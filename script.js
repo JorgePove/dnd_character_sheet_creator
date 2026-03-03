@@ -30,7 +30,15 @@ function nuevaFicha(datosGuardados) {
     tab.addEventListener('click', () => activarFicha(id));
     barra.insertBefore(tab, btnNueva);
 
-    actualizarDadosGolpePanel(panel.querySelector('.dg-total'));
+    // Init primer grupo dados de golpe
+    (function(){
+        const wrap = panel.querySelector('.dg-grupos-wrap');
+        if (wrap && wrap.children.length === 0) {
+            const g = dgCrearGrupo('d8', 1);
+            wrap.appendChild(g);
+            actualizarDadosGolpePanel(g.querySelector('.dg-total'));
+        }
+    })();
     if (typeof initCaractSelectores === 'function') initCaractSelectores(panel);
     if (typeof initSpellcasting === 'function') initSpellcasting(panel);
     activarFicha(id);
@@ -295,11 +303,79 @@ function modificarVidaPanel(btn, tipo) {
 /* ═══════════════════════════════════════════════════════
    DADOS DE GOLPE
 ═══════════════════════════════════════════════════════ */
+/* ── Dados de Golpe multi-grupo ─────────────────────── */
+const DG_COLORES = {
+    d4:  { borde:'#a0aec0', fondo:'#f7fafc', chk:'#718096', txt:'#4a5568' },
+    d6:  { borde:'#38a169', fondo:'#f0fff4', chk:'#38a169', txt:'#276749' },
+    d8:  { borde:'#3182ce', fondo:'#ebf8ff', chk:'#3182ce', txt:'#2b6cb0' },
+    d10: { borde:'#805ad5', fondo:'#faf5ff', chk:'#805ad5', txt:'#553c9a' },
+    d12: { borde:'#dd6b20', fondo:'#fffaf0', chk:'#dd6b20', txt:'#c05621' },
+};
+
+function dgColorCSS(tipo) {
+    const c = DG_COLORES[tipo] || DG_COLORES.d8;
+    return `--dg-borde:${c.borde};--dg-fondo:${c.fondo};--dg-chk:${c.chk};--dg-txt:${c.txt}`;
+}
+
+function dgCrearGrupo(tipo, total) {
+    tipo  = tipo  || 'd8';
+    total = total || 1;
+    const grupo = document.createElement('div');
+    grupo.className = 'dg-grupo';
+    grupo.setAttribute('style', dgColorCSS(tipo));
+    grupo.innerHTML = `
+        <div class="dg-grupo-head">
+            <div class="dg-left-col">
+                <label class="dg-lbl">Tipo</label>
+                <select class="dg-tipo" onchange="dgTipoCambia(this)">
+                    <option value="d4" ${tipo==='d4'?'selected':''}>d4</option>
+                    <option value="d6" ${tipo==='d6'?'selected':''}>d6</option>
+                    <option value="d8" ${tipo==='d8'?'selected':''}>d8</option>
+                    <option value="d10" ${tipo==='d10'?'selected':''}>d10</option>
+                    <option value="d12" ${tipo==='d12'?'selected':''}>d12</option>
+                </select>
+                <label class="dg-lbl" style="margin-top:4px">Dados</label>
+                <input type="number" class="dg-total" value="${total}" min="0" max="20"
+                    oninput="actualizarDadosGolpePanel(this)">
+            </div>
+            <div class="dg-checks-contenedor"></div>
+            <button class="dg-del-btn" onclick="dgBorrarGrupo(this)" title="Eliminar este grupo">×</button>
+        </div>`;
+    return grupo;
+}
+
+function dgTipoCambia(sel) {
+    const grupo = sel.closest('.dg-grupo');
+    grupo.setAttribute('style', dgColorCSS(sel.value));
+    // Recolorear los checkboxes existentes
+    grupo.querySelectorAll('.dg-check-item input').forEach(c => {
+        c.style.setProperty('--chk', DG_COLORES[sel.value]?.chk || '#3182ce');
+    });
+    guardarDebounced();
+}
+
+function dgBorrarGrupo(btn) {
+    const wrap = btn.closest('.dg-grupos-wrap');
+    if (wrap.querySelectorAll('.dg-grupo').length <= 1) return;
+    btn.closest('.dg-grupo').remove();
+    guardarDebounced();
+}
+
+function dgAñadirGrupo(btn) {
+    const wrap = getPanel(btn).querySelector('.dg-grupos-wrap');
+    const g = dgCrearGrupo('d8', 1);
+    wrap.appendChild(g);
+    actualizarDadosGolpePanel(g.querySelector('.dg-total'));
+}
+
 function actualizarDadosGolpePanel(input) {
-    const panel = getPanel(input);
-    const total      = Math.max(0, Math.min(20, parseInt(panel.querySelector('.dg-total').value) || 0));
-    const contenedor = panel.querySelector('.dg-checks-contenedor');
+    const grupo      = input.closest('.dg-grupo');
+    const panel      = getPanel(input);
+    const total      = Math.max(0, Math.min(20, parseInt(input.value) || 0));
+    const contenedor = grupo.querySelector('.dg-checks-contenedor');
     const actuales   = contenedor.querySelectorAll('.dg-check-item').length;
+    const tipo       = grupo.querySelector('.dg-tipo').value;
+    const chkColor   = DG_COLORES[tipo]?.chk || '#3182ce';
 
     if (total > actuales) {
         for (let i = actuales; i < total; i++) {
@@ -307,8 +383,9 @@ function actualizarDadosGolpePanel(input) {
             item.className = 'dg-check-item';
             const chk = document.createElement('input');
             chk.type = 'checkbox'; chk.checked = true;
+            chk.style.setProperty('--chk', chkColor);
             chk.addEventListener('change', function() {
-                if (!this.checked) usarDadoGolpePanel(getPanel(this));
+                if (!this.checked) dgUsarDado(this.closest('.dg-grupo'), panel);
                 guardarDebounced();
             });
             item.appendChild(chk);
@@ -321,8 +398,8 @@ function actualizarDadosGolpePanel(input) {
     guardarDebounced();
 }
 
-function usarDadoGolpePanel(panel) {
-    const tipo   = panel.querySelector('.dg-tipo').value;
+function dgUsarDado(grupo, panel) {
+    const tipo   = grupo.querySelector('.dg-tipo').value;
     const caras  = parseInt(tipo.replace('d','')) || 6;
     const tirada = Math.floor(Math.random() * caras) + 1;
     const conScore = parseInt(panel.querySelector('.stat-score[data-stat="con"]').value) || 10;
@@ -382,7 +459,7 @@ function descansoLargo(btn) {
     panel.querySelector('.hp-actual').value = max;
     panel.querySelector('.hp-temp-val').value = 0;
     actualizarVidaPanel(panel.querySelector('.hp-actual'));
-    panel.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]').forEach(chk => { chk.checked = true; });
+    panel.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]').forEach(chk => { chk.checked = true; }); // recarga todos los grupos
     btn.style.background = '#c6f6d5'; btn.style.borderColor = '#38a169';
     setTimeout(() => { btn.style.background = ''; btn.style.borderColor = ''; }, 600);
     // Recargar recursos marcados con L (o C, ya que largo recarga todo)
@@ -417,7 +494,6 @@ function añadirFilaInventario(contenedor) {
         <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()">
         <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
         <input type="checkbox" title="Equipado" onchange="guardarDebounced()">
-        <input type="checkbox" class="sintonizado-chk" title="Sintonizado" onchange="guardarDebounced()">
         <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>
     `;
     contenedor.appendChild(div);
@@ -430,7 +506,7 @@ function borrarItemInventario(btn) {
     const contenedor = fila.closest('.contenedor-items');
     if (contenedor.querySelectorAll('.item-fila').length <= 1) {
         fila.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => i.value = '');
-        fila.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+        fila.querySelector('input[type="checkbox"]').checked = false;
     } else {
         fila.remove();
     }
@@ -709,13 +785,16 @@ function leerFicha(panel) {
 
     // Condiciones
     d.condiciones = Array.from(panel.querySelectorAll('.condicion-chk')).map(c => c.checked);
-    // Agotamiento
-    d.agotamiento = Array.from(panel.querySelectorAll('.agot-bolita')).filter(b => b.classList.contains('activo')).length;
 
-    // Dados de golpe
-    d.dgTotal  = panel.querySelector('.dg-total')?.value || '0';
-    d.dgTipo   = panel.querySelector('.dg-tipo')?.value  || 'd8';
-    d.dgChecks = Array.from(panel.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]')).map(c => c.checked);
+    // Dados de golpe — array de grupos (con compat. legacy)
+    d.dgGrupos = Array.from(panel.querySelectorAll('.dg-grupo')).map(g => ({
+        tipo:   g.querySelector('.dg-tipo')?.value || 'd8',
+        total:  g.querySelector('.dg-total')?.value || '0',
+        checks: Array.from(g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]')).map(c => c.checked)
+    }));
+    d.dgTotal  = d.dgGrupos[0]?.total  || '0'; // compat legacy
+    d.dgTipo   = d.dgGrupos[0]?.tipo   || 'd8';
+    d.dgChecks = d.dgGrupos[0]?.checks || [];
 
     // Salvaciones de muerte
     d.exitosMuerte = Array.from(panel.querySelectorAll('.circulos-exito .circulo-muerte')).map(c => c.classList.contains('activo'));
@@ -731,7 +810,7 @@ function leerFicha(panel) {
     d.items = [];
     panel.querySelectorAll('.item-fila').forEach(fila => {
         const ins = fila.querySelectorAll('input');
-        d.items.push({ nombre: ins[0]?.value||'', cant: ins[1]?.value||'', desc: ins[2]?.value||'', equip: ins[3]?.checked||false, sint: ins[4]?.checked||false });
+        d.items.push({ nombre: ins[0]?.value||'', cant: ins[1]?.value||'', desc: ins[2]?.value||'', equip: ins[3]?.checked||false });
     });
 
     // Sentidos
@@ -871,13 +950,23 @@ function cargarDatosEnPanel(panel, d) {
 
     // Condiciones
     if (d.condiciones) panel.querySelectorAll('.condicion-chk').forEach((c,i) => { c.checked = d.condiciones[i]||false; });
-    // Agotamiento
-    if (d.agotamiento !== undefined) actualizarAgotamientoPanel(panel, d.agotamiento);
 
-    // Dados de golpe
-    if (d.dgTotal) { panel.querySelector('.dg-total').value = d.dgTotal; actualizarDadosGolpePanel(panel.querySelector('.dg-total')); }
-    if (d.dgTipo)  panel.querySelector('.dg-tipo').value = d.dgTipo;
-    if (d.dgChecks) panel.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]').forEach((c,i) => { c.checked = d.dgChecks[i]!==undefined?d.dgChecks[i]:true; });
+    // Dados de golpe — restaurar grupos
+    (function() {
+        const wrap = panel.querySelector('.dg-grupos-wrap');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        const grupos = (d.dgGrupos && d.dgGrupos.length)
+            ? d.dgGrupos
+            : [{ tipo: d.dgTipo || 'd8', total: d.dgTotal || '1', checks: d.dgChecks || [] }];
+        grupos.forEach(gd => {
+            const g = dgCrearGrupo(gd.tipo || 'd8', gd.total || '1');
+            wrap.appendChild(g);
+            actualizarDadosGolpePanel(g.querySelector('.dg-total'));
+            const chks = g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]');
+            if (gd.checks) chks.forEach((c,i) => { c.checked = gd.checks[i] !== undefined ? gd.checks[i] : true; });
+        });
+    })();
 
     // Salvaciones de muerte
     if (d.exitosMuerte) panel.querySelectorAll('.circulos-exito .circulo-muerte').forEach((c,i) => c.classList.toggle('activo', d.exitosMuerte[i]||false));
@@ -900,7 +989,6 @@ function cargarDatosEnPanel(panel, d) {
                 <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()" value="${_esc(item.cant)}">
                 <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()" value="${_esc(item.desc)}">
                 <input type="checkbox" title="Equipado" onchange="guardarDebounced()" ${item.equip?'checked':''}>
-                <input type="checkbox" class="sintonizado-chk" title="Sintonizado" onchange="guardarDebounced()" ${item.sint?'checked':''}>
                 <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>`;
             cont.appendChild(div);
         });
@@ -974,8 +1062,29 @@ function cargarDatosEnPanel(panel, d) {
         });
     });
 
-    // Restaurar Recursos
+    // Restaurar Recursos (crear filas extra si había más de 4)
     if (d.recursos && Array.isArray(d.recursos)) {
+        const _wrap = panel.querySelector('.recursos-extra-wrap');
+        if (_wrap && typeof _recursosCajaHTML === 'function') {
+            _wrap.innerHTML = ''; // limpiar filas extra previas
+            const _base4 = panel.querySelector('.recursos-grid')?.querySelectorAll('.recurso-caja').length || 4;
+            const _extras = d.recursos.length - _base4;
+            const _nfilas = Math.ceil(_extras / 4);
+            for (let _f = 0; _f < _nfilas; _f++) {
+                const _fila = document.createElement('div');
+                _fila.className = 'recursos-extra-fila';
+                const _b = _base4 + _f * 4;
+                let _h = '';
+                for (let _i = 0; _i < 4; _i++) _h += _recursosCajaHTML(_b + _i);
+                _fila.innerHTML = _h;
+                const _del = document.createElement('button');
+                _del.className = 'recursos-fila-del-btn';
+                _del.textContent = '× Eliminar esta fila';
+                _del.onclick = (function(el){ return function(){ el.remove(); guardarDebounced(); }; })(_fila);
+                _fila.appendChild(_del);
+                _wrap.appendChild(_fila);
+            }
+        }
         panel.querySelectorAll('.recurso-caja').forEach((caja, i) => {
             const r = d.recursos[i];
             if (!r) return;
@@ -1048,116 +1157,47 @@ function cargarDatosEnPanel(panel, d) {
     actualizarTodoPanel(panel);
 }
 
-/* ═══════════════════════════════════════════════════════
-   AGOTAMIENTO
-═══════════════════════════════════════════════════════ */
-function toggleAgotamiento(btn) {
-    const tracker = btn.closest('.agotamiento-tracker');
-    const panel   = btn.closest('.ficha-panel');
-    const nivel   = parseInt(btn.dataset.nivel);
-    const bolitas = tracker.querySelectorAll('.agot-bolita');
-    // Si pulsas el único activo (nivel actual), desactivas todo
-    const nivelActual = Array.from(bolitas).filter(b => b.classList.contains('activo')).length;
-    const nuevoNivel  = (nivelActual === nivel) ? 0 : nivel;
-    actualizarAgotamientoPanel(panel, nuevoNivel);
+
+/* ── Recursos expandibles ──────────────────────────── */
+function _recursosCajaHTML(idx) {
+    return `<div class="recurso-caja" data-recurso="${idx}">
+        <div class="recurso-top">
+            <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)" title="Descanso Corto">C</button>
+            <div class="recurso-total-wrap">
+                <span class="recurso-total-label">Total</span>
+                <input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()">
+            </div>
+            <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)" title="Descanso Largo">L</button>
+        </div>
+        <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
+        <div class="recurso-nombre" contenteditable="true" spellcheck="false"
+            oninput="guardarDebounced()" data-placeholder="Recurso ${idx+1}">Recurso ${idx+1}</div>
+    </div>`;
+}
+
+function recursosAñadirFila(btn) {
+    const seccion = btn.closest('.seccion-caja');
+    const wrap    = seccion.querySelector('.recursos-extra-wrap');
+    const base    = seccion.querySelectorAll('.recurso-caja').length;
+    const fila    = document.createElement('div');
+    fila.className = 'recursos-extra-fila';
+    let html = '';
+    for (let i = 0; i < 4; i++) html += _recursosCajaHTML(base + i);
+    fila.innerHTML = html;
+    // Botón borrar fila
+    const delBtn = document.createElement('button');
+    delBtn.className = 'recursos-fila-del-btn';
+    delBtn.textContent = '× Eliminar esta fila';
+    delBtn.onclick = function() { fila.remove(); guardarDebounced(); };
+    fila.appendChild(delBtn);
+    wrap.appendChild(fila);
     guardarDebounced();
 }
-function actualizarAgotamientoPanel(panel, nivel) {
-    const tracker = panel.querySelector('.agotamiento-tracker');
-    if (!tracker) return;
-    const bolitas = tracker.querySelectorAll('.agot-bolita');
-    bolitas.forEach((b, i) => b.classList.toggle('activo', i < nivel));
-    const txt = tracker.querySelector('.agotamiento-nivel-txt');
-    if (txt) {
-        const labels = ['Sin agotamiento','Nivel 1 — Desventaja en habilidades','Nivel 2 — Velocidad ÷2','Nivel 3 — Desvent. en ataques y salvaciones','Nivel 4 — PG máx. ÷2','Nivel 5 — Velocidad 0','Nivel 6 — Muerte'];
-        txt.textContent = labels[nivel] || 'Sin agotamiento';
-        txt.style.color = nivel >= 4 ? '#e53e3e' : nivel >= 2 ? '#dd6b20' : nivel >= 1 ? '#d69e2e' : '#718096';
-    }
-}
-
-/* ═══════════════════════════════════════════════════════
-   EXPORTAR / COMPARTIR
-═══════════════════════════════════════════════════════ */
-function _getFichaActivaData() {
-    const panel = document.querySelector('.ficha-panel.activa') || document.querySelector('.ficha-panel');
-    if (!panel) return null;
-    return leerFicha(panel);
-}
-
-function exportarFichaJSON() {
-    const d = _getFichaActivaData();
-    if (!d) return;
-    const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = (d.nombre || 'personaje') + '.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-}
-
-function exportarFichaPDF() {
-    const panel = document.querySelector('.ficha-panel.activa') || document.querySelector('.ficha-panel');
-    if (!panel) return;
-    // Ocultar elementos no imprimibles y lanzar impresión
-    document.body.classList.add('modo-impresion');
-    window.print();
-    document.body.classList.remove('modo-impresion');
-}
-
-function generarURLCompartir() {
-    const d = _getFichaActivaData();
-    if (!d) return;
-    try {
-        const json    = JSON.stringify(d);
-        const b64     = btoa(encodeURIComponent(json));
-        const url     = window.location.origin + window.location.pathname + '?ficha=' + b64;
-        // Copiar al portapapeles
-        navigator.clipboard.writeText(url).then(() => {
-            _mostrarToastInfo('🔗 Enlace copiado al portapapeles');
-        }).catch(() => {
-            prompt('Copia este enlace:', url);
-        });
-    } catch(e) {
-        alert('Error generando enlace: ' + e.message);
-    }
-}
-
-function _mostrarToastInfo(msg, color) {
-    color = color || '#2b6cb0';
-    let t = document.getElementById('toast-info-general');
-    if (!t) {
-        t = document.createElement('div');
-        t.id = 'toast-info-general';
-        t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transition:opacity .3s;pointer-events:none;';
-        document.body.appendChild(t);
-    }
-    t.style.background = color;
-    t.textContent = msg;
-    t.style.opacity = '1';
-    clearTimeout(t._t);
-    t._t = setTimeout(() => { t.style.opacity = '0'; }, 3500);
-}
-
 
 /* ═══════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════ */
 window.onload = function () {
-
-    // Cargar ficha desde URL compartida (?ficha=...)
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const fichaB64 = params.get('ficha');
-        if (fichaB64) {
-            const d = JSON.parse(decodeURIComponent(atob(fichaB64)));
-            if (d) {
-                nuevaFicha(d);
-                history.replaceState(null, '', window.location.pathname);
-                return;
-            }
-        }
-    } catch(e) { console.warn('URL ficha inválida:', e); }
-
     try {
         const guardado = localStorage.getItem('dnd_fichas');
         const contador = localStorage.getItem('dnd_contador');
@@ -1536,10 +1576,22 @@ actualizarTodoPanel = function(panel) {
 };
 
 /* WIDGET DADOS */
+function toggleDadosWidget() {
+    var w = document.getElementById('dados-widget');
+    if (!w) return;
+    var min = w.classList.toggle('is-min');
+    try { localStorage.setItem('dnd_dados_min', min ? '1' : '0'); } catch(e) {}
+}
 function dadosInitWidget(){
     var c=document.getElementById('dados-filas');
     if(!c||c.children.length>0)return;
     dadosAddFila(true);
+    try {
+        if (localStorage.getItem('dnd_dados_min') === '1') {
+            var w = document.getElementById('dados-widget');
+            if (w) w.classList.add('is-min');
+        }
+    } catch(e) {}
 }
 function dadosAddFila(primera){
     var c=document.getElementById('dados-filas');
@@ -1596,4 +1648,4 @@ function dadosRealizarTirada(){
     div.innerHTML='<strong>🎲 Tirada personalizada</strong><div class="res"><span>'+total+'</span><small>'+partes.join(' + ')+'</small></div>';
     log.prepend(div);
 }
-document.addEventListener('DOMContentLoaded',function(){dadosInitWidget();});
+dadosInitWidget(); // Script al final de <body>: DOM ya listo

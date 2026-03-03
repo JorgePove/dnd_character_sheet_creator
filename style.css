@@ -772,18 +772,25 @@ label {
 .agotamiento-zona {
     margin-top: 8px;
     border-top: 1px solid #e2e8f0;
-    padding-top: 8px;
+    padding-top: 6px;
+}
+.agotamiento-fila-principal {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 .agotamiento-titulo {
     font-size: 9px; font-weight: 700; text-transform: uppercase;
-    color: #718096; letter-spacing: 0.4px; text-align: center;
-    margin-bottom: 6px;
+    color: #718096; letter-spacing: 0.4px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 .agotamiento-bolitas {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 8px;
     flex-wrap: wrap;
+    flex: 1;
 }
 .agotamiento-item {
     display: flex;

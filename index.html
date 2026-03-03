@@ -8,9 +8,16 @@
 </head>
 <body>
 
-<!-- BARRA DE PESTAÑAS -->
-<div class="barra-pestanas" id="barra-pestanas">
-    <button class="btn-nueva-pestana" id="btn-nueva-pestana" onclick="nuevaFicha()" title="Nueva ficha">＋</button>
+<!-- BARRA SUPERIOR: PESTAÑAS + ACCIONES -->
+<div class="barra-superior-wrap">
+    <div class="barra-pestanas" id="barra-pestanas">
+        <button class="btn-nueva-pestana" id="btn-nueva-pestana" onclick="nuevaFicha()" title="Nueva ficha">＋</button>
+    </div>
+    <div class="barra-acciones-ficha">
+        <button class="btn-accion-ficha btn-export-pdf" onclick="exportarFichaPDF()" title="Exportar ficha como PDF">⬇ PDF</button>
+        <button class="btn-accion-ficha btn-export-json" onclick="exportarFichaJSON()" title="Descargar datos de la ficha en JSON">⬇ JSON</button>
+        <button class="btn-accion-ficha btn-compartir-url" onclick="generarURLCompartir()" title="Generar enlace de solo lectura">🔗 Compartir</button>
+    </div>
 </div>
 
 <!-- LOG DE TIRADAS -->
@@ -27,16 +34,14 @@
 
 <!-- WIDGET DADOS -->
 <div id="dados-widget" class="dados-widget">
-    <div class="dados-widget-cabecera" onclick="toggleDadosWidget()" title="Minimizar / Expandir">
-        <span>&#127922; Dados</span>
-        <button class="dados-toggle-btn" onclick="event.stopPropagation();toggleDadosWidget()" title="Minimizar">&#9650;</button>
-    </div>
-    <div class="dados-widget-body">
-        <div id="dados-filas" class="dados-filas"></div>
-        <button class="dados-add-btn" onclick="dadosAddFila(false)">+ Más dados</button>
-        <button class="dados-tirar-btn" onclick="dadosRealizarTirada()">&#127922; Realizar Tirada</button>
-    </div>
+    <div class="dados-widget-cabecera"><span>&#127922; Dados</span></div>
+    <div id="dados-filas" class="dados-filas"></div>
+    <button class="dados-add-btn" onclick="dadosAddFila(false)">+ Más dados</button>
+    <button class="dados-tirar-btn" onclick="dadosRealizarTirada()">&#127922; Realizar Tirada</button>
 </div>
+
+
+
 
 <!-- PLANTILLA DE FICHA -->
 <template id="plantilla-ficha">
@@ -65,12 +70,14 @@
         </div>
     </header>
 
-    <!-- BARRA DE CONTROLES -->
+    <!-- BARRA DE CONTROLES: ventaja/desventaja | CA+INI+VEL (centro) | descansos -->
     <div class="controles-accion">
         <div class="grupo-dados">
             <button class="btn-tirada btn-ventaja" onclick="toggleDados(this,'ventaja')">▲ VENTAJA</button>
             <button class="btn-tirada btn-desventaja" onclick="toggleDados(this,'desventaja')">▼ DESVENTAJA</button>
         </div>
+
+        <!-- CA + INICIATIVA + VELOCIDADES integrados en la barra -->
         <div class="combate-inline">
             <div class="caja-stat-inline">
                 <span class="csi-label">CA</span>
@@ -103,6 +110,7 @@
                 </div>
             </div>
         </div>
+
         <div class="grupo-descansos">
             <button class="btn-descanso" onclick="descansoCorto(this)">☽ Descanso Corto</button>
             <button class="btn-descanso btn-descanso-largo" onclick="descansoLargo(this)">☀ Descanso Largo</button>
@@ -211,7 +219,7 @@
                 </div>
             </div>
 
-            <!-- SENTIDOS -->
+            <!-- CAJA DE SENTIDOS (bajo Estadísticas) -->
             <div class="seccion-caja seccion-sentidos">
                 <h3 class="titulo-caja">Sentidos</h3>
                 <div class="sentido-fila">
@@ -228,6 +236,7 @@
                 </div>
                 <textarea class="sentidos-extra" placeholder="Ej: Visión en la oscuridad 18 m., Sentido ciego 3 m..." oninput="guardarDebounced()"></textarea>
             </div>
+
         </aside>
 
         <!-- COL CENTRAL: HABILIDADES + COMPETENCIAS -->
@@ -270,10 +279,10 @@
             </div>
         </section>
 
-        <!-- COL DERECHA -->
+        <!-- COL DERECHA: VIDA → RESISTENCIAS → DADOS/MUERTE → INVENTARIO -->
         <section class="columna-combate">
 
-            <!-- PUNTOS DE GOLPE -->
+            <!-- PUNTOS DE GOLPE (ahora arriba del todo, mismo nivel que stats) -->
             <div class="seccion-vida">
                 <div class="cabecera-vida">
                     <span>Puntos de Golpe</span>
@@ -319,28 +328,19 @@
             <!-- DADOS DE GOLPE + SALVACIONES MUERTE -->
             <div class="fila-dados-muerte">
                 <div class="seccion-caja dados-golpe">
-                    <div class="titulo-caja-wrap">
-                        <h3 class="titulo-caja">Dados de Golpe</h3>
-                        <button class="dg-add-btn" onclick="añadirGrupoDadosGolpe(this)" title="Añadir grupo (multiclase)">＋</button>
-                    </div>
-                    <div class="dg-grupos-contenedor">
-                        <div class="dg-grupo" data-dg-idx="0">
-                            <div class="dg-grupo-body">
-                                <div class="dg-controles">
-                                    <div class="dg-selector"><label>Tipo</label>
-                                        <select class="dg-tipo" onchange="onDgTipoChange(this);guardarDebounced()">
-                                            <option>d6</option><option>d8</option>
-                                            <option selected>d10</option><option>d12</option>
-                                        </select>
-                                    </div>
-                                    <div class="dg-selector"><label>Total</label>
-                                        <input type="number" class="dg-total" value="1" min="0" max="20" oninput="actualizarDadosGolpePanel(this)">
-                                    </div>
-                                </div>
-                                <div class="dg-checks-contenedor"></div>
-                            </div>
+                    <h3 class="titulo-caja">Dados de Golpe</h3>
+                    <div class="dg-controles">
+                        <div class="dg-selector"><label>Tipo</label>
+                            <select class="dg-tipo">
+                                <option>d6</option><option>d8</option>
+                                <option selected>d10</option><option>d12</option>
+                            </select>
+                        </div>
+                        <div class="dg-selector"><label>Total</label>
+                            <input type="number" class="dg-total" value="1" min="0" max="20" oninput="actualizarDadosGolpePanel(this)">
                         </div>
                     </div>
+                    <div class="dg-checks-contenedor"></div>
                     <p class="dg-hint">Desmarca un dado para gastarlo y curar PG</p>
                 </div>
 
@@ -390,6 +390,19 @@
                     <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Petrificado</span></label>
                     <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Restringido</span></label>
                 </div>
+                <!-- TRACKER DE AGOTAMIENTO -->
+                <div class="agotamiento-tracker">
+                    <span class="agotamiento-label">Agotamiento</span>
+                    <div class="agotamiento-bolitas">
+                        <button class="agot-bolita" data-nivel="1" onclick="toggleAgotamiento(this)" title="Nivel 1: Desventaja en pruebas de habilidad">1</button>
+                        <button class="agot-bolita" data-nivel="2" onclick="toggleAgotamiento(this)" title="Nivel 2: Velocidad reducida a la mitad">2</button>
+                        <button class="agot-bolita" data-nivel="3" onclick="toggleAgotamiento(this)" title="Nivel 3: Desventaja en ataques y salvaciones">3</button>
+                        <button class="agot-bolita" data-nivel="4" onclick="toggleAgotamiento(this)" title="Nivel 4: PG máximos reducidos a la mitad">4</button>
+                        <button class="agot-bolita" data-nivel="5" onclick="toggleAgotamiento(this)" title="Nivel 5: Velocidad reducida a 0">5</button>
+                        <button class="agot-bolita" data-nivel="6" onclick="toggleAgotamiento(this)" title="Nivel 6: Muerte">6</button>
+                    </div>
+                    <span class="agotamiento-nivel-txt">Sin agotamiento</span>
+                </div>
             </div>
 
             <!-- INVENTARIO -->
@@ -406,7 +419,8 @@
                     <span>Objeto</span>
                     <span class="inv-col-center">Cant.</span>
                     <span>Descripción</span>
-                    <span class="inv-col-center">Equipado</span>
+                    <span class="inv-col-center">Equip.</span>
+                    <span class="inv-col-center">Sint.</span>
                     <span></span>
                 </div>
                 <div class="contenedor-items">
@@ -415,6 +429,7 @@
                         <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()">
                         <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
                         <input type="checkbox" title="Equipado" onchange="guardarDebounced()">
+                        <input type="checkbox" class="sintonizado-chk" title="Sintonizado" onchange="guardarDebounced()">
                         <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>
                     </div>
                 </div>
@@ -423,10 +438,15 @@
         </section>
     </main>
 
-    <!-- SEGUNDA PÁGINA: ACCIONES -->
+    <!-- ═══════════════════════════════════
+         SEGUNDA PÁGINA: ACCIONES
+    ═══════════════════════════════════ -->
     <div class="segunda-pagina">
+
         <div class="seccion-caja caja-acciones">
             <h3 class="titulo-caja">Acciones de Combate</h3>
+
+            <!-- Tabs de navegación -->
             <div class="acciones-tabs">
                 <button class="accion-tab activo" data-tab="armas" onclick="cambiarTab(this)">⚔ Armas / Spells</button>
                 <button class="accion-tab" data-tab="actions" onclick="cambiarTab(this)">▶ Actions</button>
@@ -434,11 +454,19 @@
                 <button class="accion-tab" data-tab="reactions" onclick="cambiarTab(this)">↩ Reactions</button>
                 <button class="accion-tab" data-tab="otros" onclick="cambiarTab(this)">✦ Otros</button>
             </div>
+
+            <!-- Paneles de cada tab -->
             <div class="acciones-contenido">
+
+                <!-- ARMAS / SPELLS -->
                 <div class="accion-panel activo" data-panel="armas">
                     <div class="armas-cabecera">
-                        <span>Nombre</span><span>Bono de Ataque</span><span>Daño</span>
-                        <span>Alcance</span><span>Notas</span><span></span>
+                        <span>Nombre</span>
+                        <span>Bono de Ataque</span>
+                        <span>Daño</span>
+                        <span>Alcance</span>
+                        <span>Notas</span>
+                        <span></span>
                     </div>
                     <div class="armas-lista">
                         <div class="arma-fila">
@@ -448,9 +476,12 @@
                             </div>
                             <div class="arma-bono-wrap">
                                 <select class="arma-stat-sel" onchange="recalcArma(this);guardarDebounced()">
-                                    <option value="str">Fuerza</option><option value="dex">Destreza</option>
-                                    <option value="con">Constitución</option><option value="int">Inteligencia</option>
-                                    <option value="wis">Sabiduría</option><option value="cha">Carisma</option>
+                                    <option value="str">Fuerza</option>
+                                    <option value="dex">Destreza</option>
+                                    <option value="con">Constitución</option>
+                                    <option value="int">Inteligencia</option>
+                                    <option value="wis">Sabiduría</option>
+                                    <option value="cha">Carisma</option>
                                     <option value="ninguno">— Ninguna —</option>
                                 </select>
                                 <input type="number" class="arma-bono-extra" value="0" title="Bono extra manual" onchange="recalcArma(this);guardarDebounced()">
@@ -460,16 +491,26 @@
                                 <div class="arma-daño-bloque">
                                     <input type="number" class="arma-dado-qty" value="1" min="1" max="20" oninput="guardarDebounced()">
                                     <select class="arma-dado-tipo" onchange="guardarDebounced()">
-                                        <option>d4</option><option>d6</option><option selected>d8</option>
-                                        <option>d10</option><option>d12</option><option>d20</option>
+                                        <option>d4</option><option>d6</option>
+                                        <option selected>d8</option><option>d10</option>
+                                        <option>d12</option><option>d20</option>
                                     </select>
                                     <span class="arma-daño-sep">+</span>
-                                    <input type="number" class="arma-bono-daño" value="0" oninput="guardarDebounced()">
+                                    <input type="number" class="arma-bono-daño" value="0" title="Bono de daño (auto=stat mod)" oninput="guardarDebounced()">
                                     <select class="arma-tipo-daño" onchange="guardarDebounced()">
-                                        <option>Contundente</option><option>Cortante</option><option>Perforante</option>
-                                        <option>Ácido</option><option>Frío</option><option>Fuego</option>
-                                        <option>Fuerza</option><option>Relámpago</option><option>Necrótico</option>
-                                        <option>Veneno</option><option>Psíquico</option><option>Radiante</option><option>Trueno</option>
+                                        <option>Contundente</option>
+                                        <option>Cortante</option>
+                                        <option>Perforante</option>
+                                        <option>Ácido</option>
+                                        <option>Frío</option>
+                                        <option>Fuego</option>
+                                        <option>Fuerza</option>
+                                        <option>Relámpago</option>
+                                        <option>Necrótico</option>
+                                        <option>Veneno</option>
+                                        <option>Psíquico</option>
+                                        <option>Radiante</option>
+                                        <option>Trueno</option>
                                     </select>
                                     <button class="arma-btn-extra-daño" onclick="añadirDañoExtra(this)" title="Añadir bloque de daño extra">＋</button>
                                 </div>
@@ -481,77 +522,131 @@
                     </div>
                     <button class="btn-añadir-arma" onclick="añadirArma(this)">+ Añadir arma / spell</button>
                 </div>
+
+                <!-- ACTIONS -->
                 <div class="accion-panel" data-panel="actions">
-                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre de la acción..."><textarea class="accion-desc" placeholder="Descripción, tirada, efecto..."></textarea></div></div>
+                    <div class="acciones-lista" id-panel="actions">
+                        <div class="entrada-accion">
+                            <input type="text" class="accion-nombre" placeholder="Nombre de la acción...">
+                            <textarea class="accion-desc" placeholder="Descripción, tirada, efecto..."></textarea>
+                        </div>
+                    </div>
                     <button class="btn-añadir-accion" onclick="añadirAccion(this,'actions')">+ Añadir acción</button>
                 </div>
+
+                <!-- BONUS ACTIONS -->
                 <div class="accion-panel" data-panel="bonus">
-                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre de la bonus action..."><textarea class="accion-desc" placeholder="Descripción, tirada, efecto..."></textarea></div></div>
+                    <div class="acciones-lista" id-panel="bonus">
+                        <div class="entrada-accion">
+                            <input type="text" class="accion-nombre" placeholder="Nombre de la bonus action...">
+                            <textarea class="accion-desc" placeholder="Descripción, tirada, efecto..."></textarea>
+                        </div>
+                    </div>
                     <button class="btn-añadir-accion" onclick="añadirAccion(this,'bonus')">+ Añadir bonus action</button>
                 </div>
+
+                <!-- REACTIONS -->
                 <div class="accion-panel" data-panel="reactions">
-                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre de la reaction..."><textarea class="accion-desc" placeholder="Descripción, trigger, efecto..."></textarea></div></div>
+                    <div class="acciones-lista" id-panel="reactions">
+                        <div class="entrada-accion">
+                            <input type="text" class="accion-nombre" placeholder="Nombre de la reaction...">
+                            <textarea class="accion-desc" placeholder="Descripción, trigger, efecto..."></textarea>
+                        </div>
+                    </div>
                     <button class="btn-añadir-accion" onclick="añadirAccion(this,'reactions')">+ Añadir reaction</button>
                 </div>
+
+                <!-- OTROS -->
                 <div class="accion-panel" data-panel="otros">
-                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre..."><textarea class="accion-desc" placeholder="Descripción, habilidades especiales, acciones legendarias..."></textarea></div></div>
+                    <div class="acciones-lista" id-panel="otros">
+                        <div class="entrada-accion">
+                            <input type="text" class="accion-nombre" placeholder="Nombre...">
+                            <textarea class="accion-desc" placeholder="Descripción, habilidades especiales, acciones legendarias..."></textarea>
+                        </div>
+                    </div>
                     <button class="btn-añadir-accion" onclick="añadirAccion(this,'otros')">+ Añadir entrada</button>
                 </div>
+
             </div>
         </div>
-    </div>
 
-    <!-- TERCERA PÁGINA: CARACTERÍSTICAS -->
+    </div><!-- fin segunda-pagina -->
+
+    <!-- ═══════════════════════════════════
+         TERCERA PÁGINA: CARACTERÍSTICAS
+    ═══════════════════════════════════ -->
     <div class="segunda-pagina tercera-pagina">
+
         <div class="seccion-caja caja-caracteristicas">
             <h3 class="titulo-caja">Características de Personaje</h3>
 
+            <!-- FILA 1: Clase + Subclase -->
             <div class="caract-fila">
+
                 <div class="seccion-caja caract-mitad">
                     <h3 class="titulo-caja">Clase</h3>
                     <div class="caract-selector-wrap">
-                        <select class="caract-select sel-clase" onchange="onClaseChange(this)"><option value="">— Selecciona una clase —</option></select>
+                        <select class="caract-select sel-clase" onchange="onClaseChange(this)">
+                            <option value="">— Selecciona una clase —</option>
+                        </select>
                         <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'clase')" title="Limpiar">✕</button>
                     </div>
                     <textarea class="caract-textarea caract-clase" placeholder="Selecciona una clase arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
                 </div>
+
                 <div class="seccion-caja caract-mitad">
                     <h3 class="titulo-caja">Subclase</h3>
                     <div class="caract-selector-wrap">
-                        <select class="caract-select sel-subclase" onchange="onSubclaseChange(this)"><option value="">— Selecciona primero una clase —</option></select>
+                        <select class="caract-select sel-subclase" onchange="onSubclaseChange(this)">
+                            <option value="">— Selecciona primero una clase —</option>
+                        </select>
                         <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'subclase')" title="Limpiar">✕</button>
                     </div>
                     <textarea class="caract-textarea caract-subclase" placeholder="Selecciona una subclase arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
                 </div>
+
             </div>
 
+            <!-- FILA 2: Especie + Dotes -->
             <div class="caract-fila">
+
                 <div class="seccion-caja caract-mitad">
                     <h3 class="titulo-caja">Especie</h3>
                     <div class="caract-selector-wrap">
-                        <select class="caract-select sel-especie" onchange="onEspecieChange(this)"><option value="">— Selecciona una especie —</option></select>
+                        <select class="caract-select sel-especie" onchange="onEspecieChange(this)">
+                            <option value="">— Selecciona una especie —</option>
+                        </select>
                         <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'especie')" title="Limpiar">✕</button>
                     </div>
                     <textarea class="caract-textarea caract-especie" placeholder="Selecciona una especie arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
                 </div>
+
                 <div class="seccion-caja caract-mitad">
                     <h3 class="titulo-caja">Dotes</h3>
                     <div class="caract-selector-wrap">
-                        <select class="caract-select sel-dote"><option value="">— Añadir dote —</option></select>
+                        <select class="caract-select sel-dote">
+                            <option value="">— Añadir dote —</option>
+                        </select>
                         <button class="caract-btn-add" onclick="onDoteAdd(this)" title="Añadir al listado">＋</button>
                         <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'dotes')" title="Limpiar todo">✕</button>
                     </div>
                     <textarea class="caract-textarea caract-dotes" placeholder="Selecciona dotes arriba para añadirlas, o escribe libremente..." oninput="guardarDebounced()"></textarea>
                 </div>
+
             </div>
 
+            <!-- FILA 3: Trasfondo -->
             <div class="caract-fila caract-fila-last">
                 <div class="seccion-caja caract-completa caract-trasfondo">
                     <h3 class="titulo-caja">Trasfondo</h3>
                     <div class="caract-selector-wrap">
-                        <select class="caract-select sel-trasfondo" onchange="onTrasfondoChange(this)"><option value="">— Selecciona un trasfondo —</option></select>
+                        <select class="caract-select sel-trasfondo" onchange="onTrasfondoChange(this)">
+                            <option value="">— Selecciona un trasfondo —</option>
+                        </select>
                         <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'trasfondo')" title="Limpiar">✕</button>
                     </div>
+
+                    <!-- Panel de trasfondo PERSONALIZADO (oculto por defecto) -->
                     <div class="trasfondo-personalizado" style="display:none">
                         <div class="tf-fila">
                             <span class="tf-label">Aumento de característica:</span>
@@ -571,76 +666,100 @@
                         </div>
                         <div class="tf-fila">
                             <span class="tf-label">Habilidad 1:</span>
-                            <select class="tf-hab1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))"><option value="">— Habilidad —</option></select>
+                            <select class="tf-hab1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                <option value="">— Habilidad —</option>
+                            </select>
                         </div>
                         <div class="tf-fila">
                             <span class="tf-label">Habilidad 2:</span>
-                            <select class="tf-hab2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))"><option value="">— Habilidad —</option></select>
+                            <select class="tf-hab2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                <option value="">— Habilidad —</option>
+                            </select>
                         </div>
                         <div class="tf-fila">
                             <span class="tf-label">Dote de Origen:</span>
-                            <select class="tf-dote-sel tf-sel"><option value="">— Dote de Origen —</option></select>
+                            <select class="tf-dote-sel tf-sel">
+                                <option value="">— Dote de Origen —</option>
+                            </select>
                             <button class="caract-btn-add" onclick="onDoteOrigenAdd(this)" title="Añadir a Dotes">＋</button>
                         </div>
                     </div>
+
                     <textarea class="caract-textarea caract-textarea-sm caract-trasfondo-txt" placeholder="Selecciona un trasfondo arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
                 </div>
             </div>
 
+            <!-- FILA 4: RECURSOS -->
             <div class="caract-fila caract-fila-last">
                 <div class="seccion-caja caract-completa">
-                    <div class="titulo-caja-wrap">
-                        <h3 class="titulo-caja">Recursos</h3>
-                        <button class="recursos-add-btn" onclick="añadirFilaRecursos(this)" title="Añadir más recursos">＋</button>
-                    </div>
-                    <div class="recursos-filas-contenedor">
+                    <h3 class="titulo-caja">Recursos</h3>
                     <div class="recursos-grid">
+
                         <div class="recurso-caja" data-recurso="0">
                             <div class="recurso-top">
                                 <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Corto">C</button>
-                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
+                                <div class="recurso-total-wrap">
+                                    <span class="recurso-total-label">Total</span>
+                                    <input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()">
+                                </div>
                                 <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Largo">L</button>
                             </div>
                             <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
                             <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 1">Recurso 1</div>
                         </div>
+
                         <div class="recurso-caja" data-recurso="1">
                             <div class="recurso-top">
-                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)">C</button>
-                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
-                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)">L</button>
+                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Corto">C</button>
+                                <div class="recurso-total-wrap">
+                                    <span class="recurso-total-label">Total</span>
+                                    <input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()">
+                                </div>
+                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Largo">L</button>
                             </div>
                             <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
                             <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 2">Recurso 2</div>
                         </div>
+
                         <div class="recurso-caja" data-recurso="2">
                             <div class="recurso-top">
-                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)">C</button>
-                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
-                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)">L</button>
+                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Corto">C</button>
+                                <div class="recurso-total-wrap">
+                                    <span class="recurso-total-label">Total</span>
+                                    <input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()">
+                                </div>
+                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Largo">L</button>
                             </div>
                             <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
                             <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 3">Recurso 3</div>
                         </div>
+
                         <div class="recurso-caja" data-recurso="3">
                             <div class="recurso-top">
-                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)">C</button>
-                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
-                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)">L</button>
+                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Corto">C</button>
+                                <div class="recurso-total-wrap">
+                                    <span class="recurso-total-label">Total</span>
+                                    <input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()">
+                                </div>
+                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Largo">L</button>
                             </div>
                             <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
                             <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 4">Recurso 4</div>
                         </div>
-                    </div>
+
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- CUARTA PÁGINA: SPELLCASTING -->
+        </div>
+    </div><!-- fin tercera-pagina -->
+
+    <!-- ═══════════════════════════════════
+         CUARTA PÁGINA: SPELLCASTING
+    ═══════════════════════════════════ -->
     <div class="segunda-pagina cuarta-pagina">
 
+        <!-- TOOLTIP GLOBAL DE HECHIZO (oculto por defecto) -->
         <div class="spell-tooltip" id="spell-tooltip">
             <div class="stt-header">
                 <span class="stt-nombre"></span>
@@ -661,36 +780,54 @@
             </div>
         </div>
 
+        <!-- CAJA: VALORES DE SPELLCASTING -->
         <div class="seccion-caja caja-spell-valores">
             <h3 class="titulo-caja">Spellcasting — Valores</h3>
             <div class="spell-valores-fila">
+
+                <!-- Estadística de hechizos -->
                 <div class="spell-val-bloque">
                     <label class="spell-val-label">Estadística</label>
                     <select class="spell-stat-sel" onchange="recalcSpellcasting(getPanel(this));guardarDebounced()">
                         <option value="">— Ninguna —</option>
-                        <option value="int">Inteligencia</option><option value="wis">Sabiduría</option>
-                        <option value="cha">Carisma</option><option value="str">Fuerza</option>
-                        <option value="dex">Destreza</option><option value="con">Constitución</option>
+                        <option value="int">Inteligencia</option>
+                        <option value="wis">Sabiduría</option>
+                        <option value="cha">Carisma</option>
+                        <option value="str">Fuerza</option>
+                        <option value="dex">Destreza</option>
+                        <option value="con">Constitución</option>
                     </select>
                 </div>
+
+                <!-- Spell DC -->
                 <div class="spell-val-bloque spell-calc-bloque">
                     <label class="spell-val-label">Spell Save DC</label>
                     <div class="spell-calc-display spell-dc-display">8</div>
                     <div class="spell-extra-bono-wrap">
                         <label class="spell-extra-label">Bono extra</label>
-                        <input type="number" class="spell-bono-extra spell-dc-extra" value="0" oninput="recalcSpellcasting(getPanel(this));guardarDebounced()">
+                        <input type="number" class="spell-bono-extra spell-dc-extra" value="0"
+                               oninput="recalcSpellcasting(getPanel(this));guardarDebounced()">
                     </div>
                 </div>
+
+                <!-- Separador -->
                 <div class="spell-sep-v"></div>
+
+                <!-- Bono de ataque -->
                 <div class="spell-val-bloque spell-calc-bloque">
                     <label class="spell-val-label">Bono de Ataque</label>
                     <div class="spell-calc-display spell-atk-display">+0</div>
                     <div class="spell-extra-bono-wrap">
                         <label class="spell-extra-label">Bono extra</label>
-                        <input type="number" class="spell-bono-extra spell-atk-extra" value="0" oninput="recalcSpellcasting(getPanel(this));guardarDebounced()">
+                        <input type="number" class="spell-bono-extra spell-atk-extra" value="0"
+                               oninput="recalcSpellcasting(getPanel(this));guardarDebounced()">
                     </div>
                 </div>
+
+                <!-- Separador -->
                 <div class="spell-sep-v"></div>
+
+                <!-- Aprendidos / Preparados -->
                 <div class="spell-val-bloque spell-count-bloque">
                     <label class="spell-val-label">Aprendidos</label>
                     <input type="number" class="spell-count-input" value="0" min="0" oninput="guardarDebounced()">
@@ -699,72 +836,190 @@
                     <label class="spell-val-label">Preparados</label>
                     <input type="number" class="spell-count-input" value="0" min="0" oninput="guardarDebounced()">
                 </div>
+
             </div>
         </div>
 
+        <!-- CAJA: LISTA DE HECHIZOS -->
         <div class="seccion-caja caja-spell-lista">
             <h3 class="titulo-caja">Lista de Hechizos</h3>
             <div class="spell-columnas">
                 <div class="spell-col spell-col-izq">
-                    <div class="spell-nivel-bloque" data-nivel="0">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Trucos <small>(Cantrips)</small></span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir cantrip —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila" style="display:none"></div>
-                        <div class="spell-lista-hechizos"></div>
+            <div class="spell-nivel-bloque" data-nivel="0">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Trucos <small>(Cantrips)</small></span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir cantrip —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
                     </div>
-                    <div class="spell-nivel-bloque" data-nivel="1">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 1</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
+                </div>
+                <div class="spell-slots-fila" style="display:none"></div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+            <div class="spell-nivel-bloque" data-nivel="1">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 1</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
                     </div>
-                    <div class="spell-nivel-bloque" data-nivel="2">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 2</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+            <div class="spell-nivel-bloque" data-nivel="2">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 2</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
                     </div>
-                    <div class="spell-nivel-bloque" data-nivel="3">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 3</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+            <div class="spell-nivel-bloque" data-nivel="3">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 3</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
                     </div>
-                    <div class="spell-nivel-bloque" data-nivel="4">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 4</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+            <div class="spell-nivel-bloque" data-nivel="4">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 4</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
                     </div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
                 </div>
                 <div class="spell-col spell-col-der">
-                    <div class="spell-nivel-bloque" data-nivel="5">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 5</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
-                    </div>
-                    <div class="spell-nivel-bloque" data-nivel="6">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 6</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
-                    </div>
-                    <div class="spell-nivel-bloque" data-nivel="7">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 7</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
-                    </div>
-                    <div class="spell-nivel-bloque" data-nivel="8">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 8</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
-                    </div>
-                    <div class="spell-nivel-bloque" data-nivel="9">
-                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 9</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
-                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
-                        <div class="spell-lista-hechizos"></div>
+            <div class="spell-nivel-bloque" data-nivel="5">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 5</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
                     </div>
                 </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
             </div>
-        </div>
+            <div class="spell-nivel-bloque" data-nivel="6">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 6</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
+                    </div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+            <div class="spell-nivel-bloque" data-nivel="7">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 7</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
+                    </div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+            <div class="spell-nivel-bloque" data-nivel="8">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 8</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
+                    </div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+            <div class="spell-nivel-bloque" data-nivel="9">
+                <div class="spell-nivel-cabecera">
+                    <span class="spell-nivel-titulo">Nivel 9</span>
+                    <div class="spell-nivel-añadir">
+                        <select class="spell-sel-hechizo">
+                            <option value="">— Añadir hechizo —</option>
+                        </select>
+                        <button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button>
+                    </div>
+                </div>
+                <div class="spell-slots-fila">
+                    <span class="spell-slots-label">Slots:</span>
+                    <div class="spell-slots-checks"></div>
+                    <button class="btn-slot-add" onclick="añadirSlot(this)" title="Añadir slot">＋</button>
+                </div>
+                <div class="spell-lista-hechizos"></div>
+            </div>
+                </div>
+            </div>
+        </div><!-- fin caja-spell-lista -->
 
-    </div>
+    </div><!-- fin cuarta-pagina -->
 
-    <!-- MODAL DE CONFIRMACIÓN -->
+    <!-- MODAL DE CONFIRMACIÓN DE BORRADO -->
     <div class="modal-overlay" style="display:none">
         <div class="modal-caja">
             <div class="modal-icono">⚠️</div>
@@ -782,6 +1037,6 @@
 
 <script src="caracteristicas.js"></script>
 <script src="hechizos.js"></script>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

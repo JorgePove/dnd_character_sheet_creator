@@ -450,6 +450,32 @@ function tirarSalvacionMuertePanel(btn) {
 
 function toggleCirculo(el) { el.classList.toggle('activo'); guardarDebounced(); }
 
+/* ═══════════════════════════════════════════════════
+   AGOTAMIENTO
+═══════════════════════════════════════════════════ */
+function toggleAgotamiento(bolita) {
+    const nivel = parseInt(bolita.dataset.nivel);
+    const panel = getPanel(bolita);
+    const todas = panel.querySelectorAll('.agotamiento-bolita');
+    const estaActivo = bolita.classList.contains('activo');
+
+    // Si clicas la bolita ya activa y es la última activa → desmarcar todas hasta esa
+    // Comportamiento: marcar hasta el nivel clicado, o desmarcar si ya estaba todo marcado hasta ahí
+    const nivelActual = [...todas].filter(b => b.classList.contains('activo')).length;
+
+    if (nivel === nivelActual && estaActivo) {
+        // Desmarcar solo esta (bajar un nivel)
+        bolita.classList.remove('activo');
+    } else {
+        // Marcar todas hasta este nivel
+        todas.forEach(b => {
+            const n = parseInt(b.dataset.nivel);
+            b.classList.toggle('activo', n <= nivel);
+        });
+    }
+    guardarDebounced();
+}
+
 /* ═══════════════════════════════════════════════════════
    DESCANSO
 ═══════════════════════════════════════════════════════ */
@@ -785,6 +811,7 @@ function leerFicha(panel) {
 
     // Condiciones
     d.condiciones = Array.from(panel.querySelectorAll('.condicion-chk')).map(c => c.checked);
+    d.agotamiento = Array.from(panel.querySelectorAll('.agotamiento-bolita')).map(b => b.classList.contains('activo'));
 
     // Dados de golpe — array de grupos (con compat. legacy)
     d.dgGrupos = Array.from(panel.querySelectorAll('.dg-grupo')).map(g => ({
@@ -950,6 +977,7 @@ function cargarDatosEnPanel(panel, d) {
 
     // Condiciones
     if (d.condiciones) panel.querySelectorAll('.condicion-chk').forEach((c,i) => { c.checked = d.condiciones[i]||false; });
+    if (d.agotamiento) panel.querySelectorAll('.agotamiento-bolita').forEach((b,i) => { b.classList.toggle('activo', !!d.agotamiento[i]); });
 
     // Dados de golpe — restaurar grupos
     (function() {
@@ -1269,6 +1297,10 @@ function recalcSpellcasting(panel) {
    SPELLCASTING — SLOTS
 ═══════════════════════════════════════════════════════ */
 function añadirSlot(btn) {
+    const bloque = btn.closest('.spell-nivel-bloque');
+    const checks = bloque.querySelectorAll('.slot-chk');
+    if (checks.length >= 4) return; // máximo 4 slots por nivel
+    // ... resto del código existente
     const checksDiv = btn.previousElementSibling;
     const wrap = document.createElement('div');
     wrap.className = 'slot-check-wrap';

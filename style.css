@@ -587,7 +587,7 @@ label {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    min-width: 58px;
+    min-width: 52px;
 }
 .dg-lbl {
     font-size: 9px;
@@ -597,36 +597,36 @@ label {
     font-weight: 700;
 }
 .dg-tipo {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 800;
     color: var(--dg-txt);
     border: 2px solid var(--dg-borde);
-    border-radius: 6px;
-    padding: 3px 5px;
+    border-radius: 5px;
+    padding: 2px 4px;
     background: white;
     outline: none;
     cursor: pointer;
-    width: 58px;
+    width: 52px;
 }
 .dg-total {
     border: 1.5px solid var(--dg-borde);
-    border-radius: 6px;
-    padding: 3px 5px;
-    font-size: 14px;
+    border-radius: 5px;
+    padding: 2px 4px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--dg-txt);
     background: white;
     outline: none;
     text-align: center;
-    width: 58px;
+    width: 52px;
 }
 /* Checkboxes — cuadrícula de 3 columnas */
 .dg-checks-contenedor {
     display: grid;
-    grid-template-columns: repeat(7, 22px);  /* máx 20 dados: 3 filas × 7 col = 21, pero usamos flow column */
-    grid-template-rows: repeat(3, 22px);
+    grid-template-columns: repeat(7, 20px);
+    grid-template-rows: repeat(3, 20px);
     grid-auto-flow: column;
-    gap: 5px;
+    gap: 4px;
     align-content: start;
     flex: 1;
     padding-top: 2px;
@@ -635,9 +635,9 @@ label {
 .dg-check-item input[type="checkbox"] {
     --chk: #3182ce;
     appearance: none; -webkit-appearance: none;
-    width: 22px; height: 22px;
+    width: 20px; height: 20px;
     border: 2px solid var(--chk);
-    border-radius: 5px;
+    border-radius: 4px;
     background: var(--chk);
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
@@ -648,7 +648,7 @@ label {
     content: "✔";
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%,-50%);
-    font-size: 11px; color: #fff; font-weight: 700; line-height: 1;
+    font-size: 10px; color: #fff; font-weight: 700; line-height: 1;
 }
 .dg-check-item input[type="checkbox"]:not(:checked) {
     background: #e2e8f0;

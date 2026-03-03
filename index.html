@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha D&D 5e 2024</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- BARRA DE PESTAÑAS -->
+<div class="barra-pestanas" id="barra-pestanas">
+    <button class="btn-nueva-pestana" id="btn-nueva-pestana" onclick="nuevaFicha()" title="Nueva ficha">＋</button>
+</div>
+
+<!-- LOG DE TIRADAS -->
+<div id="log-tiradas" class="log-contenedor">
+    <div class="log-cabecera">
+        <span>⚄ LOG DE TIRADAS</span>
+        <button onclick="limpiarLog()">✖</button>
+    </div>
+    <div id="log-lista"></div>
+</div>
+
+<!-- CONTENEDOR DE FICHAS -->
+<div id="fichas-contenedor"></div>
+
+<!-- WIDGET DADOS -->
+<div id="dados-widget" class="dados-widget">
+    <div class="dados-widget-cabecera" onclick="toggleDadosWidget()" title="Minimizar / Expandir">
+        <span>&#127922; Dados</span>
+        <button class="dados-toggle-btn" onclick="event.stopPropagation();toggleDadosWidget()" title="Minimizar">&#9650;</button>
+    </div>
+    <div class="dados-widget-body">
+        <div id="dados-filas" class="dados-filas"></div>
+        <button class="dados-add-btn" onclick="dadosAddFila(false)">+ Más dados</button>
+        <button class="dados-tirar-btn" onclick="dadosRealizarTirada()">&#127922; Realizar Tirada</button>
+    </div>
+</div>
+
+<!-- PLANTILLA DE FICHA -->
+<template id="plantilla-ficha">
+<div class="hoja-contenedor ficha-panel">
+
+    <!-- CABECERA -->
+    <header class="cabecera-principal">
+        <div class="bloque-nombre">
+            <input type="text" class="input-nombre" placeholder="Nombre del Personaje" oninput="onNombreCambia(this)">
+            <label>Nombre del Personaje</label>
+        </div>
+        <div class="bloque-clase-info">
+            <div class="fila-input">
+                <div class="campo campo-sm"><input type="text" placeholder="Ej: Guerrero 5"><label>Clase y Nivel</label></div>
+                <div class="campo campo-sm"><input type="text" placeholder="Ej: Humano"><label>Especie</label></div>
+                <div class="campo campo-sm"><input type="text" placeholder="Ej: Soldado"><label>Trasfondo</label></div>
+            </div>
+        </div>
+        <div class="bloque-inspiracion" onclick="toggleInspiracion(this)" title="Inspiración Heroica">
+            <div class="inspiracion-estrella">✦</div>
+            <label>Inspiración</label>
+        </div>
+        <div class="bloque-pb">
+            <label>Bono de Competencia</label>
+            <input type="number" class="pb-input" value="2" oninput="actualizarTodo(this)">
+        </div>
+    </header>
+
+    <!-- BARRA DE CONTROLES -->
+    <div class="controles-accion">
+        <div class="grupo-dados">
+            <button class="btn-tirada btn-ventaja" onclick="toggleDados(this,'ventaja')">▲ VENTAJA</button>
+            <button class="btn-tirada btn-desventaja" onclick="toggleDados(this,'desventaja')">▼ DESVENTAJA</button>
+        </div>
+        <div class="combate-inline">
+            <div class="caja-stat-inline">
+                <span class="csi-label">CA</span>
+                <input type="number" value="10" class="csi-input" oninput="guardarDebounced()">
+            </div>
+            <div class="caja-stat-inline rollable" onclick="realizarTiradaInput(this,'Iniciativa')">
+                <span class="csi-label">Iniciativa</span>
+                <input type="number" class="csi-input ini-val" value="0" onclick="event.stopPropagation()" oninput="actualizarIniBonus(this)">
+            </div>
+            <div class="sep-inline"></div>
+            <div class="vel-inline-bloque">
+                <span class="vel-inline-titulo">Velocidad</span>
+                <div class="vel-inline-fila">
+                    <div class="vel-inline-item">
+                        <input type="text" value="30 ft" class="vel-inline-input vel-grande" oninput="guardarDebounced()">
+                        <label>Andar</label>
+                    </div>
+                    <div class="vel-inline-item">
+                        <input type="text" placeholder="—" class="vel-inline-input" oninput="guardarDebounced()">
+                        <label>Nadar</label>
+                    </div>
+                    <div class="vel-inline-item">
+                        <input type="text" placeholder="—" class="vel-inline-input" oninput="guardarDebounced()">
+                        <label>Escalar</label>
+                    </div>
+                    <div class="vel-inline-item">
+                        <input type="text" placeholder="—" class="vel-inline-input" oninput="guardarDebounced()">
+                        <label>Volar</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grupo-descansos">
+            <button class="btn-descanso" onclick="descansoCorto(this)">☽ Descanso Corto</button>
+            <button class="btn-descanso btn-descanso-largo" onclick="descansoLargo(this)">☀ Descanso Largo</button>
+        </div>
+    </div>
+
+    <!-- REJILLA PRINCIPAL -->
+    <main class="rejilla-ficha">
+
+        <!-- COL IZQUIERDA: ESTADÍSTICAS -->
+        <aside class="columna-stats">
+            <div class="seccion-caja">
+                <h3 class="titulo-caja">Estadísticas</h3>
+                <div class="stats-lista">
+
+                    <div class="stat-bloque">
+                        <div class="stat-parte-superior" onclick="realizarTiradaStat(this,'Fuerza')">
+                            <div class="stat-info-izq">
+                                <span class="stat-nombre">Fuerza</span>
+                                <input type="number" class="stat-score" data-stat="str" value="10" oninput="actualizarAtributo(this)" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="stat-mod-circulo" data-mod="str">+0</div>
+                        </div>
+                        <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Fuerza')">
+                            <input type="checkbox" class="dot prof salv-dot" data-stat="str" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
+                            <span class="salv-label">Salvación</span>
+                            <span class="salv-valor" data-salv="str">+0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-bloque">
+                        <div class="stat-parte-superior" onclick="realizarTiradaStat(this,'Destreza')">
+                            <div class="stat-info-izq">
+                                <span class="stat-nombre">Destreza</span>
+                                <input type="number" class="stat-score" data-stat="dex" value="10" oninput="actualizarAtributo(this)" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="stat-mod-circulo" data-mod="dex">+0</div>
+                        </div>
+                        <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Destreza')">
+                            <input type="checkbox" class="dot prof salv-dot" data-stat="dex" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
+                            <span class="salv-label">Salvación</span>
+                            <span class="salv-valor" data-salv="dex">+0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-bloque">
+                        <div class="stat-parte-superior" onclick="realizarTiradaStat(this,'Constitución')">
+                            <div class="stat-info-izq">
+                                <span class="stat-nombre">Constitución</span>
+                                <input type="number" class="stat-score" data-stat="con" value="10" oninput="actualizarAtributo(this)" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="stat-mod-circulo" data-mod="con">+0</div>
+                        </div>
+                        <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Constitución')">
+                            <input type="checkbox" class="dot prof salv-dot" data-stat="con" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
+                            <span class="salv-label">Salvación</span>
+                            <span class="salv-valor" data-salv="con">+0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-bloque">
+                        <div class="stat-parte-superior" onclick="realizarTiradaStat(this,'Inteligencia')">
+                            <div class="stat-info-izq">
+                                <span class="stat-nombre">Inteligencia</span>
+                                <input type="number" class="stat-score" data-stat="int" value="10" oninput="actualizarAtributo(this)" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="stat-mod-circulo" data-mod="int">+0</div>
+                        </div>
+                        <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Inteligencia')">
+                            <input type="checkbox" class="dot prof salv-dot" data-stat="int" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
+                            <span class="salv-label">Salvación</span>
+                            <span class="salv-valor" data-salv="int">+0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-bloque">
+                        <div class="stat-parte-superior" onclick="realizarTiradaStat(this,'Sabiduría')">
+                            <div class="stat-info-izq">
+                                <span class="stat-nombre">Sabiduría</span>
+                                <input type="number" class="stat-score" data-stat="wis" value="10" oninput="actualizarAtributo(this)" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="stat-mod-circulo" data-mod="wis">+0</div>
+                        </div>
+                        <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Sabiduría')">
+                            <input type="checkbox" class="dot prof salv-dot" data-stat="wis" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
+                            <span class="salv-label">Salvación</span>
+                            <span class="salv-valor" data-salv="wis">+0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-bloque">
+                        <div class="stat-parte-superior" onclick="realizarTiradaStat(this,'Carisma')">
+                            <div class="stat-info-izq">
+                                <span class="stat-nombre">Carisma</span>
+                                <input type="number" class="stat-score" data-stat="cha" value="10" oninput="actualizarAtributo(this)" onclick="event.stopPropagation()">
+                            </div>
+                            <div class="stat-mod-circulo" data-mod="cha">+0</div>
+                        </div>
+                        <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Carisma')">
+                            <input type="checkbox" class="dot prof salv-dot" data-stat="cha" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
+                            <span class="salv-label">Salvación</span>
+                            <span class="salv-valor" data-salv="cha">+0</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SENTIDOS -->
+            <div class="seccion-caja seccion-sentidos">
+                <h3 class="titulo-caja">Sentidos</h3>
+                <div class="sentido-fila">
+                    <div class="sentido-valor percepcion-pasiva">10</div>
+                    <label>Percepción Pasiva <span class="sentido-stat">(Sab)</span></label>
+                </div>
+                <div class="sentido-fila">
+                    <div class="sentido-valor perspicacia-pasiva">10</div>
+                    <label>Perspicacia Pasiva <span class="sentido-stat">(Sab)</span></label>
+                </div>
+                <div class="sentido-fila sentido-fila-last">
+                    <div class="sentido-valor investigacion-pasiva">10</div>
+                    <label>Investigación Pasiva <span class="sentido-stat">(Int)</span></label>
+                </div>
+                <textarea class="sentidos-extra" placeholder="Ej: Visión en la oscuridad 18 m., Sentido ciego 3 m..." oninput="guardarDebounced()"></textarea>
+            </div>
+        </aside>
+
+        <!-- COL CENTRAL: HABILIDADES + COMPETENCIAS -->
+        <section class="columna-habilidades">
+            <div class="seccion-caja">
+                <h3 class="titulo-caja">Habilidades</h3>
+                <div class="cabecera-habilidades">
+                    <span class="etiqueta-pe" title="Competencia">P</span>
+                    <span class="etiqueta-pe" title="Expertise">E</span>
+                    <span class="etiqueta-mod">Bono</span>
+                    <span class="etiqueta-nombre">Habilidad</span>
+                    <span class="etiqueta-adv" title="Ventaja / Desventaja permanente">¿Ven?</span>
+                </div>
+                <div class="lista-habilidades">
+                    <div class="fila-skill rollable" data-stat="str" onclick="tirarDesdeFila(this,'Atletismo')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Atletismo <small>(Fue)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Acrobacias')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Acrobacias <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Trato con Animales')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Trato con Animales <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Arcanos')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Arcanos <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Historia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Historia <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Intimidación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Intimidación <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable fila-investigacion" data-stat="int" onclick="tirarDesdeFila(this,'Investigación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Investigación <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Medicina')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Medicina <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Naturaleza')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Naturaleza <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable fila-percepcion" data-stat="wis" onclick="tirarDesdeFila(this,'Percepción')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Percepción <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable fila-perspicacia" data-stat="wis" onclick="tirarDesdeFila(this,'Perspicacia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Perspicacia <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Interpretación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Interpretación <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Persuasión')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Persuasión <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Religión')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Religión <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Juego de Manos')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Juego de Manos <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Sigilo')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Sigilo <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Supervivencia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Supervivencia <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                </div>
+            </div>
+
+            <div class="seccion-caja seccion-competencias">
+                <h3 class="titulo-caja">Otras Competencias</h3>
+                <div class="bloque-competencia"><label>Idiomas</label><textarea placeholder="Ej: Común, Élfico, Enano..." oninput="guardarDebounced()"></textarea></div>
+                <div class="bloque-competencia"><label>Herramientas y Otros</label><textarea placeholder="Ej: Herramientas de Ladrón..." oninput="guardarDebounced()"></textarea></div>
+                <div class="bloque-competencia"><label>Armas y Armaduras</label><textarea placeholder="Ej: Armas Marciales, Armadura Pesada..." oninput="guardarDebounced()"></textarea></div>
+            </div>
+        </section>
+
+        <!-- COL DERECHA -->
+        <section class="columna-combate">
+
+            <!-- PUNTOS DE GOLPE -->
+            <div class="seccion-vida">
+                <div class="cabecera-vida">
+                    <span>Puntos de Golpe</span>
+                    <div class="hp-inputs">
+                        <input type="number" class="hp-actual" value="10" oninput="actualizarVidaPanel(this)">
+                        <span class="separador-hp">/</span>
+                        <input type="number" class="hp-max" value="10" oninput="actualizarVidaPanel(this)">
+                    </div>
+                </div>
+                <div class="barra-vida-contenedor">
+                    <div class="barra-relleno verde" style="width:100%"></div>
+                    <div class="barra-relleno azul"></div>
+                </div>
+                <div class="hp-controles">
+                    <div class="hp-temp"><label>PG Temporales</label><input type="number" class="hp-temp-val" value="0" oninput="actualizarVidaPanel(this)"></div>
+                    <div class="hp-calculadora">
+                        <button class="btn-hp daño" onclick="modificarVidaPanel(this,'daño')">− DAÑO</button>
+                        <input type="number" class="hp-mod" value="1" min="0">
+                        <button class="btn-hp cura" onclick="modificarVidaPanel(this,'cura')">+ CURA</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESISTENCIAS E INMUNIDADES -->
+            <div class="seccion-caja seccion-resistencias">
+                <h3 class="titulo-caja">Resistencias e Inmunidades</h3>
+                <div class="resistencias-grid">
+                    <div class="res-grupo">
+                        <label>Resistencias al daño</label>
+                        <textarea class="res-textarea" placeholder="Ej: Fuego, Cortante no mágico..." oninput="guardarDebounced()"></textarea>
+                    </div>
+                    <div class="res-grupo">
+                        <label>Inmunidades al daño</label>
+                        <textarea class="res-textarea" placeholder="Ej: Veneno, Psíquico..." oninput="guardarDebounced()"></textarea>
+                    </div>
+                    <div class="res-grupo">
+                        <label>Inmunidades a condiciones</label>
+                        <textarea class="res-textarea" placeholder="Ej: Envenenado, Asustado..." oninput="guardarDebounced()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DADOS DE GOLPE + SALVACIONES MUERTE -->
+            <div class="fila-dados-muerte">
+                <div class="seccion-caja dados-golpe">
+                    <div class="titulo-caja-wrap">
+                        <h3 class="titulo-caja">Dados de Golpe</h3>
+                        <button class="dg-add-btn" onclick="añadirGrupoDadosGolpe(this)" title="Añadir grupo (multiclase)">＋</button>
+                    </div>
+                    <div class="dg-grupos-contenedor">
+                        <div class="dg-grupo" data-dg-idx="0">
+                            <div class="dg-grupo-body">
+                                <div class="dg-controles">
+                                    <div class="dg-selector"><label>Tipo</label>
+                                        <select class="dg-tipo" onchange="onDgTipoChange(this);guardarDebounced()">
+                                            <option>d6</option><option>d8</option>
+                                            <option selected>d10</option><option>d12</option>
+                                        </select>
+                                    </div>
+                                    <div class="dg-selector"><label>Total</label>
+                                        <input type="number" class="dg-total" value="1" min="0" max="20" oninput="actualizarDadosGolpePanel(this)">
+                                    </div>
+                                </div>
+                                <div class="dg-checks-contenedor"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="dg-hint">Desmarca un dado para gastarlo y curar PG</p>
+                </div>
+
+                <div class="seccion-caja salvaciones-muerte">
+                    <h3 class="titulo-caja">Salvaciones Muerte</h3>
+                    <div class="grupo-muerte">
+                        <div class="muerte-fila">
+                            <span class="muerte-icono exito">✔</span>
+                            <span class="muerte-etiqueta exito-texto">Éxitos</span>
+                            <div class="muerte-circulos circulos-exito">
+                                <div class="circulo-muerte exito" onclick="toggleCirculo(this)"></div>
+                                <div class="circulo-muerte exito" onclick="toggleCirculo(this)"></div>
+                                <div class="circulo-muerte exito" onclick="toggleCirculo(this)"></div>
+                            </div>
+                        </div>
+                        <div class="muerte-fila">
+                            <span class="muerte-icono fallo">✖</span>
+                            <span class="muerte-etiqueta fallo-texto">Fallos</span>
+                            <div class="muerte-circulos circulos-fallo">
+                                <div class="circulo-muerte fallo" onclick="toggleCirculo(this)"></div>
+                                <div class="circulo-muerte fallo" onclick="toggleCirculo(this)"></div>
+                                <div class="circulo-muerte fallo" onclick="toggleCirculo(this)"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-salv-muerte" onclick="tirarSalvacionMuertePanel(this)">⚄ Tirar Salvación de Muerte</button>
+                </div>
+            </div>
+
+            <!-- CONDICIONES -->
+            <div class="seccion-caja seccion-condiciones">
+                <h3 class="titulo-caja">Condiciones</h3>
+                <div class="condiciones-grid">
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Agarrado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Agotamiento</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Asustado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Aturdido</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Cegado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Derribado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Encantado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Ensordecido</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Envenenado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Incapacitado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Inconsciente</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Invisible</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Paralizado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Petrificado</span></label>
+                    <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Restringido</span></label>
+                </div>
+            </div>
+
+            <!-- INVENTARIO -->
+            <div class="seccion-caja seccion-inventario">
+                <h3 class="titulo-caja">Inventario</h3>
+                <div class="dinero-barra">
+                    <div class="moneda cobre"><label>Cobre</label><input type="number" placeholder="0" oninput="guardarDebounced()"></div>
+                    <div class="moneda plata"><label>Plata</label><input type="number" placeholder="0" oninput="guardarDebounced()"></div>
+                    <div class="moneda oro"><label>Oro</label><input type="number" placeholder="0" oninput="guardarDebounced()"></div>
+                    <div class="moneda platino"><label>Platino</label><input type="number" placeholder="0" oninput="guardarDebounced()"></div>
+                </div>
+                <p class="inventario-hint">Pulsa <kbd>Enter</kbd> para añadir una línea</p>
+                <div class="inventario-cabecera">
+                    <span>Objeto</span>
+                    <span class="inv-col-center">Cant.</span>
+                    <span>Descripción</span>
+                    <span class="inv-col-center">Equipado</span>
+                    <span></span>
+                </div>
+                <div class="contenedor-items">
+                    <div class="item-fila">
+                        <input type="text" placeholder="Nombre..." class="input-item" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
+                        <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()">
+                        <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
+                        <input type="checkbox" title="Equipado" onchange="guardarDebounced()">
+                        <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- SEGUNDA PÁGINA: ACCIONES -->
+    <div class="segunda-pagina">
+        <div class="seccion-caja caja-acciones">
+            <h3 class="titulo-caja">Acciones de Combate</h3>
+            <div class="acciones-tabs">
+                <button class="accion-tab activo" data-tab="armas" onclick="cambiarTab(this)">⚔ Armas / Spells</button>
+                <button class="accion-tab" data-tab="actions" onclick="cambiarTab(this)">▶ Actions</button>
+                <button class="accion-tab" data-tab="bonus" onclick="cambiarTab(this)">⚡ Bonus Actions</button>
+                <button class="accion-tab" data-tab="reactions" onclick="cambiarTab(this)">↩ Reactions</button>
+                <button class="accion-tab" data-tab="otros" onclick="cambiarTab(this)">✦ Otros</button>
+            </div>
+            <div class="acciones-contenido">
+                <div class="accion-panel activo" data-panel="armas">
+                    <div class="armas-cabecera">
+                        <span>Nombre</span><span>Bono de Ataque</span><span>Daño</span>
+                        <span>Alcance</span><span>Notas</span><span></span>
+                    </div>
+                    <div class="armas-lista">
+                        <div class="arma-fila">
+                            <div class="arma-nombre-wrap">
+                                <span class="arma-nombre-txt rollable-arma" onclick="tirarArma(this)" title="Clicar para tirar">⚔</span>
+                                <input type="text" class="arma-input arma-nombre-input" placeholder="Nombre del arma..." oninput="guardarDebounced()">
+                            </div>
+                            <div class="arma-bono-wrap">
+                                <select class="arma-stat-sel" onchange="recalcArma(this);guardarDebounced()">
+                                    <option value="str">Fuerza</option><option value="dex">Destreza</option>
+                                    <option value="con">Constitución</option><option value="int">Inteligencia</option>
+                                    <option value="wis">Sabiduría</option><option value="cha">Carisma</option>
+                                    <option value="ninguno">— Ninguna —</option>
+                                </select>
+                                <input type="number" class="arma-bono-extra" value="0" title="Bono extra manual" onchange="recalcArma(this);guardarDebounced()">
+                                <span class="arma-bono-total">+2</span>
+                            </div>
+                            <div class="arma-daños-wrap">
+                                <div class="arma-daño-bloque">
+                                    <input type="number" class="arma-dado-qty" value="1" min="1" max="20" oninput="guardarDebounced()">
+                                    <select class="arma-dado-tipo" onchange="guardarDebounced()">
+                                        <option>d4</option><option>d6</option><option selected>d8</option>
+                                        <option>d10</option><option>d12</option><option>d20</option>
+                                    </select>
+                                    <span class="arma-daño-sep">+</span>
+                                    <input type="number" class="arma-bono-daño" value="0" oninput="guardarDebounced()">
+                                    <select class="arma-tipo-daño" onchange="guardarDebounced()">
+                                        <option>Contundente</option><option>Cortante</option><option>Perforante</option>
+                                        <option>Ácido</option><option>Frío</option><option>Fuego</option>
+                                        <option>Fuerza</option><option>Relámpago</option><option>Necrótico</option>
+                                        <option>Veneno</option><option>Psíquico</option><option>Radiante</option><option>Trueno</option>
+                                    </select>
+                                    <button class="arma-btn-extra-daño" onclick="añadirDañoExtra(this)" title="Añadir bloque de daño extra">＋</button>
+                                </div>
+                            </div>
+                            <input type="text" class="arma-input arma-alcance-input" placeholder="5 ft" oninput="guardarDebounced()">
+                            <input type="text" class="arma-input arma-notas-input" placeholder="Notas..." oninput="guardarDebounced()">
+                            <button class="btn-borrar-arma" onclick="this.closest('.arma-fila').remove();guardarDebounced()" title="Eliminar">×</button>
+                        </div>
+                    </div>
+                    <button class="btn-añadir-arma" onclick="añadirArma(this)">+ Añadir arma / spell</button>
+                </div>
+                <div class="accion-panel" data-panel="actions">
+                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre de la acción..."><textarea class="accion-desc" placeholder="Descripción, tirada, efecto..."></textarea></div></div>
+                    <button class="btn-añadir-accion" onclick="añadirAccion(this,'actions')">+ Añadir acción</button>
+                </div>
+                <div class="accion-panel" data-panel="bonus">
+                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre de la bonus action..."><textarea class="accion-desc" placeholder="Descripción, tirada, efecto..."></textarea></div></div>
+                    <button class="btn-añadir-accion" onclick="añadirAccion(this,'bonus')">+ Añadir bonus action</button>
+                </div>
+                <div class="accion-panel" data-panel="reactions">
+                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre de la reaction..."><textarea class="accion-desc" placeholder="Descripción, trigger, efecto..."></textarea></div></div>
+                    <button class="btn-añadir-accion" onclick="añadirAccion(this,'reactions')">+ Añadir reaction</button>
+                </div>
+                <div class="accion-panel" data-panel="otros">
+                    <div class="acciones-lista"><div class="entrada-accion"><input type="text" class="accion-nombre" placeholder="Nombre..."><textarea class="accion-desc" placeholder="Descripción, habilidades especiales, acciones legendarias..."></textarea></div></div>
+                    <button class="btn-añadir-accion" onclick="añadirAccion(this,'otros')">+ Añadir entrada</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TERCERA PÁGINA: CARACTERÍSTICAS -->
+    <div class="segunda-pagina tercera-pagina">
+        <div class="seccion-caja caja-caracteristicas">
+            <h3 class="titulo-caja">Características de Personaje</h3>
+
+            <div class="caract-fila">
+                <div class="seccion-caja caract-mitad">
+                    <h3 class="titulo-caja">Clase</h3>
+                    <div class="caract-selector-wrap">
+                        <select class="caract-select sel-clase" onchange="onClaseChange(this)"><option value="">— Selecciona una clase —</option></select>
+                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'clase')" title="Limpiar">✕</button>
+                    </div>
+                    <textarea class="caract-textarea caract-clase" placeholder="Selecciona una clase arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
+                </div>
+                <div class="seccion-caja caract-mitad">
+                    <h3 class="titulo-caja">Subclase</h3>
+                    <div class="caract-selector-wrap">
+                        <select class="caract-select sel-subclase" onchange="onSubclaseChange(this)"><option value="">— Selecciona primero una clase —</option></select>
+                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'subclase')" title="Limpiar">✕</button>
+                    </div>
+                    <textarea class="caract-textarea caract-subclase" placeholder="Selecciona una subclase arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
+                </div>
+            </div>
+
+            <div class="caract-fila">
+                <div class="seccion-caja caract-mitad">
+                    <h3 class="titulo-caja">Especie</h3>
+                    <div class="caract-selector-wrap">
+                        <select class="caract-select sel-especie" onchange="onEspecieChange(this)"><option value="">— Selecciona una especie —</option></select>
+                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'especie')" title="Limpiar">✕</button>
+                    </div>
+                    <textarea class="caract-textarea caract-especie" placeholder="Selecciona una especie arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
+                </div>
+                <div class="seccion-caja caract-mitad">
+                    <h3 class="titulo-caja">Dotes</h3>
+                    <div class="caract-selector-wrap">
+                        <select class="caract-select sel-dote"><option value="">— Añadir dote —</option></select>
+                        <button class="caract-btn-add" onclick="onDoteAdd(this)" title="Añadir al listado">＋</button>
+                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'dotes')" title="Limpiar todo">✕</button>
+                    </div>
+                    <textarea class="caract-textarea caract-dotes" placeholder="Selecciona dotes arriba para añadirlas, o escribe libremente..." oninput="guardarDebounced()"></textarea>
+                </div>
+            </div>
+
+            <div class="caract-fila caract-fila-last">
+                <div class="seccion-caja caract-completa caract-trasfondo">
+                    <h3 class="titulo-caja">Trasfondo</h3>
+                    <div class="caract-selector-wrap">
+                        <select class="caract-select sel-trasfondo" onchange="onTrasfondoChange(this)"><option value="">— Selecciona un trasfondo —</option></select>
+                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'trasfondo')" title="Limpiar">✕</button>
+                    </div>
+                    <div class="trasfondo-personalizado" style="display:none">
+                        <div class="tf-fila">
+                            <span class="tf-label">Aumento de característica:</span>
+                            <span class="tf-bonus">+2</span>
+                            <select class="tf-stat2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                <option value="">— Estadística —</option>
+                                <option>Fuerza</option><option>Destreza</option><option>Constitución</option>
+                                <option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option>
+                            </select>
+                            <span class="tf-sep">/</span>
+                            <span class="tf-bonus">+1</span>
+                            <select class="tf-stat1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                <option value="">— Estadística —</option>
+                                <option>Fuerza</option><option>Destreza</option><option>Constitución</option>
+                                <option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option>
+                            </select>
+                        </div>
+                        <div class="tf-fila">
+                            <span class="tf-label">Habilidad 1:</span>
+                            <select class="tf-hab1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))"><option value="">— Habilidad —</option></select>
+                        </div>
+                        <div class="tf-fila">
+                            <span class="tf-label">Habilidad 2:</span>
+                            <select class="tf-hab2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))"><option value="">— Habilidad —</option></select>
+                        </div>
+                        <div class="tf-fila">
+                            <span class="tf-label">Dote de Origen:</span>
+                            <select class="tf-dote-sel tf-sel"><option value="">— Dote de Origen —</option></select>
+                            <button class="caract-btn-add" onclick="onDoteOrigenAdd(this)" title="Añadir a Dotes">＋</button>
+                        </div>
+                    </div>
+                    <textarea class="caract-textarea caract-textarea-sm caract-trasfondo-txt" placeholder="Selecciona un trasfondo arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
+                </div>
+            </div>
+
+            <div class="caract-fila caract-fila-last">
+                <div class="seccion-caja caract-completa">
+                    <div class="titulo-caja-wrap">
+                        <h3 class="titulo-caja">Recursos</h3>
+                        <button class="recursos-add-btn" onclick="añadirFilaRecursos(this)" title="Añadir más recursos">＋</button>
+                    </div>
+                    <div class="recursos-filas-contenedor">
+                    <div class="recursos-grid">
+                        <div class="recurso-caja" data-recurso="0">
+                            <div class="recurso-top">
+                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Corto">C</button>
+                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
+                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)" title="Se recarga en Descanso Largo">L</button>
+                            </div>
+                            <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
+                            <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 1">Recurso 1</div>
+                        </div>
+                        <div class="recurso-caja" data-recurso="1">
+                            <div class="recurso-top">
+                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)">C</button>
+                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
+                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)">L</button>
+                            </div>
+                            <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
+                            <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 2">Recurso 2</div>
+                        </div>
+                        <div class="recurso-caja" data-recurso="2">
+                            <div class="recurso-top">
+                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)">C</button>
+                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
+                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)">L</button>
+                            </div>
+                            <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
+                            <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 3">Recurso 3</div>
+                        </div>
+                        <div class="recurso-caja" data-recurso="3">
+                            <div class="recurso-top">
+                                <button class="recurso-recarga-btn" data-tipo="corto" onclick="toggleRecargaRecurso(this)">C</button>
+                                <div class="recurso-total-wrap"><span class="recurso-total-label">Total</span><input type="number" class="recurso-max" value="0" min="0" step="1" oninput="guardarDebounced()"></div>
+                                <button class="recurso-recarga-btn" data-tipo="largo" onclick="toggleRecargaRecurso(this)">L</button>
+                            </div>
+                            <input type="number" class="recurso-actual" value="0" min="0" step="1" oninput="guardarDebounced()">
+                            <div class="recurso-nombre" contenteditable="true" spellcheck="false" oninput="guardarDebounced()" data-placeholder="Recurso 4">Recurso 4</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUARTA PÁGINA: SPELLCASTING -->
+    <div class="segunda-pagina cuarta-pagina">
+
+        <div class="spell-tooltip" id="spell-tooltip">
+            <div class="stt-header">
+                <span class="stt-nombre"></span>
+                <span class="stt-nivel-escuela"></span>
+            </div>
+            <div class="stt-meta">
+                <div class="stt-fila"><span class="stt-key">Tiempo de lanzamiento</span><span class="stt-val stt-casting"></span></div>
+                <div class="stt-fila"><span class="stt-key">Alcance</span><span class="stt-val stt-range"></span></div>
+                <div class="stt-fila"><span class="stt-key">Componentes</span><span class="stt-val stt-components"></span></div>
+                <div class="stt-fila"><span class="stt-key">Duración</span><span class="stt-val stt-duration"></span></div>
+            </div>
+            <div class="stt-desc"></div>
+            <div class="stt-daño-wrap" style="display:none">
+                <div class="stt-fila"><span class="stt-key">Daño / Efecto</span><span class="stt-val stt-damage"></span></div>
+            </div>
+            <div class="stt-extra-wrap" style="display:none">
+                <div class="stt-fila stt-extra"></div>
+            </div>
+        </div>
+
+        <div class="seccion-caja caja-spell-valores">
+            <h3 class="titulo-caja">Spellcasting — Valores</h3>
+            <div class="spell-valores-fila">
+                <div class="spell-val-bloque">
+                    <label class="spell-val-label">Estadística</label>
+                    <select class="spell-stat-sel" onchange="recalcSpellcasting(getPanel(this));guardarDebounced()">
+                        <option value="">— Ninguna —</option>
+                        <option value="int">Inteligencia</option><option value="wis">Sabiduría</option>
+                        <option value="cha">Carisma</option><option value="str">Fuerza</option>
+                        <option value="dex">Destreza</option><option value="con">Constitución</option>
+                    </select>
+                </div>
+                <div class="spell-val-bloque spell-calc-bloque">
+                    <label class="spell-val-label">Spell Save DC</label>
+                    <div class="spell-calc-display spell-dc-display">8</div>
+                    <div class="spell-extra-bono-wrap">
+                        <label class="spell-extra-label">Bono extra</label>
+                        <input type="number" class="spell-bono-extra spell-dc-extra" value="0" oninput="recalcSpellcasting(getPanel(this));guardarDebounced()">
+                    </div>
+                </div>
+                <div class="spell-sep-v"></div>
+                <div class="spell-val-bloque spell-calc-bloque">
+                    <label class="spell-val-label">Bono de Ataque</label>
+                    <div class="spell-calc-display spell-atk-display">+0</div>
+                    <div class="spell-extra-bono-wrap">
+                        <label class="spell-extra-label">Bono extra</label>
+                        <input type="number" class="spell-bono-extra spell-atk-extra" value="0" oninput="recalcSpellcasting(getPanel(this));guardarDebounced()">
+                    </div>
+                </div>
+                <div class="spell-sep-v"></div>
+                <div class="spell-val-bloque spell-count-bloque">
+                    <label class="spell-val-label">Aprendidos</label>
+                    <input type="number" class="spell-count-input" value="0" min="0" oninput="guardarDebounced()">
+                </div>
+                <div class="spell-val-bloque spell-count-bloque">
+                    <label class="spell-val-label">Preparados</label>
+                    <input type="number" class="spell-count-input" value="0" min="0" oninput="guardarDebounced()">
+                </div>
+            </div>
+        </div>
+
+        <div class="seccion-caja caja-spell-lista">
+            <h3 class="titulo-caja">Lista de Hechizos</h3>
+            <div class="spell-columnas">
+                <div class="spell-col spell-col-izq">
+                    <div class="spell-nivel-bloque" data-nivel="0">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Trucos <small>(Cantrips)</small></span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir cantrip —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila" style="display:none"></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="1">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 1</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="2">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 2</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="3">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 3</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="4">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 4</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                </div>
+                <div class="spell-col spell-col-der">
+                    <div class="spell-nivel-bloque" data-nivel="5">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 5</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="6">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 6</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="7">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 7</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="8">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 8</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                    <div class="spell-nivel-bloque" data-nivel="9">
+                        <div class="spell-nivel-cabecera"><span class="spell-nivel-titulo">Nivel 9</span><div class="spell-nivel-añadir"><select class="spell-sel-hechizo"><option value="">— Añadir hechizo —</option></select><button class="btn-spell-add" onclick="añadirHechizo(this)">＋</button></div></div>
+                        <div class="spell-slots-fila"><span class="spell-slots-label">Slots:</span><div class="spell-slots-checks"></div><button class="btn-slot-add" onclick="añadirSlot(this)">＋</button></div>
+                        <div class="spell-lista-hechizos"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div class="modal-overlay" style="display:none">
+        <div class="modal-caja">
+            <div class="modal-icono">⚠️</div>
+            <h3 class="modal-titulo">¿Borrar esta ficha?</h3>
+            <p class="modal-texto">Esta acción eliminará permanentemente la ficha <strong class="modal-nombre-personaje"></strong> y todos sus datos. No hay vuelta atrás.</p>
+            <div class="modal-botones">
+                <button class="modal-btn cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button class="modal-btn confirmar" onclick="confirmarBorrado()">Sí, borrar</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</template>
+
+<script src="caracteristicas.js"></script>
+<script src="hechizos.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

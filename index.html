@@ -8,16 +8,9 @@
 </head>
 <body>
 
-<!-- BARRA SUPERIOR: PESTAÑAS + ACCIONES -->
-<div class="barra-superior-wrap">
-    <div class="barra-pestanas" id="barra-pestanas">
-        <button class="btn-nueva-pestana" id="btn-nueva-pestana" onclick="nuevaFicha()" title="Nueva ficha">＋</button>
-    </div>
-    <div class="barra-acciones-ficha">
-        <button class="btn-accion-ficha btn-export-pdf" onclick="exportarFichaPDF()" title="Exportar ficha como PDF">⬇ PDF</button>
-        <button class="btn-accion-ficha btn-export-json" onclick="exportarFichaJSON()" title="Descargar datos de la ficha en JSON">⬇ JSON</button>
-        <button class="btn-accion-ficha btn-compartir-url" onclick="generarURLCompartir()" title="Generar enlace de solo lectura">🔗 Compartir</button>
-    </div>
+<!-- BARRA DE PESTAÑAS -->
+<div class="barra-pestanas" id="barra-pestanas">
+    <button class="btn-nueva-pestana" id="btn-nueva-pestana" onclick="nuevaFicha()" title="Nueva ficha">＋</button>
 </div>
 
 <!-- LOG DE TIRADAS -->
@@ -34,10 +27,15 @@
 
 <!-- WIDGET DADOS -->
 <div id="dados-widget" class="dados-widget">
-    <div class="dados-widget-cabecera"><span>&#127922; Dados</span></div>
-    <div id="dados-filas" class="dados-filas"></div>
-    <button class="dados-add-btn" onclick="dadosAddFila(false)">+ Más dados</button>
-    <button class="dados-tirar-btn" onclick="dadosRealizarTirada()">&#127922; Realizar Tirada</button>
+    <div class="dados-widget-cabecera" onclick="toggleDadosWidget()" title="Minimizar / Expandir">
+        <span>&#127922; Dados</span>
+        <span class="dados-min-arrow">&#9650;</span>
+    </div>
+    <div class="dados-widget-body">
+        <div id="dados-filas" class="dados-filas"></div>
+        <button class="dados-add-btn" onclick="dadosAddFila(false)">+ Más dados</button>
+        <button class="dados-tirar-btn" onclick="dadosRealizarTirada()">&#127922; Realizar Tirada</button>
+    </div>
 </div>
 
 
@@ -328,19 +326,10 @@
             <!-- DADOS DE GOLPE + SALVACIONES MUERTE -->
             <div class="fila-dados-muerte">
                 <div class="seccion-caja dados-golpe">
-                    <h3 class="titulo-caja">Dados de Golpe</h3>
-                    <div class="dg-controles">
-                        <div class="dg-selector"><label>Tipo</label>
-                            <select class="dg-tipo">
-                                <option>d6</option><option>d8</option>
-                                <option selected>d10</option><option>d12</option>
-                            </select>
-                        </div>
-                        <div class="dg-selector"><label>Total</label>
-                            <input type="number" class="dg-total" value="1" min="0" max="20" oninput="actualizarDadosGolpePanel(this)">
-                        </div>
-                    </div>
-                    <div class="dg-checks-contenedor"></div>
+                    <h3 class="titulo-caja">Dados de Golpe
+                        <button class="dg-add-grupo-btn" onclick="dgAñadirGrupo(this)" title="Añadir otro tipo de dado de golpe">＋</button>
+                    </h3>
+                    <div class="dg-grupos-wrap"></div>
                     <p class="dg-hint">Desmarca un dado para gastarlo y curar PG</p>
                 </div>
 
@@ -390,19 +379,6 @@
                     <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Petrificado</span></label>
                     <label class="condicion-item"><input type="checkbox" class="condicion-chk"><span class="condicion-nombre">Restringido</span></label>
                 </div>
-                <!-- TRACKER DE AGOTAMIENTO -->
-                <div class="agotamiento-tracker">
-                    <span class="agotamiento-label">Agotamiento</span>
-                    <div class="agotamiento-bolitas">
-                        <button class="agot-bolita" data-nivel="1" onclick="toggleAgotamiento(this)" title="Nivel 1: Desventaja en pruebas de habilidad">1</button>
-                        <button class="agot-bolita" data-nivel="2" onclick="toggleAgotamiento(this)" title="Nivel 2: Velocidad reducida a la mitad">2</button>
-                        <button class="agot-bolita" data-nivel="3" onclick="toggleAgotamiento(this)" title="Nivel 3: Desventaja en ataques y salvaciones">3</button>
-                        <button class="agot-bolita" data-nivel="4" onclick="toggleAgotamiento(this)" title="Nivel 4: PG máximos reducidos a la mitad">4</button>
-                        <button class="agot-bolita" data-nivel="5" onclick="toggleAgotamiento(this)" title="Nivel 5: Velocidad reducida a 0">5</button>
-                        <button class="agot-bolita" data-nivel="6" onclick="toggleAgotamiento(this)" title="Nivel 6: Muerte">6</button>
-                    </div>
-                    <span class="agotamiento-nivel-txt">Sin agotamiento</span>
-                </div>
             </div>
 
             <!-- INVENTARIO -->
@@ -419,8 +395,7 @@
                     <span>Objeto</span>
                     <span class="inv-col-center">Cant.</span>
                     <span>Descripción</span>
-                    <span class="inv-col-center">Equip.</span>
-                    <span class="inv-col-center">Sint.</span>
+                    <span class="inv-col-center">Equipado</span>
                     <span></span>
                 </div>
                 <div class="contenedor-items">
@@ -429,7 +404,6 @@
                         <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()">
                         <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
                         <input type="checkbox" title="Equipado" onchange="guardarDebounced()">
-                        <input type="checkbox" class="sintonizado-chk" title="Sintonizado" onchange="guardarDebounced()">
                         <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>
                     </div>
                 </div>
@@ -692,7 +666,9 @@
             <!-- FILA 4: RECURSOS -->
             <div class="caract-fila caract-fila-last">
                 <div class="seccion-caja caract-completa">
-                    <h3 class="titulo-caja">Recursos</h3>
+                    <h3 class="titulo-caja">Recursos
+                        <button class="recursos-add-btn" onclick="recursosAñadirFila(this)" title="Añadir más recursos">＋</button>
+                    </h3>
                     <div class="recursos-grid">
 
                         <div class="recurso-caja" data-recurso="0">
@@ -748,6 +724,7 @@
                         </div>
 
                     </div>
+                    <div class="recursos-extra-wrap"></div>
                 </div>
             </div>
 

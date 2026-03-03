@@ -623,8 +623,10 @@ label {
 /* Checkboxes — cuadrícula de 3 columnas */
 .dg-checks-contenedor {
     display: grid;
-    grid-template-columns: repeat(3, 22px);
-    gap: 4px 5px;
+    grid-template-columns: repeat(7, 22px);  /* máx 20 dados: 3 filas × 7 col = 21, pero usamos flow column */
+    grid-template-rows: repeat(3, 22px);
+    grid-auto-flow: column;
+    gap: 5px;
     align-content: start;
     flex: 1;
     padding-top: 2px;
@@ -762,6 +764,84 @@ label {
 
 .condicion-nombre {
     font-size: 12px; font-weight: 600; color: #2d3748;
+}
+
+/* ===================================================
+   AGOTAMIENTO
+=================================================== */
+.agotamiento-zona {
+    margin-top: 8px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 8px;
+}
+.agotamiento-titulo {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    color: #718096; letter-spacing: 0.4px; text-align: center;
+    margin-bottom: 6px;
+}
+.agotamiento-bolitas {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.agotamiento-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    position: relative;
+}
+.agotamiento-bolita {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #a0aec0;
+    background: #f7fafc;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+    position: relative;
+}
+.agotamiento-bolita:hover { border-color: #718096; box-shadow: 0 0 5px rgba(0,0,0,0.15); }
+.agotamiento-bolita.activo {
+    background: #fc8181;
+    border-color: #c53030;
+    box-shadow: 0 0 8px rgba(229,62,62,0.55);
+}
+.agotamiento-num {
+    font-size: 8px; font-weight: 700; color: #718096;
+    line-height: 1;
+}
+.agotamiento-item:hover .agotamiento-tooltip {
+    display: block;
+}
+.agotamiento-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3748;
+    color: #e2e8f0;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.35;
+    padding: 5px 8px;
+    border-radius: 6px;
+    width: 160px;
+    z-index: 100;
+    pointer-events: none;
+    text-align: left;
+    white-space: normal;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.agotamiento-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #2d3748;
 }
 
 /* ===================================================
@@ -1758,7 +1838,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 }
 .spell-slots-checks {
     display: flex;
-    gap: 6px;
+    gap: 10px;
     flex-wrap: wrap;
     align-items: center;
 }

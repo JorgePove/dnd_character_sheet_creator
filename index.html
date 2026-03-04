@@ -300,8 +300,12 @@
                     <div class="hp-inputs">
                         <input type="number" class="hp-actual" value="10" oninput="actualizarVidaPanel(this)">
                         <span class="separador-hp">/</span>
-                        <input type="number" class="hp-max" value="10" oninput="actualizarVidaPanel(this)">
+                        <div class="hp-max-wrap">
+                            <input type="number" class="hp-max" value="10" data-hp-auto="true" oninput="onHpMaxEdita(this)">
+                            <button class="hp-auto-btn" onclick="hpReactivarAuto(this)" title="Recalcular automáticamente" style="display:none">⟳</button>
+                        </div>
                     </div>
+                    <div class="hp-auto-label">⚙ calculado automáticamente</div>
                 </div>
                 <div class="barra-vida-contenedor">
                     <div class="barra-relleno verde" style="width:100%"></div>

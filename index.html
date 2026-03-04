@@ -441,6 +441,7 @@
                     <span class="inv-col-center">Cant.</span>
                     <span>Descripción</span>
                     <span class="inv-col-center">Equipado</span>
+                    <span class="inv-col-center">Sint.</span>
                     <span></span>
                 </div>
                 <div class="contenedor-items">
@@ -448,7 +449,8 @@
                         <input type="text" placeholder="Nombre..." class="input-item" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
                         <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()">
                         <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
-                        <input type="checkbox" title="Equipado" onchange="guardarDebounced()">
+                        <input type="checkbox" class="chk-equipado" title="Equipado" onchange="guardarDebounced()">
+                        <input type="checkbox" class="chk-sintonizado" title="Sintonizado" onchange="validarSintonizados(this);guardarDebounced()">
                         <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>
                     </div>
                 </div>

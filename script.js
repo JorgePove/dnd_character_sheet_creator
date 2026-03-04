@@ -41,6 +41,7 @@ function nuevaFicha(datosGuardados) {
     })();
     if (typeof initCaractSelectores === 'function') initCaractSelectores(panel);
     if (typeof initSpellcasting === 'function') initSpellcasting(panel);
+    initNotasSubpags(panel);
     activarFicha(id);
 
     if (datosGuardados) cargarDatosEnPanel(panel, datosGuardados);
@@ -1859,7 +1860,169 @@ function roleplayBorrarImagen(btn) {
     guardarDebounced();
 }
 
+// ── Inicialización de sub-tabs en paneles fijos del template ─────────
+/* Convierte los paneles fijos del HTML (que tienen un textarea suelto)
+   en paneles con barra de sub-tabs. Se llama una sola vez al crear la ficha. */
+function initNotasSubpags(fichaPanel) {
+    const IDS_FIJOS = ['diario','personas','lugares','objetos','sucesos','pistas'];
+    IDS_FIJOS.forEach(id => {
+        const panelEl = fichaPanel.querySelector(`.notas-panel[data-panel-id="${id}"]`);
+        if (!panelEl) return;
+        // Si ya fue inicializado (tiene sub-barra), saltar
+        if (panelEl.querySelector('.notas-subpags-barra')) return;
+
+        // Rescatar texto existente del textarea suelto (si lo hubiera)
+        const textoExistente = panelEl.querySelector('.notas-textarea')?.value || '';
+        panelEl.innerHTML = '';
+
+        const subBarra = document.createElement('div');
+        subBarra.className = 'notas-subpags-barra';
+
+        const subLista = document.createElement('div');
+        subLista.className = 'notas-subpags-lista';
+        subBarra.appendChild(subLista);
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'notas-subpag-add';
+        addBtn.title = 'Nueva página';
+        addBtn.textContent = '+';
+        addBtn.addEventListener('click', () => notasAñadirSubpag(panelEl));
+        subBarra.appendChild(addBtn);
+        panelEl.appendChild(subBarra);
+
+        const subContenido = document.createElement('div');
+        subContenido.className = 'notas-subpags-contenido';
+        panelEl.appendChild(subContenido);
+
+        _notasCrearSubpag(panelEl, _subpagId(), 'Página 1', textoExistente, true);
+    });
+}
+
 // ── Tabs de notas ─────────────────────────────────────
+
+/* Crea la estructura interna de un panel de notas:
+   una barra de sub-tabs + los sub-paneles correspondientes.
+   tabId: id de la tab padre (ej: "diario").
+   páginas: array de { id, nombre, contenido } — si null, crea una página por defecto. */
+function _notasConstruirPanel(tabId, paginas) {
+    const panelEl = document.createElement('div');
+    panelEl.className = 'notas-panel';
+    panelEl.dataset.panelId = tabId;
+
+    const subBarra = document.createElement('div');
+    subBarra.className = 'notas-subpags-barra';
+
+    const subLista = document.createElement('div');
+    subLista.className = 'notas-subpags-lista';
+    subBarra.appendChild(subLista);
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'notas-subpag-add';
+    addBtn.title = 'Nueva página';
+    addBtn.textContent = '+';
+    addBtn.addEventListener('click', () => notasAñadirSubpag(panelEl));
+    subBarra.appendChild(addBtn);
+
+    panelEl.appendChild(subBarra);
+
+    const subContenido = document.createElement('div');
+    subContenido.className = 'notas-subpags-contenido';
+    panelEl.appendChild(subContenido);
+
+    // Crear páginas
+    const lista = paginas && paginas.length ? paginas : [{ id: _subpagId(), nombre: 'Página 1', contenido: '' }];
+    lista.forEach((pg, i) => _notasCrearSubpag(panelEl, pg.id, pg.nombre, pg.contenido, i === 0));
+
+    return panelEl;
+}
+
+function _subpagId() { return 'sp-' + Date.now() + '-' + Math.random().toString(36).slice(2,6); }
+
+/* Crea una sub-tab + sub-panel dentro de un panel de notas. */
+function _notasCrearSubpag(panelEl, spId, nombre, contenido, activo) {
+    const lista = panelEl.querySelector('.notas-subpags-lista');
+    const contenedor = panelEl.querySelector('.notas-subpags-contenido');
+
+    // Sub-tab
+    const tab = document.createElement('div');
+    tab.className = 'notas-subpag-tab' + (activo ? ' activo' : '');
+    tab.dataset.spId = spId;
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'notas-subpag-nombre';
+    nameInput.value = nombre;
+    nameInput.addEventListener('click', (e) => { e.stopPropagation(); });
+    nameInput.addEventListener('input', () => guardarDebounced());
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'notas-subpag-del';
+    delBtn.textContent = '×';
+    delBtn.title = 'Borrar página';
+    delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notasBorrarSubpag(panelEl, spId);
+    });
+
+    tab.appendChild(nameInput);
+    tab.appendChild(delBtn);
+    tab.addEventListener('click', () => notasCambiarSubpag(panelEl, spId));
+    lista.appendChild(tab);
+
+    // Sub-panel
+    const sp = document.createElement('div');
+    sp.className = 'notas-subpag-panel' + (activo ? ' activo' : '');
+    sp.dataset.spId = spId;
+
+    const ta = document.createElement('textarea');
+    ta.className = 'notas-textarea';
+    ta.placeholder = 'Escribe aquí...';
+    ta.value = contenido || '';
+    ta.addEventListener('input', () => guardarDebounced());
+    sp.appendChild(ta);
+    contenedor.appendChild(sp);
+}
+
+function notasCambiarSubpag(panelEl, spId) {
+    panelEl.querySelectorAll('.notas-subpag-tab').forEach(t => t.classList.toggle('activo', t.dataset.spId === spId));
+    panelEl.querySelectorAll('.notas-subpag-panel').forEach(p => p.classList.toggle('activo', p.dataset.spId === spId));
+    guardarDebounced();
+}
+
+function notasAñadirSubpag(panelEl) {
+    const existentes = panelEl.querySelectorAll('.notas-subpag-tab').length;
+    const spId = _subpagId();
+    const nombre = 'Página ' + (existentes + 1);
+    _notasCrearSubpag(panelEl, spId, nombre, '', false);
+    notasCambiarSubpag(panelEl, spId);
+    guardarDebounced();
+}
+
+function notasBorrarSubpag(panelEl, spId) {
+    const tabs = panelEl.querySelectorAll('.notas-subpag-tab');
+    if (tabs.length <= 1) return; // no borrar la última
+    const eraActivo = panelEl.querySelector(`.notas-subpag-tab[data-sp-id="${spId}"]`)?.classList.contains('activo');
+    panelEl.querySelector(`.notas-subpag-tab[data-sp-id="${spId}"]`)?.remove();
+    panelEl.querySelector(`.notas-subpag-panel[data-sp-id="${spId}"]`)?.remove();
+    if (eraActivo) {
+        const primera = panelEl.querySelector('.notas-subpag-tab');
+        if (primera) notasCambiarSubpag(panelEl, primera.dataset.spId);
+    }
+    guardarDebounced();
+}
+
+/* Lee las sub-páginas de un panel como array de { id, nombre, contenido }. */
+function _notasLeerSubpags(panelEl) {
+    const pags = [];
+    panelEl.querySelectorAll('.notas-subpag-tab').forEach(tab => {
+        const spId = tab.dataset.spId;
+        const nombre = tab.querySelector('.notas-subpag-nombre')?.value || '';
+        const sp = panelEl.querySelector(`.notas-subpag-panel[data-sp-id="${spId}"] .notas-textarea`);
+        pags.push({ id: spId, nombre, contenido: sp?.value || '' });
+    });
+    return pags;
+}
+
 function notasCambiarTab(btn) {
     const notas = btn.closest('.roleplay-notas');
     const tabId = btn.dataset.tabId;
@@ -1874,28 +2037,23 @@ function notasCambiarTab(btn) {
 function notasAñadirTab(btn) {
     const notas = btn.closest('.roleplay-notas');
     const tabId = 'custom-' + Date.now();
-    const nombre = 'Nueva tab';
 
-    // Crear tab
+    // Tab principal
     const tab = document.createElement('button');
     tab.className = 'notas-tab';
     tab.dataset.tabId = tabId;
     tab.onclick = function() { notasCambiarTab(this); };
-    tab.innerHTML = `<input class="notas-tab-nombre-edit" type="text" value="${nombre}"
+    tab.innerHTML = `<input class="notas-tab-nombre-edit" type="text" value="Nueva tab"
         onclick="event.stopPropagation()"
         onchange="guardarDebounced()"
         oninput="guardarDebounced()">
         <button class="notas-tab-cerrar" onclick="notasBorrarTab(event,this)" title="Eliminar tab">×</button>`;
     notas.querySelector('.notas-tabs-lista').appendChild(tab);
 
-    // Crear panel
-    const panel = document.createElement('div');
-    panel.className = 'notas-panel';
-    panel.dataset.panelId = tabId;
-    panel.innerHTML = `<textarea class="notas-textarea" placeholder="Escribe tus notas aquí..." oninput="guardarDebounced()"></textarea>`;
-    notas.querySelector('.notas-paneles-custom').appendChild(panel);
+    // Panel con sub-tabs
+    const panelEl = _notasConstruirPanel(tabId, null);
+    notas.querySelector('.notas-paneles-custom').appendChild(panelEl);
 
-    // Activar el nuevo tab
     notasCambiarTab(tab);
     guardarDebounced();
 }
@@ -1905,13 +2063,10 @@ function notasBorrarTab(event, btn) {
     const tab = btn.closest('.notas-tab');
     const notas = tab.closest('.roleplay-notas');
     const tabId = tab.dataset.tabId;
-
-    // Si está activo, activar el primero fijo
     if (tab.classList.contains('activo')) {
         const primerTab = notas.querySelector('.notas-tab:not(.borrado-pendiente)');
         if (primerTab && primerTab !== tab) notasCambiarTab(primerTab);
     }
-    // Borrar panel
     const panel = notas.querySelector(`.notas-panel[data-panel-id="${tabId}"]`);
     if (panel) panel.remove();
     tab.remove();
@@ -1919,18 +2074,17 @@ function notasBorrarTab(event, btn) {
 }
 
 // ── Guardar/cargar roleplay dentro de leerFicha/cargarDatosEnPanel ────
-// (añadir en leerFicha)
 function leerRoleplay(panel) {
     const pag = panel.querySelector('.quinta-pagina');
     if (!pag) return null;
     const img = pag.querySelector('.apariencia-img');
     const historia = pag.querySelector('.roleplay-textarea-historia');
 
-    // Tabs fijas
+    // Tabs fijas — ahora cada una tiene sub-páginas
     const notas = {};
     ['diario','personas','lugares','objetos','sucesos','pistas'].forEach(id => {
-        const ta = pag.querySelector(`.notas-panel[data-panel-id="${id}"] .notas-textarea`);
-        notas[id] = ta ? ta.value : '';
+        const panelEl = pag.querySelector(`.notas-panel[data-panel-id="${id}"]`);
+        notas[id] = panelEl ? _notasLeerSubpags(panelEl) : [];
     });
 
     // Tabs custom
@@ -1939,8 +2093,7 @@ function leerRoleplay(panel) {
         const tabId = p.dataset.panelId;
         const tabBtn = pag.querySelector(`.notas-tab[data-tab-id="${tabId}"]`);
         const nombre = tabBtn?.querySelector('.notas-tab-nombre-edit')?.value || 'Tab';
-        const contenido = p.querySelector('.notas-textarea')?.value || '';
-        custom.push({ id: tabId, nombre, contenido });
+        custom.push({ id: tabId, nombre, paginas: _notasLeerSubpags(p) });
     });
 
     return {
@@ -1965,14 +2118,27 @@ function cargarRoleplay(panel, data) {
 
     if (data.notas) {
         ['diario','personas','lugares','objetos','sucesos','pistas'].forEach(id => {
-            const ta = pag.querySelector(`.notas-panel[data-panel-id="${id}"] .notas-textarea`);
-            if (ta) ta.value = data.notas[id] || '';
+            const panelEl = pag.querySelector(`.notas-panel[data-panel-id="${id}"]`);
+            if (!panelEl) return;
+            const paginas = data.notas[id];
+            // Compatibilidad con formato antiguo (string)
+            if (typeof paginas === 'string') {
+                const ta = panelEl.querySelector('.notas-textarea');
+                if (ta) ta.value = paginas;
+                return;
+            }
+            if (Array.isArray(paginas) && paginas.length) {
+                // Limpiar y reconstruir sub-tabs
+                panelEl.querySelector('.notas-subpags-lista').innerHTML = '';
+                panelEl.querySelector('.notas-subpags-contenido').innerHTML = '';
+                paginas.forEach((pg, i) => _notasCrearSubpag(panelEl, pg.id || _subpagId(), pg.nombre, pg.contenido, i === 0));
+            }
         });
     }
 
     if (data.custom && Array.isArray(data.custom)) {
         data.custom.forEach(c => {
-            const notas = pag.querySelector('.roleplay-notas');
+            const notasEl = pag.querySelector('.roleplay-notas');
             const tabId = c.id || ('custom-' + Date.now());
             const tab = document.createElement('button');
             tab.className = 'notas-tab';
@@ -1983,16 +2149,19 @@ function cargarRoleplay(panel, data) {
                 onchange="guardarDebounced()"
                 oninput="guardarDebounced()">
                 <button class="notas-tab-cerrar" onclick="notasBorrarTab(event,this)" title="Eliminar tab">×</button>`;
-            notas.querySelector('.notas-tabs-lista').appendChild(tab);
+            notasEl.querySelector('.notas-tabs-lista').appendChild(tab);
 
-            const panelEl = document.createElement('div');
-            panelEl.className = 'notas-panel';
-            panelEl.dataset.panelId = tabId;
-            panelEl.innerHTML = `<textarea class="notas-textarea" oninput="guardarDebounced()">${_esc(c.contenido)}</textarea>`;
-            notas.querySelector('.notas-paneles-custom').appendChild(panelEl);
+            // Compatibilidad con formato antiguo (contenido string)
+            let paginas = c.paginas;
+            if (!paginas && c.contenido !== undefined) {
+                paginas = [{ id: _subpagId(), nombre: 'Página 1', contenido: c.contenido }];
+            }
+            const panelEl = _notasConstruirPanel(tabId, paginas);
+            notasEl.querySelector('.notas-paneles-custom').appendChild(panelEl);
         });
     }
 }
+
 
 /* ═══════════════════════════════════════════════════════
    SPELLCASTING — TIRADAS DE HECHIZOS

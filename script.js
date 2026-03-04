@@ -42,6 +42,8 @@ function nuevaFicha(datosGuardados) {
     if (typeof initCaractSelectores === 'function') initCaractSelectores(panel);
     if (typeof initSpellcasting === 'function') initSpellcasting(panel);
     initNotasSubpags(panel);
+    _initAutoAccionesBloque(panel);
+    _hookAutoAcciones(panel);
     activarFicha(id);
 
     if (datosGuardados) cargarDatosEnPanel(panel, datosGuardados);
@@ -943,6 +945,7 @@ function leerFicha(panel) {
     };
 
     d.roleplay = leerRoleplay(panel);
+    d.autoNotas = leerAutoNotas(panel);
 
     return d;
 }
@@ -1218,6 +1221,12 @@ function cargarDatosEnPanel(panel, d) {
     actualizarTodoPanel(panel);
 
     cargarRoleplay(panel, d.roleplay);
+    // Regenerar acciones auto tras cargar todos los datos (clase, especie, hechizos ya restaurados)
+    // Usamos setTimeout para esperar a que el DOM esté completamente actualizado
+    setTimeout(() => {
+        regenerarAccionesAuto(panel);
+        cargarAutoNotas(panel, d.autoNotas);
+    }, 0);
 }
 
 
@@ -1420,6 +1429,8 @@ function añadirHechizo(btn) {
     _renderSpellEntry(lista, sp);
     sel.value = '';
     guardarDebounced();
+    const fichaPanel = btn.closest('.ficha-panel');
+    if (fichaPanel) setTimeout(() => regenerarAccionesAuto(fichaPanel), 0);
 }
 
 function _renderSpellEntry(lista, sp) {
@@ -1485,8 +1496,10 @@ function _renderSpellEntry(lista, sp) {
     delBtn.textContent = '×';
     delBtn.title = 'Eliminar hechizo';
     delBtn.addEventListener('click', () => {
+        const fichaPanel = entry.closest('.ficha-panel');
         entry.remove();
         guardarDebounced();
+        if (fichaPanel) setTimeout(() => regenerarAccionesAuto(fichaPanel), 0);
     });
 
     entry.appendChild(chkPrep);
@@ -1863,6 +1876,22 @@ function roleplayBorrarImagen(btn) {
 // ── Inicialización de sub-tabs en paneles fijos del template ─────────
 /* Convierte los paneles fijos del HTML (que tienen un textarea suelto)
    en paneles con barra de sub-tabs. Se llama una sola vez al crear la ficha. */
+/* Engancha listeners en selectores de clase/subclase/especie y textarea de dotes
+   para regenerar acciones auto cuando cambian. */
+function _hookAutoAcciones(fichaPanel) {
+    const re = () => regenerarAccionesAuto(fichaPanel);
+    const delay = () => setTimeout(re, 50); // pequeño delay para que onClaseChange actualice primero
+
+    const sels = ['.sel-clase', '.sel-subclase', '.sel-especie', '.sel-trasfondo'];
+    sels.forEach(sel => {
+        const el = fichaPanel.querySelector(sel);
+        if (el) el.addEventListener('change', delay);
+    });
+    // Textarea de dotes: regenerar al escribir (con debounce implícito de guardarDebounced)
+    const dotesTa = fichaPanel.querySelector('.caract-dotes');
+    if (dotesTa) dotesTa.addEventListener('input', delay);
+}
+
 function initNotasSubpags(fichaPanel) {
     const IDS_FIJOS = ['diario','personas','lugares','objetos','sucesos','pistas'];
     IDS_FIJOS.forEach(id => {
@@ -2487,4 +2516,200 @@ async function tirarHechizo(sp, panel) {
     log.prepend(div);
     panel.querySelector('.btn-ventaja').classList.remove('activo-ventaja');
     panel.querySelector('.btn-desventaja').classList.remove('activo-desventaja');
+}
+
+/* ═══════════════════════════════════════════════════════
+   ACCIONES AUTO-GENERADAS DESDE CARACTERÍSTICAS Y HECHIZOS
+═══════════════════════════════════════════════════════ */
+
+/* ── Clasificador de tipo de acción ─────────────────────
+   Devuelve 'actions' | 'bonus' | 'reactions' | 'otros'
+   según palabras clave en el texto de descripción.       */
+function _clasificarAccion(texto) {
+    if (!texto) return 'otros';
+    const t = texto.toLowerCase();
+    // Bonus action primero (más específico)
+    if (/acci[oó]n adicional|bonus action|acción bonus/.test(t)) return 'bonus';
+    // Reaction
+    if (/reacci[oó]n|reaction/.test(t)) return 'reactions';
+    // Action
+    if (/acci[oó]n\b|acción\b|action\b/.test(t)) return 'actions';
+    return 'otros';
+}
+
+/* Clasifica un hechizo según su campo casting */
+function _clasificarCasting(castingStr) {
+    if (!castingStr) return 'actions';
+    const c = castingStr.toLowerCase();
+    if (/adicional|bonus/.test(c)) return 'bonus';
+    if (/reacci[oó]n|reaction/.test(c)) return 'reactions';
+    return 'actions';
+}
+
+/* ── Construye la lista de entradas auto desde la ficha ──
+   Devuelve array de { nombre, desc, origen, tipo }        */
+function _recogerEntradasAuto(fichaPanel) {
+    const entradas = [];
+
+    // ── Clase ──────────────────────────────────────────
+    const claseKey = fichaPanel.querySelector('.sel-clase')?.value || '';
+    if (claseKey && typeof DND_CLASES !== 'undefined' && DND_CLASES[claseKey]) {
+        (DND_CLASES[claseKey].rasgos || []).forEach(r => {
+            const tipo = _clasificarAccion(r.d);
+            entradas.push({ nombre: r.n, desc: r.d, origen: claseKey, tipo });
+        });
+    }
+
+    // ── Subclase ───────────────────────────────────────
+    const subKey = fichaPanel.querySelector('.sel-subclase')?.value || '';
+    if (claseKey && subKey && typeof DND_CLASES !== 'undefined') {
+        const subRasgos = DND_CLASES[claseKey]?.subclases?.[subKey] || [];
+        subRasgos.forEach(r => {
+            const tipo = _clasificarAccion(r.d);
+            entradas.push({ nombre: r.n, desc: r.d, origen: subKey, tipo });
+        });
+    }
+
+    // ── Especie ────────────────────────────────────────
+    const especieKey = fichaPanel.querySelector('.sel-especie')?.value || '';
+    if (especieKey && typeof DND_ESPECIES !== 'undefined' && DND_ESPECIES[especieKey]) {
+        (DND_ESPECIES[especieKey] || []).forEach(r => {
+            const tipo = _clasificarAccion(r.d);
+            entradas.push({ nombre: r.n, desc: r.d, origen: especieKey, tipo });
+        });
+    }
+
+    // ── Dotes (parseamos el textarea de dotes) ─────────
+    if (typeof DND_DOTES !== 'undefined') {
+        const dotesTxt = fichaPanel.querySelector('.caract-dotes')?.value || '';
+        // Cada dote está en una línea con formato "NombreDote: descripción"
+        // Buscamos todas las dotes que aparezcan en el textarea
+        DND_DOTES.forEach(dote => {
+            if (dotesTxt.includes(dote.n)) {
+                const tipo = _clasificarAccion(dote.d);
+                entradas.push({ nombre: dote.n, desc: dote.d, origen: 'Dote', tipo });
+            }
+        });
+    }
+
+    // ── Hechizos ───────────────────────────────────────
+    fichaPanel.querySelectorAll('.spell-entry').forEach(entry => {
+        const spId = entry.dataset.spellId;
+        // Buscar en todos los niveles de DND_SPELLS
+        if (typeof DND_SPELLS === 'undefined') return;
+        let sp = null;
+        for (const nivel of Object.keys(DND_SPELLS)) {
+            sp = DND_SPELLS[nivel].find(s => s.id === spId);
+            if (sp) break;
+        }
+        if (!sp) return;
+        const tipo = _clasificarCasting(sp.casting);
+        const desc = `${sp.casting} · ${sp.range} · ${sp.duration}${sp.damage ? ' · ' + sp.damage : ''}`;
+        entradas.push({ nombre: sp.n, desc, origen: 'Hechizo', tipo });
+    });
+
+    return entradas;
+}
+
+/* ── Inicializar bloque auto en todos los panels de acción ── */
+function _initAutoAccionesBloque(fichaPanel) {
+    ['actions','bonus','reactions','otros'].forEach(tipo => {
+        const panelAcc = fichaPanel.querySelector(`.accion-panel[data-panel="${tipo}"]`);
+        if (!panelAcc) return;
+        // Insertar bloque auto antes de la lista manual
+        const lista = panelAcc.querySelector('.acciones-lista');
+        if (!lista) return;
+        if (panelAcc.querySelector('.auto-acciones-bloque')) return; // ya existe
+        const bloque = document.createElement('div');
+        bloque.className = 'auto-acciones-bloque';
+        bloque.innerHTML = '<div class="auto-acciones-header"><span>⚙ Automáticas</span></div><div class="auto-acciones-lista"></div>';
+        panelAcc.insertBefore(bloque, lista);
+    });
+}
+
+/* ── Regenerar el bloque auto completo ────────────────────
+   Lee las notas adicionales guardadas, destruye y reconstruye. */
+function regenerarAccionesAuto(fichaPanel) {
+    _initAutoAccionesBloque(fichaPanel);
+
+    // Guardar notas adicionales existentes por (tipo, nombre)
+    const notasGuardadas = {};
+    ['actions','bonus','reactions','otros'].forEach(tipo => {
+        const bloque = fichaPanel.querySelector(`.accion-panel[data-panel="${tipo}"] .auto-acciones-lista`);
+        if (!bloque) return;
+        bloque.querySelectorAll('.auto-entrada').forEach(el => {
+            const key = el.dataset.autoKey;
+            const nota = el.querySelector('.auto-nota')?.value || '';
+            if (nota) notasGuardadas[key] = nota;
+        });
+    });
+
+    // Limpiar bloques
+    fichaPanel.querySelectorAll('.auto-acciones-lista').forEach(b => { b.innerHTML = ''; });
+
+    // Reconstruir
+    const entradas = _recogerEntradasAuto(fichaPanel);
+    const contadores = { actions: 0, bonus: 0, reactions: 0, otros: 0 };
+
+    entradas.forEach(e => {
+        const bloque = fichaPanel.querySelector(`.accion-panel[data-panel="${e.tipo}"] .auto-acciones-lista`);
+        if (!bloque) return;
+        contadores[e.tipo]++;
+
+        const key = `${e.tipo}::${e.nombre}`;
+        const div = document.createElement('div');
+        div.className = 'auto-entrada';
+        div.dataset.autoKey = key;
+
+        const notaGuardada = notasGuardadas[key] || '';
+        div.innerHTML = `
+            <div class="auto-entrada-cabecera">
+                <span class="auto-entrada-nombre">${_esc(e.nombre)}</span>
+                <span class="auto-entrada-origen">${_esc(e.origen)}</span>
+            </div>
+            <div class="auto-entrada-desc">${_esc(e.desc)}</div>
+            <textarea class="auto-nota" placeholder="Notas adicionales..." oninput="guardarDebounced()">${_esc(notaGuardada)}</textarea>`;
+        bloque.appendChild(div);
+    });
+
+    // Mostrar/ocultar cabecera según haya entradas
+    ['actions','bonus','reactions','otros'].forEach(tipo => {
+        const bloque = fichaPanel.querySelector(`.accion-panel[data-panel="${tipo}"] .auto-acciones-bloque`);
+        if (!bloque) return;
+        const tiene = contadores[tipo] > 0;
+        bloque.style.display = tiene ? '' : 'none';
+    });
+
+    guardarDebounced();
+}
+
+/* ── Leer notas auto para persistencia ────────────────── */
+function leerAutoNotas(fichaPanel) {
+    const result = {};
+    ['actions','bonus','reactions','otros'].forEach(tipo => {
+        const bloque = fichaPanel.querySelector(`.accion-panel[data-panel="${tipo}"] .auto-acciones-lista`);
+        if (!bloque) return;
+        bloque.querySelectorAll('.auto-entrada').forEach(el => {
+            const key = el.dataset.autoKey;
+            const nota = el.querySelector('.auto-nota')?.value || '';
+            if (nota) result[key] = nota;
+        });
+    });
+    return result;
+}
+
+/* ── Restaurar notas auto desde datos guardados ───────── */
+function cargarAutoNotas(fichaPanel, notasData) {
+    if (!notasData) return;
+    ['actions','bonus','reactions','otros'].forEach(tipo => {
+        const bloque = fichaPanel.querySelector(`.accion-panel[data-panel="${tipo}"] .auto-acciones-lista`);
+        if (!bloque) return;
+        bloque.querySelectorAll('.auto-entrada').forEach(el => {
+            const key = el.dataset.autoKey;
+            if (notasData[key]) {
+                const ta = el.querySelector('.auto-nota');
+                if (ta) ta.value = notasData[key];
+            }
+        });
+    });
 }

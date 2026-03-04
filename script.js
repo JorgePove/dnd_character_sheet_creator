@@ -1492,31 +1492,52 @@ function _renderSpellEntry(lista, sp) {
         clearTimeout(_tooltipShowTimeout);
         ocultarTooltipHechizo();
     });
-    // Clic → tirar hechizo
-    nombre.addEventListener('click', (e) => {
+
+    // Detectar si el hechizo es de concentración por sus datos
+    const esConc = _esConcentracion(sp);
+
+    // Tag "Concentración" — visible estáticamente si el hechizo lo requiere
+    if (esConc) {
+        const concTag = document.createElement('span');
+        concTag.className = 'spell-conc-tag';
+        concTag.textContent = 'Concentración';
+        nombreWrap.appendChild(nombre);
+        nombreWrap.appendChild(concTag);
+    } else {
+        nombreWrap.appendChild(nombre);
+    }
+
+    // Lógica de click: si es concentración, gestionar glow; si no, tirar directamente
+    nombre.addEventListener('click', async (e) => {
         e.stopPropagation();
         clearTimeout(_tooltipShowTimeout);
         ocultarTooltipHechizo();
         const panel = nombre.closest('.ficha-panel');
-        if (panel) tirarHechizo(sp, panel);
-    });
+        if (!panel) return;
 
-    // Tag de concentración (oculto hasta que se active)
-    const concTag = document.createElement('span');
-    concTag.className = 'spell-conc-tag';
-    concTag.textContent = 'C';
-
-    nombreWrap.appendChild(nombre);
-    nombreWrap.appendChild(concTag);
-
-    // Bolita concentración
-    const concBtn = document.createElement('button');
-    concBtn.className = 'spell-conc-btn';
-    concBtn.title = 'Concentración';
-    concBtn.addEventListener('click', () => {
-        concBtn.classList.toggle('activo');
-        // Mostrar/ocultar tag C
-        concTag.style.display = concBtn.classList.contains('activo') ? 'inline' : 'none';
+        if (esConc) {
+            const yaConcentrando = entry.classList.contains('concentrando');
+            if (yaConcentrando) {
+                // Apagar glow → deja de concentrarse, sin tirar
+                entry.classList.remove('concentrando');
+                guardarDebounced();
+                return;
+            }
+            // Comprobar si hay otro hechizo con glow activo
+            const otroConcentrando = _getHechizoConcActivo(panel);
+            if (otroConcentrando && otroConcentrando !== entry) {
+                const nombreActivo = otroConcentrando.querySelector('.spell-entry-nombre')?.textContent || '?';
+                const confirmar = await _modalConcentracion(nombreActivo, sp.n);
+                if (!confirmar) return;
+                // Apagar glow del anterior
+                otroConcentrando.classList.remove('concentrando');
+            }
+            // Lanzar hechizo y activar glow
+            await tirarHechizo(sp, panel);
+            entry.classList.add('concentrando');
+        } else {
+            tirarHechizo(sp, panel);
+        }
         guardarDebounced();
     });
 
@@ -1534,7 +1555,6 @@ function _renderSpellEntry(lista, sp) {
 
     entry.appendChild(chkPrep);
     entry.appendChild(nombreWrap);
-    entry.appendChild(concBtn);
     entry.appendChild(delBtn);
     lista.appendChild(entry);
 }
@@ -1626,9 +1646,9 @@ function leerSpellcasting(panel) {
         const slots = Array.from(bloque.querySelectorAll('.slot-chk')).map(c => c.checked);
         // Hechizos
         const hechizos = Array.from(bloque.querySelectorAll('.spell-entry')).map(entry => ({
-            id:   entry.dataset.spellId,
-            prep: entry.querySelector('.spell-prep-chk')?.checked || false,
-            conc: entry.querySelector('.spell-conc-btn')?.classList.contains('activo') || false,
+            id:          entry.dataset.spellId,
+            prep:        entry.querySelector('.spell-prep-chk')?.checked || false,
+            concentrando: entry.classList.contains('concentrando'),
         }));
         d.spellNiveles.push({ nivel, slots, hechizos });
     });
@@ -1688,12 +1708,7 @@ function cargarSpellcasting(panel, d) {
                 const entry = lista.lastElementChild;
                 const prepChk = entry.querySelector('.spell-prep-chk');
                 if (prepChk) prepChk.checked = h.prep || false;
-                const concBtn = entry.querySelector('.spell-conc-btn');
-                const concTag = entry.querySelector('.spell-conc-tag');
-                if (concBtn && h.conc) {
-                    concBtn.classList.add('activo');
-                    if (concTag) concTag.style.display = 'inline';
-                }
+                if (h.concentrando) entry.classList.add('concentrando');
             });
         }
     });
@@ -3301,29 +3316,16 @@ cargarDatosEnPanel = function(panel, d) {
    CONCENTRACIÓN — ALERTA AL LANZAR SEGUNDO HECHIZO
 ═══════════════════════════════════════════════════════ */
 
-/* Devuelve el hechizo activo de concentración en el panel, o null */
+/* Devuelve la entry con glow de concentración activo en el panel, o null */
 function _getHechizoConcActivo(panel) {
-    let activo = null;
-    panel.querySelectorAll('.spell-entry').forEach(entry => {
-        const concBtn = entry.querySelector('.spell-conc-btn');
-        if (concBtn && concBtn.classList.contains('activo')) {
-            activo = entry;
-        }
-    });
-    return activo;
+    return panel.querySelector('.spell-entry.concentrando') || null;
 }
 
-/* Comprueba si un hechizo es de concentración según sus datos O si tiene el botón C marcado */
-function _esConcentracion(sp, panel) {
-    // Primero: comprobar datos del hechizo
-    if (sp && (/concentración|concentration/i.test(sp.duration || '') ||
-               /concentración|concentration/i.test(sp.desc || ''))) return true;
-    // Segundo: si el panel existe, comprobar si la entry del hechizo tiene C activo
-    if (panel && sp) {
-        const entry = panel.querySelector(`.spell-entry[data-spell-id="${sp.id}"]`);
-        if (entry && entry.querySelector('.spell-conc-btn')?.classList.contains('activo')) return true;
-    }
-    return false;
+/* Comprueba si un hechizo requiere concentración según sus datos */
+function _esConcentracion(sp) {
+    if (!sp) return false;
+    return /concentración|concentration/i.test(sp.duration || '') ||
+           /concentración|concentration/i.test(sp.desc || '');
 }
 
 /* Modal de alerta de concentración — devuelve Promise<bool> */
@@ -3378,29 +3380,6 @@ function _modalConcentracion(nombreActivo, nombreNuevo) {
         });
     });
 }
-
-/* Patch de tirarHechizo para interceptar concentración */
-const _tirarHechizOrig = tirarHechizo;
-tirarHechizo = async function(sp, panel) {
-    // Solo actuar si el hechizo nuevo es de concentración
-    if (_esConcentracion(sp, panel)) {
-        const entradaActiva = _getHechizoConcActivo(panel);
-        if (entradaActiva) {
-            const nombreActivo = entradaActiva.querySelector('.spell-entry-nombre')?.textContent || '?';
-            const confirmar = await _modalConcentracion(nombreActivo, sp.n);
-            if (!confirmar) return; // Usuario canceló
-
-            // Desactivar concentración del hechizo anterior
-            const concBtnActivo = entradaActiva.querySelector('.spell-conc-btn');
-            const concTagActivo = entradaActiva.querySelector('.spell-conc-tag');
-            if (concBtnActivo) concBtnActivo.classList.remove('activo');
-            if (concTagActivo) concTagActivo.style.display = 'none';
-            guardarDebounced();
-        }
-    }
-    // Llamar al original
-    return _tirarHechizOrig(sp, panel);
-};
 
 /* ═══════════════════════════════════════════════════════
    TOOLTIPS DE CONDICIONES

@@ -11,6 +11,13 @@
 <!-- BARRA DE PESTAÑAS -->
 <div class="barra-pestanas" id="barra-pestanas">
     <button class="btn-nueva-pestana" id="btn-nueva-pestana" onclick="nuevaFicha()" title="Nueva ficha">＋</button>
+    <div class="barra-acciones-globales">
+        <button class="btn-global" onclick="exportarFichasJSON()" title="Exportar todas las fichas a JSON">⬇ Exportar</button>
+        <label class="btn-global btn-importar" title="Importar fichas desde JSON">
+            ⬆ Importar
+            <input type="file" accept=".json" onchange="importarFichasJSON(event)" style="display:none">
+        </label>
+    </div>
 </div>
 
 <!-- LOG DE TIRADAS -->

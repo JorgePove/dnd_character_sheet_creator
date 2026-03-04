@@ -60,7 +60,13 @@
         </div>
         <div class="bloque-clase-info">
             <div class="fila-input">
-                <div class="campo campo-sm"><input type="text" placeholder="Ej: Guerrero 5"><label>Clase y Nivel</label></div>
+                <div class="campo campo-multiclase">
+                    <div class="multiclase-widget">
+                        <div class="multiclase-lista"></div>
+                        <button class="multiclase-add-btn" onclick="multiclaseAñadir(this)" title="Añadir clase">+ Clase</button>
+                    </div>
+                    <label>Clase y Nivel</label>
+                </div>
                 <div class="campo campo-sm"><input type="text" placeholder="Ej: Humano"><label>Especie</label></div>
                 <div class="campo campo-sm"><input type="text" placeholder="Ej: Soldado"><label>Trasfondo</label></div>
             </div>

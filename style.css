@@ -742,11 +742,20 @@ label {
 =================================================== */
 .seccion-condiciones { margin-bottom: 14px; }
 
+/* Layout exterior: condiciones izq + agotamiento der */
+.condiciones-y-agotamiento {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+    width: 100%;
+}
+
 .condiciones-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1px 2px;
-    width: 100%;
+    grid-template-columns: repeat(3, max-content);
+    gap: 1px 0px;
+    width: auto;
+    flex: 1;
 }
 
 .condicion-item {
@@ -794,21 +803,28 @@ label {
    AGOTAMIENTO
 =================================================== */
 .agotamiento-zona {
-    margin-top: 6px;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 5px;
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding-left: 10px;
+    border-left: 1px solid #e2e8f0;
 }
 .agotamiento-fila-principal {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 6px;
+    gap: 4px;
 }
 .agotamiento-titulo {
     font-size: 9px; font-weight: 700; text-transform: uppercase;
     color: #718096; letter-spacing: 0.4px;
-    flex-shrink: 0;
     white-space: nowrap;
+    text-align: center;
 }
 .agotamiento-bolitas {
     display: grid;
@@ -816,7 +832,7 @@ label {
     grid-template-rows: repeat(3, auto);
     grid-auto-flow: column;
     gap: 3px;
-    justify-content: end;
+    justify-content: center;
 }
 .agotamiento-item {
     display: flex;
@@ -931,9 +947,9 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 
 /* Scrollable, grows to fill inventario height */
 .contenedor-items {
-    flex: 1;
-    min-height: 100px;
-    max-height: 220px;
+    height: 220px;
+    min-height: unset;
+    max-height: unset;
     overflow-y: auto;
     display: flex;
     flex-direction: column;

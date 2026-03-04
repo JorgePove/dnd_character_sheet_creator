@@ -546,7 +546,7 @@ function borrarItemInventario(btn) {
     const contenedor = fila.closest('.contenedor-items');
     if (contenedor.querySelectorAll('.item-fila').length <= 1) {
         fila.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => i.value = '');
-        fila.querySelector('input[type="checkbox"]').checked = false;
+        fila.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
     } else {
         fila.remove();
     }
@@ -771,7 +771,17 @@ function guardarTodo() {
         localStorage.setItem('dnd_fichas', JSON.stringify(datos));
         localStorage.setItem('dnd_contador', contadorFichas);
         localStorage.setItem('dnd_activa', fichaActual);
-    } catch(e) { console.warn('No se pudo guardar:', e); }
+    } catch(e) {
+        console.warn('No se pudo guardar:', e);
+        // Aviso si es error de cuota (p.ej. imagen muy grande en Roleplay)
+        if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+            const aviso = document.createElement('div');
+            aviso.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#e53e3e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.3)';
+            aviso.textContent = '⚠ No se pudo guardar: almacenamiento lleno. Exporta tus fichas a JSON como copia de seguridad.';
+            document.body.appendChild(aviso);
+            setTimeout(() => aviso.remove(), 6000);
+        }
+    }
 }
 
 function leerFicha(panel) {
@@ -1038,7 +1048,8 @@ function cargarDatosEnPanel(panel, d) {
                 <input type="text" placeholder="Nombre..." class="input-item" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()" value="${_esc(item.nombre)}">
                 <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()" value="${_esc(item.cant)}">
                 <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()" value="${_esc(item.desc)}">
-                <input type="checkbox" title="Equipado" onchange="guardarDebounced()" ${item.equip?'checked':''}>
+                <input type="checkbox" class="chk-equipado" title="Equipado" onchange="guardarDebounced()" ${item.equip?'checked':''}>
+                <input type="checkbox" class="chk-sintonizado" title="Sintonizado" onchange="validarSintonizados(this);guardarDebounced()" ${item.sint?'checked':''}>
                 <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>`;
             cont.appendChild(div);
         });
@@ -1211,6 +1222,39 @@ function cargarDatosEnPanel(panel, d) {
 
 
 /* ── Recursos expandibles ──────────────────────────── */
+function toggleRecargaRecurso(btn) {
+    const tipo = btn.dataset.tipo;
+    if (tipo === 'corto') {
+        const eraActivo = btn.classList.contains('activo-corto');
+        btn.classList.toggle('activo-corto', !eraActivo);
+        // Si se activa corto, desactivar largo (corto ⊂ largo)
+        if (!eraActivo) {
+            const btnLargo = btn.closest('.recurso-caja').querySelector('.recurso-recarga-btn[data-tipo="largo"]');
+            if (btnLargo) btnLargo.classList.remove('activo-largo');
+        }
+    } else {
+        btn.classList.toggle('activo-largo');
+    }
+    guardarDebounced();
+}
+
+function recargaRecursosPorDescanso(panel, tipo) {
+    panel.querySelectorAll('.recurso-caja').forEach(caja => {
+        const btnC = caja.querySelector('.recurso-recarga-btn[data-tipo="corto"]');
+        const btnL = caja.querySelector('.recurso-recarga-btn[data-tipo="largo"]');
+        const recargaCorto = btnC?.classList.contains('activo-corto');
+        const recargaLargo = btnL?.classList.contains('activo-largo');
+        const actualEl = caja.querySelector('.recurso-actual');
+        const maxEl    = caja.querySelector('.recurso-max');
+        if (!actualEl || !maxEl) return;
+        if (tipo === 'largo' && (recargaLargo || recargaCorto)) {
+            actualEl.value = maxEl.value;
+        } else if (tipo === 'corto' && recargaCorto) {
+            actualEl.value = maxEl.value;
+        }
+    });
+    guardarDebounced();
+}
 function _recursosCajaHTML(idx) {
     return `<div class="recurso-caja" data-recurso="${idx}">
         <div class="recurso-top">

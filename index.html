@@ -17,6 +17,7 @@
             ⬆ Importar
             <input type="file" accept=".json" onchange="importarFichasJSON(event)" style="display:none">
         </label>
+        <button class="btn-global btn-pdf" onclick="exportarFichaPDF()" title="Exportar ficha activa a PDF">🖨 PDF</button>
     </div>
 </div>
 
@@ -286,7 +287,45 @@
                 <h3 class="titulo-caja">Otras Competencias</h3>
                 <div class="bloque-competencia"><label>Idiomas</label><textarea placeholder="Ej: Común, Élfico, Enano..." oninput="guardarDebounced()"></textarea></div>
                 <div class="bloque-competencia"><label>Herramientas y Otros</label><textarea placeholder="Ej: Herramientas de Ladrón..." oninput="guardarDebounced()"></textarea></div>
-                <div class="bloque-competencia"><label>Armas y Armaduras</label><textarea placeholder="Ej: Armas Marciales, Armadura Pesada..." oninput="guardarDebounced()"></textarea></div>
+                <div class="bloque-competencia">
+                    <label>Armas y Armaduras</label>
+                    <div class="armadura-selector-wrap">
+                        <select class="armadura-sel" onchange="onArmaduraChange(this)" title="Seleccionar armadura equipada">
+                            <option value="">— Armadura equipada —</option>
+                            <optgroup label="Sin armadura">
+                                <option value="sinarmadura|10|dex|0">Sin armadura (10 + DES)</option>
+                                <option value="ropas|10|dex|0">Ropas comunes (10 + DES)</option>
+                            </optgroup>
+                            <optgroup label="Armadura Ligera">
+                                <option value="acolchada|11|dex|0">Acolchada (11 + DES)</option>
+                                <option value="cuero|11|dex|0">Cuero (11 + DES)</option>
+                                <option value="cueroestud|12|dex|0">Cuero Tachonado (12 + DES)</option>
+                            </optgroup>
+                            <optgroup label="Armadura Media">
+                                <option value="pieles|11|dex2|0">Pieles (11 + DES máx.2)</option>
+                                <option value="cadena|12|dex2|0">Camisa de Malla (12 + DES máx.2)</option>
+                                <option value="escamas|13|dex2|0">Escamas (13 + DES máx.2)</option>
+                                <option value="coraza|13|dex2|0">Coraza (13 + DES máx.2)</option>
+                                <option value="mediacota|14|dex2|0">Media Cota (14 + DES máx.2)</option>
+                            </optgroup>
+                            <optgroup label="Armadura Pesada">
+                                <option value="anillos|14|none|0">Cota de Anillos (14)</option>
+                                <option value="bandas|14|none|0">Armadura de Bandas (14)</option>
+                                <option value="cota|16|none|0">Cota de Malla (16)</option>
+                                <option value="segmentada|17|none|0">Armadura Segmentada (17)</option>
+                                <option value="placas|18|none|0">Armadura de Placas (18)</option>
+                            </optgroup>
+                            <optgroup label="Escudo">
+                                <option value="escudo|0|none|2">+ Escudo (+2 CA)</option>
+                            </optgroup>
+                        </select>
+                        <select class="escudo-sel" onchange="onArmaduraChange(this)" title="¿Llevas escudo?">
+                            <option value="0">Sin escudo</option>
+                            <option value="2">+ Escudo (+2)</option>
+                        </select>
+                    </div>
+                    <textarea placeholder="Ej: Armas Marciales, Armadura Pesada..." oninput="guardarDebounced()"></textarea>
+                </div>
             </div>
         </section>
 

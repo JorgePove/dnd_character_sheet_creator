@@ -2056,6 +2056,8 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     display: flex;
     flex-direction: column;
     gap: 3px;
+    padding: 2px;
+    overflow: visible;
 }
 
 .spell-entry {
@@ -2134,8 +2136,11 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 /* Glow dorado palpitante cuando el jugador está concentrado en ese hechizo */
 .spell-entry.concentrando {
     outline: 2px solid #d69e2e;
+    outline-offset: 1px;
     box-shadow: 0 0 8px 2px rgba(214,158,46,0.5);
     animation: conc-glow 1.4s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
 }
 @keyframes conc-glow {
     0%, 100% { box-shadow: 0 0 5px 1px rgba(214,158,46,0.35); outline-color: #d69e2e; }

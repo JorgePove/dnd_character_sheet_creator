@@ -1726,3 +1726,193 @@ function importarFichasJSON(event) {
     // Reset input para poder reimportar el mismo archivo
     event.target.value = '';
 }
+
+/* ═══════════════════════════════════════════════════════
+   PÁGINA DE ROLEPLAY
+═══════════════════════════════════════════════════════ */
+
+// ── Imagen de apariencia ──────────────────────────────
+function roleplayCargarImagen(event, input) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const contenedor = input.closest('.apariencia-contenedor');
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        _roleplaySetImagen(contenedor, e.target.result);
+        guardarDebounced();
+    };
+    reader.readAsDataURL(file);
+}
+
+function roleplayDropImagen(event, contenedor) {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        _roleplaySetImagen(contenedor, e.target.result);
+        guardarDebounced();
+    };
+    reader.readAsDataURL(file);
+}
+
+function _roleplaySetImagen(contenedor, src) {
+    const img = contenedor.querySelector('.apariencia-img');
+    const placeholder = contenedor.querySelector('.apariencia-placeholder');
+    const btnBorrar = contenedor.querySelector('.apariencia-btn-borrar');
+    img.src = src;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    btnBorrar.style.display = 'flex';
+    contenedor.style.borderStyle = 'solid';
+}
+
+function roleplayBorrarImagen(btn) {
+    const contenedor = btn.closest('.apariencia-contenedor');
+    const img = contenedor.querySelector('.apariencia-img');
+    const placeholder = contenedor.querySelector('.apariencia-placeholder');
+    img.src = '';
+    img.style.display = 'none';
+    placeholder.style.display = 'flex';
+    btn.style.display = 'none';
+    contenedor.style.borderStyle = 'dashed';
+    // Reset file input
+    const fileInput = contenedor.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
+    guardarDebounced();
+}
+
+// ── Tabs de notas ─────────────────────────────────────
+function notasCambiarTab(btn) {
+    const notas = btn.closest('.roleplay-notas');
+    const tabId = btn.dataset.tabId;
+    notas.querySelectorAll('.notas-tab').forEach(t => t.classList.remove('activo'));
+    btn.classList.add('activo');
+    notas.querySelectorAll('.notas-panel').forEach(p => p.classList.remove('activo'));
+    const panel = notas.querySelector(`.notas-panel[data-panel-id="${tabId}"]`)
+               || notas.querySelector(`.notas-paneles-custom .notas-panel[data-panel-id="${tabId}"]`);
+    if (panel) panel.classList.add('activo');
+}
+
+function notasAñadirTab(btn) {
+    const notas = btn.closest('.roleplay-notas');
+    const tabId = 'custom-' + Date.now();
+    const nombre = 'Nueva tab';
+
+    // Crear tab
+    const tab = document.createElement('button');
+    tab.className = 'notas-tab';
+    tab.dataset.tabId = tabId;
+    tab.onclick = function() { notasCambiarTab(this); };
+    tab.innerHTML = `<input class="notas-tab-nombre-edit" type="text" value="${nombre}"
+        onclick="event.stopPropagation()"
+        onchange="guardarDebounced()"
+        oninput="guardarDebounced()">
+        <button class="notas-tab-cerrar" onclick="notasBorrarTab(event,this)" title="Eliminar tab">×</button>`;
+    notas.querySelector('.notas-tabs-lista').appendChild(tab);
+
+    // Crear panel
+    const panel = document.createElement('div');
+    panel.className = 'notas-panel';
+    panel.dataset.panelId = tabId;
+    panel.innerHTML = `<textarea class="notas-textarea" placeholder="Escribe tus notas aquí..." oninput="guardarDebounced()"></textarea>`;
+    notas.querySelector('.notas-paneles-custom').appendChild(panel);
+
+    // Activar el nuevo tab
+    notasCambiarTab(tab);
+    guardarDebounced();
+}
+
+function notasBorrarTab(event, btn) {
+    event.stopPropagation();
+    const tab = btn.closest('.notas-tab');
+    const notas = tab.closest('.roleplay-notas');
+    const tabId = tab.dataset.tabId;
+
+    // Si está activo, activar el primero fijo
+    if (tab.classList.contains('activo')) {
+        const primerTab = notas.querySelector('.notas-tab:not(.borrado-pendiente)');
+        if (primerTab && primerTab !== tab) notasCambiarTab(primerTab);
+    }
+    // Borrar panel
+    const panel = notas.querySelector(`.notas-panel[data-panel-id="${tabId}"]`);
+    if (panel) panel.remove();
+    tab.remove();
+    guardarDebounced();
+}
+
+// ── Guardar/cargar roleplay dentro de leerFicha/cargarDatosEnPanel ────
+// (añadir en leerFicha)
+function leerRoleplay(panel) {
+    const pag = panel.querySelector('.quinta-pagina');
+    if (!pag) return null;
+    const img = pag.querySelector('.apariencia-img');
+    const historia = pag.querySelector('.roleplay-textarea-historia');
+
+    // Tabs fijas
+    const notas = {};
+    ['diario','personas','lugares','objetos','sucesos','pistas'].forEach(id => {
+        const ta = pag.querySelector(`.notas-panel[data-panel-id="${id}"] .notas-textarea`);
+        notas[id] = ta ? ta.value : '';
+    });
+
+    // Tabs custom
+    const custom = [];
+    pag.querySelectorAll('.notas-paneles-custom .notas-panel').forEach(p => {
+        const tabId = p.dataset.panelId;
+        const tabBtn = pag.querySelector(`.notas-tab[data-tab-id="${tabId}"]`);
+        const nombre = tabBtn?.querySelector('.notas-tab-nombre-edit')?.value || 'Tab';
+        const contenido = p.querySelector('.notas-textarea')?.value || '';
+        custom.push({ id: tabId, nombre, contenido });
+    });
+
+    return {
+        imagen: (img && img.src && img.style.display !== 'none') ? img.src : '',
+        historia: historia ? historia.value : '',
+        notas,
+        custom
+    };
+}
+
+function cargarRoleplay(panel, data) {
+    if (!data) return;
+    const pag = panel.querySelector('.quinta-pagina');
+    if (!pag) return;
+
+    if (data.imagen) {
+        const contenedor = pag.querySelector('.apariencia-contenedor');
+        if (contenedor) _roleplaySetImagen(contenedor, data.imagen);
+    }
+    const historia = pag.querySelector('.roleplay-textarea-historia');
+    if (historia && data.historia) historia.value = data.historia;
+
+    if (data.notas) {
+        ['diario','personas','lugares','objetos','sucesos','pistas'].forEach(id => {
+            const ta = pag.querySelector(`.notas-panel[data-panel-id="${id}"] .notas-textarea`);
+            if (ta) ta.value = data.notas[id] || '';
+        });
+    }
+
+    if (data.custom && Array.isArray(data.custom)) {
+        data.custom.forEach(c => {
+            const notas = pag.querySelector('.roleplay-notas');
+            const tabId = c.id || ('custom-' + Date.now());
+            const tab = document.createElement('button');
+            tab.className = 'notas-tab';
+            tab.dataset.tabId = tabId;
+            tab.onclick = function() { notasCambiarTab(this); };
+            tab.innerHTML = `<input class="notas-tab-nombre-edit" type="text" value="${_esc(c.nombre)}"
+                onclick="event.stopPropagation()"
+                onchange="guardarDebounced()"
+                oninput="guardarDebounced()">
+                <button class="notas-tab-cerrar" onclick="notasBorrarTab(event,this)" title="Eliminar tab">×</button>`;
+            notas.querySelector('.notas-tabs-lista').appendChild(tab);
+
+            const panelEl = document.createElement('div');
+            panelEl.className = 'notas-panel';
+            panelEl.dataset.panelId = tabId;
+            panelEl.innerHTML = `<textarea class="notas-textarea" oninput="guardarDebounced()">${_esc(c.contenido)}</textarea>`;
+            notas.querySelector('.notas-paneles-custom').appendChild(panelEl);
+        });
+    }
+}

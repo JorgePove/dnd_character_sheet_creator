@@ -2021,7 +2021,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     font-size: 13px;
     font-weight: 600;
     color: #322659;
-    cursor: default;
+    cursor: pointer;
     position: relative;
 }
 .spell-entry-nombre:hover { color: #553c9a; text-decoration: underline dotted #805ad5; }
@@ -2640,13 +2640,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .notas-subpag-panel { display: none; flex: 1; flex-direction: column; }
 .notas-subpag-panel.activo { display: flex; }
 
-/* El notas-panel ahora es flex column para alojar barra + contenido */
-.notas-panel {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-}
-.notas-panel.activo { display: flex; }
+/* El notas-panel es flex column para alojar barra de sub-tabs + contenido */
 
 /* ═══════════════════════════════════════════════════════
    ACCIONES AUTO-GENERADAS
@@ -2736,15 +2730,12 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     min-height: 28px;
     outline: none;
     transition: border-color 0.15s, background 0.15s;
-    display: none; /* Solo visible al hacer hover o si tiene contenido */
+    display: none;
 }
 .auto-entrada:hover .auto-nota,
-.auto-nota:not(:placeholder-shown) { display: block; }
-.auto-nota:focus {
-    display: block;
-    border-color: #805ad5;
-    background: #fff;
-}
+.auto-nota.tiene-contenido,
+.auto-nota:focus { display: block; }
+.auto-nota:focus { border-color: #805ad5; background: #fff; }
 
 /* ═══════════════════════════════════════════════════════
    MULTICLASE WIDGET — CABECERA

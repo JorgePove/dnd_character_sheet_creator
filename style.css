@@ -2647,3 +2647,101 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     flex-direction: column;
 }
 .notas-panel.activo { display: flex; }
+
+/* ═══════════════════════════════════════════════════════
+   ACCIONES AUTO-GENERADAS
+═══════════════════════════════════════════════════════ */
+
+.auto-acciones-bloque {
+    margin-bottom: 12px;
+    border: 1.5px solid #e9d8fd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #faf5ff;
+}
+
+.auto-acciones-header {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    background: #e9d8fd;
+    font-size: 10px;
+    font-weight: 800;
+    color: #553c9a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    gap: 6px;
+}
+
+.auto-acciones-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Entrada auto individual */
+.auto-entrada {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e9d8fd;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: background 0.12s;
+}
+.auto-entrada:last-child { border-bottom: none; }
+.auto-entrada:hover { background: #f3e8ff; }
+
+.auto-entrada-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.auto-entrada-nombre {
+    font-size: 13px;
+    font-weight: 700;
+    color: #322659;
+    flex: 1;
+}
+
+.auto-entrada-origen {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #805ad5;
+    background: #e9d8fd;
+    border-radius: 4px;
+    padding: 1px 6px;
+    flex-shrink: 0;
+}
+
+.auto-entrada-desc {
+    font-size: 11px;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.auto-nota {
+    width: 100%;
+    border: 1px dashed #d6bcfa;
+    border-radius: 4px;
+    background: transparent;
+    padding: 4px 7px;
+    font-size: 11px;
+    color: #553c9a;
+    font-family: inherit;
+    resize: none;
+    min-height: 28px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    display: none; /* Solo visible al hacer hover o si tiene contenido */
+}
+.auto-entrada:hover .auto-nota,
+.auto-nota:not(:placeholder-shown) { display: block; }
+.auto-nota:focus {
+    display: block;
+    border-color: #805ad5;
+    background: #fff;
+}

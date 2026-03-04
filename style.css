@@ -917,7 +917,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 /* Grid: nombre | cant | descripción | equipado | sintonizado | borrar */
 .inventario-cabecera {
     display: grid;
-    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 50px 30px 20px;
+    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 30px 30px 20px;
     gap: 4px;
     padding: 2px 4px 5px;
     border-bottom: 1px solid #cbd5e0;
@@ -943,7 +943,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 
 .item-fila {
     display: grid;
-    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 50px 20px;
+    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 30px 30px 20px;
     gap: 4px;
     align-items: center;
     padding: 3px 4px;
@@ -2330,7 +2330,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .roleplay-textarea-historia {
     flex: 1;
     width: 100%;
-    min-height: 220px;
+    min-height: 440px;
     resize: none;
     border: 1px solid #cbd5e0;
     border-radius: 6px;
@@ -2349,7 +2349,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 /* Contenedor imagen */
 .apariencia-contenedor {
     flex: 1;
-    min-height: 220px;
+    min-height: 440px;
     border: 2px dashed #cbd5e0;
     border-radius: 8px;
     display: flex;
@@ -2408,7 +2408,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     display: flex;
     flex-direction: column;
     margin-bottom: 0;
-    min-height: 320px;
+    min-height: 640px;
 }
 .notas-tabs-barra {
     display: flex;
@@ -2475,7 +2475,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .notas-textarea {
     flex: 1;
     width: 100%;
-    min-height: 260px;
+    min-height: 520px;
     resize: none;
     border: 1px solid #cbd5e0;
     border-radius: 6px;

@@ -75,7 +75,31 @@ body > * { position: relative; z-index: 1; }
     line-height: 1; position: relative; bottom: -3px; flex-shrink: 0;
 }
 .btn-nueva-pestana:hover { background: #3182ce; color: #fff; border-color: #2b6cb0; }
-
+.barra-acciones-globales {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    align-items: center;
+    padding-bottom: 4px;
+}
+.btn-global {
+    padding: 5px 12px;
+    background: #2d3748;
+    color: #e2e8f0;
+    border: 2px solid #4a5568;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+}
+.btn-global:hover { background: #4a5568; border-color: #718096; }
+.btn-importar { cursor: pointer; }
 /* ===================================================
    CONTENEDOR FICHAS
 =================================================== */

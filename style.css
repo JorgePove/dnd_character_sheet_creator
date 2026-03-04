@@ -100,6 +100,69 @@ body > * { position: relative; z-index: 1; }
 }
 .btn-global:hover { background: #4a5568; border-color: #718096; }
 .btn-importar { cursor: pointer; }
+.btn-pdf { background: #44337a; border-color: #6b46c1; }
+.btn-pdf:hover { background: #553c9a; border-color: #805ad5; }
+
+/* ── Selector de armadura ── */
+.armadura-selector-wrap {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+.armadura-sel {
+    flex: 1;
+    font-size: 11px;
+    border: 1.5px solid #cbd5e0;
+    border-radius: 5px;
+    padding: 3px 5px;
+    background: #f7fafc;
+    color: #2d3748;
+    outline: none;
+    cursor: pointer;
+}
+.armadura-sel:focus { border-color: #4a5568; }
+.escudo-sel {
+    font-size: 11px;
+    border: 1.5px solid #cbd5e0;
+    border-radius: 5px;
+    padding: 3px 4px;
+    background: #f7fafc;
+    color: #2d3748;
+    outline: none;
+    cursor: pointer;
+    width: 95px;
+    flex-shrink: 0;
+}
+.escudo-sel:focus { border-color: #4a5568; }
+
+/* ── Tooltips de condiciones ── */
+.condicion-item { position: relative; }
+.condicion-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    background: #2d3748;
+    color: #e2e8f0;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.4;
+    padding: 6px 9px;
+    border-radius: 7px;
+    width: 210px;
+    z-index: 200;
+    pointer-events: none;
+    white-space: normal;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+.condicion-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 12px;
+    border: 5px solid transparent;
+    border-top-color: #2d3748;
+}
+.condicion-item:hover .condicion-tooltip { display: block; }
 /* ===================================================
    CONTENEDOR FICHAS
 =================================================== */

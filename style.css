@@ -529,7 +529,7 @@ label {
 .cabecera-vida { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .cabecera-vida > span { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #4a5568; letter-spacing: 0.4px; }
 .hp-inputs { display: flex; align-items: center; gap: 2px; }
-.hp-inputs input { width: 50px; font-size: 20px; font-weight: 700; border: none; border-bottom: 2px solid #cbd5e0; text-align: center; background: transparent; color: #1a202c; outline: none; padding: 0 2px; }
+.hp-inputs input { width: 62px; font-size: 20px; font-weight: 700; border: none; border-bottom: 2px solid #cbd5e0; text-align: center; background: transparent; color: #1a202c; outline: none; padding: 0 4px; }
 .hp-inputs input:focus { border-bottom-color: #4a5568; }
 .separador-hp { font-size: 18px; font-weight: 700; color: #a0aec0; padding: 0 2px; }
 .barra-vida-contenedor { height: 14px; background: #e2e8f0; border: 1px solid #a0aec0; border-radius: 7px; overflow: hidden; position: relative; margin-bottom: 10px; }
@@ -630,7 +630,7 @@ label {
     background: white;
     outline: none;
     cursor: pointer;
-    width: 52px;
+    width: 58px;
 }
 .dg-total {
     border: 1.5px solid var(--dg-borde);
@@ -642,13 +642,13 @@ label {
     background: white;
     outline: none;
     text-align: center;
-    width: 52px;
+    width: 58px;
 }
 /* Checkboxes — cuadrícula de 3 columnas */
 .dg-checks-contenedor {
     display: grid;
-    grid-template-columns: repeat(7, 20px);
-    grid-template-rows: repeat(3, 20px);
+    grid-template-columns: repeat(7, 15px);
+    grid-template-rows: repeat(3, 15px);
     grid-auto-flow: column;
     gap: 4px;
     align-content: start;
@@ -659,9 +659,9 @@ label {
 .dg-check-item input[type="checkbox"] {
     --chk: #3182ce;
     appearance: none; -webkit-appearance: none;
-    width: 20px; height: 20px;
+    width: 15px; height: 15px;
     border: 2px solid var(--chk);
-    border-radius: 4px;
+    border-radius: 3px;
     background: var(--chk);
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
@@ -672,7 +672,7 @@ label {
     content: "✔";
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%,-50%);
-    font-size: 10px; color: #fff; font-weight: 700; line-height: 1;
+    font-size: 8px; color: #fff; font-weight: 700; line-height: 1;
 }
 .dg-check-item input[type="checkbox"]:not(:checked) {
     background: #e2e8f0;
@@ -745,16 +745,16 @@ label {
 .condiciones-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 2px 6px;
+    gap: 1px 2px;
     width: 100%;
 }
 
 .condicion-item {
     display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 4px 6px;
-    border-radius: 5px;
+    gap: 4px;
+    padding: 2px 3px;
+    border-radius: 4px;
     cursor: pointer;
     transition: background 0.15s;
     user-select: none;
@@ -763,8 +763,8 @@ label {
 
 .condicion-chk {
     appearance: none; -webkit-appearance: none;
-    width: 14px; height: 14px; flex-shrink: 0;
-    border: 1.5px solid #a0aec0; border-radius: 3px;
+    width: 9px; height: 9px; flex-shrink: 0;
+    border: 1.5px solid #a0aec0; border-radius: 2px;
     background: #f7fafc; cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
     position: relative;
@@ -777,7 +777,7 @@ label {
     content: "✔";
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 9px; color: #fff; font-weight: 700; line-height: 1;
+    font-size: 6px; color: #fff; font-weight: 700; line-height: 1;
 }
 
 /* Fila activa (condición marcada): resaltar toda la fila */
@@ -787,21 +787,22 @@ label {
 }
 
 .condicion-nombre {
-    font-size: 12px; font-weight: 600; color: #2d3748;
+    font-size: 9px; font-weight: 600; color: #2d3748;
 }
 
 /* ===================================================
    AGOTAMIENTO
 =================================================== */
 .agotamiento-zona {
-    margin-top: 8px;
+    margin-top: 6px;
     border-top: 1px solid #e2e8f0;
-    padding-top: 6px;
+    padding-top: 5px;
 }
 .agotamiento-fila-principal {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 6px;
 }
 .agotamiento-titulo {
     font-size: 9px; font-weight: 700; text-transform: uppercase;
@@ -810,22 +811,23 @@ label {
     white-space: nowrap;
 }
 .agotamiento-bolitas {
-    display: flex;
-    justify-content: flex-start;
-    gap: 8px;
-    flex-wrap: wrap;
-    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    gap: 3px;
+    justify-content: end;
 }
 .agotamiento-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     cursor: pointer;
     position: relative;
 }
 .agotamiento-bolita {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 15px; height: 15px; border-radius: 50%;
     border: 2px solid #a0aec0;
     background: #f7fafc;
     cursor: pointer;
@@ -833,14 +835,14 @@ label {
     flex-shrink: 0;
     position: relative;
 }
-.agotamiento-bolita:hover { border-color: #718096; box-shadow: 0 0 5px rgba(0,0,0,0.15); }
+.agotamiento-bolita:hover { border-color: #718096; box-shadow: 0 0 4px rgba(0,0,0,0.15); }
 .agotamiento-bolita.activo {
     background: #fc8181;
     border-color: #c53030;
-    box-shadow: 0 0 8px rgba(229,62,62,0.55);
+    box-shadow: 0 0 6px rgba(229,62,62,0.55);
 }
 .agotamiento-num {
-    font-size: 8px; font-weight: 700; color: #718096;
+    font-size: 7px; font-weight: 700; color: #718096;
     line-height: 1;
 }
 .agotamiento-item:hover .agotamiento-tooltip {
@@ -931,6 +933,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .contenedor-items {
     flex: 1;
     min-height: 100px;
+    max-height: 220px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;

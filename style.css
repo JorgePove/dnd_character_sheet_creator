@@ -2523,3 +2523,127 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 /* Log: hechizo lanzado sin daño */
 .log-entrada.spell-lanzado { border-left-color: #4a5568; }
 .log-entrada.spell-lanzado strong { color: #b794f4; }
+
+/* ═══════════════════════════════════════════════════════
+   NOTAS — SUB-TABS (páginas dentro de cada tab)
+═══════════════════════════════════════════════════════ */
+
+/* Barra de sub-páginas */
+.notas-subpags-barra {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 6px 0;
+    background: #f0f4f8;
+    border-bottom: 1.5px solid #e2e8f0;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.notas-subpags-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    flex: 1;
+}
+
+/* Sub-tab individual */
+.notas-subpag-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px 3px 6px;
+    background: #e2e8f0;
+    border: 1.5px solid #cbd5e0;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    font-size: 11px;
+    color: #4a5568;
+    position: relative;
+    bottom: -1.5px;
+    transition: background 0.12s, border-color 0.12s;
+    user-select: none;
+}
+.notas-subpag-tab:hover { background: #cbd5e0; }
+.notas-subpag-tab.activo {
+    background: #fff;
+    border-color: #4a5568;
+    color: #1a202c;
+    font-weight: 700;
+    z-index: 2;
+}
+
+/* Input de nombre dentro de sub-tab */
+.notas-subpag-nombre {
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    font-weight: inherit;
+    color: inherit;
+    outline: none;
+    width: auto;
+    min-width: 30px;
+    max-width: 110px;
+    cursor: text;
+    padding: 0;
+    font-family: inherit;
+}
+
+/* Botón × borrar sub-tab */
+.notas-subpag-del {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #a0aec0;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: background 0.12s, color 0.12s;
+}
+.notas-subpag-del:hover { background: #e53e3e; color: #fff; border-radius: 50%; }
+/* Ocultar × si solo queda una página */
+.notas-subpags-lista:has(.notas-subpag-tab:only-child) .notas-subpag-del { opacity: 0.2; pointer-events: none; }
+
+/* Botón + añadir sub-página */
+.notas-subpag-add {
+    padding: 2px 8px;
+    background: transparent;
+    border: 1.5px dashed #a0aec0;
+    border-radius: 5px;
+    color: #718096;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+    transition: border-color 0.12s, color 0.12s;
+    flex-shrink: 0;
+}
+.notas-subpag-add:hover { border-color: #805ad5; color: #805ad5; }
+
+/* Contenedor de sub-paneles */
+.notas-subpags-contenido {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* Sub-panel individual */
+.notas-subpag-panel { display: none; flex: 1; flex-direction: column; }
+.notas-subpag-panel.activo { display: flex; }
+
+/* El notas-panel ahora es flex column para alojar barra + contenido */
+.notas-panel {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+}
+.notas-panel.activo { display: flex; }

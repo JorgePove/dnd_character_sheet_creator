@@ -917,7 +917,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 /* Grid: nombre | cant | descripción | equipado | sintonizado | borrar */
 .inventario-cabecera {
     display: grid;
-    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 30px 30px 20px;
+    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 50px 30px 20px;
     gap: 4px;
     padding: 2px 4px 5px;
     border-bottom: 1px solid #cbd5e0;
@@ -943,7 +943,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 
 .item-fila {
     display: grid;
-    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 30px 30px 20px;
+    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 50px 20px;
     gap: 4px;
     align-items: center;
     padding: 3px 4px;
@@ -2330,7 +2330,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .roleplay-textarea-historia {
     flex: 1;
     width: 100%;
-    min-height: 440px;
+    min-height: 220px;
     resize: none;
     border: 1px solid #cbd5e0;
     border-radius: 6px;
@@ -2349,7 +2349,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 /* Contenedor imagen */
 .apariencia-contenedor {
     flex: 1;
-    min-height: 440px;
+    min-height: 220px;
     border: 2px dashed #cbd5e0;
     border-radius: 8px;
     display: flex;
@@ -2408,7 +2408,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     display: flex;
     flex-direction: column;
     margin-bottom: 0;
-    min-height: 640px;
+    min-height: 320px;
 }
 .notas-tabs-barra {
     display: flex;
@@ -2475,7 +2475,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .notas-textarea {
     flex: 1;
     width: 100%;
-    min-height: 520px;
+    min-height: 260px;
     resize: none;
     border: 1px solid #cbd5e0;
     border-radius: 6px;
@@ -2490,3 +2490,36 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     box-sizing: border-box;
 }
 .notas-textarea:focus { border-color: #4a5568; background: #fff; }
+
+/* ═══════════════════════════════════════════════════════
+   SPELL ROLLING — LOG ENTRIES & CURSOR
+═══════════════════════════════════════════════════════ */
+
+/* Nombre clickeable del hechizo */
+.spell-entry-nombre.rollable-spell {
+    cursor: pointer;
+}
+.spell-entry-nombre.rollable-spell:hover {
+    color: #6b46c1;
+    text-decoration: underline dotted #805ad5;
+}
+.spell-entry-nombre.rollable-spell::after {
+    content: ' ⚄';
+    font-size: 10px;
+    color: #b794f4;
+    opacity: 0.7;
+}
+
+/* Log: hechizo con ataque (morado) */
+.log-entrada.spell-ataque { border-left-color: #805ad5; }
+.log-entrada.spell-ataque.critico { border-left-color: #d6bcfa; border-left-width: 5px; }
+
+/* Log: hechizo con salvación (amarillo) */
+.log-entrada.spell-salv { border-left-color: #d69e2e; }
+
+/* Log: hechizo solo daño */
+.log-entrada.spell-daño { border-left-color: #9f7aea; }
+
+/* Log: hechizo lanzado sin daño */
+.log-entrada.spell-lanzado { border-left-color: #4a5568; }
+.log-entrada.spell-lanzado strong { color: #b794f4; }

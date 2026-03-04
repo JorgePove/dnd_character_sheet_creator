@@ -106,11 +106,12 @@ body > * { position: relative; z-index: 1; }
 /* ── Selector de armadura ── */
 .armadura-selector-wrap {
     display: flex;
-    gap: 5px;
+    flex-direction: column;
+    gap: 4px;
     margin-bottom: 5px;
 }
 .armadura-sel {
-    flex: 1;
+    width: 100%;
     font-size: 11px;
     border: 1.5px solid #cbd5e0;
     border-radius: 5px;
@@ -119,9 +120,11 @@ body > * { position: relative; z-index: 1; }
     color: #2d3748;
     outline: none;
     cursor: pointer;
+    box-sizing: border-box;
 }
 .armadura-sel:focus { border-color: #4a5568; }
 .escudo-sel {
+    width: 100%;
     font-size: 11px;
     border: 1.5px solid #cbd5e0;
     border-radius: 5px;
@@ -130,8 +133,7 @@ body > * { position: relative; z-index: 1; }
     color: #2d3748;
     outline: none;
     cursor: pointer;
-    width: 95px;
-    flex-shrink: 0;
+    box-sizing: border-box;
 }
 .escudo-sel:focus { border-color: #4a5568; }
 
@@ -2109,27 +2111,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 }
 .spell-entry-nombre:hover { color: #553c9a; text-decoration: underline dotted #805ad5; }
 
-/* bolita de concentración */
-.spell-conc-btn {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid #81e6d9;
-    background: #e6fffa;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.15s, border-color 0.15s, box-shadow 0.2s;
-    outline: none;
-    title: "Concentración";
-}
-.spell-conc-btn.activo {
-    background: #2c7a7b;
-    border-color: #2c7a7b;
-    box-shadow: 0 0 6px 2px rgba(72,187,170,0.55);
-}
-.spell-conc-btn:hover:not(.activo) { background: #b2f5ea; }
-
-/* Etiqueta C de concentración (tooltip inline) */
+/* Tag "Concentración" inline en el nombre — visible si el hechizo lo requiere */
 .spell-entry-nombre-wrap {
     display: flex;
     align-items: center;
@@ -2139,15 +2121,26 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .spell-conc-tag {
     font-size: 9px;
     font-weight: 800;
-    color: #2c7a7b;
-    background: #e6fffa;
-    border: 1px solid #81e6d9;
+    color: #b7791f;
+    background: #fffff0;
+    border: 1px solid #f6e05e;
     border-radius: 3px;
     padding: 1px 4px;
-    display: none;
+    flex-shrink: 0;
+    white-space: nowrap;
+    pointer-events: none;
 }
-.spell-conc-btn.activo ~ .spell-conc-tag,
-.spell-entry:has(.spell-conc-btn.activo) .spell-conc-tag { display: inline; }
+
+/* Glow dorado palpitante cuando el jugador está concentrado en ese hechizo */
+.spell-entry.concentrando {
+    outline: 2px solid #d69e2e;
+    box-shadow: 0 0 8px 2px rgba(214,158,46,0.5);
+    animation: conc-glow 1.4s ease-in-out infinite;
+}
+@keyframes conc-glow {
+    0%, 100% { box-shadow: 0 0 5px 1px rgba(214,158,46,0.35); outline-color: #d69e2e; }
+    50%       { box-shadow: 0 0 14px 4px rgba(214,158,46,0.75); outline-color: #f6e05e; }
+}
 
 /* botón borrar hechizo */
 .btn-spell-del {

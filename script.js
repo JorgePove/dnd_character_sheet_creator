@@ -519,12 +519,26 @@ function añadirFilaInventario(contenedor) {
         <input type="text" placeholder="Nombre..." class="input-item" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
         <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()">
         <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
-        <input type="checkbox" title="Equipado" onchange="guardarDebounced()">
+        <input type="checkbox" class="chk-equipado" title="Equipado" onchange="guardarDebounced()">
+        <input type="checkbox" class="chk-sintonizado" title="Sintonizado" onchange="validarSintonizados(this);guardarDebounced()">
         <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>
     `;
     contenedor.appendChild(div);
     div.querySelector('.input-item').focus();
     contenedor.scrollTop = contenedor.scrollHeight;
+}
+
+function validarSintonizados(chk) {
+    const panel = getPanel(chk);
+    const todos = panel.querySelectorAll('.chk-sintonizado:checked');
+    if (todos.length > 3) {
+        chk.checked = false;
+        // Feedback visual breve
+        const fila = chk.closest('.item-fila');
+        fila.style.outline = '2px solid #e53e3e';
+        fila.title = 'Máximo 3 objetos sintonizados';
+        setTimeout(() => { fila.style.outline = ''; fila.title = ''; }, 1200);
+    }
 }
 
 function borrarItemInventario(btn) {
@@ -837,7 +851,13 @@ function leerFicha(panel) {
     d.items = [];
     panel.querySelectorAll('.item-fila').forEach(fila => {
         const ins = fila.querySelectorAll('input');
-        d.items.push({ nombre: ins[0]?.value||'', cant: ins[1]?.value||'', desc: ins[2]?.value||'', equip: ins[3]?.checked||false });
+        d.items.push({
+            nombre: ins[0]?.value||'',
+            cant:   ins[1]?.value||'',
+            desc:   ins[2]?.value||'',
+            equip:  fila.querySelector('.chk-equipado')?.checked||false,
+            sint:   fila.querySelector('.chk-sintonizado')?.checked||false
+        });
     });
 
     // Sentidos

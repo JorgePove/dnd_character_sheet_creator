@@ -1041,6 +1041,85 @@
 
     </div><!-- fin cuarta-pagina -->
 
+    <!-- ═══════════════════════════════════════════════════════
+     QUINTA PÁGINA: ROLEPLAY
+    ═══════════════════════════════════════════════════════ -->
+    <div class="segunda-pagina quinta-pagina">
+    
+        <!-- FILA SUPERIOR: Apariencia + Historia -->
+        <div class="roleplay-fila-superior">
+    
+            <!-- APARIENCIA -->
+            <div class="seccion-caja roleplay-apariencia">
+                <h3 class="titulo-caja">Apariencia</h3>
+                <div class="apariencia-contenedor"
+                     ondragover="event.preventDefault()"
+                     ondrop="roleplayDropImagen(event,this)">
+                    <img class="apariencia-img" style="display:none" alt="Personaje">
+                    <div class="apariencia-placeholder">
+                        <span class="apariencia-icono">🧙</span>
+                        <span class="apariencia-texto">Arrastra una imagen<br>o haz clic para subir</span>
+                    </div>
+                    <label class="apariencia-label-upload">
+                        <input type="file" accept="image/*" onchange="roleplayCargarImagen(event,this)" style="display:none">
+                    </label>
+                    <button class="apariencia-btn-borrar" onclick="roleplayBorrarImagen(this)" title="Quitar imagen" style="display:none">×</button>
+                </div>
+            </div>
+    
+            <!-- HISTORIA -->
+            <div class="seccion-caja roleplay-historia">
+                <h3 class="titulo-caja">Historia del Personaje</h3>
+                <textarea class="roleplay-textarea-historia"
+                          placeholder="Escribe aquí la historia de tu personaje: sus orígenes, motivaciones, secretos, aventuras pasadas..."
+                          oninput="guardarDebounced()"></textarea>
+            </div>
+    
+        </div>
+    
+        <!-- NOTAS CON TABS -->
+        <div class="seccion-caja roleplay-notas">
+            <h3 class="titulo-caja">Notas</h3>
+    
+            <!-- Barra de tabs -->
+            <div class="notas-tabs-barra">
+                <div class="notas-tabs-lista">
+                    <button class="notas-tab activo" data-tab-id="diario" onclick="notasCambiarTab(this)">Diario</button>
+                    <button class="notas-tab" data-tab-id="personas" onclick="notasCambiarTab(this)">Personas</button>
+                    <button class="notas-tab" data-tab-id="lugares" onclick="notasCambiarTab(this)">Lugares</button>
+                    <button class="notas-tab" data-tab-id="objetos" onclick="notasCambiarTab(this)">Objetos</button>
+                    <button class="notas-tab" data-tab-id="sucesos" onclick="notasCambiarTab(this)">Sucesos</button>
+                    <button class="notas-tab" data-tab-id="pistas" onclick="notasCambiarTab(this)">Pistas</button>
+                </div>
+                <button class="notas-tab-add" onclick="notasAñadirTab(this)" title="Añadir pestaña personalizada">＋</button>
+            </div>
+    
+            <!-- Paneles de tabs fijos -->
+            <div class="notas-panel activo" data-panel-id="diario">
+                <textarea class="notas-textarea" placeholder="Tu diario de aventuras..." oninput="guardarDebounced()"></textarea>
+            </div>
+            <div class="notas-panel" data-panel-id="personas">
+                <textarea class="notas-textarea" placeholder="NPCs, aliados, enemigos que has conocido..." oninput="guardarDebounced()"></textarea>
+            </div>
+            <div class="notas-panel" data-panel-id="lugares">
+                <textarea class="notas-textarea" placeholder="Ciudades, mazmorras, tabernas, lugares importantes..." oninput="guardarDebounced()"></textarea>
+            </div>
+            <div class="notas-panel" data-panel-id="objetos">
+                <textarea class="notas-textarea" placeholder="Objetos especiales, misiones pendientes, recompensas..." oninput="guardarDebounced()"></textarea>
+            </div>
+            <div class="notas-panel" data-panel-id="sucesos">
+                <textarea class="notas-textarea" placeholder="Eventos importantes, batallas, decisiones clave..." oninput="guardarDebounced()"></textarea>
+            </div>
+            <div class="notas-panel" data-panel-id="pistas">
+                <textarea class="notas-textarea" placeholder="Pistas, misterios sin resolver, rumores, teorías..." oninput="guardarDebounced()"></textarea>
+            </div>
+            <!-- Los tabs personalizados se insertan aquí dinámicamente -->
+            <div class="notas-paneles-custom"></div>
+    
+        </div>
+    
+    </div><!-- fin quinta-pagina -->
+
     <!-- MODAL DE CONFIRMACIÓN DE BORRADO -->
     <div class="modal-overlay" style="display:none">
         <div class="modal-caja">

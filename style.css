@@ -2273,3 +2273,195 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 .dados-tirar-btn:active { filter: brightness(0.9);  transform: translateY(0); }
 .log-entrada.dados-custom .res span { color: #b794f4; }
 .log-entrada.dados-custom strong    { color: #d6bcfa; }
+
+/* ===================================================
+   QUINTA PÁGINA — ROLEPLAY
+=================================================== */
+.quinta-pagina {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Fila superior: Apariencia + Historia */
+.roleplay-fila-superior {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 18px;
+    margin-bottom: 18px;
+    width: 100%;
+    align-items: stretch;
+}
+.roleplay-apariencia {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+.roleplay-historia {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+.roleplay-textarea-historia {
+    flex: 1;
+    width: 100%;
+    min-height: 220px;
+    resize: none;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #2d3748;
+    background: #f7fafc;
+    outline: none;
+    line-height: 1.6;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+.roleplay-textarea-historia:focus { border-color: #4a5568; background: #fff; }
+
+/* Contenedor imagen */
+.apariencia-contenedor {
+    flex: 1;
+    min-height: 220px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: #f7fafc;
+    transition: border-color 0.2s, background 0.2s;
+}
+.apariencia-contenedor:hover { border-color: #a0aec0; background: #edf2f7; }
+.apariencia-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+}
+.apariencia-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+.apariencia-icono { font-size: 40px; line-height: 1; }
+.apariencia-texto { font-size: 11px; color: #a0aec0; text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.apariencia-label-upload {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    display: block;
+}
+.apariencia-btn-borrar {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(45,55,72,0.75);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+    line-height: 1;
+    transition: background 0.15s;
+}
+.apariencia-btn-borrar:hover { background: #e53e3e; }
+
+/* Notas con tabs */
+.roleplay-notas {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    min-height: 320px;
+}
+.notas-tabs-barra {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.notas-tabs-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    flex: 1;
+}
+.notas-tab {
+    padding: 5px 12px;
+    border: 1.5px solid #cbd5e0;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: #f0f4f8;
+    color: #718096;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    position: relative;
+    bottom: -2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+.notas-tab:hover { background: #e2e8f0; color: #2d3748; }
+.notas-tab.activo { background: #fff; color: #1a202c; border-color: #2d3748; font-weight: 700; z-index: 2; }
+.notas-tab .notas-tab-cerrar {
+    width: 14px; height: 14px; border-radius: 50%; border: none;
+    background: transparent; color: #a0aec0; font-size: 11px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    padding: 0; line-height: 1; transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+.notas-tab .notas-tab-cerrar:hover { background: #e53e3e; color: #fff; }
+.notas-tab-nombre-edit {
+    border: none; background: transparent; font-size: 12px; font-weight: 700;
+    color: inherit; outline: none; width: auto; min-width: 20px; max-width: 120px;
+    cursor: text; padding: 0;
+}
+.notas-tab-add {
+    padding: 4px 9px;
+    border: 1.5px dashed #cbd5e0;
+    border-radius: 6px;
+    background: transparent;
+    color: #a0aec0;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+.notas-tab-add:hover { border-color: #3182ce; color: #3182ce; }
+.notas-panel { display: none; flex: 1; flex-direction: column; }
+.notas-panel.activo { display: flex; }
+.notas-textarea {
+    flex: 1;
+    width: 100%;
+    min-height: 260px;
+    resize: none;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #2d3748;
+    background: #f7fafc;
+    outline: none;
+    line-height: 1.6;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+.notas-textarea:focus { border-color: #4a5568; background: #fff; }

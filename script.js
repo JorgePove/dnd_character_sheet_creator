@@ -912,6 +912,8 @@ function leerFicha(panel) {
         tfPrevBonos:     panel.querySelector('.trasfondo-personalizado')?.dataset.prevBonos || '',
     };
 
+    d.roleplay = leerRoleplay(panel);
+
     return d;
 }
 
@@ -1183,6 +1185,8 @@ function cargarDatosEnPanel(panel, d) {
 
     // Recalcular todo al final
     actualizarTodoPanel(panel);
+
+    cargarRoleplay(panel, d.roleplay);
 }
 
 

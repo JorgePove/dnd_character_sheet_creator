@@ -2827,3 +2827,47 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     font-family: inherit;
 }
 .multiclase-add-btn:hover { border-color: #4a5568; color: #2d3748; }
+
+/* ═══════════════════════════════════════════════════════
+   HP MÁXIMO AUTO-CALCULADO
+═══════════════════════════════════════════════════════ */
+
+.hp-max-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+}
+
+.hp-auto-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #805ad5;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+    margin-top: 2px;
+    opacity: 0.8;
+}
+
+.hp-auto-btn {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid #cbd5e0;
+    background: #fff;
+    color: #718096;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: border-color 0.15s, color 0.15s;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.hp-auto-btn:hover {
+    border-color: #805ad5;
+    color: #805ad5;
+}

@@ -175,7 +175,8 @@ function actualizarTodoPanel(panel) {
     const bonusInv  = parseInt(panel.querySelector('.fila-investigacion .mod-valor').innerText) || 0;
     panel.querySelector('.investigacion-pasiva').innerText = 10 + bonusInv;
 
-    actualizarVidaPanel(panel.querySelector('.hp-actual'));
+    const hpActualEl = panel.querySelector('.hp-actual');
+    if (hpActualEl) actualizarVidaPanel(hpActualEl);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -861,9 +862,6 @@ function leerFicha(panel) {
         total:  g.querySelector('.dg-total')?.value || '0',
         checks: Array.from(g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]')).map(c => c.checked)
     }));
-    d.dgTotal  = d.dgGrupos[0]?.total  || '0'; // compat legacy
-    d.dgTipo   = d.dgGrupos[0]?.tipo   || 'd8';
-    d.dgChecks = d.dgGrupos[0]?.checks || [];
 
     // Salvaciones de muerte
     d.exitosMuerte = Array.from(panel.querySelectorAll('.circulos-exito .circulo-muerte')).map(c => c.classList.contains('activo'));
@@ -1720,7 +1718,10 @@ cargarDatosEnPanel = function(panel, d) {
     cargarSpellcasting(panel, d);
 };
 
-// recalcSpellcasting se llama ya desde actualizarTodoPanel (ver patch abajo)
+// recalcSpellcasting ya se llama al final de cargarSpellcasting y desde los eventos oninput.
+// El patch de actualizarTodoPanel lo añade para cubrir cambios de stats/PB que afectan DC y ataque.
+// La llamada al final de cargarSpellcasting es suficiente en ese contexto, así que el patch
+// solo añade cobertura para recálculos de stats — sin duplicación real en flujo normal.
 
 // Sobreescribir actualizarTodoPanel para recalcular spell stats
 const _actualizarTodoPanelOrig = actualizarTodoPanel;
@@ -1731,75 +1732,77 @@ actualizarTodoPanel = function(panel) {
 
 /* WIDGET DADOS */
 function toggleDadosWidget() {
-    var w = document.getElementById('dados-widget');
+    const w = document.getElementById('dados-widget');
     if (!w) return;
-    var min = w.classList.toggle('is-min');
+    const min = w.classList.toggle('is-min');
     try { localStorage.setItem('dnd_dados_min', min ? '1' : '0'); } catch(e) {}
 }
-function dadosInitWidget(){
-    var c=document.getElementById('dados-filas');
-    if(!c||c.children.length>0)return;
+function dadosInitWidget() {
+    const c = document.getElementById('dados-filas');
+    if (!c || c.children.length > 0) return;
     dadosAddFila(true);
     try {
         if (localStorage.getItem('dnd_dados_min') === '1') {
-            var w = document.getElementById('dados-widget');
+            const w = document.getElementById('dados-widget');
             if (w) w.classList.add('is-min');
         }
     } catch(e) {}
 }
-function dadosAddFila(primera){
-    var c=document.getElementById('dados-filas');
-    if(!c)return;
-    var idx=c.children.length;
-    var fila=document.createElement('div');
-    fila.className='dados-fila';
-    var h='<label>'+(idx+1)+'.</label>';
-    h+='<select class="dados-tipo">';
-    h+='<option value="4">d4</option>';
-    h+='<option value="6">d6</option>';
-    h+='<option value="8">d8</option>';
-    h+='<option value="10">d10</option>';
-    h+='<option value="12">d12</option>';
-    h+='<option value="20" selected>d20</option>';
-    h+='<option value="100">d%</option>';
-    h+='</select>';
-    h+='<input type="number" class="dados-num" value="1" min="1" max="20">';
-    h+='<span class="dados-bono-label">+</span>';
-    h+='<input type="number" class="dados-bono" value="0" min="-99" max="99">';
-    if(!primera)h+='<button class="dados-del-btn" onclick="dadosDelFila(this)">×</button>';
-    fila.innerHTML=h;
+function dadosAddFila(primera) {
+    const c = document.getElementById('dados-filas');
+    if (!c) return;
+    const idx = c.children.length;
+    const fila = document.createElement('div');
+    fila.className = 'dados-fila';
+    let h = `<label>${idx + 1}.</label>`;
+    h += '<select class="dados-tipo">';
+    h += '<option value="4">d4</option>';
+    h += '<option value="6">d6</option>';
+    h += '<option value="8">d8</option>';
+    h += '<option value="10">d10</option>';
+    h += '<option value="12">d12</option>';
+    h += '<option value="20" selected>d20</option>';
+    h += '<option value="100">d%</option>';
+    h += '</select>';
+    h += '<input type="number" class="dados-num" value="1" min="1" max="20">';
+    h += '<span class="dados-bono-label">+</span>';
+    h += '<input type="number" class="dados-bono" value="0" min="-99" max="99">';
+    if (!primera) h += '<button class="dados-del-btn" onclick="dadosDelFila(this)">\u00d7</button>';
+    fila.innerHTML = h;
     c.appendChild(fila);
     _dadosRenumerar();
 }
-function dadosDelFila(btn){
+function dadosDelFila(btn) {
     btn.closest('.dados-fila').remove();
     _dadosRenumerar();
 }
-function _dadosRenumerar(){
-    var fs=document.querySelectorAll('#dados-filas .dados-fila');
-    for(var i=0;i<fs.length;i++){var l=fs[i].querySelector('label');if(l)l.textContent=(i+1)+'.';}
+function _dadosRenumerar() {
+    document.querySelectorAll('#dados-filas .dados-fila').forEach((f, i) => {
+        const l = f.querySelector('label');
+        if (l) l.textContent = (i + 1) + '.';
+    });
 }
-function dadosRealizarTirada(){
-    var fs=document.querySelectorAll('#dados-filas .dados-fila');
-    if(!fs.length)return;
-    var total=0,partes=[];
-    for(var i=0;i<fs.length;i++){
-        var caras=parseInt(fs[i].querySelector('.dados-tipo').value)||20;
-        var num=Math.max(1,Math.min(20,parseInt(fs[i].querySelector('.dados-num').value)||1));
-        var bonus=parseInt(fs[i].querySelector('.dados-bono').value)||0;
-        var rolls=[];
-        for(var r=0;r<num;r++)rolls.push(Math.floor(Math.random()*caras)+1);
-        var sd=rolls.reduce(function(a,b){return a+b;},0);
-        total+=sd+bonus;
-        var p=num+'d'+caras+' ['+rolls.join(', ')+']';
-        if(bonus>0)p+='+'+bonus;else if(bonus<0)p+=bonus;
+function dadosRealizarTirada() {
+    const filas = document.querySelectorAll('#dados-filas .dados-fila');
+    if (!filas.length) return;
+    let total = 0;
+    const partes = [];
+    filas.forEach(fila => {
+        const caras  = parseInt(fila.querySelector('.dados-tipo').value) || 20;
+        const num    = Math.max(1, Math.min(20, parseInt(fila.querySelector('.dados-num').value) || 1));
+        const bonus  = parseInt(fila.querySelector('.dados-bono').value) || 0;
+        const rolls  = Array.from({ length: num }, () => Math.floor(Math.random() * caras) + 1);
+        const sd     = rolls.reduce((a, b) => a + b, 0);
+        total += sd + bonus;
+        let p = `${num}d${caras} [${rolls.join(', ')}]`;
+        if (bonus > 0) p += `+${bonus}`; else if (bonus < 0) p += bonus;
         partes.push(p);
-    }
-    var log=document.getElementById('log-lista');
-    if(!log)return;
-    var div=document.createElement('div');
-    div.className='log-entrada dados-custom';
-    div.innerHTML='<strong>🎲 Tirada personalizada</strong><div class="res"><span>'+total+'</span><small>'+partes.join(' + ')+'</small></div>';
+    });
+    const log = document.getElementById('log-lista');
+    if (!log) return;
+    const div = document.createElement('div');
+    div.className = 'log-entrada dados-custom';
+    div.innerHTML = `<strong>🎲 Tirada personalizada</strong><div class="res"><span>${total}</span><small>${partes.join(' + ')}</small></div>`;
     log.prepend(div);
 }
 dadosInitWidget(); // Script al final de <body>: DOM ya listo
@@ -2339,14 +2342,10 @@ function _sincronizarSpellCounts(fichaPanel, mcs) {
     const counts = fichaPanel.querySelectorAll('.spell-count-input');
     if (counts.length < 2) return;
 
-    // Stat mod del lanzador principal
+    // Stat mod del lanzador principal (spell-stat-sel ya devuelve 'int','wis','cha', etc.)
     const spellStatSel = fichaPanel.querySelector('.spell-stat-sel');
-    const statKey = spellStatSel?.value || 'INT';
-    const statMap = { STR:'str', DEX:'dex', CON:'con', INT:'int', WIS:'wis', CHA:'cha',
-                      FUE:'str', DES:'dex', SAB:'wis', CAR:'cha',
-                      SABIDURÍA:'wis', INTELIGENCIA:'int', CARISMA:'cha',
-                      FUERZA:'str', DESTREZA:'dex', CONSTITUCIÓN:'con' };
-    const statEl = fichaPanel.querySelector(`.stat-score[data-stat="${statMap[statKey] || 'int'}"]`);
+    const statKey = spellStatSel?.value || 'int';
+    const statEl = fichaPanel.querySelector(`.stat-score[data-stat="${statKey}"]`);
     const statVal = parseInt(statEl?.value) || 10;
     const mod = Math.floor((statVal - 10) / 2);
 
@@ -3286,13 +3285,15 @@ leerFicha = function(panel) {
 const _cargarDatosOrig2 = cargarDatosEnPanel;
 cargarDatosEnPanel = function(panel, d) {
     _cargarDatosOrig2(panel, d);
-    if (d.armaduraSel !== undefined) {
-        const armSel = panel.querySelector('.armadura-sel');
-        if (armSel) armSel.value = d.armaduraSel;
-    }
-    if (d.escudoSel !== undefined) {
-        const escSel = panel.querySelector('.escudo-sel');
-        if (escSel) escSel.value = d.escudoSel;
+    const armSel = panel.querySelector('.armadura-sel');
+    const escSel = panel.querySelector('.escudo-sel');
+    if (armSel && d.armaduraSel !== undefined) armSel.value = d.armaduraSel;
+    if (escSel && d.escudoSel   !== undefined) escSel.value = d.escudoSel;
+    // Recalcular CA automática y luego restaurar el valor guardado manualmente
+    if (d.armaduraSel && armSel) onArmaduraChange(armSel);
+    if (d.ca) {
+        const caInput = panel.querySelector('.csi-input');
+        if (caInput) caInput.value = d.ca;
     }
 };
 
@@ -3312,11 +3313,17 @@ function _getHechizoConcActivo(panel) {
     return activo;
 }
 
-/* Comprueba si un hechizo es de concentración según su campo duration */
-function _esConcentracion(sp) {
-    if (!sp) return false;
-    return /concentración|concentration/i.test(sp.duration || '') ||
-           /concentración|concentration/i.test(sp.desc || '');
+/* Comprueba si un hechizo es de concentración según sus datos O si tiene el botón C marcado */
+function _esConcentracion(sp, panel) {
+    // Primero: comprobar datos del hechizo
+    if (sp && (/concentración|concentration/i.test(sp.duration || '') ||
+               /concentración|concentration/i.test(sp.desc || ''))) return true;
+    // Segundo: si el panel existe, comprobar si la entry del hechizo tiene C activo
+    if (panel && sp) {
+        const entry = panel.querySelector(`.spell-entry[data-spell-id="${sp.id}"]`);
+        if (entry && entry.querySelector('.spell-conc-btn')?.classList.contains('activo')) return true;
+    }
+    return false;
 }
 
 /* Modal de alerta de concentración — devuelve Promise<bool> */
@@ -3376,7 +3383,7 @@ function _modalConcentracion(nombreActivo, nombreNuevo) {
 const _tirarHechizOrig = tirarHechizo;
 tirarHechizo = async function(sp, panel) {
     // Solo actuar si el hechizo nuevo es de concentración
-    if (_esConcentracion(sp)) {
+    if (_esConcentracion(sp, panel)) {
         const entradaActiva = _getHechizoConcActivo(panel);
         if (entradaActiva) {
             const nombreActivo = entradaActiva.querySelector('.spell-entry-nombre')?.textContent || '?';
@@ -3428,7 +3435,6 @@ function _initTooltipsCondiciones(panel) {
         const tt = document.createElement('div');
         tt.className = 'condicion-tooltip';
         tt.textContent = texto;
-        item.style.position = 'relative';
         item.appendChild(tt);
     });
 }

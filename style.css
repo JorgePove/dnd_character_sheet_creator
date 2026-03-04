@@ -2745,3 +2745,94 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
     border-color: #805ad5;
     background: #fff;
 }
+
+/* ═══════════════════════════════════════════════════════
+   MULTICLASE WIDGET — CABECERA
+═══════════════════════════════════════════════════════ */
+
+.campo-multiclase {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+}
+
+.multiclase-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.multiclase-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.multiclase-fila {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.multiclase-sel {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2d3748;
+    border: none;
+    border-bottom: 1.5px solid #cbd5e0;
+    background: transparent;
+    outline: none;
+    padding: 2px 2px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+.multiclase-sel:focus { border-bottom-color: #4a5568; }
+
+.multiclase-nivel {
+    width: 64px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2d3748;
+    border: none;
+    border-bottom: 1.5px solid #cbd5e0;
+    background: transparent;
+    outline: none;
+    padding: 2px 2px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+.multiclase-nivel:focus { border-bottom-color: #4a5568; }
+
+.multiclase-del {
+    width: 18px; height: 18px;
+    border: none; background: transparent;
+    color: #cbd5e0; font-size: 14px;
+    cursor: pointer; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s; padding: 0; line-height: 1; flex-shrink: 0;
+}
+.multiclase-del:hover { color: #e53e3e; }
+/* Hide del button when only one row */
+.multiclase-lista:has(.multiclase-fila:only-child) .multiclase-del {
+    opacity: 0.2; pointer-events: none;
+}
+
+.multiclase-add-btn {
+    align-self: flex-start;
+    font-size: 11px;
+    font-weight: 700;
+    color: #718096;
+    background: transparent;
+    border: 1.5px dashed #cbd5e0;
+    border-radius: 5px;
+    padding: 2px 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    font-family: inherit;
+}
+.multiclase-add-btn:hover { border-color: #4a5568; color: #2d3748; }

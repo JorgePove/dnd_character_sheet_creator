@@ -127,6 +127,7 @@ function actualizarAtributo(input) {
         iniEl.value = mod + bonus;
     }
     actualizarTodoPanel(panel);
+    if (stat === 'con') calcularHPMaxAuto(panel);
     guardarDebounced();
 }
 
@@ -842,6 +843,7 @@ function leerFicha(panel) {
     d.hpActual = panel.querySelector('.hp-actual')?.value   || '10';
     d.hpMax    = panel.querySelector('.hp-max')?.value      || '10';
     d.hpTemp   = panel.querySelector('.hp-temp-val')?.value || '0';
+    d.hpAuto   = panel.querySelector('.hp-max')?.dataset.hpAuto !== 'false';
 
     // Resistencias (3 textareas separadas)
     const resTas = panel.querySelectorAll('.res-textarea');
@@ -1022,6 +1024,13 @@ function cargarDatosEnPanel(panel, d) {
     if (d.hpActual) panel.querySelector('.hp-actual').value    = d.hpActual;
     if (d.hpMax)    panel.querySelector('.hp-max').value       = d.hpMax;
     if (d.hpTemp)   panel.querySelector('.hp-temp-val').value  = d.hpTemp;
+    // Restaurar flag auto (por defecto true si no hay dato guardado)
+    const hpMaxEl = panel.querySelector('.hp-max');
+    if (hpMaxEl) {
+        const esAuto = d.hpAuto !== false;
+        hpMaxEl.dataset.hpAuto = esAuto ? 'true' : 'false';
+        _hpAutoLabelVisible(panel, esAuto);
+    }
 
     // Resistencias (3 textareas separadas)
     const resTasLoad = panel.querySelectorAll('.res-textarea');
@@ -2141,10 +2150,104 @@ function multiclaseActualizar(fichaPanel) {
     // 5. Aprendidos y Preparados
     _sincronizarSpellCounts(fichaPanel, mcs);
 
-    // 6. Regenerar acciones auto
+    // 6. HP máximo automático
+    calcularHPMaxAuto(fichaPanel);
+
+    // 7. Regenerar acciones auto
     setTimeout(() => regenerarAccionesAuto(fichaPanel), 50);
 
     guardarDebounced();
+}
+
+/* ═══════════════════════════════════════════════════════
+   HP MÁXIMO AUTO-CALCULADO
+═══════════════════════════════════════════════════════ */
+
+/* Valor medio de un dado (redondeado arriba, fórmula oficial):
+   d6→4, d8→5, d10→6, d12→7 */
+function _avgDado(diceStr) {
+    const faces = parseInt(diceStr.replace('d','')) || 8;
+    return Math.ceil((faces + 1) / 2);
+}
+function _maxDado(diceStr) {
+    return parseInt(diceStr.replace('d','')) || 8;
+}
+
+/* Calcula el HP máximo según las reglas PHB 2024:
+   - Nivel 1 (primera clase, primer nivel): máximo del dado + mod CON
+   - Cada nivel adicional: average del dado + mod CON
+   - Multiclase: orden de entrada no importa para el cálculo total */
+function calcularHPMax(mcs, conMod) {
+    if (!mcs || !mcs.length) return 0;
+    let total = 0;
+    let primerNivel = true;
+
+    mcs.forEach(mc => {
+        const data = _getClaseData(mc.clase);
+        const nv   = parseInt(mc.nivel) || 0;
+        if (nv <= 0) return;
+        const dado = data.diceHit || 'd8';
+
+        for (let i = 0; i < nv; i++) {
+            if (primerNivel) {
+                total += _maxDado(dado) + conMod;
+                primerNivel = false;
+            } else {
+                total += _avgDado(dado) + conMod;
+            }
+        }
+    });
+
+    return Math.max(total, 1);
+}
+
+/* Lee mod CON del panel */
+function _getConMod(fichaPanel) {
+    const conScore = parseInt(fichaPanel.querySelector('.stat-score[data-stat="con"]')?.value) || 10;
+    return Math.floor((conScore - 10) / 2);
+}
+
+/* Aplica el HP calculado al input si el auto está activado */
+function calcularHPMaxAuto(fichaPanel) {
+    const hpMaxInput = fichaPanel.querySelector('.hp-max');
+    if (!hpMaxInput) return;
+    if (hpMaxInput.dataset.hpAuto !== 'true') return; // manual override activo
+
+    const mcs = leerMulticlases(fichaPanel).filter(mc => mc.clase);
+    if (!mcs.length) return;
+
+    const conMod = _getConMod(fichaPanel);
+    const nuevo  = calcularHPMax(mcs, conMod);
+
+    hpMaxInput.value = nuevo;
+    _hpAutoLabelVisible(fichaPanel, true);
+    actualizarVidaPanel(hpMaxInput);
+}
+
+/* Muestra/oculta el label "calculado automáticamente" y el botón ⟳ */
+function _hpAutoLabelVisible(fichaPanel, esAuto) {
+    const label  = fichaPanel.querySelector('.hp-auto-label');
+    const btnRst = fichaPanel.querySelector('.hp-auto-btn');
+    if (label)  label.style.display  = esAuto ? '' : 'none';
+    if (btnRst) btnRst.style.display = esAuto ? 'none' : '';
+}
+
+/* Llamado cuando el jugador edita hp-max manualmente */
+function onHpMaxEdita(input) {
+    input.dataset.hpAuto = 'false';
+    const fichaPanel = getPanel(input);
+    _hpAutoLabelVisible(fichaPanel, false);
+    actualizarVidaPanel(input);
+    guardarDebounced();
+}
+
+/* Botón ⟳ — reactiva el cálculo automático */
+function hpReactivarAuto(btn) {
+    const fichaPanel = getPanel(btn);
+    const hpMaxInput = fichaPanel.querySelector('.hp-max');
+    if (!hpMaxInput) return;
+    hpMaxInput.dataset.hpAuto = 'true';
+    calcularHPMaxAuto(fichaPanel);
 }
 
 /* ── Sincronizar dados de golpe ── */

@@ -1532,9 +1532,9 @@ function _renderSpellEntry(lista, sp) {
                 // Apagar glow del anterior
                 otroConcentrando.classList.remove('concentrando');
             }
-            // Lanzar hechizo y activar glow
-            await tirarHechizo(sp, panel);
-            entry.classList.add('concentrando');
+            // Lanzar hechizo y activar glow SOLO si no se canceló el modal
+            const lanzado = await tirarHechizo(sp, panel);
+            if (lanzado !== false) entry.classList.add('concentrando');
         } else {
             tirarHechizo(sp, panel);
         }
@@ -2885,7 +2885,7 @@ async function tirarHechizo(sp, panel) {
             {label:'1-4', value:1}, {label:'5-10', value:5},
             {label:'11-16', value:11}, {label:'17-20', value:17}
         ]);
-        if (res === null) return;
+        if (res === null) return false;
         nivelPersonaje = res;
     } else {
         // Nivel base del hechizo (extraer número)
@@ -2896,7 +2896,7 @@ async function tirarHechizo(sp, panel) {
             opts.push({ label: `Nivel ${i}`, value: i });
         }
         const res = await _modalNivel(`¿A qué nivel lanzar ${sp.n}?`, opts);
-        if (res === null) return;
+        if (res === null) return false;
         nivelLanzado = res;
         const nivelBase2 = nivelBase; // alias para escalado
 
@@ -3321,11 +3321,13 @@ function _getHechizoConcActivo(panel) {
     return panel.querySelector('.spell-entry.concentrando') || null;
 }
 
-/* Comprueba si un hechizo requiere concentración según sus datos */
+/* Comprueba si un hechizo requiere concentración según sus datos.
+   Normaliza tildes para cubrir variantes de escritura en hechizos.js */
 function _esConcentracion(sp) {
     if (!sp) return false;
-    return /concentración|concentration/i.test(sp.duration || '') ||
-           /concentración|concentration/i.test(sp.desc || '');
+    const _norm = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const hayConc = str => /concentraci.n|concentration|conc\b/i.test(_norm(str));
+    return hayConc(sp.duration) || hayConc(sp.desc) || hayConc(sp.extra) || hayConc(sp.components);
 }
 
 /* Modal de alerta de concentración — devuelve Promise<bool> */

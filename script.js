@@ -1681,3 +1681,48 @@ function dadosRealizarTirada(){
     log.prepend(div);
 }
 dadosInitWidget(); // Script al final de <body>: DOM ya listo
+
+/* ═══════════════════════════════════════════════════════
+   EXPORTAR / IMPORTAR JSON
+═══════════════════════════════════════════════════════ */
+function exportarFichasJSON() {
+    guardarTodo();
+    const datos = fichas.map(f => leerFicha(f.panel));
+    const json = JSON.stringify(datos, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const nombre = datos[0]?.nombre?.trim() || 'personaje';
+    a.download = `dnd_fichas_${nombre.replace(/\s+/g,'_')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importarFichasJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const datos = JSON.parse(e.target.result);
+            if (!Array.isArray(datos)) throw new Error('Formato inválido');
+            // Cerrar fichas actuales y recrear
+            [...fichas].forEach(f => {
+                f.panel.remove();
+                const tab = document.querySelector(`.pestana[data-ficha-id="${f.id}"]`);
+                if (tab) tab.remove();
+            });
+            fichas = [];
+            fichaActual = null;
+            contadorFichas = 0;
+            datos.forEach(d => nuevaFicha(d));
+            guardarTodo();
+        } catch(err) {
+            alert('Error al importar: el archivo no es válido.\n' + err.message);
+        }
+    };
+    reader.readAsText(file);
+    // Reset input para poder reimportar el mismo archivo
+    event.target.value = '';
+}

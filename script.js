@@ -43,6 +43,7 @@ function nuevaFicha(datosGuardados) {
     if (typeof initSpellcasting === 'function') initSpellcasting(panel);
     initNotasSubpags(panel);
     _initAutoAccionesBloque(panel);
+    initMulticlaseWidget(panel);
     _hookAutoAcciones(panel);
     activarFicha(id);
 
@@ -793,11 +794,12 @@ function leerFicha(panel) {
     // Cabecera
     d.nombre      = panel.querySelector('.input-nombre')?.value || '';
     const campos  = panel.querySelectorAll('.campo-sm input');
-    d.clase       = campos[0]?.value || '';
-    d.especie     = campos[1]?.value || '';
-    d.trasfondo   = campos[2]?.value || '';
+    d.especie     = campos[0]?.value || '';
+    d.trasfondo   = campos[1]?.value || '';
     d.pb          = panel.querySelector('.pb-input')?.value || '2';
     d.inspiracion = panel.querySelector('.bloque-inspiracion')?.classList.contains('activo') || false;
+    // Multiclase
+    d.multiclases = leerMulticlases(panel);
 
     // Stats y salvaciones
     d.stats = {}; d.salvs = {};
@@ -954,11 +956,20 @@ function cargarDatosEnPanel(panel, d) {
     // Cabecera
     if (d.nombre) { panel.querySelector('.input-nombre').value = d.nombre; onNombreCambia(panel.querySelector('.input-nombre')); }
     const campos = panel.querySelectorAll('.campo-sm input');
-    if (campos[0]) campos[0].value = d.clase     || '';
-    if (campos[1]) campos[1].value = d.especie   || '';
-    if (campos[2]) campos[2].value = d.trasfondo || '';
+    if (campos[0]) campos[0].value = d.especie   || '';
+    if (campos[1]) campos[1].value = d.trasfondo || '';
     if (d.pb) panel.querySelector('.pb-input').value = d.pb;
     if (d.inspiracion) panel.querySelector('.bloque-inspiracion').classList.add('activo');
+    // Multiclase - compat with old d.clase string
+    if (d.multiclases && d.multiclases.length) {
+        cargarMulticlases(panel, d.multiclases);
+    } else if (d.clase) {
+        // Legacy: parse "Guerrero 5" or just "Guerrero"
+        const m = d.clase.match(/^(.+?)\s+(\d+)$/);
+        const claseNombre = m ? m[1].trim() : d.clase.trim();
+        const nivel = m ? parseInt(m[2]) : 1;
+        cargarMulticlases(panel, [{ clase: claseNombre, nivel }]);
+    }
 
     // Stats y salvaciones
     if (d.stats) ['str','dex','con','int','wis','cha'].forEach(s => {
@@ -1878,6 +1889,377 @@ function roleplayBorrarImagen(btn) {
    en paneles con barra de sub-tabs. Se llama una sola vez al crear la ficha. */
 /* Engancha listeners en selectores de clase/subclase/especie y textarea de dotes
    para regenerar acciones auto cuando cambian. */
+/* ═══════════════════════════════════════════════════════
+   MULTICLASE — SELECTOR DE CLASE Y NIVEL EN CABECERA
+═══════════════════════════════════════════════════════ */
+
+/* ── Tablas de datos por clase ──────────────────────────
+   diceHit: dado de golpe
+   casting: 'full' | 'half' | 'third' | 'none' | 'warlock'
+   spellStat: estadística de lanzamiento por defecto
+   knownCaster: true si aprende conjuros (Bardo, Mago, etc.)
+   preparedFormula: función (nivel, mod) => nº de hechizos preparados
+──────────────────────────────────────────────────────── */
+const CLASE_DATA = {
+    'Bárbaro':    { diceHit:'d12', casting:'none' },
+    'Bardo':      { diceHit:'d8',  casting:'full',    spellStat:'CAR', knownCaster:true  },
+    'Clérigo':    { diceHit:'d8',  casting:'full',    spellStat:'SAB', knownCaster:false,
+                    preparedFormula:(nv,mod) => nv + mod },
+    'Druida':     { diceHit:'d8',  casting:'full',    spellStat:'SAB', knownCaster:false,
+                    preparedFormula:(nv,mod) => nv + mod },
+    'Guerrero':   { diceHit:'d10', casting:'none' },
+    'Explorador': { diceHit:'d10', casting:'half',    spellStat:'SAB', knownCaster:true  },
+    'Monje':      { diceHit:'d8',  casting:'none' },
+    'Paladín':    { diceHit:'d10', casting:'half',    spellStat:'CAR', knownCaster:false,
+                    preparedFormula:(nv,mod) => Math.floor(nv/2) + mod },
+    'Pícaro':     { diceHit:'d8',  casting:'none' },
+    'Hechicero':  { diceHit:'d6',  casting:'full',    spellStat:'CAR', knownCaster:true  },
+    'Warlock':    { diceHit:'d8',  casting:'warlock', spellStat:'CAR', knownCaster:true  },
+    'Mago':       { diceHit:'d6',  casting:'full',    spellStat:'INT', knownCaster:true  },
+    'Ranger':     { diceHit:'d10', casting:'half',    spellStat:'SAB', knownCaster:true  },
+};
+
+/* ── Tabla de slots por nivel efectivo (PHB 2024 multiclase) ──
+   Índices [0..9] = slots nivel 1..9 para nivel efectivo 1..20 */
+const SLOTS_POR_NIVEL = [
+  //  1   2   3   4   5   6   7   8   9
+    [ 2,  0,  0,  0,  0,  0,  0,  0,  0], // nivel efectivo 1
+    [ 3,  0,  0,  0,  0,  0,  0,  0,  0], // 2
+    [ 4,  2,  0,  0,  0,  0,  0,  0,  0], // 3
+    [ 4,  3,  0,  0,  0,  0,  0,  0,  0], // 4
+    [ 4,  3,  2,  0,  0,  0,  0,  0,  0], // 5
+    [ 4,  3,  3,  0,  0,  0,  0,  0,  0], // 6
+    [ 4,  3,  3,  1,  0,  0,  0,  0,  0], // 7
+    [ 4,  3,  3,  2,  0,  0,  0,  0,  0], // 8
+    [ 4,  3,  3,  3,  1,  0,  0,  0,  0], // 9
+    [ 4,  3,  3,  3,  2,  0,  0,  0,  0], // 10
+    [ 4,  3,  3,  3,  2,  1,  0,  0,  0], // 11
+    [ 4,  3,  3,  3,  2,  1,  0,  0,  0], // 12
+    [ 4,  3,  3,  3,  2,  1,  1,  0,  0], // 13
+    [ 4,  3,  3,  3,  2,  1,  1,  0,  0], // 14
+    [ 4,  3,  3,  3,  2,  1,  1,  1,  0], // 15
+    [ 4,  3,  3,  3,  2,  1,  1,  1,  0], // 16
+    [ 4,  3,  3,  3,  2,  1,  1,  1,  1], // 17
+    [ 4,  3,  3,  3,  3,  1,  1,  1,  1], // 18
+    [ 4,  3,  3,  3,  3,  2,  1,  1,  1], // 19
+    [ 4,  3,  3,  3,  3,  2,  2,  1,  1], // 20
+];
+
+/* Slots de Warlock (Pact Magic) - siempre de nivel máximo disponible, pocos pero recuperables */
+const WARLOCK_SLOTS = [
+    [1,0],[2,0],[2,1],[2,1],[2,2],[2,2],[2,2],[2,2],[2,2],[2,2],
+    [3,2],[3,2],[3,2],[3,2],[3,2],[3,2],[4,3],[4,3],[4,3],[4,3]
+]; // [cantidad, nivel_max_idx_0=1] para niveles 1-20
+
+/* Cantrips conocidos por clase y nivel (tabla PHB 2024) */
+const CANTRIPS_CONOCIDOS = {
+    full:    [0,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4],
+    half:    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    warlock: [0,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4],
+    Bardo:   [0,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4],
+    Mago:    [0,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5],
+    Clérigo: [0,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5],
+    Druida:  [0,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4],
+};
+
+/* Hechizos conocidos por clase known-casters (Bardo, Hechicero, etc.) */
+const HECHIZOS_CONOCIDOS = {
+    Bardo:      [0,4,5,6,7,8,9,10,11,12,14,15,15,16,18,19,19,20,22,22],
+    Hechicero:  [0,2,3,4,5,6,7,8,9,10,11,12,12,13,13,14,14,15,15,15],
+    Warlock:    [0,2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15],
+    Ranger:     [0,0,2,3,4,5,6,7,8,9,10,11,11,12,13,13,14,14,15,15],
+    Explorador: [0,0,0,3,4,4,4,5,6,6,7,8,8,9,10,10,11,11,12,13],
+};
+
+/* ── Bono de Competencia por nivel total ── */
+function calcPB(nivelTotal) {
+    if (nivelTotal >= 17) return 6;
+    if (nivelTotal >= 13) return 5;
+    if (nivelTotal >= 9)  return 4;
+    if (nivelTotal >= 5)  return 3;
+    return 2;
+}
+
+/* ── Nivel efectivo de lanzamiento multiclase ── */
+function calcNivelEfectivoSpell(multiclases) {
+    let efectivo = 0;
+    multiclases.forEach(mc => {
+        const data = _getClaseData(mc.clase);
+        const nv   = parseInt(mc.nivel) || 0;
+        if (data.casting === 'full')    efectivo += nv;
+        else if (data.casting === 'half')  efectivo += Math.floor(nv / 2);
+        else if (data.casting === 'third') efectivo += Math.floor(nv / 3);
+        // warlock se trata aparte; none no suma
+    });
+    return Math.min(efectivo, 20);
+}
+
+/* Obtiene datos de clase — busca en CLASE_DATA o devuelve defaults */
+function _getClaseData(nombreClase) {
+    if (!nombreClase) return { diceHit:'d8', casting:'none' };
+    // Búsqueda exacta primero, luego parcial
+    if (CLASE_DATA[nombreClase]) return CLASE_DATA[nombreClase];
+    const lower = nombreClase.toLowerCase();
+    for (const [key, val] of Object.entries(CLASE_DATA)) {
+        if (key.toLowerCase() === lower || lower.includes(key.toLowerCase())) return val;
+    }
+    return { diceHit:'d8', casting:'none' };
+}
+
+/* ── Construye una fila de clase en el widget ── */
+function _multiclaseFila(claseNombre, nivel) {
+    const fila = document.createElement('div');
+    fila.className = 'multiclase-fila';
+
+    // Selector de clase
+    const sel = document.createElement('select');
+    sel.className = 'multiclase-sel';
+    sel.innerHTML = '<option value="">— Clase —</option>';
+    // Poblar con DND_CLASES si disponible, sino con CLASE_DATA
+    const opciones = typeof DND_CLASES !== 'undefined'
+        ? Object.keys(DND_CLASES)
+        : Object.keys(CLASE_DATA);
+    opciones.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        if (c === claseNombre) opt.selected = true;
+        sel.appendChild(opt);
+    });
+
+    // Selector de nivel 1-20
+    const selNv = document.createElement('select');
+    selNv.className = 'multiclase-nivel';
+    for (let i = 1; i <= 20; i++) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `Nv. ${i}`;
+        if (i === (parseInt(nivel) || 1)) opt.selected = true;
+        selNv.appendChild(opt);
+    }
+
+    // Botón eliminar
+    const delBtn = document.createElement('button');
+    delBtn.className = 'multiclase-del';
+    delBtn.textContent = '×';
+    delBtn.title = 'Eliminar clase';
+
+    fila.appendChild(sel);
+    fila.appendChild(selNv);
+    fila.appendChild(delBtn);
+
+    // Eventos
+    const onChange = () => {
+        const fichaPanel = fila.closest('.ficha-panel');
+        if (fichaPanel) multiclaseActualizar(fichaPanel);
+    };
+    sel.addEventListener('change', onChange);
+    selNv.addEventListener('change', onChange);
+    delBtn.addEventListener('click', () => {
+        // No borrar si es la única fila
+        const lista = fila.closest('.multiclase-lista');
+        if (lista && lista.querySelectorAll('.multiclase-fila').length <= 1) return;
+        fila.remove();
+        const fichaPanel = delBtn.closest('.ficha-panel');
+        if (fichaPanel) multiclaseActualizar(fichaPanel);
+    });
+
+    return fila;
+}
+
+/* ── Añadir nueva clase al widget ── */
+function multiclaseAñadir(btn) {
+    const lista = btn.closest('.multiclase-widget').querySelector('.multiclase-lista');
+    const fila = _multiclaseFila('', 1);
+    lista.appendChild(fila);
+    fila.querySelector('.multiclase-sel').focus();
+    const fichaPanel = btn.closest('.ficha-panel');
+    if (fichaPanel) multiclaseActualizar(fichaPanel);
+}
+
+/* ── Leer datos actuales del widget ── */
+function leerMulticlases(fichaPanel) {
+    const filas = fichaPanel.querySelectorAll('.multiclase-fila');
+    return Array.from(filas).map(f => ({
+        clase: f.querySelector('.multiclase-sel')?.value || '',
+        nivel: parseInt(f.querySelector('.multiclase-nivel')?.value) || 1,
+    }));
+}
+
+/* ── Cargar multiclases en el widget (desde guardado) ── */
+function cargarMulticlases(fichaPanel, datos) {
+    const lista = fichaPanel.querySelector('.multiclase-lista');
+    if (!lista) return;
+    lista.innerHTML = '';
+    const arr = Array.isArray(datos) && datos.length ? datos : [{ clase:'', nivel:1 }];
+    arr.forEach(mc => lista.appendChild(_multiclaseFila(mc.clase, mc.nivel)));
+    // No llamar a multiclaseActualizar aquí — se llama desde cargarDatosEnPanel después
+}
+
+/* ── ACTUALIZACIÓN CENTRAL: recalcula todo al cambiar clase/nivel ── */
+function multiclaseActualizar(fichaPanel) {
+    const mcs = leerMulticlases(fichaPanel).filter(mc => mc.clase);
+    if (!mcs.length) return;
+
+    const nivelTotal = mcs.reduce((s, mc) => s + (parseInt(mc.nivel)||0), 0);
+
+    // 1. Bono de Competencia
+    const pb = calcPB(nivelTotal);
+    const pbInput = fichaPanel.querySelector('.pb-input');
+    if (pbInput) { pbInput.value = pb; actualizarTodoPanel(fichaPanel); }
+
+    // 2. Sincronizar con selector de clase de Características (primera clase)
+    const selClaseCaract = fichaPanel.querySelector('.sel-clase');
+    if (selClaseCaract && mcs[0]?.clase) {
+        if (selClaseCaract.querySelector(`option[value="${mcs[0].clase}"]`)) {
+            selClaseCaract.value = mcs[0].clase;
+            // Disparar evento para que onClaseChange actualice subclases
+            selClaseCaract.dispatchEvent(new Event('change'));
+        }
+    }
+
+    // 3. Dados de Golpe — sincronizar grupos
+    _sincronizarDadosGolpe(fichaPanel, mcs);
+
+    // 4. Spell slots
+    _sincronizarSpellSlots(fichaPanel, mcs, nivelTotal);
+
+    // 5. Aprendidos y Preparados
+    _sincronizarSpellCounts(fichaPanel, mcs);
+
+    // 6. Regenerar acciones auto
+    setTimeout(() => regenerarAccionesAuto(fichaPanel), 50);
+
+    guardarDebounced();
+}
+
+/* ── Sincronizar dados de golpe ── */
+function _sincronizarDadosGolpe(fichaPanel, mcs) {
+    const wrap = fichaPanel.querySelector('.dg-grupos-wrap');
+    if (!wrap) return;
+
+    // Leer checks actuales para preservarlos
+    const checksPrevios = {};
+    wrap.querySelectorAll('.dg-grupo').forEach(g => {
+        const tipo = g.querySelector('.dg-tipo')?.value;
+        const chks = Array.from(g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]')).map(c => c.checked);
+        if (tipo) checksPrevios[tipo] = chks;
+    });
+
+    wrap.innerHTML = '';
+
+    mcs.forEach(mc => {
+        const data = _getClaseData(mc.clase);
+        const tipo = data.diceHit || 'd8';
+        const total = parseInt(mc.nivel) || 1;
+        const g = dgCrearGrupo(tipo, total);
+        wrap.appendChild(g);
+        // Restaurar checks si los había
+        if (checksPrevios[tipo]) {
+            const chkEls = g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]');
+            checksPrevios[tipo].forEach((val, i) => { if (chkEls[i]) chkEls[i].checked = val; });
+        }
+        actualizarDadosGolpePanel(g.querySelector('.dg-total'));
+    });
+}
+
+/* ── Sincronizar spell slots ── */
+function _sincronizarSpellSlots(fichaPanel, mcs, nivelTotal) {
+    // Calcular nivel efectivo (excluye warlock, suma full/half/third)
+    const nivelEfectivo = calcNivelEfectivoSpell(mcs);
+
+    // Slots de la tabla multiclase (niveles 1-9)
+    const slots = nivelEfectivo > 0
+        ? SLOTS_POR_NIVEL[Math.min(nivelEfectivo, 20) - 1]
+        : Array(9).fill(0);
+
+    // Warlock: añadir Pact Magic por encima
+    const warlockMC = mcs.find(mc => _getClaseData(mc.clase).casting === 'warlock');
+    let warlockSlots = 0, warlockNivel = 0;
+    if (warlockMC) {
+        const wNv = parseInt(warlockMC.nivel) - 1; // 0-indexed
+        warlockSlots = WARLOCK_SLOTS[Math.min(wNv, 19)][0];
+        warlockNivel = WARLOCK_SLOTS[Math.min(wNv, 19)][1];
+    }
+
+    // Actualizar cada bloque de nivel
+    for (let nivel = 1; nivel <= 9; nivel++) {
+        const bloque = fichaPanel.querySelector(`.spell-nivel-bloque[data-nivel="${nivel}"]`);
+        if (!bloque) continue;
+        const checksDiv = bloque.querySelector('.spell-slots-checks');
+        if (!checksDiv) continue;
+
+        // Calcular cuántos slots queremos
+        let cantidad = slots[nivel - 1] || 0;
+        // Sumar warlock si aplica
+        if (warlockMC && nivel === warlockNivel + 1) cantidad += warlockSlots;
+
+        // Limpiar y reconstruir slots
+        checksDiv.innerHTML = '';
+        for (let i = 0; i < Math.min(cantidad, 4); i++) {
+            const wrap = document.createElement('div');
+            wrap.className = 'slot-check-wrap';
+            const chk = document.createElement('input');
+            chk.type = 'checkbox'; chk.className = 'slot-chk'; chk.checked = true;
+            chk.addEventListener('change', () => guardarDebounced());
+            const del = document.createElement('button');
+            del.className = 'slot-del-btn'; del.textContent = '×'; del.title = 'Quitar slot';
+            del.addEventListener('click', e => { e.stopPropagation(); wrap.remove(); guardarDebounced(); });
+            wrap.appendChild(chk); wrap.appendChild(del);
+            checksDiv.appendChild(wrap);
+        }
+    }
+}
+
+/* ── Sincronizar aprendidos y preparados ── */
+function _sincronizarSpellCounts(fichaPanel, mcs) {
+    const counts = fichaPanel.querySelectorAll('.spell-count-input');
+    if (counts.length < 2) return;
+
+    // Stat mod del lanzador principal
+    const spellStatSel = fichaPanel.querySelector('.spell-stat-sel');
+    const statKey = spellStatSel?.value || 'INT';
+    const statMap = { STR:'str', DEX:'dex', CON:'con', INT:'int', WIS:'wis', CHA:'cha',
+                       FUE:'str', DES:'dex', SAB:'wis', CAR:'cha' };
+    const statEl = fichaPanel.querySelector(`.stat-score[data-stat="${statMap[statKey] || 'int'}"]`);
+    const statVal = parseInt(statEl?.value) || 10;
+    const mod = Math.floor((statVal - 10) / 2);
+
+    // Calcular totales sumando todas las clases lanzadoras
+    let totalAprendidos = 0, totalPreparados = 0;
+    mcs.forEach(mc => {
+        const data = _getClaseData(mc.clase);
+        const nv = parseInt(mc.nivel) || 0;
+        if (data.casting === 'none') return;
+
+        // Cantrips para aprendidos
+        const cantripTable = CANTRIPS_CONOCIDOS[mc.clase] || CANTRIPS_CONOCIDOS[data.casting] || [];
+        totalAprendidos += cantripTable[Math.min(nv, 20) - 1] || 0;
+
+        if (data.knownCaster && HECHIZOS_CONOCIDOS[mc.clase]) {
+            totalAprendidos += HECHIZOS_CONOCIDOS[mc.clase][Math.min(nv, 20) - 1] || 0;
+        }
+
+        if (data.preparedFormula) {
+            totalPreparados += Math.max(1, data.preparedFormula(nv, mod));
+        } else if (data.knownCaster && HECHIZOS_CONOCIDOS[mc.clase]) {
+            totalPreparados += HECHIZOS_CONOCIDOS[mc.clase][Math.min(nv, 20) - 1] || 0;
+        }
+    });
+
+    if (totalAprendidos > 0) counts[0].value = totalAprendidos;
+    if (totalPreparados > 0) counts[1].value = totalPreparados;
+}
+
+/* ── Init: crear fila inicial vacía si el widget está vacío ── */
+function initMulticlaseWidget(fichaPanel) {
+    const lista = fichaPanel.querySelector('.multiclase-lista');
+    if (!lista) return;
+    if (lista.children.length === 0) {
+        lista.appendChild(_multiclaseFila('', 1));
+    }
+}
+
 function _hookAutoAcciones(fichaPanel) {
     const re = () => regenerarAccionesAuto(fichaPanel);
     const delay = () => setTimeout(re, 50); // pequeño delay para que onClaseChange actualice primero

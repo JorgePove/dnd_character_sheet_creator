@@ -139,6 +139,7 @@ function validarExpertise(chk) {
 function actualizarTodo(el) { actualizarTodoPanel(getPanel(el)); guardarDebounced(); }
 
 function actualizarTodoPanel(panel) {
+    if (!panel) return;
     const pb = parseInt(panel.querySelector('.pb-input').value) || 0;
     const stats = ['str','dex','con','int','wis','cha'];
 
@@ -504,6 +505,17 @@ function descansoCorto(btn) {
     btn.style.background = '#bee3f8'; btn.style.borderColor = '#3182ce';
     setTimeout(() => { btn.style.background = ''; btn.style.borderColor = ''; }, 600);
     if (typeof recargaRecursosPorDescanso === 'function') recargaRecursosPorDescanso(panel, 'corto');
+    // Warlock: Pact Magic se recarga en descanso corto
+    if (typeof leerMulticlases === 'function' && typeof _getClaseData === 'function') {
+        const mcs = leerMulticlases(panel).filter(mc => mc.clase);
+        const warlockMC = mcs.find(mc => _getClaseData(mc.clase).casting === 'warlock');
+        if (warlockMC) {
+            const wNv = Math.min((parseInt(warlockMC.nivel) || 1) - 1, 19);
+            const warlockNivel = WARLOCK_SLOTS[wNv][1] + 1;
+            const bloque = panel.querySelector(`.spell-nivel-bloque[data-nivel="${warlockNivel}"]`);
+            if (bloque) bloque.querySelectorAll('.slot-chk').forEach(chk => { chk.checked = true; });
+        }
+    }
     guardarDebounced();
 }
 
@@ -1388,9 +1400,9 @@ function recalcSpellcasting(panel) {
 function añadirSlot(btn) {
     const bloque = btn.closest('.spell-nivel-bloque');
     const checks = bloque.querySelectorAll('.slot-chk');
-    if (checks.length >= 4) return; // máximo 4 slots por nivel
-    // ... resto del código existente
-    const checksDiv = btn.previousElementSibling;
+    if (checks.length >= 4) return;
+    const checksDiv = bloque.querySelector('.spell-slots-checks');
+    if (!checksDiv) return;
     const wrap = document.createElement('div');
     wrap.className = 'slot-check-wrap';
 
@@ -1596,7 +1608,6 @@ function leerSpellcasting(panel) {
     d.spellStat      = statEl?.value || '';
     d.spellDcExtra   = panel.querySelector('.spell-dc-extra')?.value  || '0';
     d.spellAtkExtra  = panel.querySelector('.spell-atk-extra')?.value || '0';
-    d.spellAprendidos = panel.querySelector('.spell-count-input')?.value || '0';
     const counts = panel.querySelectorAll('.spell-count-input');
     d.spellAprendidos = counts[0]?.value || '0';
     d.spellPreparados = counts[1]?.value || '0';
@@ -2106,7 +2117,10 @@ function multiclaseActualizar(fichaPanel) {
     // 1. Bono de Competencia
     const pb = calcPB(nivelTotal);
     const pbInput = fichaPanel.querySelector('.pb-input');
-    if (pbInput) { pbInput.value = pb; actualizarTodoPanel(fichaPanel); }
+    if (pbInput) {
+        pbInput.value = pb;
+        actualizarTodoPanel(fichaPanel);
+    }
 
     // 2. Sincronizar con selector de clase de Características (primera clase)
     const selClaseCaract = fichaPanel.querySelector('.sel-clase');
@@ -2220,7 +2234,9 @@ function _sincronizarSpellCounts(fichaPanel, mcs) {
     const spellStatSel = fichaPanel.querySelector('.spell-stat-sel');
     const statKey = spellStatSel?.value || 'INT';
     const statMap = { STR:'str', DEX:'dex', CON:'con', INT:'int', WIS:'wis', CHA:'cha',
-                       FUE:'str', DES:'dex', SAB:'wis', CAR:'cha' };
+                      FUE:'str', DES:'dex', SAB:'wis', CAR:'cha',
+                      SABIDURÍA:'wis', INTELIGENCIA:'int', CARISMA:'cha',
+                      FUERZA:'str', DESTREZA:'dex', CONSTITUCIÓN:'con' };
     const statEl = fichaPanel.querySelector(`.stat-score[data-stat="${statMap[statKey] || 'int'}"]`);
     const statVal = parseInt(statEl?.value) || 10;
     const mod = Math.floor((statVal - 10) / 2);
@@ -2733,6 +2749,7 @@ function _tirarDados(qty, faces, esCrit) {
 
 /* ── Función principal: clic en nombre de hechizo ───────────────── */
 async function tirarHechizo(sp, panel) {
+    if (!sp || !panel) return;
     const esCantrip = sp.nivel === 'Truco';
     const base = _parseDamageBase(sp.damage);
 
@@ -2962,7 +2979,7 @@ function _recogerEntradasAuto(fichaPanel) {
     }
 
     // ── Dotes (parseamos el textarea de dotes) ─────────
-    if (typeof DND_DOTES !== 'undefined') {
+    if (typeof DND_DOTES !== 'undefined' && Array.isArray(DND_DOTES)) {
         const dotesTxt = fichaPanel.querySelector('.caract-dotes')?.value || '';
         // Cada dote está en una línea con formato "NombreDote: descripción"
         // Buscamos todas las dotes que aparezcan en el textarea
@@ -3051,6 +3068,13 @@ function regenerarAccionesAuto(fichaPanel) {
             </div>
             <div class="auto-entrada-desc">${_esc(e.desc)}</div>
             <textarea class="auto-nota" placeholder="Notas adicionales..." oninput="guardarDebounced()">${_esc(notaGuardada)}</textarea>`;
+        // Marcar clase si tiene contenido (para mostrarla aunque no haga hover)
+        if (notaGuardada) {
+            setTimeout(() => div.querySelector('.auto-nota')?.classList.add('tiene-contenido'), 0);
+        }
+        div.querySelector?.('.auto-nota')?.addEventListener?.('input', function() {
+            this.classList.toggle('tiene-contenido', this.value.length > 0);
+        });
         bloque.appendChild(div);
     });
 

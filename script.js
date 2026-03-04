@@ -1757,8 +1757,11 @@ function dadosInitWidget() {
     if (!c || c.children.length > 0) return;
     dadosAddFila(true);
     try {
-        if (localStorage.getItem('dnd_dados_min') === '1') {
-            const w = document.getElementById('dados-widget');
+        const savedMin = localStorage.getItem('dnd_dados_min');
+        const w = document.getElementById('dados-widget');
+        // En pantallas pequeñas, minimizar por defecto si no hay preferencia guardada
+        const esSmall = window.innerWidth < 1280;
+        if (savedMin === '1' || (savedMin === null && esSmall)) {
             if (w) w.classList.add('is-min');
         }
     } catch(e) {}
@@ -3430,6 +3433,74 @@ nuevaFicha = function(datosGuardados) {
 };
 
 /* ═══════════════════════════════════════════════════════
+   RESPONSIVO — ESCALA DINÁMICA DE LA FICHA
+   La ficha tiene 1100px de ancho fijo. En pantallas más
+   pequeñas la escalamos con transform: scale() para que
+   quepa sin romper el layout interno.
+═══════════════════════════════════════════════════════ */
+
+const FICHA_ANCHO = 1100;   // ancho fijo de la ficha en px
+const FICHA_PADDING = 56;   // padding lateral del contenedor (28px × 2)
+
+function _calcularEscalaFicha() {
+    // Espacio disponible: viewport menos el ancho de los widgets flotantes
+    // Dados (izq): ~210px + margen · Log (der): ~210px + margen
+    const anchoVP = window.innerWidth;
+
+    // En pantallas muy anchas no escalamos (scale = 1)
+    const espacioDisponible = anchoVP - FICHA_PADDING;
+    if (espacioDisponible >= FICHA_ANCHO) return 1;
+
+    // Mínimo: 0.6 (no reducir más del 40%, por legibilidad)
+    return Math.max(0.6, espacioDisponible / FICHA_ANCHO);
+}
+
+function aplicarEscalaFicha() {
+    const escala = _calcularEscalaFicha();
+    const alturaOriginal = FICHA_ANCHO * 1; // base — se recalcula por panel activo
+
+    document.querySelectorAll('.ficha-panel.activa').forEach(panel => {
+        panel.style.setProperty('--ficha-scale', escala);
+        // Ajustar el margen inferior para compensar el espacio "perdido"
+        // por el transform (que no afecta al flow del documento)
+        if (escala < 1) {
+            // Altura visual del panel escalado
+            const alturaReal = panel.scrollHeight;
+            const alturaVisual = alturaReal * escala;
+            const delta = alturaReal - alturaVisual;
+            panel.style.marginBottom = `-${delta}px`;
+        } else {
+            panel.style.marginBottom = '';
+        }
+    });
+
+    // Aplicar también a los paneles inactivos para cuando se activen
+    document.querySelectorAll('.ficha-panel:not(.activa)').forEach(panel => {
+        panel.style.setProperty('--ficha-scale', escala);
+    });
+}
+
+// Ejecutar al cargar y al redimensionar (con debounce)
+let _resizeTimer = null;
+window.addEventListener('resize', () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(aplicarEscalaFicha, 80);
+});
+
+// Ejecutar después de que el DOM esté listo
+window.addEventListener('load', () => {
+    setTimeout(aplicarEscalaFicha, 100);
+});
+
+// También re-aplicar cuando se cambia de pestaña (por si el panel
+// recién activado no tenía la escala calculada aún)
+const _activarFichaOrig = activarFicha;
+activarFicha = function(id) {
+    _activarFichaOrig(id);
+    setTimeout(aplicarEscalaFicha, 50);
+};
+
+/* ═══════════════════════════════════════════════════════
    EXPORTAR A PDF
 ═══════════════════════════════════════════════════════ */
 
@@ -3451,6 +3522,10 @@ function exportarFichaPDF() {
     clone.querySelectorAll('.spell-tooltip').forEach(t => t.remove());
     clone.querySelectorAll('.condicion-tooltip').forEach(t => t.remove());
     clone.querySelectorAll('.agotamiento-tooltip').forEach(t => t.remove());
+    // Quitar la escala responsiva para que el PDF salga a tamaño completo
+    clone.style.removeProperty('--ficha-scale');
+    clone.style.removeProperty('margin-bottom');
+    clone.style.transform = 'none';
 
     // Recoger estilos del documento actual
     const estilos = Array.from(document.styleSheets).map(ss => {

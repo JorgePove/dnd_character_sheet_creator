@@ -2255,7 +2255,7 @@ function _sincronizarDadosGolpe(fichaPanel, mcs) {
     const wrap = fichaPanel.querySelector('.dg-grupos-wrap');
     if (!wrap) return;
 
-    // Leer checks actuales para preservarlos
+    // Leer checks actuales para preservarlos por tipo
     const checksPrevios = {};
     wrap.querySelectorAll('.dg-grupo').forEach(g => {
         const tipo = g.querySelector('.dg-tipo')?.value;
@@ -2263,12 +2263,18 @@ function _sincronizarDadosGolpe(fichaPanel, mcs) {
         if (tipo) checksPrevios[tipo] = chks;
     });
 
-    wrap.innerHTML = '';
-
+    // Fusionar clases que comparten el mismo tipo de dado
+    const fusionado = {};
     mcs.forEach(mc => {
         const data = _getClaseData(mc.clase);
         const tipo = data.diceHit || 'd8';
-        const total = parseInt(mc.nivel) || 1;
+        const nv = parseInt(mc.nivel) || 1;
+        fusionado[tipo] = (fusionado[tipo] || 0) + nv;
+    });
+
+    wrap.innerHTML = '';
+
+    Object.entries(fusionado).forEach(([tipo, total]) => {
         const g = dgCrearGrupo(tipo, total);
         wrap.appendChild(g);
         // Restaurar checks si los había

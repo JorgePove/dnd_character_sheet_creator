@@ -3081,3 +3081,136 @@ hr.sep-seccion {
 .mc-fila {
     transition: background var(--transicion);
 }
+
+/* ===================================================
+   RESPONSIVO — ESCALA Y WIDGETS FLOTANTES
+=================================================== */
+
+/* El contenedor de fichas permite que la transformación
+   de escala no cause overflow horizontal en la página */
+#fichas-contenedor {
+    overflow-x: hidden;
+}
+
+/* La ficha escalada necesita que su contenedor ajuste
+   la altura al tamaño visual (no al tamaño original) */
+.ficha-panel.activa {
+    transform-origin: top center;
+    /* El valor de --ficha-scale se inyecta por JS */
+    transform: scale(var(--ficha-scale, 1));
+    /* Cuando escala, el espacio que ocupa sigue siendo
+       el del tamaño original — JS ajusta margin-bottom */
+    transition: transform 0.2s ease;
+}
+
+/* ── Monitor estándar 1280–1440px ── */
+@media (max-width: 1440px) and (min-width: 1280px) {
+    .dados-widget {
+        top: 48px;
+        left: 10px;
+        width: 210px;
+        font-size: 11px;
+    }
+    .dados-widget.is-min { width: 136px; }
+    .log-contenedor {
+        width: 210px;
+        right: 10px;
+    }
+}
+
+/* ── Laptop / pantalla pequeña 1024–1280px ── */
+@media (max-width: 1280px) {
+    .barra-pestanas {
+        padding: 8px 14px 0;
+        gap: 3px;
+    }
+    .pestana {
+        font-size: 12px;
+        padding: 6px 10px 6px 12px;
+        max-width: 160px;
+    }
+    .pestana-nombre { max-width: 110px; }
+    .btn-global {
+        font-size: 11px;
+        padding: 4px 9px;
+    }
+
+    /* Dados: más pequeño y minimizable por defecto */
+    .dados-widget {
+        top: 44px;
+        left: 8px;
+        width: 195px;
+        font-size: 11px;
+        border-radius: 10px;
+    }
+    .dados-widget.is-min { width: 128px; }
+    .dados-widget-cabecera {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    /* Log: más estrecho */
+    .log-contenedor {
+        width: 195px;
+        right: 8px;
+        top: 62px;
+        font-size: 11px;
+    }
+    .log-cabecera {
+        padding: 7px 10px;
+        font-size: 10px;
+    }
+    #log-lista { padding: 6px; gap: 4px; }
+    .log-entrada { padding: 6px 8px; }
+    .res span { font-size: 18px; }
+    .res small { font-size: 10px; }
+}
+
+/* ── Tablet 768–1024px ── */
+@media (max-width: 1024px) {
+    .barra-pestanas {
+        padding: 6px 10px 0;
+    }
+    .pestana {
+        font-size: 11px;
+        padding: 5px 8px 5px 10px;
+        max-width: 130px;
+    }
+    .pestana-nombre { max-width: 90px; }
+
+    /* Dados: minimizado por defecto, pegado arriba-izquierda */
+    .dados-widget {
+        top: 38px;
+        left: 6px;
+        width: 175px;
+        font-size: 10px;
+        border-radius: 9px;
+    }
+    .dados-widget.is-min { width: 118px; }
+
+    /* Log: abajo-derecha en lugar de arriba para evitar solapar */
+    .log-contenedor {
+        top: auto;
+        bottom: 14px;
+        right: 8px;
+        width: 185px;
+        max-height: 45vh;
+        font-size: 11px;
+    }
+}
+
+/* ── Pantallas muy grandes: dar más aire al layout ── */
+@media (min-width: 1600px) {
+    #fichas-contenedor {
+        padding: 36px 36px 60px;
+    }
+    .dados-widget {
+        left: 24px;
+        top: 58px;
+    }
+    .log-contenedor {
+        right: 28px;
+        top: 76px;
+        width: 260px;
+    }
+}

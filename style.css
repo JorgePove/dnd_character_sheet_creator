@@ -752,7 +752,8 @@ label {
 
 .condiciones-grid {
     display: grid;
-    grid-template-columns: repeat(3, max-content);
+    grid-template-columns: repeat(4, max-content);
+    grid-auto-rows: auto;
     gap: 1px 0px;
     width: auto;
     flex: 1;
@@ -828,9 +829,9 @@ label {
 }
 .agotamiento-bolitas {
     display: grid;
-    grid-template-columns: repeat(2, auto);
-    grid-template-rows: repeat(3, auto);
-    grid-auto-flow: column;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: row;
     gap: 3px;
     justify-content: center;
 }

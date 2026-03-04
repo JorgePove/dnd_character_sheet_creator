@@ -3228,3 +3228,282 @@ function cargarAutoNotas(fichaPanel, notasData) {
         });
     });
 }
+
+/* ═══════════════════════════════════════════════════════
+   CA AUTOMÁTICA — SELECTOR DE ARMADURA
+═══════════════════════════════════════════════════════ */
+
+/* Datos de armaduras: base CA, tipo de DEX (full / max2 / none), bono escudo */
+function onArmaduraChange(el) {
+    const panel = getPanel(el);
+    if (!panel) return;
+
+    const armSel    = panel.querySelector('.armadura-sel');
+    const escudoSel = panel.querySelector('.escudo-sel');
+    if (!armSel || !escudoSel) return;
+
+    const armVal   = armSel.value;   // ej: "cueroestud|12|dex|0"
+    const escudoBonus = parseInt(escudoSel.value) || 0;
+
+    if (!armVal) {
+        // Sin selección: no tocar CA
+        guardarDebounced();
+        return;
+    }
+
+    const parts  = armVal.split('|');
+    const base   = parseInt(parts[1]) || 10;
+    const dexType = parts[2] || 'dex'; // 'dex' | 'dex2' | 'none'
+
+    // Leer modificador de DES
+    const dexScore = parseInt(panel.querySelector('.stat-score[data-stat="dex"]')?.value) || 10;
+    const dexMod   = Math.floor((dexScore - 10) / 2);
+
+    let dexBonus = 0;
+    if (dexType === 'dex')  dexBonus = dexMod;
+    if (dexType === 'dex2') dexBonus = Math.min(dexMod, 2);
+    // 'none' → dexBonus = 0
+
+    const caTotal = base + dexBonus + escudoBonus;
+
+    // Asignar CA (respetando que el usuario puede cambiarla manualmente después)
+    const caInput = panel.querySelector('.csi-input');
+    if (caInput) {
+        caInput.value = caTotal;
+    }
+    guardarDebounced();
+}
+
+/* Guardar y restaurar armadura seleccionada */
+const _leerFichaOrig2 = leerFicha;
+leerFicha = function(panel) {
+    const d = _leerFichaOrig2(panel);
+    d.armaduraSel = panel.querySelector('.armadura-sel')?.value || '';
+    d.escudoSel   = panel.querySelector('.escudo-sel')?.value  || '0';
+    return d;
+};
+
+const _cargarDatosOrig2 = cargarDatosEnPanel;
+cargarDatosEnPanel = function(panel, d) {
+    _cargarDatosOrig2(panel, d);
+    if (d.armaduraSel !== undefined) {
+        const armSel = panel.querySelector('.armadura-sel');
+        if (armSel) armSel.value = d.armaduraSel;
+    }
+    if (d.escudoSel !== undefined) {
+        const escSel = panel.querySelector('.escudo-sel');
+        if (escSel) escSel.value = d.escudoSel;
+    }
+};
+
+/* ═══════════════════════════════════════════════════════
+   CONCENTRACIÓN — ALERTA AL LANZAR SEGUNDO HECHIZO
+═══════════════════════════════════════════════════════ */
+
+/* Devuelve el hechizo activo de concentración en el panel, o null */
+function _getHechizoConcActivo(panel) {
+    let activo = null;
+    panel.querySelectorAll('.spell-entry').forEach(entry => {
+        const concBtn = entry.querySelector('.spell-conc-btn');
+        if (concBtn && concBtn.classList.contains('activo')) {
+            activo = entry;
+        }
+    });
+    return activo;
+}
+
+/* Comprueba si un hechizo es de concentración según su campo duration */
+function _esConcentracion(sp) {
+    if (!sp) return false;
+    return /concentración|concentration/i.test(sp.duration || '') ||
+           /concentración|concentration/i.test(sp.desc || '');
+}
+
+/* Modal de alerta de concentración — devuelve Promise<bool> */
+function _modalConcentracion(nombreActivo, nombreNuevo) {
+    return new Promise(resolve => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position:fixed;inset:0;background:rgba(0,0,0,0.6);
+            z-index:10000;display:flex;align-items:center;justify-content:center;`;
+
+        const caja = document.createElement('div');
+        caja.style.cssText = `
+            background:#1a202c;border:2px solid #d69e2e;border-radius:12px;
+            padding:22px 26px;min-width:280px;max-width:360px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.7);color:#e2e8f0;font-family:inherit;`;
+
+        caja.innerHTML = `
+            <div style="font-size:22px;text-align:center;margin-bottom:10px;">⚠️</div>
+            <div style="font-size:13px;font-weight:700;color:#f6e05e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;text-align:center;">
+                ¡Ya estás concentrado!
+            </div>
+            <p style="font-size:12px;color:#cbd5e0;line-height:1.5;margin-bottom:6px;text-align:center;">
+                Ya tienes activo <strong style="color:#fbd38d">${_esc(nombreActivo)}</strong>
+            </p>
+            <p style="font-size:12px;color:#cbd5e0;line-height:1.5;margin-bottom:18px;text-align:center;">
+                Si lanzas <strong style="color:#90cdf4">${_esc(nombreNuevo)}</strong>, perderás la concentración anterior.
+            </p>
+            <div style="display:flex;gap:10px;">
+                <button id="_conc_cancelar" style="
+                    flex:1;padding:9px;background:transparent;border:1.5px solid #4a5568;
+                    border-radius:7px;color:#a0aec0;font-size:13px;cursor:pointer;font-family:inherit;">
+                    Cancelar
+                </button>
+                <button id="_conc_confirmar" style="
+                    flex:1;padding:9px;background:#744210;border:1.5px solid #d69e2e;
+                    border-radius:7px;color:#fefcbf;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+                    Sí, lanzar
+                </button>
+            </div>`;
+
+        overlay.appendChild(caja);
+        document.body.appendChild(overlay);
+
+        caja.querySelector('#_conc_cancelar').addEventListener('click', () => {
+            document.body.removeChild(overlay); resolve(false);
+        });
+        caja.querySelector('#_conc_confirmar').addEventListener('click', () => {
+            document.body.removeChild(overlay); resolve(true);
+        });
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) { document.body.removeChild(overlay); resolve(false); }
+        });
+    });
+}
+
+/* Patch de tirarHechizo para interceptar concentración */
+const _tirarHechizOrig = tirarHechizo;
+tirarHechizo = async function(sp, panel) {
+    // Solo actuar si el hechizo nuevo es de concentración
+    if (_esConcentracion(sp)) {
+        const entradaActiva = _getHechizoConcActivo(panel);
+        if (entradaActiva) {
+            const nombreActivo = entradaActiva.querySelector('.spell-entry-nombre')?.textContent || '?';
+            const confirmar = await _modalConcentracion(nombreActivo, sp.n);
+            if (!confirmar) return; // Usuario canceló
+
+            // Desactivar concentración del hechizo anterior
+            const concBtnActivo = entradaActiva.querySelector('.spell-conc-btn');
+            const concTagActivo = entradaActiva.querySelector('.spell-conc-tag');
+            if (concBtnActivo) concBtnActivo.classList.remove('activo');
+            if (concTagActivo) concTagActivo.style.display = 'none';
+            guardarDebounced();
+        }
+    }
+    // Llamar al original
+    return _tirarHechizOrig(sp, panel);
+};
+
+/* ═══════════════════════════════════════════════════════
+   TOOLTIPS DE CONDICIONES
+═══════════════════════════════════════════════════════ */
+
+const CONDICION_TOOLTIPS = {
+    'Agarrado':     'Tu velocidad se reduce a 0 y no puedes beneficiarte de bonificaciones a la velocidad. La condición termina si quien te agarra queda Incapacitado o si un efecto te saca de su alcance.',
+    'Asustado':     'Tienes Desventaja en pruebas de característica y tiradas de ataque mientras puedas ver la fuente de tu miedo. No puedes moverte voluntariamente hacia ella.',
+    'Aturdido':     'Estás Incapacitado, no puedes moverte y solo puedes hablar de manera entrecortada. Fallas automáticamente las salvaciones de FUE y DES. Las tiradas de ataque contra ti tienen Ventaja.',
+    'Cegado':       'No puedes ver. Las tiradas de ataque contra ti tienen Ventaja y tus tiradas de ataque tienen Desventaja.',
+    'Derribado':    'Solo puedes moverte arrastrándote (coste doble de movimiento). Tienes Desventaja en tus tiradas de ataque. Los ataques cuerpo a cuerpo contra ti tienen Ventaja; los ataques a distancia tienen Desventaja.',
+    'Encantado':    'No puedes atacar al encantador ni elegirle como objetivo de efectos perjudiciales. El encantador tiene Ventaja en pruebas de Carisma para interactuar socialmente contigo.',
+    'Ensordecido':  'No puedes oír. Fallas automáticamente cualquier prueba que requiera el oído.',
+    'Envenenado':   'Tienes Desventaja en tiradas de ataque y pruebas de característica.',
+    'Incapacitado': 'No puedes realizar acciones ni reacciones.',
+    'Inconsciente': 'Estás Incapacitado, no puedes moverte ni hablar y no eres consciente de lo que te rodea. Sueltas lo que sostienes y caes al suelo (Derribado). Fallas automáticamente las salvaciones de FUE y DES. Los ataques contra ti tienen Ventaja. Cualquier ataque que te impacte desde 1,5 m es un golpe crítico.',
+    'Invisible':    'No puedes ser visto sin magia u otros sentidos especiales. Tus tiradas de ataque tienen Ventaja. Las tiradas de ataque contra ti tienen Desventaja.',
+    'Paralizado':   'Estás Incapacitado y no puedes moverte ni hablar. Fallas automáticamente las salvaciones de FUE y DES. Los ataques contra ti tienen Ventaja. Cualquier ataque que te impacte desde 1,5 m es un golpe crítico.',
+    'Petrificado':  'Te transformas en una sustancia sólida e inanimada. Estás Incapacitado, no puedes moverte ni hablar, y no eres consciente de lo que te rodea. Tienes Resistencia a todo el daño. Eres inmune a veneno y enfermedad. Las condiciones de veneno o enfermedad quedan en suspenso.',
+    'Restringido':  'Tu velocidad se reduce a 0. Tienes Desventaja en tiradas de ataque. Las tiradas de ataque contra ti tienen Ventaja. Desventaja en salvaciones de DES.',
+};
+
+function _initTooltipsCondiciones(panel) {
+    panel.querySelectorAll('.condicion-item').forEach(item => {
+        const nombreEl = item.querySelector('.condicion-nombre');
+        if (!nombreEl) return;
+        const nombre = nombreEl.textContent.trim();
+        const texto = CONDICION_TOOLTIPS[nombre];
+        if (!texto) return;
+
+        // Crear tooltip
+        const tt = document.createElement('div');
+        tt.className = 'condicion-tooltip';
+        tt.textContent = texto;
+        item.style.position = 'relative';
+        item.appendChild(tt);
+    });
+}
+
+/* Inicializar tooltips al crear cada ficha — patch de nuevaFicha */
+const _nuevaFichaOrig = nuevaFicha;
+nuevaFicha = function(datosGuardados) {
+    _nuevaFichaOrig(datosGuardados);
+    // El panel recién creado es el último
+    const panel = fichas[fichas.length - 1]?.panel;
+    if (panel) _initTooltipsCondiciones(panel);
+};
+
+/* ═══════════════════════════════════════════════════════
+   EXPORTAR A PDF
+═══════════════════════════════════════════════════════ */
+
+function exportarFichaPDF() {
+    const ficha = fichas.find(f => f.id === fichaActual);
+    if (!ficha) return;
+
+    const panel = ficha.panel;
+    const nombre = panel.querySelector('.input-nombre')?.value.trim() || 'personaje';
+
+    // Crear ventana de impresión con contenido de la ficha actual
+    const printWin = window.open('', '_blank', 'width=1200,height=900');
+
+    // Clonar el panel para no afectar el original
+    const clone = panel.cloneNode(true);
+
+    // Ajustes para impresión: mostrar todas las páginas, quitar modals
+    clone.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+    clone.querySelectorAll('.spell-tooltip').forEach(t => t.remove());
+    clone.querySelectorAll('.condicion-tooltip').forEach(t => t.remove());
+    clone.querySelectorAll('.agotamiento-tooltip').forEach(t => t.remove());
+
+    // Recoger estilos del documento actual
+    const estilos = Array.from(document.styleSheets).map(ss => {
+        try {
+            return Array.from(ss.cssRules).map(r => r.cssText).join('\n');
+        } catch(e) { return ''; }
+    }).join('\n');
+
+    printWin.document.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ficha D&D — ${nombre}</title>
+<style>
+${estilos}
+
+/* Overrides para impresión */
+* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+body { background: #fff !important; margin: 0; padding: 0; }
+.ficha-panel { display: block !important; opacity: 1 !important; }
+.segunda-pagina { page-break-before: always; }
+.modal-overlay, .spell-tooltip, .condicion-tooltip, .agotamiento-tooltip { display: none !important; }
+.barra-pestanas, #log-tiradas, #dados-widget { display: none !important; }
+
+@page { size: A4; margin: 12mm 10mm; }
+@media print {
+    .segunda-pagina { page-break-before: always; }
+    .seccion-inventario .contenedor-items { max-height: none !important; height: auto !important; overflow: visible !important; }
+}
+</style>
+</head>
+<body>
+${clone.outerHTML}
+<script>
+window.onload = function() {
+    setTimeout(function() { window.print(); window.close(); }, 600);
+};
+<\/script>
+</body>
+</html>`);
+
+    printWin.document.close();
+}

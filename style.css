@@ -914,10 +914,10 @@ label {
 .inventario-hint { font-size: 10px; color: #a0aec0; margin-bottom: 4px; text-align: right; }
 kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; padding: 1px 4px; font-family: monospace; font-size: 10px; }
 
-/* Grid: nombre | cant | descripción | equipado | borrar */
+/* Grid: nombre | cant | descripción | equipado | sintonizado | borrar */
 .inventario-cabecera {
     display: grid;
-    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 50px 20px;
+    grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 50px 30px 20px;
     gap: 4px;
     padding: 2px 4px 5px;
     border-bottom: 1px solid #cbd5e0;
@@ -965,6 +965,31 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 }
 .btn-borrar-item:hover { color: #e53e3e; background: #fff5f5; }
 
+.chk-sintonizado {
+    appearance: none; -webkit-appearance: none;
+    width: 14px; height: 14px; flex-shrink: 0;
+    border: 1.5px solid #805ad5; border-radius: 3px;
+    background: #f7fafc; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+    justify-self: center;
+}
+.chk-sintonizado:checked {
+    background: #805ad5;
+    border-color: #553c9a;
+}
+.chk-sintonizado:checked::after {
+    content: "✦";
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px; color: #fff; font-weight: 700; line-height: 1;
+}
+/* Item sintonizado — resalte sutil en morado */
+.item-fila:has(.chk-sintonizado:checked) {
+    background: #faf5ff;
+    outline: 1px solid #d6bcfa;
+    border-radius: 4px;
+}
 
 /* ===================================================
    SEGUNDA PÁGINA

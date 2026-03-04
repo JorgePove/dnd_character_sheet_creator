@@ -546,7 +546,7 @@ function borrarItemInventario(btn) {
     const contenedor = fila.closest('.contenedor-items');
     if (contenedor.querySelectorAll('.item-fila').length <= 1) {
         fila.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => i.value = '');
-        fila.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+        fila.querySelector('input[type="checkbox"]').checked = false;
     } else {
         fila.remove();
     }
@@ -771,17 +771,7 @@ function guardarTodo() {
         localStorage.setItem('dnd_fichas', JSON.stringify(datos));
         localStorage.setItem('dnd_contador', contadorFichas);
         localStorage.setItem('dnd_activa', fichaActual);
-    } catch(e) {
-        console.warn('No se pudo guardar:', e);
-        // Aviso si es error de cuota (p.ej. imagen muy grande en Roleplay)
-        if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-            const aviso = document.createElement('div');
-            aviso.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#e53e3e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.3)';
-            aviso.textContent = '⚠ No se pudo guardar: almacenamiento lleno. Exporta tus fichas a JSON como copia de seguridad.';
-            document.body.appendChild(aviso);
-            setTimeout(() => aviso.remove(), 6000);
-        }
-    }
+    } catch(e) { console.warn('No se pudo guardar:', e); }
 }
 
 function leerFicha(panel) {
@@ -1048,8 +1038,7 @@ function cargarDatosEnPanel(panel, d) {
                 <input type="text" placeholder="Nombre..." class="input-item" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()" value="${_esc(item.nombre)}">
                 <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()" value="${_esc(item.cant)}">
                 <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()" value="${_esc(item.desc)}">
-                <input type="checkbox" class="chk-equipado" title="Equipado" onchange="guardarDebounced()" ${item.equip?'checked':''}>
-                <input type="checkbox" class="chk-sintonizado" title="Sintonizado" onchange="validarSintonizados(this);guardarDebounced()" ${item.sint?'checked':''}>
+                <input type="checkbox" title="Equipado" onchange="guardarDebounced()" ${item.equip?'checked':''}>
                 <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>`;
             cont.appendChild(div);
         });
@@ -1222,39 +1211,6 @@ function cargarDatosEnPanel(panel, d) {
 
 
 /* ── Recursos expandibles ──────────────────────────── */
-function toggleRecargaRecurso(btn) {
-    const tipo = btn.dataset.tipo;
-    if (tipo === 'corto') {
-        const eraActivo = btn.classList.contains('activo-corto');
-        btn.classList.toggle('activo-corto', !eraActivo);
-        // Si se activa corto, desactivar largo (corto ⊂ largo)
-        if (!eraActivo) {
-            const btnLargo = btn.closest('.recurso-caja').querySelector('.recurso-recarga-btn[data-tipo="largo"]');
-            if (btnLargo) btnLargo.classList.remove('activo-largo');
-        }
-    } else {
-        btn.classList.toggle('activo-largo');
-    }
-    guardarDebounced();
-}
-
-function recargaRecursosPorDescanso(panel, tipo) {
-    panel.querySelectorAll('.recurso-caja').forEach(caja => {
-        const btnC = caja.querySelector('.recurso-recarga-btn[data-tipo="corto"]');
-        const btnL = caja.querySelector('.recurso-recarga-btn[data-tipo="largo"]');
-        const recargaCorto = btnC?.classList.contains('activo-corto');
-        const recargaLargo = btnL?.classList.contains('activo-largo');
-        const actualEl = caja.querySelector('.recurso-actual');
-        const maxEl    = caja.querySelector('.recurso-max');
-        if (!actualEl || !maxEl) return;
-        if (tipo === 'largo' && (recargaLargo || recargaCorto)) {
-            actualEl.value = maxEl.value;
-        } else if (tipo === 'corto' && recargaCorto) {
-            actualEl.value = maxEl.value;
-        }
-    });
-    guardarDebounced();
-}
 function _recursosCajaHTML(idx) {
     return `<div class="recurso-caja" data-recurso="${idx}">
         <div class="recurso-top">
@@ -1438,7 +1394,8 @@ function _renderSpellEntry(lista, sp) {
     nombreWrap.className = 'spell-entry-nombre-wrap';
 
     const nombre = document.createElement('span');
-    nombre.className = 'spell-entry-nombre';
+    nombre.className = 'spell-entry-nombre rollable-spell';
+    nombre.title = 'Clic para tirar · Mantén para ver descripción';
     nombre.textContent = sp.n;
     nombre.addEventListener('mouseenter', (e) => {
         clearTimeout(_tooltipShowTimeout);
@@ -1448,6 +1405,14 @@ function _renderSpellEntry(lista, sp) {
     nombre.addEventListener('mouseleave', () => {
         clearTimeout(_tooltipShowTimeout);
         ocultarTooltipHechizo();
+    });
+    // Clic → tirar hechizo
+    nombre.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearTimeout(_tooltipShowTimeout);
+        ocultarTooltipHechizo();
+        const panel = nombre.closest('.ficha-panel');
+        if (panel) tirarHechizo(sp, panel);
     });
 
     // Tag de concentración (oculto hasta que se active)
@@ -1983,4 +1948,330 @@ function cargarRoleplay(panel, data) {
             notas.querySelector('.notas-paneles-custom').appendChild(panelEl);
         });
     }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SPELLCASTING — TIRADAS DE HECHIZOS
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Parser de dados ─────────────────────────────────────
+   Extrae { qty, faces, tipo } del campo damage de un hechizo.
+   Formato esperado: "XdY Tipo (escala...)" o "XdY Tipo"
+   Devuelve null si no hay dados reales (ej: "+5 CA").
+──────────────────────────────────────────────────────── */
+function _parseDamageBase(damageStr) {
+    if (!damageStr) return null;
+    const m = damageStr.match(/^(\d+)d(\d+)\s+([A-Za-záéíóúüñÁÉÍÓÚÜÑ]+)/i);
+    if (!m) return null;
+    return { qty: parseInt(m[1]), faces: parseInt(m[2]), tipo: m[3] };
+}
+
+/* Escalado de cantrips: tablas estándar D&D 5e 2024
+   Devuelve multiplicador de dados según nivel de personaje. */
+function _cantripScale(nivelPersonaje) {
+    if (nivelPersonaje >= 17) return 4;
+    if (nivelPersonaje >= 11) return 3;
+    if (nivelPersonaje >= 5)  return 2;
+    return 1;
+}
+
+/* Escalado de hechizos de nivel.
+   Intenta parsear el patrón "(escala: +XdY/nivel)" o "(escala: +X/nivel)".
+   Devuelve { qty, faces } de dados extra por nivel sobre el base, o null. */
+function _parseEscalaHechizo(damageStr) {
+    if (!damageStr) return null;
+    // Patrón: "+1d6/nivel" o "+1d8/nivel"
+    const mDice = damageStr.match(/escala:\s*\+(\d+)d(\d+)\/nivel/i);
+    if (mDice) return { qty: parseInt(mDice[1]), faces: parseInt(mDice[2]), flat: 0 };
+    // Patrón: "+1/nivel" (bono plano)
+    const mFlat = damageStr.match(/escala:\s*\+(\d+)\/nivel/i);
+    if (mFlat) return { qty: 0, faces: 0, flat: parseInt(mFlat[1]) };
+    return null;
+}
+
+/* Escalado de cantrips con tabla propia: "(2dY Nv.5, 3dY Nv.11, 4dY Nv.17)"
+   Devuelve qty de dados para el nivel dado o null si no hay tabla. */
+function _cantripTableScale(damageStr, nivelPersonaje) {
+    if (!damageStr || !damageStr.includes('Nv.')) return null;
+    // Extraer todas las entradas Nv.XX
+    const entradas = [];
+    const re = /(\d+)d\d+\s+Nv\.(\d+)/gi;
+    let m;
+    while ((m = re.exec(damageStr)) !== null) {
+        entradas.push({ qty: parseInt(m[1]), desde: parseInt(m[2]) });
+    }
+    if (!entradas.length) return null;
+    // Ordenar descendente y coger la primera que aplique
+    entradas.sort((a, b) => b.desde - a.desde);
+    for (const e of entradas) {
+        if (nivelPersonaje >= e.desde) return e.qty;
+    }
+    return null;
+}
+
+/* Detecta si un hechizo requiere tirada de ataque */
+function _spellRequiereAtaque(sp) {
+    if (!sp.desc) return false;
+    return /ataque\s+a\s+distancia|ataque\s+cuerpo\s+a\s+cuerpo|tirada\s+de\s+ataque|melee\s+spell\s+attack|ranged\s+spell\s+attack/i.test(sp.desc);
+}
+
+/* Detecta si un hechizo requiere salvación y qué stat */
+function _spellSalvacion(sp) {
+    if (!sp.desc) return null;
+    const m = sp.desc.match(/salvaci[oó]n\s+(?:de\s+)?([A-ZÁÉÍÓÚ]{3}|Fuerza|Destreza|Constituci[oó]n|Inteligencia|Sabidur[ií]a|Carisma)/i);
+    if (!m) return null;
+    const raw = m[1].toUpperCase();
+    const mapa = { FUE:'Fuerza', DES:'Destreza', CON:'Constitución', INT:'Inteligencia',
+                   SAB:'Sabiduría', CAR:'Carisma', STR:'Fuerza', DEX:'Destreza',
+                   CONSTITUCIÓN:'Constitución', FUERZA:'Fuerza', DESTREZA:'Destreza',
+                   INTELIGENCIA:'Inteligencia', SABIDURÍA:'Sabiduría', CARISMA:'Carisma' };
+    return mapa[raw] || m[1];
+}
+
+/* ── Modal de nivel ──────────────────────────────────────
+   Muestra un modal centrado con opciones de nivel y devuelve
+   una Promise que resuelve al número elegido o null si cancela.
+──────────────────────────────────────────────────────── */
+function _modalNivel(titulo, opciones) {
+    return new Promise(resolve => {
+        // Overlay
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position:fixed;inset:0;background:rgba(0,0,0,0.55);
+            z-index:10000;display:flex;align-items:center;justify-content:center;`;
+
+        const caja = document.createElement('div');
+        caja.style.cssText = `
+            background:#1a202c;border:2px solid #553c9a;border-radius:12px;
+            padding:20px 24px;min-width:260px;max-width:340px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.6);color:#e2e8f0;font-family:inherit;`;
+
+        const h = document.createElement('div');
+        h.style.cssText = 'font-size:13px;font-weight:700;color:#b794f4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px;';
+        h.textContent = titulo;
+        caja.appendChild(h);
+
+        const grid = document.createElement('div');
+        grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;';
+
+        opciones.forEach(op => {
+            const btn = document.createElement('button');
+            btn.textContent = op.label;
+            btn.style.cssText = `
+                padding:8px 14px;background:#2d3748;border:1.5px solid #4a5568;
+                border-radius:7px;color:#e2e8f0;font-size:13px;font-weight:600;
+                cursor:pointer;transition:background 0.15s,border-color 0.15s;font-family:inherit;`;
+            btn.addEventListener('mouseenter', () => { btn.style.background='#553c9a'; btn.style.borderColor='#805ad5'; });
+            btn.addEventListener('mouseleave', () => { btn.style.background='#2d3748'; btn.style.borderColor='#4a5568'; });
+            btn.addEventListener('click', () => { document.body.removeChild(overlay); resolve(op.value); });
+            grid.appendChild(btn);
+        });
+        caja.appendChild(grid);
+
+        const cancelar = document.createElement('button');
+        cancelar.textContent = 'Cancelar';
+        cancelar.style.cssText = `
+            width:100%;padding:7px;background:transparent;border:1px solid #4a5568;
+            border-radius:6px;color:#718096;font-size:12px;cursor:pointer;font-family:inherit;`;
+        cancelar.addEventListener('click', () => { document.body.removeChild(overlay); resolve(null); });
+        caja.appendChild(cancelar);
+
+        overlay.appendChild(caja);
+        // Cerrar al clicar fuera
+        overlay.addEventListener('click', e => { if (e.target === overlay) { document.body.removeChild(overlay); resolve(null); } });
+        document.body.appendChild(overlay);
+    });
+}
+
+/* ── Gasta un slot del nivel indicado ───────────────────
+   Busca el primer slot marcado (checked) en el bloque de ese nivel y lo desmarca.
+   Devuelve true si lo encontró, false si no había slots disponibles.
+──────────────────────────────────────────────────────── */
+function _gastarSlot(panel, nivel) {
+    const bloque = panel.querySelector(`.spell-nivel-bloque[data-nivel="${nivel}"]`);
+    if (!bloque) return false;
+    const slot = [...bloque.querySelectorAll('.slot-chk')].find(c => c.checked);
+    if (!slot) return false;
+    slot.checked = false;
+    guardarDebounced();
+    return true;
+}
+
+/* ── Tirar dados ─────────────────────────────────────────
+   Tira qty dados de `faces` caras. Si esCrit, dobla qty.
+   Devuelve { rolls, suma }.
+──────────────────────────────────────────────────────── */
+function _tirarDados(qty, faces, esCrit) {
+    const n = esCrit ? qty * 2 : qty;
+    const rolls = Array.from({ length: n }, () => Math.floor(Math.random() * faces) + 1);
+    return { rolls, suma: rolls.reduce((a, b) => a + b, 0) };
+}
+
+/* ── Función principal: clic en nombre de hechizo ───────────────── */
+async function tirarHechizo(sp, panel) {
+    const esCantrip = sp.nivel === 'Truco';
+    const base = _parseDamageBase(sp.damage);
+
+    // ── Elegir nivel ─────────────────────────────────────
+    let nivelLanzado = null;
+    let nivelPersonaje = null;
+
+    if (esCantrip) {
+        const res = await _modalNivel('¿Nivel del personaje?', [
+            {label:'1-4', value:1}, {label:'5-10', value:5},
+            {label:'11-16', value:11}, {label:'17-20', value:17}
+        ]);
+        if (res === null) return;
+        nivelPersonaje = res;
+    } else {
+        // Nivel base del hechizo (extraer número)
+        const nivelBase = parseInt((sp.nivel || '').replace(/\D/g,'')) || 1;
+        // Opciones: desde nivel base hasta 9
+        const opts = [];
+        for (let i = nivelBase; i <= 9; i++) {
+            opts.push({ label: `Nivel ${i}`, value: i });
+        }
+        const res = await _modalNivel(`¿A qué nivel lanzar ${sp.n}?`, opts);
+        if (res === null) return;
+        nivelLanzado = res;
+        const nivelBase2 = nivelBase; // alias para escalado
+
+        // ── Gastar slot ───────────────────────────────────
+        const slotGastado = _gastarSlot(panel, nivelLanzado);
+        if (!slotGastado) {
+            // Aviso pero sigue (puede haber usado magia innata, etc.)
+            const aviso = document.createElement('div');
+            aviso.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#744210;color:#fefcbf;padding:9px 14px;border-radius:8px;font-size:12px;font-weight:700;z-index:9999;border:1px solid #d69e2e;';
+            aviso.textContent = `⚠ No hay slots de nivel ${nivelLanzado} disponibles`;
+            document.body.appendChild(aviso);
+            setTimeout(() => aviso.remove(), 3000);
+        }
+    }
+
+    // ── Construir log ────────────────────────────────────
+    const log = document.getElementById('log-lista');
+    const div = document.createElement('div');
+    const gV = panel.querySelector('.btn-ventaja').classList.contains('activo-ventaja');
+    const gD = panel.querySelector('.btn-desventaja').classList.contains('activo-desventaja');
+
+    // Etiqueta de nivel para el log
+    const labelNivel = esCantrip
+        ? `Truco (Nv. personaje ${nivelPersonaje === 17 ? '17-20' : nivelPersonaje === 11 ? '11-16' : nivelPersonaje === 5 ? '5-10' : '1-4'})`
+        : `Nivel ${nivelLanzado}`;
+
+    // ── Sin daño real ─────────────────────────────────────
+    if (!base) {
+        div.className = 'log-entrada spell-lanzado';
+        div.innerHTML = `
+            <strong>✨ ${sp.n} — ${labelNivel}</strong>
+            <div class="res"><span style="font-size:13px;color:#b794f4">Lanzado</span>
+            <small>${sp.damage || 'Sin daño'} · ${sp.casting}</small></div>`;
+        log.prepend(div);
+        panel.querySelector('.btn-ventaja').classList.remove('activo-ventaja');
+        panel.querySelector('.btn-desventaja').classList.remove('activo-desventaja');
+        return;
+    }
+
+    // ── Calcular dados finales ────────────────────────────
+    let qtyFinal = base.qty;
+    let flatBonus = 0;
+
+    if (esCantrip) {
+        // Intentar tabla propia primero, luego escala estándar
+        const tablaQty = _cantripTableScale(sp.damage, nivelPersonaje);
+        qtyFinal = tablaQty !== null ? tablaQty : base.qty * _cantripScale(nivelPersonaje);
+    } else {
+        const escala = _parseEscalaHechizo(sp.damage);
+        const nivelBase = parseInt((sp.nivel || '').replace(/\D/g,'')) || 1;
+        const nivelesExtra = nivelLanzado - nivelBase;
+        if (escala && nivelesExtra > 0) {
+            if (escala.qty > 0) {
+                qtyFinal += escala.qty * nivelesExtra;
+            } else {
+                flatBonus += escala.flat * nivelesExtra;
+            }
+        }
+    }
+
+    const tieneAtaque = _spellRequiereAtaque(sp);
+    const salvStat    = _spellSalvacion(sp);
+
+    // ── Obtener bono de ataque / DC del panel ─────────────
+    const spellAtkEl = panel.querySelector('.spell-atk-display');
+    const spellDcEl  = panel.querySelector('.spell-dc-display');
+    const spellAtk   = parseInt(spellAtkEl?.textContent) || 0;
+    const spellDc    = parseInt(spellDcEl?.textContent)  || 8;
+
+    // ── Hechizo con tirada de ataque ──────────────────────
+    if (tieneAtaque) {
+        const d1 = Math.floor(Math.random() * 20) + 1;
+        const d2 = Math.floor(Math.random() * 20) + 1;
+        let dImpacto, detalleImpacto, claseAdv = '';
+        if      (gV) { dImpacto = Math.max(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; claseAdv = 'ventaja'; }
+        else if (gD) { dImpacto = Math.min(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; claseAdv = 'desventaja'; }
+        else         { dImpacto = d1; detalleImpacto = `${d1}`; }
+
+        const totalImpacto = dImpacto + spellAtk;
+        const esCrit  = dImpacto === 20;
+        const esFallo = dImpacto === 1;
+
+        const { rolls, suma } = _tirarDados(qtyFinal, base.faces, esCrit);
+        const totalDaño = suma + flatBonus;
+        const bonStr = spellAtk >= 0 ? `+${spellAtk}` : `${spellAtk}`;
+        const critStr = esCrit ? ` ✦CRIT(${qtyFinal}d→${qtyFinal*2}d)` : '';
+        const flatStr = flatBonus ? ` +${flatBonus}` : '';
+
+        const impColor = esCrit ? 'crit-verde' : esFallo ? 'crit-rojo' : '';
+        const impLabel = esCrit ? '¡CRÍTICO!' : esFallo ? 'Pifia' : 'impacto';
+
+        div.className = `log-entrada spell-ataque${esCrit?' critico':''}`;
+        div.innerHTML = `
+            <strong>✨ ${sp.n} — ${labelNivel}</strong>
+            <div class="res">
+                <span class="${impColor}">${totalImpacto}</span>
+                <small>🎯 ${impLabel} (${detalleImpacto} ${bonStr})</small>
+            </div>
+            <hr class="log-sep">
+            <div class="log-daño-linea">
+                <span>${totalDaño}</span>
+                <small>${base.tipo} (${rolls.join('+')}${flatStr}${critStr})</small>
+            </div>`;
+
+    // ── Hechizo con salvación ──────────────────────────────
+    } else if (salvStat) {
+        const { rolls, suma } = _tirarDados(qtyFinal, base.faces, false);
+        const totalDaño = suma + flatBonus;
+        const flatStr = flatBonus ? ` +${flatBonus}` : '';
+
+        div.className = 'log-entrada spell-salv';
+        div.innerHTML = `
+            <strong>✨ ${sp.n} — ${labelNivel}</strong>
+            <div class="res" style="margin-bottom:4px">
+                <span style="font-size:13px;font-weight:700;color:#f6e05e">CD ${spellDc}</span>
+                <small>🛡 Salvación de ${salvStat}</small>
+            </div>
+            <hr class="log-sep">
+            <div class="log-daño-linea">
+                <span>${totalDaño}</span>
+                <small>${base.tipo} (${rolls.join('+')}${flatStr}) · mitad en éxito</small>
+            </div>`;
+
+    // ── Hechizo solo daño (sin ataque ni salvación explícita) ─
+    } else {
+        const { rolls, suma } = _tirarDados(qtyFinal, base.faces, false);
+        const totalDaño = suma + flatBonus;
+        const flatStr = flatBonus ? ` +${flatBonus}` : '';
+
+        div.className = 'log-entrada spell-daño';
+        div.innerHTML = `
+            <strong>✨ ${sp.n} — ${labelNivel}</strong>
+            <div class="log-daño-linea">
+                <span>${totalDaño}</span>
+                <small>${base.tipo} (${rolls.join('+')}${flatStr})</small>
+            </div>`;
+    }
+
+    log.prepend(div);
+    panel.querySelector('.btn-ventaja').classList.remove('activo-ventaja');
+    panel.querySelector('.btn-desventaja').classList.remove('activo-desventaja');
 }

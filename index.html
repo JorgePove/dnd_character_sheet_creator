@@ -149,7 +149,7 @@
                         <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Fuerza')">
                             <input type="checkbox" class="dot prof salv-dot" data-stat="str" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
                             <span class="salv-label">Salvación</span>
-                            <span class="salv-valor" data-salv="str">+0</span>
+                            <div class="salv-ajuste" onclick="event.stopPropagation()"><div class="salv-flechas"><button class="salv-arrow" onclick="ajustarSalv(this,1)" tabindex="-1">▲</button><button class="salv-arrow" onclick="ajustarSalv(this,-1)" tabindex="-1">▼</button></div><input type="number" class="salv-valor" data-salv="str" value="0" data-salv-override="false" oninput="onSalvValorEdit(this)" ondblclick="onSalvValorReset(this)" onclick="event.stopPropagation()" title="Editar · Doble clic restaura"></div>
                         </div>
                     </div>
 
@@ -164,7 +164,7 @@
                         <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Destreza')">
                             <input type="checkbox" class="dot prof salv-dot" data-stat="dex" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
                             <span class="salv-label">Salvación</span>
-                            <span class="salv-valor" data-salv="dex">+0</span>
+                            <div class="salv-ajuste" onclick="event.stopPropagation()"><div class="salv-flechas"><button class="salv-arrow" onclick="ajustarSalv(this,1)" tabindex="-1">▲</button><button class="salv-arrow" onclick="ajustarSalv(this,-1)" tabindex="-1">▼</button></div><input type="number" class="salv-valor" data-salv="dex" value="0" data-salv-override="false" oninput="onSalvValorEdit(this)" ondblclick="onSalvValorReset(this)" onclick="event.stopPropagation()" title="Editar · Doble clic restaura"></div>
                         </div>
                     </div>
 
@@ -179,7 +179,7 @@
                         <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Constitución')">
                             <input type="checkbox" class="dot prof salv-dot" data-stat="con" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
                             <span class="salv-label">Salvación</span>
-                            <span class="salv-valor" data-salv="con">+0</span>
+                            <div class="salv-ajuste" onclick="event.stopPropagation()"><div class="salv-flechas"><button class="salv-arrow" onclick="ajustarSalv(this,1)" tabindex="-1">▲</button><button class="salv-arrow" onclick="ajustarSalv(this,-1)" tabindex="-1">▼</button></div><input type="number" class="salv-valor" data-salv="con" value="0" data-salv-override="false" oninput="onSalvValorEdit(this)" ondblclick="onSalvValorReset(this)" onclick="event.stopPropagation()" title="Editar · Doble clic restaura"></div>
                         </div>
                     </div>
 
@@ -194,7 +194,7 @@
                         <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Inteligencia')">
                             <input type="checkbox" class="dot prof salv-dot" data-stat="int" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
                             <span class="salv-label">Salvación</span>
-                            <span class="salv-valor" data-salv="int">+0</span>
+                            <div class="salv-ajuste" onclick="event.stopPropagation()"><div class="salv-flechas"><button class="salv-arrow" onclick="ajustarSalv(this,1)" tabindex="-1">▲</button><button class="salv-arrow" onclick="ajustarSalv(this,-1)" tabindex="-1">▼</button></div><input type="number" class="salv-valor" data-salv="int" value="0" data-salv-override="false" oninput="onSalvValorEdit(this)" ondblclick="onSalvValorReset(this)" onclick="event.stopPropagation()" title="Editar · Doble clic restaura"></div>
                         </div>
                     </div>
 
@@ -209,7 +209,7 @@
                         <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Sabiduría')">
                             <input type="checkbox" class="dot prof salv-dot" data-stat="wis" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
                             <span class="salv-label">Salvación</span>
-                            <span class="salv-valor" data-salv="wis">+0</span>
+                            <div class="salv-ajuste" onclick="event.stopPropagation()"><div class="salv-flechas"><button class="salv-arrow" onclick="ajustarSalv(this,1)" tabindex="-1">▲</button><button class="salv-arrow" onclick="ajustarSalv(this,-1)" tabindex="-1">▼</button></div><input type="number" class="salv-valor" data-salv="wis" value="0" data-salv-override="false" oninput="onSalvValorEdit(this)" ondblclick="onSalvValorReset(this)" onclick="event.stopPropagation()" title="Editar · Doble clic restaura"></div>
                         </div>
                     </div>
 
@@ -224,7 +224,7 @@
                         <div class="stat-salv" onclick="tirarSalvacionStat(this,'Salv. Carisma')">
                             <input type="checkbox" class="dot prof salv-dot" data-stat="cha" onchange="actualizarTodo(this)" onclick="event.stopPropagation()">
                             <span class="salv-label">Salvación</span>
-                            <span class="salv-valor" data-salv="cha">+0</span>
+                            <div class="salv-ajuste" onclick="event.stopPropagation()"><div class="salv-flechas"><button class="salv-arrow" onclick="ajustarSalv(this,1)" tabindex="-1">▲</button><button class="salv-arrow" onclick="ajustarSalv(this,-1)" tabindex="-1">▼</button></div><input type="number" class="salv-valor" data-salv="cha" value="0" data-salv-override="false" oninput="onSalvValorEdit(this)" ondblclick="onSalvValorReset(this)" onclick="event.stopPropagation()" title="Editar · Doble clic restaura"></div>
                         </div>
                     </div>
 
@@ -263,23 +263,24 @@
                     <span class="etiqueta-adv" title="Ventaja / Desventaja permanente">¿Ven?</span>
                 </div>
                 <div class="lista-habilidades">
-                    <div class="fila-skill rollable" data-stat="str" onclick="tirarDesdeFila(this,'Atletismo')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Atletismo <small>(Fue)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Acrobacias')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Acrobacias <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Trato con Animales')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Trato con Animales <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Arcanos')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Arcanos <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Historia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Historia <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Intimidación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Intimidación <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable fila-investigacion" data-stat="int" onclick="tirarDesdeFila(this,'Investigación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Investigación <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Medicina')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Medicina <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Naturaleza')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Naturaleza <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable fila-percepcion" data-stat="wis" onclick="tirarDesdeFila(this,'Percepción')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Percepción <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable fila-perspicacia" data-stat="wis" onclick="tirarDesdeFila(this,'Perspicacia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Perspicacia <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Interpretación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Interpretación <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Persuasión')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Persuasión <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Religión')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Religión <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Juego de Manos')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Juego de Manos <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Sigilo')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Sigilo <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
-                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Supervivencia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><span class="mod-valor">+0</span><label>Supervivencia <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="str" onclick="tirarDesdeFila(this,'Atletismo')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Atletismo <small>(Fue)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Acrobacias')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Acrobacias <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Trato con Animales')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Trato con Animales <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Arcana')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Arcana <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Engaño')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Engaño <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Historia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Historia <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Intimidación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Intimidación <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable fila-investigacion" data-stat="int" onclick="tirarDesdeFila(this,'Investigación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Investigación <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Medicina')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Medicina <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Naturaleza')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Naturaleza <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable fila-percepcion" data-stat="wis" onclick="tirarDesdeFila(this,'Percepción')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Percepción <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable fila-perspicacia" data-stat="wis" onclick="tirarDesdeFila(this,'Perspicacia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Perspicacia <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Interpretación')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Interpretación <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="cha" onclick="tirarDesdeFila(this,'Persuasión')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Persuasión <small>(Car)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="int" onclick="tirarDesdeFila(this,'Religión')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Religión <small>(Int)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Juego de Manos')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Juego de Manos <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="dex" onclick="tirarDesdeFila(this,'Sigilo')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Sigilo <small>(Des)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
+                    <div class="fila-skill rollable" data-stat="wis" onclick="tirarDesdeFila(this,'Supervivencia')"><input type="checkbox" class="dot prof" onchange="actualizarTodo(this)" onclick="event.stopPropagation()"><input type="checkbox" class="dot exp" onchange="validarExpertise(this)" onclick="event.stopPropagation()"><input type="number" class="mod-valor" value="0" data-override="false" oninput="onModValorEdit(this)" ondblclick="onModValorReset(this)" onclick="event.stopPropagation()" title="Doble clic: restaurar cálculo automático"><label>Supervivencia <small>(Sab)</small></label><div class="adv-toggle" data-adv="0" onclick="toggleAdv(this);event.stopPropagation()"></div></div>
                 </div>
             </div>
 
@@ -651,31 +652,17 @@
         <div class="seccion-caja caja-caracteristicas">
             <h3 class="titulo-caja">Características de Personaje</h3>
 
-            <!-- FILA 1: Clase + Subclase -->
+            <!-- FILA 1: Clase + Subclase con pestañas multiclase -->
             <div class="caract-fila">
-
-                <div class="seccion-caja caract-mitad">
-                    <h3 class="titulo-caja">Clase</h3>
-                    <div class="caract-selector-wrap">
-                        <select class="caract-select sel-clase" onchange="onClaseChange(this)">
-                            <option value="">— Selecciona una clase —</option>
-                        </select>
-                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'clase')" title="Limpiar">✕</button>
+                <div class="seccion-caja caract-completa caract-mc-wrap">
+                    <div class="caract-mc-header">
+                        <div class="caract-mc-tabs"></div>
+                        <button class="caract-mc-add" onclick="mcAddTab(this)" title="Añadir clase">＋</button>
                     </div>
-                    <textarea class="caract-textarea caract-clase" placeholder="Selecciona una clase arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
-                </div>
-
-                <div class="seccion-caja caract-mitad">
-                    <h3 class="titulo-caja">Subclase</h3>
-                    <div class="caract-selector-wrap">
-                        <select class="caract-select sel-subclase" onchange="onSubclaseChange(this)">
-                            <option value="">— Selecciona primero una clase —</option>
-                        </select>
-                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'subclase')" title="Limpiar">✕</button>
+                    <div class="caract-mc-body">
+                        <!-- Las páginas clase+subclase se generan dinámicamente -->
                     </div>
-                    <textarea class="caract-textarea caract-subclase" placeholder="Selecciona una subclase arriba, o escribe libremente..." oninput="guardarDebounced()"></textarea>
                 </div>
-
             </div>
 
             <!-- FILA 2: Especie + Dotes -->
@@ -719,40 +706,44 @@
 
                     <!-- Panel de trasfondo PERSONALIZADO (oculto por defecto) -->
                     <div class="trasfondo-personalizado" style="display:none">
-                        <div class="tf-fila">
-                            <span class="tf-label">Aumento de característica:</span>
-                            <span class="tf-bonus">+2</span>
-                            <select class="tf-stat2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
-                                <option value="">— Estadística —</option>
-                                <option>Fuerza</option><option>Destreza</option><option>Constitución</option>
-                                <option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option>
-                            </select>
-                            <span class="tf-sep">/</span>
-                            <span class="tf-bonus">+1</span>
-                            <select class="tf-stat1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
-                                <option value="">— Estadística —</option>
-                                <option>Fuerza</option><option>Destreza</option><option>Constitución</option>
-                                <option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option>
-                            </select>
-                        </div>
-                        <div class="tf-fila">
-                            <span class="tf-label">Habilidad 1:</span>
-                            <select class="tf-hab1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
-                                <option value="">— Habilidad —</option>
-                            </select>
-                        </div>
-                        <div class="tf-fila">
-                            <span class="tf-label">Habilidad 2:</span>
-                            <select class="tf-hab2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
-                                <option value="">— Habilidad —</option>
-                            </select>
-                        </div>
-                        <div class="tf-fila">
-                            <span class="tf-label">Dote de Origen:</span>
-                            <select class="tf-dote-sel tf-sel">
-                                <option value="">— Dote de Origen —</option>
-                            </select>
-                            <button class="caract-btn-add" onclick="onDoteOrigenAdd(this)" title="Añadir a Dotes">＋</button>
+                        <div class="tf-grid">
+                            <div class="tf-campo">
+                                <label class="tf-label">Estadística <span class="tf-badge tf-badge-plus2">+2</span></label>
+                                <select class="tf-stat2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                    <option value="">— Selecciona —</option>
+                                    <option>Fuerza</option><option>Destreza</option><option>Constitución</option>
+                                    <option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option>
+                                </select>
+                            </div>
+                            <div class="tf-campo">
+                                <label class="tf-label">Estadística <span class="tf-badge tf-badge-plus1">+1</span></label>
+                                <select class="tf-stat1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                    <option value="">— Selecciona —</option>
+                                    <option>Fuerza</option><option>Destreza</option><option>Constitución</option>
+                                    <option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option>
+                                </select>
+                            </div>
+                            <div class="tf-campo">
+                                <label class="tf-label">Habilidad <span class="tf-badge tf-badge-comp">Comp.</span></label>
+                                <select class="tf-hab1-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                    <option value="">— Selecciona —</option>
+                                </select>
+                            </div>
+                            <div class="tf-campo">
+                                <label class="tf-label">Habilidad <span class="tf-badge tf-badge-comp">Comp.</span></label>
+                                <select class="tf-hab2-sel tf-sel" onchange="aplicarTrasfondoPersonalizado(getPanel(this))">
+                                    <option value="">— Selecciona —</option>
+                                </select>
+                            </div>
+                            <div class="tf-campo tf-campo-full">
+                                <label class="tf-label">Dote</label>
+                                <div class="tf-dote-row">
+                                    <select class="tf-dote-sel tf-sel">
+                                        <option value="">— Selecciona dote —</option>
+                                    </select>
+                                    <button class="caract-btn-add" onclick="onDoteOrigenAdd(this)" title="Añadir a Dotes">＋ Añadir</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -833,26 +824,7 @@
     ═══════════════════════════════════ -->
     <div class="segunda-pagina cuarta-pagina">
 
-        <!-- TOOLTIP GLOBAL DE HECHIZO (oculto por defecto) -->
-        <div class="spell-tooltip" id="spell-tooltip">
-            <div class="stt-header">
-                <span class="stt-nombre"></span>
-                <span class="stt-nivel-escuela"></span>
-            </div>
-            <div class="stt-meta">
-                <div class="stt-fila"><span class="stt-key">Tiempo de lanzamiento</span><span class="stt-val stt-casting"></span></div>
-                <div class="stt-fila"><span class="stt-key">Alcance</span><span class="stt-val stt-range"></span></div>
-                <div class="stt-fila"><span class="stt-key">Componentes</span><span class="stt-val stt-components"></span></div>
-                <div class="stt-fila"><span class="stt-key">Duración</span><span class="stt-val stt-duration"></span></div>
-            </div>
-            <div class="stt-desc"></div>
-            <div class="stt-daño-wrap" style="display:none">
-                <div class="stt-fila"><span class="stt-key">Daño / Efecto</span><span class="stt-val stt-damage"></span></div>
-            </div>
-            <div class="stt-extra-wrap" style="display:none">
-                <div class="stt-fila stt-extra"></div>
-            </div>
-        </div>
+
 
         <!-- CAJA: VALORES DE SPELLCASTING -->
         <div class="seccion-caja caja-spell-valores">
@@ -1172,24 +1144,44 @@
     
     </div><!-- fin quinta-pagina -->
 
-    <!-- MODAL DE CONFIRMACIÓN DE BORRADO -->
-    <div class="modal-overlay" style="display:none">
-        <div class="modal-caja">
-            <div class="modal-icono">⚠️</div>
-            <h3 class="modal-titulo">¿Borrar esta ficha?</h3>
-            <p class="modal-texto">Esta acción eliminará permanentemente la ficha <strong class="modal-nombre-personaje"></strong> y todos sus datos. No hay vuelta atrás.</p>
-            <div class="modal-botones">
-                <button class="modal-btn cancelar" onclick="cerrarModal()">Cancelar</button>
-                <button class="modal-btn confirmar" onclick="confirmarBorrado()">Sí, borrar</button>
-            </div>
-        </div>
-    </div>
+
 
 </div>
 </template>
 
+<!-- Clases -->
+<script src="artificer.js"></script>
+<script src="barbaro.js"></script>
+<script src="bardo.js"></script>
+<script src="bloodhunter.js"></script>
+<script src="brujo.js"></script>
+<script src="clerigo.js"></script>
+<script src="druida.js"></script>
+<script src="explorador.js"></script>
+<script src="guerrero.js"></script>
+<script src="hechicero.js"></script>
+<script src="mago.js"></script>
+<script src="monje.js"></script>
+<script src="paladin.js"></script>
+<script src="picaro.js"></script>
+<!-- Datos extra -->
+<script src="especies.js"></script>
+<script src="dotes.js"></script>
+<script src="trasfondos.js"></script>
+<!-- Hechizos por nivel -->
+<script src="hechizos-nivel-0.js"></script>
+<script src="hechizos-nivel-1.js"></script>
+<script src="hechizos-nivel-2.js"></script>
+<script src="hechizos-nivel-3.js"></script>
+<script src="hechizos-nivel-4.js"></script>
+<script src="hechizos-nivel-5.js"></script>
+<script src="hechizos-nivel-6.js"></script>
+<script src="hechizos-nivel-7.js"></script>
+<script src="hechizos-nivel-8.js"></script>
+<script src="hechizos-nivel-9.js"></script>
+<!-- Ensamblador + UI -->
 <script src="caracteristicas.js"></script>
-<script src="hechizos.js"></script>
-    <script src="script.js"></script>
+<!-- Motor principal -->
+<script src="script.js"></script>
 </body>
 </html>

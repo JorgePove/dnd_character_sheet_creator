@@ -40,6 +40,7 @@ function nuevaFicha(datosGuardados) {
         }
     })();
     if (typeof initCaractSelectores === 'function') initCaractSelectores(panel);
+    if (typeof initMcWidget === 'function') initMcWidget(panel);
     if (typeof initSpellcasting === 'function') initSpellcasting(panel);
     initNotasSubpags(panel);
     _initAutoAccionesBloque(panel);
@@ -56,6 +57,32 @@ function activarFicha(id) {
     document.querySelectorAll('.pestana').forEach(tab => tab.classList.toggle('activa', tab.dataset.fichaId === id));
 }
 
+/* ── Modal de borrado global ──
+   Se crea en DOMContentLoaded para garantizar que body existe.
+   confirmarBorrado guarda el id ANTES de cerrar el modal. ── */
+function _crearModalBorrado() {
+    if (document.getElementById('modal-borrado-global')) return;
+    const m = document.createElement('div');
+    m.id = 'modal-borrado-global';
+    m.innerHTML = `
+        <div class="modal-caja">
+            <div class="modal-icono">⚠️</div>
+            <h3 class="modal-titulo">¿Borrar esta ficha?</h3>
+            <p class="modal-texto">Se eliminará permanentemente la ficha <strong id="modal-borrado-nombre"></strong>. Esta acción es irreversible.</p>
+            <div class="modal-botones">
+                <button class="modal-btn cancelar" onclick="cerrarModal()">No, Mantener</button>
+                <button class="modal-btn confirmar" onclick="confirmarBorrado()">Sí, Borrar</button>
+            </div>
+        </div>`;
+    document.body.appendChild(m);
+}
+// Crear inmediatamente si el DOM ya está listo, si no esperar al evento
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _crearModalBorrado);
+} else {
+    _crearModalBorrado();
+}
+
 function cerrarFicha(event, id) {
     event.stopPropagation();
     if (fichas.length <= 1) return;
@@ -63,25 +90,30 @@ function cerrarFicha(event, id) {
     const nombre = ficha?.panel.querySelector('.input-nombre')?.value.trim()
         || `Personaje ${fichas.findIndex(f => f.id === id) + 1}`;
     fichaABorrar = id;
-    const panel = ficha.panel;
-    const modal = panel.querySelector('.modal-overlay');
-    panel.querySelector('.modal-nombre-personaje').textContent = `"${nombre}"`;
-    modal.style.display = '';
+    const modal = document.getElementById('modal-borrado-global');
+    if (!modal) return;
+    document.getElementById('modal-borrado-nombre').textContent = `"${nombre}"`;
+    modal.classList.add('modal-activo');
 }
 
 function cerrarModal() {
-    const panel = panelActual();
-    if (panel) panel.querySelector('.modal-overlay').style.display = 'none';
-    fichaABorrar = null;
+    const modal = document.getElementById('modal-borrado-global');
+    if (modal) modal.classList.remove('modal-activo');
+    // NO ponemos fichaABorrar = null aquí — lo hace confirmarBorrado tras usarlo
 }
 
 function confirmarBorrado() {
-    if (!fichaABorrar) return;
+    // 1. Capturar el id ANTES de cerrar el modal
     const id = fichaABorrar;
     fichaABorrar = null;
+    // 2. Cerrar el modal
+    cerrarModal();
+    // 3. Borrar
+    if (!id) return;
     const idx = fichas.findIndex(f => f.id === id);
+    if (idx === -1) return;
     fichas[idx].panel.remove();
-    document.querySelector(`.pestana[data-ficha-id="${id}"]`).remove();
+    document.querySelector(`.pestana[data-ficha-id="${id}"]`)?.remove();
     fichas.splice(idx, 1);
     if (fichaActual === id) activarFicha(fichas[Math.max(0, idx - 1)].id);
     guardarTodo();
@@ -139,9 +171,57 @@ function validarExpertise(chk) {
 
 function actualizarTodo(el) { actualizarTodoPanel(getPanel(el)); guardarDebounced(); }
 
+/* ═══════════════════════════════════════════════════════
+   SISTEMA DE OFFSET MANUAL
+   ─────────────────────────────────────────────────────
+   En vez de bloquear el recálculo, guardamos un "offset"
+   (ajuste manual) que se SUMA al valor calculado automáticamente.
+   Así, si el auto-calc cambia, el total refleja el cambio + offset.
+
+   Salvaciones: data-salv-offset  (número, puede ser negativo)
+   Habilidades: data-mod-offset   (número, puede ser negativo)
+
+   Tooltip de ayuda: "Offset manual: +N. Doble clic para resetear."
+═══════════════════════════════════════════════════════ */
+
+function _calcSalvBase(panel, stat) {
+    const pb     = parseInt(panel.querySelector('.pb-input').value) || 0;
+    const score  = parseInt(panel.querySelector(`.stat-score[data-stat="${stat}"]`).value) || 10;
+    const modBase = Math.floor((score - 10) / 2);
+    const dotEl  = panel.querySelector(`.salv-dot[data-stat="${stat}"]`);
+    return modBase + (dotEl?.checked ? pb : 0);
+}
+
+function _calcSkillBase(panel, fila) {
+    const pb     = parseInt(panel.querySelector('.pb-input').value) || 0;
+    const stat   = fila.dataset.stat;
+    const score  = parseInt(panel.querySelector(`.stat-score[data-stat="${stat}"]`).value) || 10;
+    const modBase = Math.floor((score - 10) / 2);
+    const isProf = fila.querySelector('.dot.prof').checked;
+    const isExp  = fila.querySelector('.dot.exp')?.checked || false;
+    return modBase + (isProf ? pb : 0) + (isExp ? pb : 0);
+}
+
+function _updateSalvTitle(salvEl, base, offset) {
+    if (offset !== 0) {
+        salvEl.title = `Auto: ${base >= 0 ? '+' : ''}${base}  Ajuste manual: ${offset >= 0 ? '+' : ''}${offset}  →  Total: ${base + offset}
+Doble clic para resetear ajuste`;
+    } else {
+        salvEl.title = 'Editar · Doble clic restaura';
+    }
+}
+
+function _updateModTitle(modEl, base, offset) {
+    if (offset !== 0) {
+        modEl.title = `Auto: ${base >= 0 ? '+' : ''}${base}  Ajuste: ${offset >= 0 ? '+' : ''}${offset}  →  ${base + offset}
+Doble clic para resetear ajuste`;
+    } else {
+        modEl.title = 'Doble clic: restaurar cálculo automático';
+    }
+}
+
 function actualizarTodoPanel(panel) {
     if (!panel) return;
-    const pb = parseInt(panel.querySelector('.pb-input').value) || 0;
     const stats = ['str','dex','con','int','wis','cha'];
 
     stats.forEach(stat => {
@@ -150,33 +230,115 @@ function actualizarTodoPanel(panel) {
         panel.querySelector(`[data-mod="${stat}"]`).innerText = fmtMod(mod);
     });
 
+    // Salvaciones: base + offset
     stats.forEach(stat => {
-        const score = parseInt(panel.querySelector(`.stat-score[data-stat="${stat}"]`).value) || 10;
-        const modBase = Math.floor((score - 10) / 2);
-        const dotEl = panel.querySelector(`.salv-dot[data-stat="${stat}"]`);
-        const total = modBase + (dotEl?.checked ? pb : 0);
-        panel.querySelector(`[data-salv="${stat}"]`).innerText = fmtMod(total);
+        const salvEl = panel.querySelector(`[data-salv="${stat}"]`);
+        if (!salvEl) return;
+        const base   = _calcSalvBase(panel, stat);
+        const offset = parseInt(salvEl.dataset.salvOffset) || 0;
+        salvEl.value = base + offset;
+        if (offset !== 0) salvEl.classList.add('salv-override');
+        else              salvEl.classList.remove('salv-override');
+        _updateSalvTitle(salvEl, base, offset);
     });
 
+    // Habilidades: base + offset
     panel.querySelectorAll('.fila-skill').forEach(fila => {
-        const stat = fila.dataset.stat;
-        const score = parseInt(panel.querySelector(`.stat-score[data-stat="${stat}"]`).value) || 10;
-        const modBase = Math.floor((score - 10) / 2);
-        const isProf = fila.querySelector('.dot.prof').checked;
-        const isExp  = fila.querySelector('.dot.exp')?.checked || false;
-        const total  = modBase + (isProf ? pb : 0) + (isExp ? pb : 0);
-        fila.querySelector('.mod-valor').innerText = fmtMod(total);
+        const modEl = fila.querySelector('.mod-valor');
+        if (!modEl) return;
+        const base   = _calcSkillBase(panel, fila);
+        const offset = parseInt(modEl.dataset.modOffset) || 0;
+        modEl.value = base + offset;
+        if (offset !== 0) modEl.classList.add('mod-override');
+        else              modEl.classList.remove('mod-override');
+        _updateModTitle(modEl, base, offset);
     });
 
-    const bonusPer  = parseInt(panel.querySelector('.fila-percepcion .mod-valor').innerText) || 0;
-    panel.querySelector('.percepcion-pasiva').innerText = 10 + bonusPer;
-    const bonusPers = parseInt(panel.querySelector('.fila-perspicacia .mod-valor').innerText) || 0;
-    panel.querySelector('.perspicacia-pasiva').innerText = 10 + bonusPers;
-    const bonusInv  = parseInt(panel.querySelector('.fila-investigacion .mod-valor').innerText) || 0;
-    panel.querySelector('.investigacion-pasiva').innerText = 10 + bonusInv;
+    const perEl  = panel.querySelector('.fila-percepcion .mod-valor');
+    const persEl = panel.querySelector('.fila-perspicacia .mod-valor');
+    const invEl  = panel.querySelector('.fila-investigacion .mod-valor');
+    panel.querySelector('.percepcion-pasiva').innerText  = 10 + (parseInt(perEl?.value)  || 0);
+    panel.querySelector('.perspicacia-pasiva').innerText = 10 + (parseInt(persEl?.value) || 0);
+    panel.querySelector('.investigacion-pasiva').innerText = 10 + (parseInt(invEl?.value) || 0);
 
     const hpActualEl = panel.querySelector('.hp-actual');
     if (hpActualEl) actualizarVidaPanel(hpActualEl);
+}
+
+/* El jugador escribe directamente en el input de habilidad.
+   Calculamos el offset = valorEscrito - base y lo guardamos. */
+function onModValorEdit(input) {
+    const panel  = getPanel(input);
+    if (!panel) return;
+    const fila   = input.closest('.fila-skill');
+    if (!fila) return;
+    const base   = _calcSkillBase(panel, fila);
+    const written = parseInt(input.value);
+    if (isNaN(written)) return;
+    const offset = written - base;
+    input.dataset.modOffset = offset;
+    if (offset !== 0) input.classList.add('mod-override');
+    else              input.classList.remove('mod-override');
+    _updateModTitle(input, base, offset);
+    // Actualizar pasivas
+    const perEl  = panel.querySelector('.fila-percepcion .mod-valor');
+    const persEl = panel.querySelector('.fila-perspicacia .mod-valor');
+    const invEl  = panel.querySelector('.fila-investigacion .mod-valor');
+    panel.querySelector('.percepcion-pasiva').innerText  = 10 + (parseInt(perEl?.value)  || 0);
+    panel.querySelector('.perspicacia-pasiva').innerText = 10 + (parseInt(persEl?.value) || 0);
+    panel.querySelector('.investigacion-pasiva').innerText = 10 + (parseInt(invEl?.value) || 0);
+    guardarDebounced();
+}
+
+/* Doble clic: resetear offset a 0 */
+function onModValorReset(input) {
+    input.dataset.modOffset = 0;
+    input.classList.remove('mod-override');
+    actualizarTodoPanel(getPanel(input));
+    guardarDebounced();
+}
+
+/* El jugador escribe en el input de salvación.
+   Calculamos offset = valorEscrito - base. */
+function onSalvValorEdit(input) {
+    const panel = getPanel(input);
+    if (!panel) return;
+    const stat  = input.dataset.salv;
+    if (!stat) return;
+    const base  = _calcSalvBase(panel, stat);
+    const written = parseInt(input.value);
+    if (isNaN(written)) return;
+    const offset = written - base;
+    input.dataset.salvOffset = offset;
+    if (offset !== 0) input.classList.add('salv-override');
+    else              input.classList.remove('salv-override');
+    _updateSalvTitle(input, base, offset);
+    guardarDebounced();
+}
+
+/* Doble clic: resetear offset a 0 */
+function onSalvValorReset(input) {
+    input.dataset.salvOffset = 0;
+    input.classList.remove('salv-override');
+    actualizarTodoPanel(getPanel(input));
+    guardarDebounced();
+}
+
+/* Flechas ▲▼ — ajustan el offset en ±1 */
+function ajustarSalv(btn, delta) {
+    const input = btn.closest('.salv-ajuste').querySelector('.salv-valor');
+    if (!input) return;
+    const panel = getPanel(input);
+    const stat  = input.dataset.salv;
+    const base  = (panel && stat) ? _calcSalvBase(panel, stat) : 0;
+    const currentOffset = parseInt(input.dataset.salvOffset) || 0;
+    const newOffset = currentOffset + delta;
+    input.dataset.salvOffset = newOffset;
+    input.value = base + newOffset;
+    if (newOffset !== 0) input.classList.add('salv-override');
+    else                 input.classList.remove('salv-override');
+    if (panel && stat) _updateSalvTitle(input, base, newOffset);
+    guardarDebounced();
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -202,7 +364,7 @@ function realizarTiradaStat(el, nombre) {
 
 function tirarSalvacionStat(el, nombre) {
     const panel = getPanel(el);
-    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.salv-valor')?.innerText) || 0);
+    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.salv-valor')?.value) || 0);
 }
 
 function actualizarIniBonus(input) {
@@ -223,7 +385,7 @@ function tirarDesdeFila(el, nombre) {
     const panel = getPanel(el);
     const toggle = el.querySelector('.adv-toggle');
     const advEstado = toggle ? parseInt(toggle.dataset.adv) : 0;
-    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.mod-valor').innerText) || 0, advEstado);
+    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.mod-valor')?.value) || 0, advEstado);
 }
 
 function lanzarConPanel(panel, nombre, mod, forzarAdv) {
@@ -433,9 +595,26 @@ function dgUsarDado(grupo, panel) {
 function tirarSalvacionMuertePanel(btn) {
     const panel = getPanel(btn);
     const resultado = Math.floor(Math.random() * 20) + 1;
+    const nat20 = resultado === 20;
+    const nat1  = resultado === 1;
     const exito = resultado >= 10;
 
-    if (exito) {
+    if (nat20) {
+        // Natural 20: marcar los 3 éxitos y dar 1 PG
+        panel.querySelectorAll('.circulos-exito .circulo-muerte').forEach(c => c.classList.add('activo'));
+        const hpEl = panel.querySelector('.hp-actual');
+        if (hpEl) { hpEl.value = (parseInt(hpEl.value) || 0) + 1; actualizarVidaPanel(hpEl); }
+        btn.classList.add('flash-exito');
+        setTimeout(() => btn.classList.remove('flash-exito'), 500);
+    } else if (nat1) {
+        // Natural 1: marcar 2 fallos
+        let marcados = 0;
+        panel.querySelectorAll('.circulos-fallo .circulo-muerte').forEach(c => {
+            if (marcados < 2 && !c.classList.contains('activo')) { c.classList.add('activo'); marcados++; }
+        });
+        btn.classList.add('flash-fallo');
+        setTimeout(() => btn.classList.remove('flash-fallo'), 500);
+    } else if (exito) {
         const c = [...panel.querySelectorAll('.circulos-exito .circulo-muerte')].find(c => !c.classList.contains('activo'));
         if (c) c.classList.add('activo');
         btn.classList.add('flash-exito');
@@ -449,8 +628,9 @@ function tirarSalvacionMuertePanel(btn) {
 
     const log = document.getElementById('log-lista');
     const div = document.createElement('div');
-    div.className = `log-entrada ${exito ? 'exito-muerte' : 'fallo-muerte'}`;
-    div.innerHTML = `<strong>Salvación de Muerte</strong><div class="res"><span>${resultado}</span><small>${exito ? '✔ Éxito' : '✖ Fallo'} (≥10)</small></div>`;
+    div.className = `log-entrada ${(exito || nat20) ? 'exito-muerte' : 'fallo-muerte'}`;
+    const etiqueta = nat20 ? '✨ ¡Natural 20! +1 PG' : nat1 ? '💀 ¡Natural 1! ×2 Fallos' : exito ? '✔ Éxito (≥10)' : '✖ Fallo (<10)';
+    div.innerHTML = `<strong>Salvación de Muerte</strong><div class="res"><span>${resultado}</span><small>${etiqueta}</small></div>`;
     log.prepend(div);
     guardarDebounced();
 }
@@ -512,10 +692,8 @@ function descansoCorto(btn) {
         const mcs = leerMulticlases(panel).filter(mc => mc.clase);
         const warlockMC = mcs.find(mc => _getClaseData(mc.clase).casting === 'warlock');
         if (warlockMC) {
-            const wNv = Math.min((parseInt(warlockMC.nivel) || 1) - 1, 19);
-            const warlockNivel = WARLOCK_SLOTS[wNv][1] + 1;
-            const bloque = panel.querySelector(`.spell-nivel-bloque[data-nivel="${warlockNivel}"]`);
-            if (bloque) bloque.querySelectorAll('.slot-chk').forEach(chk => { chk.checked = true; });
+            // Recargar solo los slots warlock (clase slot-warlock)
+            panel.querySelectorAll('.slot-check-wrap.slot-warlock .slot-chk').forEach(chk => { chk.checked = true; });
         }
     }
     guardarDebounced();
@@ -536,7 +714,7 @@ function añadirFilaInventario(contenedor) {
     div.innerHTML = `
         <input type="text" placeholder="Nombre..." class="input-item" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
         <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()">
-        <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()">
+        <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="this.classList.toggle('tiene-texto',this.value.length>0);guardarDebounced()">
         <input type="checkbox" class="chk-equipado" title="Equipado" onchange="guardarDebounced()">
         <input type="checkbox" class="chk-sintonizado" title="Sintonizado" onchange="validarSintonizados(this);guardarDebounced()">
         <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>
@@ -816,20 +994,25 @@ function leerFicha(panel) {
     d.multiclases = leerMulticlases(panel);
 
     // Stats y salvaciones
-    d.stats = {}; d.salvs = {};
+    d.stats = {}; d.salvs = {}; d.salvOffsets = {};
     ['str','dex','con','int','wis','cha'].forEach(s => {
         d.stats[s] = panel.querySelector(`.stat-score[data-stat="${s}"]`)?.value || '10';
         d.salvs[s] = panel.querySelector(`.salv-dot[data-stat="${s}"]`)?.checked || false;
+        const salvEl = panel.querySelector(`[data-salv="${s}"]`);
+        const off = parseInt(salvEl?.dataset.salvOffset) || 0;
+        if (off !== 0) d.salvOffsets[s] = off;
     });
 
     // Habilidades
     d.habilidades = [];
     panel.querySelectorAll('.fila-skill').forEach(fila => {
-        const adv = fila.querySelector('.adv-toggle');
+        const adv   = fila.querySelector('.adv-toggle');
+        const modEl = fila.querySelector('.mod-valor');
         d.habilidades.push({
-            prof: fila.querySelector('.dot.prof')?.checked || false,
-            exp:  fila.querySelector('.dot.exp')?.checked  || false,
-            adv:  adv ? parseInt(adv.dataset.adv) : 0
+            prof:      fila.querySelector('.dot.prof')?.checked || false,
+            exp:       fila.querySelector('.dot.exp')?.checked  || false,
+            adv:       adv ? parseInt(adv.dataset.adv) : 0,
+            modOffset: parseInt(modEl?.dataset.modOffset) || 0
         });
     });
 
@@ -956,6 +1139,7 @@ function leerFicha(panel) {
         tfHab1:          panel.querySelector('.tf-hab1-sel')?.value    || '',
         tfHab2:          panel.querySelector('.tf-hab2-sel')?.value    || '',
         tfPrevBonos:     panel.querySelector('.trasfondo-personalizado')?.dataset.prevBonos || '',
+        mcClases:        (typeof leerMcDatos === 'function') ? leerMcDatos(panel) : [],
     };
 
     d.roleplay = leerRoleplay(panel);
@@ -992,16 +1176,24 @@ function cargarDatosEnPanel(panel, d) {
         const el = panel.querySelector(`.salv-dot[data-stat="${s}"]`);
         if (el) el.checked = d.salvs[s] || false;
     });
+    if (d.salvOffsets) ['str','dex','con','int','wis','cha'].forEach(s => {
+        const off = d.salvOffsets[s];
+        if (!off) return;
+        const salvEl = panel.querySelector(`[data-salv="${s}"]`);
+        if (salvEl) salvEl.dataset.salvOffset = off;
+    });
 
     // Habilidades
     if (d.habilidades) panel.querySelectorAll('.fila-skill').forEach((fila, i) => {
         const h = d.habilidades[i]; if (!h) return;
-        const prof = fila.querySelector('.dot.prof');
-        const exp  = fila.querySelector('.dot.exp');
-        const adv  = fila.querySelector('.adv-toggle');
+        const prof  = fila.querySelector('.dot.prof');
+        const exp   = fila.querySelector('.dot.exp');
+        const adv   = fila.querySelector('.adv-toggle');
+        const modEl = fila.querySelector('.mod-valor');
         if (prof) prof.checked = h.prof;
         if (exp)  exp.checked  = h.exp;
         if (adv)  { adv.dataset.adv = h.adv; adv.textContent = h.adv===1?'▲':h.adv===2?'▼':''; }
+        if (modEl && h.modOffset) modEl.dataset.modOffset = h.modOffset;
     });
 
     // Combate
@@ -1080,7 +1272,7 @@ function cargarDatosEnPanel(panel, d) {
             div.innerHTML = `
                 <input type="text" placeholder="Nombre..." class="input-item" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()" value="${_esc(item.nombre)}">
                 <input type="number" placeholder="1" class="input-item-cant" min="0" oninput="guardarDebounced()" value="${_esc(item.cant)}">
-                <input type="text" placeholder="Descripción o notas..." class="input-item-desc" onkeypress="checkInventarioPanel(event)" oninput="guardarDebounced()" value="${_esc(item.desc)}">
+                <input type="text" placeholder="Descripción o notas..." class="input-item-desc${item.desc?' tiene-texto':''}" onkeypress="checkInventarioPanel(event)" oninput="this.classList.toggle('tiene-texto',this.value.length>0);guardarDebounced()" value="${_esc(item.desc)}">
                 <input type="checkbox" class="chk-equipado" title="Equipado" onchange="guardarDebounced()" ${item.equip?'checked':''}>
                 <input type="checkbox" class="chk-sintonizado" title="Sintonizado" onchange="validarSintonizados(this);guardarDebounced()" ${item.sint?'checked':''}>
                 <button class="btn-borrar-item" onclick="borrarItemInventario(this)" title="Eliminar">×</button>`;
@@ -1225,6 +1417,11 @@ function cargarDatosEnPanel(panel, d) {
         if (c.trasfondoSelect) {
             const sel = panel.querySelector('.sel-trasfondo');
             if (sel) sel.value = c.trasfondoSelect;
+        }
+
+        // Restaurar datos multiclase
+        if (c.mcClases && c.mcClases.length > 0 && typeof cargarMcDatos === 'function') {
+            cargarMcDatos(panel, c.mcClases);
         }
 
         // Restaurar textos (el jugador puede haber editado después de cargar)
@@ -1483,15 +1680,8 @@ function _renderSpellEntry(lista, sp) {
     nombre.className = 'spell-entry-nombre rollable-spell';
     nombre.title = 'Clic para tirar · Mantén para ver descripción';
     nombre.textContent = sp.n;
-    nombre.addEventListener('mouseenter', (e) => {
-        clearTimeout(_tooltipShowTimeout);
-        clearTimeout(_tooltipTimeout);
-        _tooltipShowTimeout = setTimeout(() => mostrarTooltipHechizo(sp, e), 1000);
-    });
-    nombre.addEventListener('mouseleave', () => {
-        clearTimeout(_tooltipShowTimeout);
-        ocultarTooltipHechizo();
-    });
+    nombre.addEventListener('mouseenter', () => spellCardShow(sp));
+    nombre.addEventListener('mouseleave', () => spellCardHide());
 
     // Detectar si el hechizo es de concentración por sus datos
     const esConc = _esConcentracion(sp);
@@ -1510,8 +1700,7 @@ function _renderSpellEntry(lista, sp) {
     // Lógica de click: si es concentración, gestionar glow; si no, tirar directamente
     nombre.addEventListener('click', async (e) => {
         e.stopPropagation();
-        clearTimeout(_tooltipShowTimeout);
-        ocultarTooltipHechizo();
+        spellCardHide();
         const panel = nombre.closest('.ficha-panel');
         if (!panel) return;
 
@@ -1560,71 +1749,104 @@ function _renderSpellEntry(lista, sp) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SPELLCASTING — TOOLTIP
+   SPELL CARD — tarjeta flotante global (fuera del template)
 ═══════════════════════════════════════════════════════ */
-let _tooltipTimeout = null;
-let _tooltipShowTimeout = null;
+let _scTimer  = null;   // timer para mostrar
+let _scMX = 0, _scMY = 0; // posición actual del ratón
 
-function _positionTooltip(tt, cx, cy) {
+(function _initSpellCard() {
+    // Crear la card si no existe
+    if (document.getElementById('spell-card-global')) return;
+    const card = document.createElement('div');
+    card.id = 'spell-card-global';
+    card.innerHTML = `
+        <div class="sc-header">
+            <span class="sc-name"></span>
+            <span class="sc-school"></span>
+        </div>
+        <div class="sc-grid">
+            <div class="sc-row"><span class="sc-lbl">Lanzamiento</span><span class="sc-val sc-casting"></span></div>
+            <div class="sc-row"><span class="sc-lbl">Alcance</span><span class="sc-val sc-range"></span></div>
+            <div class="sc-row"><span class="sc-lbl">Componentes</span><span class="sc-val sc-components"></span></div>
+            <div class="sc-row"><span class="sc-lbl">Duración</span><span class="sc-val sc-duration"></span></div>
+        </div>
+        <div class="sc-desc"></div>
+        <div class="sc-damage-wrap" style="display:none">
+            <span class="sc-lbl">Daño / Efecto</span>
+            <span class="sc-damage"></span>
+        </div>
+        <div class="sc-extra-wrap" style="display:none">
+            <span class="sc-extra"></span>
+        </div>`;
+    document.body.appendChild(card);
+
+    // Mover con el ratón
+    document.addEventListener('mousemove', (e) => {
+        _scMX = e.clientX;
+        _scMY = e.clientY;
+        if (card.classList.contains('sc-visible')) {
+            _scPosition(card, e.clientX, e.clientY);
+        }
+    });
+})();
+
+function _scPosition(card, cx, cy) {
     const W = window.innerWidth, H = window.innerHeight;
-    const TW = tt.offsetWidth  || 390;
-    const TH = tt.offsetHeight || 360;
-    let x = cx + 20, y = cy + 16;
-    if (x + TW > W - 8) x = cx - TW - 16;
+    const TW = card.offsetWidth  || 380;
+    const TH = card.offsetHeight || 300;
+    let x = cx + 18, y = cy + 14;
+    if (x + TW > W - 8) x = cx - TW - 14;
     if (y + TH > H - 8) y = H  - TH - 8;
     if (x < 4) x = 4;
     if (y < 4) y = 4;
-    tt.style.left = x + 'px';
-    tt.style.top  = y + 'px';
-}
-document.addEventListener('mousemove', (e) => {
-    document.querySelectorAll('.spell-tooltip.visible').forEach(tt => {
-        _positionTooltip(tt, e.clientX, e.clientY);
-    });
-});
-
-function mostrarTooltipHechizo(sp, evt) {
-    clearTimeout(_tooltipTimeout);
-    // Buscar el tooltip dentro del panel activo
-    const panel = fichas.find(f => f.id === fichaActual)?.panel;
-    if (!panel) return;
-    const tt = panel.querySelector('.spell-tooltip');
-    if (!tt) return;
-
-    tt.querySelector('.stt-nombre').textContent       = sp.n;
-    tt.querySelector('.stt-nivel-escuela').textContent = `${sp.nivel} · ${sp.escuela}`;
-    tt.querySelector('.stt-casting').textContent       = sp.casting;
-    tt.querySelector('.stt-range').textContent         = sp.range;
-    tt.querySelector('.stt-components').textContent    = sp.components;
-    tt.querySelector('.stt-duration').textContent      = sp.duration;
-    tt.querySelector('.stt-desc').textContent          = sp.desc;
-
-    const dañoWrap = tt.querySelector('.stt-daño-wrap');
-    if (sp.damage) {
-        tt.querySelector('.stt-damage').textContent = sp.damage;
-        dañoWrap.style.display = '';
-    } else {
-        dañoWrap.style.display = 'none';
-    }
-
-    const extraWrap = tt.querySelector('.stt-extra-wrap');
-    const extraEl   = tt.querySelector('.stt-extra');
-    if (sp.extra) {
-        extraEl.textContent = sp.extra;
-        extraWrap.style.display = '';
-    } else {
-        extraWrap.style.display = 'none';
-    }
-
-    if (evt) _positionTooltip(tt, evt.clientX, evt.clientY);
-    tt.classList.add('visible');
+    card.style.left = x + 'px';
+    card.style.top  = y + 'px';
 }
 
-function ocultarTooltipHechizo() {
-    _tooltipTimeout = setTimeout(() => {
-        document.querySelectorAll('.spell-tooltip').forEach(tt => tt.classList.remove('visible'));
-    }, 120);
+function spellCardShow(sp) {
+    clearTimeout(_scTimer);
+    _scTimer = setTimeout(() => {
+        const card = document.getElementById('spell-card-global');
+        if (!card) return;
+
+        card.querySelector('.sc-name').textContent    = sp.n;
+        card.querySelector('.sc-school').textContent  = `${sp.nivel} · ${sp.escuela}`;
+        card.querySelector('.sc-casting').textContent = sp.casting    || '—';
+        card.querySelector('.sc-range').textContent   = sp.range      || '—';
+        card.querySelector('.sc-components').textContent = sp.components || '—';
+        card.querySelector('.sc-duration').textContent   = sp.duration   || '—';
+        card.querySelector('.sc-desc').textContent       = sp.desc       || '';
+
+        const dmgWrap = card.querySelector('.sc-damage-wrap');
+        if (sp.damage) {
+            card.querySelector('.sc-damage').textContent = sp.damage;
+            dmgWrap.style.display = '';
+        } else {
+            dmgWrap.style.display = 'none';
+        }
+
+        const extWrap = card.querySelector('.sc-extra-wrap');
+        if (sp.extra) {
+            card.querySelector('.sc-extra').textContent = sp.extra;
+            extWrap.style.display = '';
+        } else {
+            extWrap.style.display = 'none';
+        }
+
+        _scPosition(card, _scMX, _scMY);
+        card.classList.add('sc-visible');
+    }, 900);
 }
+
+function spellCardHide() {
+    clearTimeout(_scTimer);
+    const card = document.getElementById('spell-card-global');
+    if (card) card.classList.remove('sc-visible');
+}
+
+// Compatibilidad con código que aún llame a las funciones viejas
+function mostrarTooltipHechizo(sp, evt) { spellCardShow(sp); }
+function ocultarTooltipHechizo()        { spellCardHide();   }
 
 /* ═══════════════════════════════════════════════════════
    SPELLCASTING — PERSISTENCIA
@@ -1987,10 +2209,30 @@ const SLOTS_POR_NIVEL = [
 ];
 
 /* Slots de Warlock (Pact Magic) - siempre de nivel máximo disponible, pocos pero recuperables */
+/* Warlock Pact Magic PHB 2024: [cantidad_slots, nivel_max_idx_0based]
+   Nivel idx 0=nivel1, 1=nivel2, 2=nivel3, 3=nivel4, 4=nivel5 */
 const WARLOCK_SLOTS = [
-    [1,0],[2,0],[2,1],[2,1],[2,2],[2,2],[2,2],[2,2],[2,2],[2,2],
-    [3,2],[3,2],[3,2],[3,2],[3,2],[3,2],[4,3],[4,3],[4,3],[4,3]
-]; // [cantidad, nivel_max_idx_0=1] para niveles 1-20
+    [1,0],  // Nv1:  1 slot nivel 1
+    [2,0],  // Nv2:  2 slots nivel 1
+    [2,1],  // Nv3:  2 slots nivel 2
+    [2,1],  // Nv4:  2 slots nivel 2
+    [2,2],  // Nv5:  2 slots nivel 3
+    [2,2],  // Nv6:  2 slots nivel 3
+    [2,3],  // Nv7:  2 slots nivel 4
+    [2,3],  // Nv8:  2 slots nivel 4
+    [2,4],  // Nv9:  2 slots nivel 5
+    [2,4],  // Nv10: 2 slots nivel 5
+    [3,4],  // Nv11: 3 slots nivel 5
+    [3,4],  // Nv12: 3 slots nivel 5
+    [3,4],  // Nv13: 3 slots nivel 5
+    [3,4],  // Nv14: 3 slots nivel 5
+    [3,4],  // Nv15: 3 slots nivel 5
+    [3,4],  // Nv16: 3 slots nivel 5
+    [4,4],  // Nv17: 4 slots nivel 5
+    [4,4],  // Nv18: 4 slots nivel 5
+    [4,4],  // Nv19: 4 slots nivel 5
+    [4,4],  // Nv20: 4 slots nivel 5
+];
 
 /* Cantrips conocidos por clase y nivel (tabla PHB 2024) */
 const CANTRIPS_CONOCIDOS = {
@@ -2118,8 +2360,25 @@ function multiclaseAñadir(btn) {
     if (fichaPanel) multiclaseActualizar(fichaPanel);
 }
 
-/* ── Leer datos actuales del widget ── */
+/* ── Leer datos actuales del widget ──
+   Prioriza el nuevo widget de pestañas (caract-mc-body).
+   Cada página tiene .mc-sel-clase y .mc-nivel-sel.
+   Fallback al widget clásico si no hay páginas. ── */
 function leerMulticlases(fichaPanel) {
+    const mcBody = fichaPanel.querySelector('.caract-mc-body');
+    if (mcBody) {
+        const paginas = mcBody.querySelectorAll('.mc-pagina');
+        if (paginas.length > 0) {
+            const resultado = [];
+            paginas.forEach(pag => {
+                const clase  = pag.querySelector('.mc-sel-clase')?.value  || '';
+                const nivel  = parseInt(pag.querySelector('.mc-nivel-sel')?.value) || 1;
+                if (clase) resultado.push({ clase, nivel });
+            });
+            if (resultado.length > 0) return resultado;
+        }
+    }
+    // Fallback: widget clásico
     const filas = fichaPanel.querySelectorAll('.multiclase-fila');
     return Array.from(filas).map(f => ({
         clase: f.querySelector('.multiclase-sel')?.value || '',
@@ -2338,11 +2597,14 @@ function _sincronizarSpellSlots(fichaPanel, mcs, nivelTotal) {
         // Sumar warlock si aplica
         if (warlockMC && nivel === warlockNivel + 1) cantidad += warlockSlots;
 
+        // ¿Es un slot warlock este nivel?
+        const esWarlock = warlockMC && nivel === warlockNivel + 1 && warlockSlots > 0;
+
         // Limpiar y reconstruir slots
         checksDiv.innerHTML = '';
-        for (let i = 0; i < Math.min(cantidad, 4); i++) {
+        for (let i = 0; i < Math.min(cantidad, 9); i++) {
             const wrap = document.createElement('div');
-            wrap.className = 'slot-check-wrap';
+            wrap.className = 'slot-check-wrap' + (esWarlock ? ' slot-warlock' : '');
             const chk = document.createElement('input');
             chk.type = 'checkbox'; chk.className = 'slot-chk'; chk.checked = true;
             chk.addEventListener('change', () => guardarDebounced());

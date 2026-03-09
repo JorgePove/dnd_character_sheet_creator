@@ -383,19 +383,19 @@
 .dw-fila[data-tipo="d20"] .dw-fila-color { background: #f6e05e; }
 .dw-fila[data-tipo="d100"] .dw-fila-color { background: #76e4f7; }
 
-/* TEMA OSCURO — ya está en modo oscuro por defecto, pero ajustes para tema claro */
+/* TEMA CLARO — ajustes para html sin .tema-oscuro */
 html:not(.tema-oscuro) #dados-widget {
-    background: #fff;
-    border-color: #cbd5e0;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+    background: #f7fafc;
+    border-color: #4a5568;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.15);
 }
 html:not(.tema-oscuro) .dados-widget-cab {
-    background: #f7fafc;
-    border-bottom-color: #cbd5e0;
+    background: #edf2f7;
+    border-bottom-color: #4a5568;
 }
-html:not(.tema-oscuro) .dados-widget-titulo { color: #c05621; }
+html:not(.tema-oscuro) .dados-widget-titulo { color: #2b6cb0; }
 html:not(.tema-oscuro) .dados-widget-colapsar { color: #718096; }
-html:not(.tema-oscuro) .dados-widget-colapsar:hover { background: #edf2f7; color: #2d3748; }
+html:not(.tema-oscuro) .dados-widget-colapsar:hover { background: #e2e8f0; color: #2d3748; }
 
 html:not(.tema-oscuro) .dw-fila {
     background: #f7fafc;
@@ -408,20 +408,28 @@ html:not(.tema-oscuro) .dw-bono {
     border-color: #cbd5e0;
     color: #2d3748;
 }
-html:not(.tema-oscuro) .dw-tipo { color: #c05621; }
+html:not(.tema-oscuro) .dw-tipo { color: #2b6cb0; }
 html:not(.tema-oscuro) .dw-bono { color: #276749; }
 html:not(.tema-oscuro) .dw-sep-d,
-html:not(.tema-oscuro) .dw-sep-bono { color: #a0aec0; }
+html:not(.tema-oscuro) .dw-sep-bono { color: #718096; }
 html:not(.tema-oscuro) .dw-btn-borrar { color: #a0aec0; }
-html:not(.tema-oscuro) #dw-btn-add { border-color: #cbd5e0; color: #a0aec0; }
-html:not(.tema-oscuro) #dw-btn-add:hover { border-color: #c05621; color: #c05621; }
-html:not(.tema-oscuro) .dw-divider { background: #edf2f7; }
-html:not(.tema-oscuro) #dw-btn-reset { border-color: #e2e8f0; color: #a0aec0; }
+html:not(.tema-oscuro) #dw-btn-add { border-color: #cbd5e0; color: #718096; }
+html:not(.tema-oscuro) #dw-btn-add:hover { border-color: #3182ce; color: #3182ce; }
+html:not(.tema-oscuro) .dw-divider { background: #e2e8f0; }
+html:not(.tema-oscuro) #dw-btn-reset { border-color: #cbd5e0; color: #718096; }
 html:not(.tema-oscuro) #dw-btn-reset:hover { border-color: #fc8181; color: #e53e3e; }
 
 html:not(.tema-oscuro) .dw-spin-btn { background: #e2e8f0; color: #718096; }
-html:not(.tema-oscuro) .dw-spin-btn:hover { background: #cbd5e0; color: #2d3748; }
-html:not(.tema-oscuro) .dw-spin-btn:active { background: #c05621; color: #fff; }
+html:not(.tema-oscuro) .dw-spin-btn:hover { background: #bee3f8; color: #2b6cb0; }
+html:not(.tema-oscuro) .dw-spin-btn:active { background: #3182ce; color: #fff; }
+
+html:not(.tema-oscuro) #dw-btn-tirar {
+    background: linear-gradient(135deg, #2b6cb0 0%, #3182ce 60%, #63b3ed 100%);
+    box-shadow: 0 3px 12px rgba(49,130,206,0.45);
+}
+html:not(.tema-oscuro) #dw-btn-tirar:hover {
+    box-shadow: 0 5px 18px rgba(49,130,206,0.6);
+}
 
 /* Responsive */
 @media (max-width: 768px) {

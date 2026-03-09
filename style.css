@@ -52,7 +52,7 @@ body::before {
 }
 
 /* Todo el contenido por encima del fondo */
-body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget) { position: relative; z-index: 1; }
+body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(#spell-card-global):not(#dote-card-global):not(#especie-card-global):not(#modal-borrado-global) { position: relative; z-index: 1; }
 
 /* ===================================================
    BARRA DE PESTAÑAS
@@ -124,6 +124,40 @@ body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget) { po
 .btn-importar { cursor: pointer; }
 .btn-pdf { background: #44337a; border-color: #6b46c1; }
 .btn-pdf:hover { background: #553c9a; border-color: #805ad5; }
+
+/* Botón Compartir */
+.btn-compartir { background: #1a4731; border-color: #276749; color: #9ae6b4; }
+.btn-compartir:hover { background: #22543d; border-color: #38a169; color: #c6f6d5; }
+
+/* Toast de confirmación de compartir */
+#share-toast {
+    position: fixed;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+    z-index: 99999;
+    pointer-events: none;
+    transition: bottom 0.3s cubic-bezier(.4,1.4,.6,1), opacity 0.3s;
+    opacity: 0;
+    white-space: nowrap;
+}
+#share-toast.share-toast-visible {
+    bottom: 28px;
+    opacity: 1;
+}
+#share-toast.share-toast-error {
+    background: #742a2a;
+    border-color: #e53e3e;
+    color: #fed7d7;
+}
 
 /* ── Selector de armadura ── */
 .armadura-selector-wrap {
@@ -3604,6 +3638,10 @@ html.tema-oscuro .btn-global {
 }
 html.tema-oscuro .btn-global:hover   { background: #382860; }
 html.tema-oscuro .btn-pdf            { background: #553c9a !important; }
+html.tema-oscuro .btn-compartir      { background: #1a4731; border-color: #38a169; color: #9ae6b4; }
+html.tema-oscuro .btn-compartir:hover { background: #22543d; }
+html.tema-oscuro #share-toast        { background: #1a202c; border-color: #2d3748; color: #e2e8f0; }
+html.tema-oscuro #share-toast.share-toast-error { background: #742a2a; border-color: #e53e3e; }
 
 /* Hoja / ficha */
 html.tema-oscuro .hoja-contenedor { background: var(--bg-ficha); }
@@ -3693,6 +3731,16 @@ html.tema-oscuro .spell-entry-nombre  { color: #c4b5fd; }
 
 /* Spell card tooltip */
 html.tema-oscuro #spell-card-global { background: #12102a; border-color: var(--border-acc); color: var(--txt-base); }
+html.tema-oscuro #dote-card-global  { background: #0f1f15; border-color: #48bb78; color: var(--txt-base); }
+html.tema-oscuro #dote-card-global .dc-desc { color: #c6f6d5; }
+html.tema-oscuro .dote-dropdown-trigger { background: var(--input-bg); border-color: var(--border); color: var(--txt-base); }
+html.tema-oscuro .dote-dropdown-listbox { background: var(--panel-bg); border-color: #48bb78; }
+html.tema-oscuro .dote-dropdown-item   { color: var(--txt-base); }
+html.tema-oscuro #especie-card-global  { background: #1a1208; border-color: #ed8936; }
+html.tema-oscuro #especie-card-global .ec-rasgo-d { color: #feebc8; }
+html.tema-oscuro .especie-dropdown-trigger { background: var(--input-bg); border-color: var(--border); color: var(--txt-base); }
+html.tema-oscuro .especie-dropdown-listbox { background: var(--panel-bg); border-color: #ed8936; }
+html.tema-oscuro .especie-dropdown-item   { color: var(--txt-base); }
 
 /* Características (mc-widget) */
 html.tema-oscuro .mc-tab          { background: #1c1830; color: var(--txt-muted); border-color: var(--border); }
@@ -3840,6 +3888,274 @@ html.tema-oscuro * {
     #fichas-contenedor {
         padding: 6px 2px 72px;
     }
+}
+
+/* ═══════════════════════════════════════════════════════
+   ESPECIE CARD — tarjeta flotante de información de especie
+═══════════════════════════════════════════════════════ */
+#especie-card-global {
+    position: fixed;
+    z-index: 99999;
+    width: 360px;
+    max-width: 92vw;
+    background: #1a1510;
+    border: 2px solid #ed8936;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(180,80,20,0.45), 0 2px 12px rgba(0,0,0,0.7);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+#especie-card-global.ec-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.ec-header {
+    background: linear-gradient(135deg, #7b341e 0%, #c05621 60%, #ed8936 100%);
+    padding: 11px 16px 9px;
+}
+.ec-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.01em;
+}
+.ec-rasgos {
+    padding: 8px 0 6px;
+    max-height: 340px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ed8936 transparent;
+}
+.ec-rasgo {
+    padding: 5px 16px;
+    border-bottom: 1px solid rgba(237,137,54,0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ec-rasgo:last-child { border-bottom: none; }
+.ec-rasgo-n {
+    font-size: 11px;
+    font-weight: 800;
+    color: #fbd38d;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.ec-rasgo-d {
+    font-size: 11px;
+    color: #feebc8;
+    line-height: 1.5;
+}
+
+/* Custom dropdown para selector de especie */
+.especie-custom-dropdown {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+.especie-dropdown-trigger {
+    width: 100%;
+    padding: 5px 10px;
+    background: var(--input-bg, #fff);
+    border: 1px solid var(--border, #cbd5e0);
+    border-radius: 6px;
+    color: var(--txt-base, #2d3748);
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: border-color 0.15s;
+}
+.especie-dropdown-trigger:hover,
+.especie-dropdown-trigger:focus {
+    border-color: #ed8936;
+    outline: none;
+}
+.especie-dropdown-trigger.has-value {
+    color: #c05621;
+    font-weight: 600;
+}
+html.tema-oscuro .especie-dropdown-trigger.has-value { color: #f6ad55; }
+
+.especie-dropdown-listbox {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 2000;
+    width: max-content;
+    min-width: 100%;
+    max-width: 320px;
+    max-height: 280px;
+    overflow-y: auto;
+    background: var(--panel-bg, #fff);
+    border: 1.5px solid #ed8936;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    padding: 4px 0;
+    display: none;
+    scrollbar-width: thin;
+    scrollbar-color: #ed8936 transparent;
+}
+.especie-custom-dropdown.open .especie-dropdown-listbox { display: block; }
+
+.especie-dropdown-item {
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--txt-base, #2d3748);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.especie-dropdown-item:hover,
+.especie-dropdown-item.selected {
+    background: rgba(237,137,54,0.15);
+    color: #c05621;
+}
+html.tema-oscuro .especie-dropdown-item:hover,
+html.tema-oscuro .especie-dropdown-item.selected { color: #f6ad55; }
+
+/* ═══════════════════════════════════════════════════════
+   DOTE CARD — tarjeta flotante de información de dotes
+   (misma arquitectura que spell-card-global)
+═══════════════════════════════════════════════════════ */
+#dote-card-global {
+    position: fixed;
+    z-index: 99999;
+    width: 340px;
+    max-width: 92vw;
+    background: #1a2510;
+    border: 2px solid #48bb78;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(34,84,61,0.55), 0 2px 12px rgba(0,0,0,0.7);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+#dote-card-global.dc-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.dc-header {
+    background: linear-gradient(135deg, #1c4532 0%, #276749 60%, #38a169 100%);
+    padding: 11px 16px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.dc-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.01em;
+}
+.dc-tipo {
+    font-size: 10px;
+    color: #9ae6b4;
+    font-style: italic;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.dc-desc {
+    padding: 10px 16px 14px;
+    font-size: 12px;
+    color: #c6f6d5;
+    line-height: 1.65;
+    white-space: pre-wrap;
+}
+
+/* Custom dropdown para selector de dotes */
+.dote-custom-dropdown {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+.dote-dropdown-trigger {
+    width: 100%;
+    padding: 5px 10px;
+    background: var(--input-bg, #fff);
+    border: 1px solid var(--border, #cbd5e0);
+    border-radius: 6px;
+    color: var(--txt-base, #2d3748);
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: border-color 0.15s;
+}
+.dote-dropdown-trigger:hover,
+.dote-dropdown-trigger:focus {
+    border-color: #48bb78;
+    outline: none;
+}
+.dote-dropdown-trigger.has-value {
+    color: #276749;
+    font-weight: 600;
+}
+html.tema-oscuro .dote-dropdown-trigger.has-value { color: #68d391; }
+
+.dote-dropdown-listbox {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 2000;
+    width: max-content;
+    min-width: 100%;
+    max-width: 340px;
+    max-height: 280px;
+    overflow-y: auto;
+    background: var(--panel-bg, #fff);
+    border: 1.5px solid #48bb78;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    padding: 4px 0;
+    display: none;
+    scrollbar-width: thin;
+    scrollbar-color: #48bb78 transparent;
+}
+.dote-custom-dropdown.open .dote-dropdown-listbox { display: block; }
+
+.dote-dropdown-group-label {
+    padding: 5px 12px 2px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #48bb78;
+    border-top: 1px solid var(--border, #e2e8f0);
+    margin-top: 2px;
+}
+.dote-dropdown-group-label:first-child { border-top: none; margin-top: 0; }
+
+.dote-dropdown-item {
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--txt-base, #2d3748);
+    cursor: pointer;
+    transition: background 0.1s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dote-dropdown-item:hover,
+.dote-dropdown-item.selected {
+    background: rgba(72,187,120,0.15);
+    color: #276749;
+}
+html.tema-oscuro .dote-dropdown-item:hover,
+html.tema-oscuro .dote-dropdown-item.selected { color: #68d391; }
+
+.dote-custom-dropdown.dote-dropdown-disabled .dote-dropdown-trigger {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 /* ── Mejoras touch generales ── */

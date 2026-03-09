@@ -1000,7 +1000,9 @@ function onEspecieCabChange(sel) {
     const selCaract = panel.querySelector('.sel-especie');
     if (selCaract && selCaract.value !== val) {
         selCaract.value = val;
-        selCaract.dispatchEvent(new Event('change'));
+        // Actualizar el trigger visual del custom dropdown
+        _syncEspecieDropdownTrigger(panel, val);
+        if (typeof onEspecieChange === 'function') onEspecieChange(selCaract);
     }
     guardarDebounced();
 }
@@ -1014,6 +1016,30 @@ function onTrasfondoCabChange(sel) {
         selCaract.dispatchEvent(new Event('change'));
     }
     guardarDebounced();
+}
+
+/* Sincroniza el trigger visual del custom dropdown de especie con el valor dado */
+function _syncEspecieDropdownTrigger(panel, valor) {
+    const wrapper = panel.querySelector('.especie-custom-dropdown');
+    if (!wrapper) return;
+    const trigger  = wrapper.querySelector('.especie-dropdown-trigger');
+    const listbox  = wrapper.querySelector('.especie-dropdown-listbox');
+    if (!trigger) return;
+    if (valor) {
+        trigger.textContent = valor;
+        trigger.classList.add('has-value');
+        wrapper.dataset.selectedName = valor;
+    } else {
+        trigger.textContent = trigger.dataset.placeholder || '— Selecciona una especie —';
+        trigger.classList.remove('has-value');
+        wrapper.dataset.selectedName = '';
+    }
+    // Marcar el item correspondiente en el listbox
+    if (listbox) {
+        listbox.querySelectorAll('.especie-dropdown-item').forEach(i => {
+            i.classList.toggle('selected', i.dataset.especieName === valor);
+        });
+    }
 }
 
 /* Poblar selectores de cabecera con las mismas opciones que en Características */
@@ -1514,7 +1540,10 @@ function cargarDatosEnPanel(panel, d) {
         }
         if (c.especieSelect) {
             const sel = panel.querySelector('.sel-especie');
-            if (sel) sel.value = c.especieSelect;
+            if (sel) {
+                sel.value = c.especieSelect;
+                _syncEspecieDropdownTrigger(panel, c.especieSelect);
+            }
         }
         if (c.trasfondoSelect) {
             const sel = panel.querySelector('.sel-trasfondo');
@@ -1645,6 +1674,11 @@ function recursosAñadirFila(btn) {
    INIT
 ═══════════════════════════════════════════════════════ */
 window.onload = function () {
+    // Si hay una ficha compartida en el hash, cargarla y saltarse el localStorage
+    if (location.hash.startsWith('#ficha=')) {
+        _detectarFichaCompartida();
+        return;
+    }
     try {
         const guardado = localStorage.getItem('dnd_fichas');
         const contador = localStorage.getItem('dnd_contador');
@@ -1736,6 +1770,12 @@ function _cerrarDropdown(wrapper) { wrapper.classList.remove('open'); }
 document.addEventListener('click', (e) => {
     if (!e.target.closest('.spell-custom-dropdown')) {
         document.querySelectorAll('.spell-custom-dropdown.open').forEach(d => _cerrarDropdown(d));
+    }
+    if (!e.target.closest('.dote-custom-dropdown')) {
+        document.querySelectorAll('.dote-custom-dropdown.open').forEach(d => d.classList.remove('open'));
+    }
+    if (!e.target.closest('.especie-custom-dropdown')) {
+        document.querySelectorAll('.especie-custom-dropdown.open').forEach(d => d.classList.remove('open'));
     }
 });
 
@@ -2033,7 +2073,7 @@ function spellCardShow(sp) {
 
         _scPosition(card, _scMX, _scMY);
         card.classList.add('sc-visible');
-    }, 900);
+    }, 220);
 }
 
 function spellCardHide() {
@@ -2045,6 +2085,144 @@ function spellCardHide() {
 // Compatibilidad con código que aún llame a las funciones viejas
 function mostrarTooltipHechizo(sp, evt) { spellCardShow(sp); }
 function ocultarTooltipHechizo()        { spellCardHide();   }
+
+/* ═══════════════════════════════════════════════════════
+   DOTE CARD — tarjeta flotante de información de dotes
+   Misma arquitectura que spell-card-global.
+═══════════════════════════════════════════════════════ */
+let _dcTimer = null;
+let _dcMX = 0, _dcMY = 0;
+
+(function _initDoteCard() {
+    if (document.getElementById('dote-card-global')) return;
+    const card = document.createElement('div');
+    card.id = 'dote-card-global';
+    card.innerHTML = `
+        <div class="dc-header">
+            <span class="dc-name"></span>
+            <span class="dc-tipo"></span>
+        </div>
+        <div class="dc-desc"></div>`;
+    document.body.appendChild(card);
+
+    document.addEventListener('mousemove', (e) => {
+        _dcMX = e.clientX;
+        _dcMY = e.clientY;
+        if (card.classList.contains('dc-visible')) {
+            _dcPosition(card, e.clientX, e.clientY);
+        }
+    });
+})();
+
+function _dcPosition(card, cx, cy) {
+    const W = window.innerWidth, H = window.innerHeight;
+    const TW = card.offsetWidth  || 340;
+    const TH = card.offsetHeight || 200;
+    let x = cx + 18, y = cy + 14;
+    if (x + TW > W - 8) x = cx - TW - 14;
+    if (y + TH > H - 8) y = H  - TH - 8;
+    if (x < 4) x = 4;
+    if (y < 4) y = 4;
+    card.style.left = x + 'px';
+    card.style.top  = y + 'px';
+}
+
+const _DOTE_TIPO_LABEL = {
+    'Origen': 'Dote de Origen',
+    'General': 'Dote General',
+    'Estilo de Combate': 'Estilo de Combate',
+    'Epic Boon': 'Epic Boon (Nv. 19+)',
+};
+
+window.doteCardShow = function(dote) {
+    clearTimeout(_dcTimer);
+    _dcTimer = setTimeout(() => {
+        const card = document.getElementById('dote-card-global');
+        if (!card) return;
+        card.querySelector('.dc-name').textContent = dote.n || '';
+        // Determinar etiqueta de tipo
+        const tipo = dote.tipo || '';
+        const etqKey = Object.keys(_DOTE_TIPO_LABEL).find(k =>
+            tipo === k || tipo.startsWith(k) || tipo.includes(k)
+        );
+        card.querySelector('.dc-tipo').textContent = _DOTE_TIPO_LABEL[etqKey] || tipo || 'Dote';
+        card.querySelector('.dc-desc').textContent = dote.d || '';
+        _dcPosition(card, _dcMX, _dcMY);
+        card.classList.add('dc-visible');
+    }, 220);
+};
+
+window.doteCardHide = function() {
+    clearTimeout(_dcTimer);
+    const card = document.getElementById('dote-card-global');
+    if (card) card.classList.remove('dc-visible');
+};
+
+/* ═══════════════════════════════════════════════════════
+   ESPECIE CARD — tarjeta flotante de información de especie
+═══════════════════════════════════════════════════════ */
+let _ecTimer = null;
+let _ecMX = 0, _ecMY = 0;
+
+(function _initEspecieCard() {
+    if (document.getElementById('especie-card-global')) return;
+    const card = document.createElement('div');
+    card.id = 'especie-card-global';
+    card.innerHTML = `
+        <div class="ec-header">
+            <span class="ec-name"></span>
+        </div>
+        <div class="ec-rasgos"></div>`;
+    document.body.appendChild(card);
+
+    document.addEventListener('mousemove', (e) => {
+        _ecMX = e.clientX;
+        _ecMY = e.clientY;
+        if (card.classList.contains('ec-visible')) {
+            _ecPosition(card, e.clientX, e.clientY);
+        }
+    });
+})();
+
+function _ecPosition(card, cx, cy) {
+    const W = window.innerWidth, H = window.innerHeight;
+    const TW = card.offsetWidth  || 340;
+    const TH = card.offsetHeight || 220;
+    let x = cx + 18, y = cy + 14;
+    if (x + TW > W - 8) x = cx - TW - 14;
+    if (y + TH > H - 8) y = H  - TH - 8;
+    if (x < 4) x = 4;
+    if (y < 4) y = 4;
+    card.style.left = x + 'px';
+    card.style.top  = y + 'px';
+}
+
+window.especieCardShow = function(nombre, rasgos) {
+    clearTimeout(_ecTimer);
+    _ecTimer = setTimeout(() => {
+        const card = document.getElementById('especie-card-global');
+        if (!card) return;
+        card.querySelector('.ec-name').textContent = nombre || '';
+        const rasgosEl = card.querySelector('.ec-rasgos');
+        rasgosEl.innerHTML = '';
+        if (rasgos && rasgos.length) {
+            rasgos.forEach(r => {
+                const fila = document.createElement('div');
+                fila.className = 'ec-rasgo';
+                fila.innerHTML = `<span class="ec-rasgo-n">${_esc(r.n)}</span><span class="ec-rasgo-d">${_esc(r.d)}</span>`;
+                rasgosEl.appendChild(fila);
+            });
+        }
+        _ecPosition(card, _ecMX, _ecMY);
+        card.classList.add('ec-visible');
+    }, 220);
+};
+
+window.especieCardHide = function() {
+    clearTimeout(_ecTimer);
+    const card = document.getElementById('especie-card-global');
+    if (card) card.classList.remove('ec-visible');
+};
 
 /* ═══════════════════════════════════════════════════════
    SPELLCASTING — PERSISTENCIA
@@ -2134,6 +2312,11 @@ function cargarSpellcasting(panel, d) {
     });
 
     recalcSpellcasting(panel);
+
+    // Aplicar filtro de nivel máximo de hechizos DESPUÉS de reconstruir los slots/hechizos
+    // Sin esto, al recargar la página todos los niveles aparecen habilitados hasta que
+    // el jugador cambia algo manualmente.
+    setTimeout(() => _refrescarFiltroNivelHechizos(panel), 0);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2172,6 +2355,124 @@ function importarFichasJSON(event) {
     };
     reader.readAsText(file);
     event.target.value = '';
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   COMPARTIR FICHA — URL con datos comprimidos en el hash
+═══════════════════════════════════════════════════════ */
+
+/* Comprime un string con DeflateRaw y devuelve base64url */
+async function _comprimirABase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    const cs = new CompressionStream('deflate-raw');
+    const writer = cs.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    const chunks = [];
+    const reader = cs.readable.getReader();
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+    }
+    const totalLen = chunks.reduce((s, c) => s + c.length, 0);
+    const out = new Uint8Array(totalLen);
+    let offset = 0;
+    for (const chunk of chunks) { out.set(chunk, offset); offset += chunk.length; }
+    // Convertir a base64url (sin +/= para uso seguro en URL)
+    let b64 = btoa(String.fromCharCode(...out));
+    return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+/* Descomprime base64url → string original */
+async function _descomprimirDeBase64(b64url) {
+    let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const ds = new DecompressionStream('deflate-raw');
+    const writer = ds.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    const chunks = [];
+    const reader = ds.readable.getReader();
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+    }
+    const totalLen = chunks.reduce((s, c) => s + c.length, 0);
+    const out = new Uint8Array(totalLen);
+    let offset = 0;
+    for (const chunk of chunks) { out.set(chunk, offset); offset += chunk.length; }
+    return new TextDecoder().decode(out);
+}
+
+/* Muestra un toast de confirmación */
+function _mostrarToast(msg, tipo) {
+    let toast = document.getElementById('share-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'share-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.className = 'share-toast-visible' + (tipo === 'error' ? ' share-toast-error' : '');
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => { toast.className = ''; }, 3200);
+}
+
+async function compartirFicha() {
+    guardarTodo();
+    const fichaActiva = fichas.find(f => f.id === fichaActual);
+    if (!fichaActiva) { _mostrarToast('No hay ficha activa.', 'error'); return; }
+
+    const datos = leerFicha(fichaActiva.panel);
+
+    // Eliminar imágenes (base64 muy grandes, no caben en URL)
+    const datosLimpios = JSON.parse(JSON.stringify(datos));
+    datosLimpios.retratoCab = '';
+    if (datosLimpios.roleplay) {
+        datosLimpios.roleplay.imagen = '';
+        if (Array.isArray(datosLimpios.roleplay.imagenes)) {
+            datosLimpios.roleplay.imagenes = [];
+        }
+    }
+
+    try {
+        const json = JSON.stringify(datosLimpios);
+        const comprimido = await _comprimirABase64(json);
+        const url = location.href.split('#')[0] + '#ficha=' + comprimido;
+
+        if (url.length > 1_900_000) {
+            _mostrarToast('⚠ La ficha es demasiado grande para compartir por URL.', 'error');
+            return;
+        }
+
+        await navigator.clipboard.writeText(url);
+        _mostrarToast('✔ URL copiada al portapapeles. Las imágenes no se incluyen.');
+    } catch (err) {
+        _mostrarToast('Error al generar la URL: ' + err.message, 'error');
+    }
+}
+
+/* Al cargar la página, detectar hash con datos de ficha compartida */
+async function _detectarFichaCompartida() {
+    const hash = location.hash;
+    if (!hash.startsWith('#ficha=')) return;
+    const b64 = hash.slice('#ficha='.length);
+    if (!b64) return;
+    // Limpiar el hash de la URL sin recargar
+    history.replaceState(null, '', location.pathname + location.search);
+    try {
+        const json = await _descomprimirDeBase64(b64);
+        const datos = JSON.parse(json);
+        nuevaFicha(datos);
+        guardarTodo();
+        _mostrarToast('✔ Ficha compartida cargada correctamente.');
+    } catch (err) {
+        _mostrarToast('Error al cargar la ficha compartida: ' + err.message, 'error');
+    }
 }
 
 /* ═══════════════════════════════════════════════════════

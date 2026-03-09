@@ -1,0 +1,97 @@
+/* ═══════════════════════════════════════════════════════
+   WIDGET LANZADOR DE DADOS
+═══════════════════════════════════════════════════════ */
+#dados-widget {
+    position: fixed; top: 60px; left: 20px; z-index: 900; width: 250px;
+    background: var(--ink-900, #1c1510);
+    border: 1.5px solid var(--parch-400, #d4b472);
+    border-top: 3px solid var(--gold-400, #e8c030);
+    border-radius: var(--radius-lg, 10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+    overflow: hidden; transition: box-shadow 0.2s; font-family: inherit;
+}
+#dados-widget:hover { box-shadow: 0 10px 40px rgba(0,0,0,0.65); }
+
+.dados-widget-cab {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px 7px;
+    background: rgba(12,8,4,0.9);
+    border-bottom: 1px solid var(--parch-400, #d4b472);
+    cursor: pointer; user-select: none;
+}
+.dados-widget-titulo { font-family: var(--font-title, 'Cinzel', serif); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-400, #e8c030); display: flex; align-items: center; gap: 6px; }
+.dados-widget-titulo .dw-icono { font-size: 14px; line-height: 1; }
+.dados-widget-colapsar { background: none; border: none; color: var(--ink-400, #9e8060); cursor: pointer; font-size: 11px; padding: 2px 4px; border-radius: 4px; transition: color 0.15s, background 0.15s; line-height: 1; }
+.dados-widget-colapsar:hover { color: var(--parch-200, #f5e6c8); background: rgba(255,255,255,0.08); }
+
+.dados-widget-cuerpo { padding: 10px 10px 8px; display: flex; flex-direction: column; gap: 0; transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease; max-height: 600px; opacity: 1; overflow: hidden; }
+#dados-widget.colapsado .dados-widget-cuerpo { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; }
+
+#dw-filas-lista { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; max-height: 260px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--parch-400, #d4b472) transparent; }
+#dw-filas-lista::-webkit-scrollbar { width: 4px; }
+#dw-filas-lista::-webkit-scrollbar-thumb { background: var(--parch-400, #d4b472); border-radius: 2px; }
+
+.dw-fila { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.05); border: 1px solid var(--parch-400, #d4b472); border-left: 3px solid var(--parch-400, #d4b472); border-radius: var(--radius-md, 7px); padding: 5px 7px; animation: dwFilaIn 0.15s ease; position: relative; }
+@keyframes dwFilaIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+
+.dw-fila-color { width: 4px; min-width: 4px; height: 32px; border-radius: 3px; background: var(--parch-400, #d4b472); transition: background 0.2s; }
+
+.dw-qty { width: 34px; min-width: 34px; background: rgba(0,0,0,0.3); border: 1px solid var(--parch-400, #d4b472); border-radius: var(--radius-sm, 5px); color: var(--parch-100, #fdf6e3); font-family: var(--font-title, 'Cinzel', serif); font-size: 13px; font-weight: 700; text-align: center; padding: 3px 2px; -moz-appearance: textfield; }
+.dw-qty::-webkit-inner-spin-button, .dw-qty::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dw-qty:focus { outline: none; border-color: var(--gold-400, #e8c030); }
+
+.dw-sep-d { color: var(--ink-400, #9e8060); font-size: 11px; font-weight: 700; flex-shrink: 0; }
+
+.dw-tipo { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--parch-400, #d4b472); border-radius: var(--radius-sm, 5px); color: var(--gold-300, #f0d060); font-family: var(--font-title, 'Cinzel', serif); font-size: 12px; font-weight: 700; padding: 3px 4px; cursor: pointer; min-width: 0; }
+.dw-tipo:focus { outline: none; border-color: var(--gold-400, #e8c030); }
+.dw-tipo option { color: var(--ink-800, #2d2218); background: var(--parch-100, #fdf6e3); }
+
+.dw-sep-bono { color: var(--ink-400, #9e8060); font-size: 11px; font-weight: 700; flex-shrink: 0; }
+
+.dw-bono { width: 36px; min-width: 36px; background: rgba(0,0,0,0.3); border: 1px solid var(--parch-400, #d4b472); border-radius: var(--radius-sm, 5px); color: var(--life-300, #68d391); font-family: var(--font-title, 'Cinzel', serif); font-size: 12px; font-weight: 700; text-align: center; padding: 3px 2px; -moz-appearance: textfield; }
+.dw-bono::-webkit-inner-spin-button, .dw-bono::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dw-bono:focus { outline: none; border-color: var(--life-400, #38a169); }
+
+.dw-btn-borrar { background: none; border: none; color: var(--ink-400, #9e8060); cursor: pointer; font-size: 14px; line-height: 1; padding: 2px; border-radius: 4px; transition: color 0.15s, background 0.15s; flex-shrink: 0; }
+.dw-btn-borrar:hover { color: var(--crimson-400, #e74c3c); background: rgba(192,57,43,0.15); }
+.dw-fila:only-child .dw-btn-borrar { opacity: 0.2; pointer-events: none; }
+
+#dw-btn-add { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; padding: 5px 0; background: transparent; border: 1.5px dashed var(--parch-400, #d4b472); border-radius: var(--radius-md, 7px); color: var(--ink-400, #9e8060); font-family: var(--font-title, 'Cinzel', serif); font-size: 10px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; margin-bottom: 8px; }
+#dw-btn-add:hover { border-color: var(--gold-400, #e8c030); color: var(--gold-400, #e8c030); background: rgba(232,192,48,0.06); }
+
+.dw-divider { height: 1px; background: var(--parch-400, #d4b472); opacity: 0.3; margin: 0 0 8px; }
+
+.dw-acciones { display: flex; flex-direction: column; gap: 5px; }
+
+#dw-btn-tirar { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 9px 0; background: linear-gradient(135deg, var(--crimson-700,#7a1a1a) 0%, var(--crimson-500,#c0392b) 60%, var(--gold-400,#e8c030) 100%); border: none; border-radius: var(--radius-md, 7px); color: #fff; font-family: var(--font-title, 'Cinzel', serif); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-shadow: 0 3px 12px rgba(192,57,43,0.45); transition: transform 0.1s, box-shadow 0.15s, filter 0.15s; }
+#dw-btn-tirar:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(192,57,43,0.6); filter: brightness(1.08); }
+#dw-btn-tirar:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(192,57,43,0.35); }
+#dw-btn-tirar .dw-dado-icono { font-size: 15px; transition: transform 0.3s; }
+#dw-btn-tirar.girando .dw-dado-icono { animation: dwGirar 0.35s ease; }
+@keyframes dwGirar { 0%{transform:rotate(0deg) scale(1)} 40%{transform:rotate(180deg) scale(1.25)} 100%{transform:rotate(360deg) scale(1)} }
+
+#dw-btn-reset { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; padding: 6px 0; background: transparent; border: 1.5px solid var(--parch-400, #d4b472); border-radius: var(--radius-md, 7px); color: var(--ink-400, #9e8060); font-family: var(--font-title, 'Cinzel', serif); font-size: 10px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+#dw-btn-reset:hover { border-color: var(--crimson-500, #c0392b); color: var(--crimson-500, #c0392b); background: rgba(192,57,43,0.07); }
+
+/* Colores por tipo de dado */
+.dw-fila[data-tipo="d4"]   .dw-fila-color { background: var(--gold-400, #e8c030); }
+.dw-fila[data-tipo="d6"]   .dw-fila-color { background: var(--life-400, #38a169); }
+.dw-fila[data-tipo="d8"]   .dw-fila-color { background: var(--steel-400, #4a86c8); }
+.dw-fila[data-tipo="d10"]  .dw-fila-color { background: #9f7aea; }
+.dw-fila[data-tipo="d12"]  .dw-fila-color { background: var(--crimson-500, #c0392b); }
+.dw-fila[data-tipo="d20"]  .dw-fila-color { background: var(--gold-300, #f0d060); }
+.dw-fila[data-tipo="d100"] .dw-fila-color { background: #4fd1c5; }
+
+/* Tema claro */
+html:not(.tema-oscuro) #dados-widget {
+    background: var(--ink-900, #1c1510);
+    border-color: var(--parch-400, #d4b472);
+    box-shadow: 0 6px 28px rgba(28,21,16,0.35);
+}
+html:not(.tema-oscuro) .dados-widget-cab { background: rgba(12,8,4,0.88); border-bottom-color: var(--parch-400, #d4b472); }
+html:not(.tema-oscuro) .dados-widget-titulo { color: var(--gold-400, #e8c030); }
+html:not(.tema-oscuro) .dw-fila { background: rgba(255,255,255,0.06); border-color: var(--parch-400, #d4b472); }
+
+/* Responsive */
+@media (max-width: 768px) { #dados-widget { bottom: 190px; left: 10px; width: 190px; } }
+@media (max-width: 480px) { #dados-widget { bottom: 185px; width: 175px; left: 6px; } }

@@ -73,12 +73,40 @@ function _addFila(tipo, qty, bono) {
     fila.dataset.tipo = tipo;
     fila.innerHTML = `
         <div class="dw-fila-color"></div>
-        <input type="number" class="dw-qty" value="${qty}" min="1" max="99" title="Cantidad de dados">
+        <div class="dw-spinner-wrap">
+            <button class="dw-spin-btn dw-spin-up" tabindex="-1">▲</button>
+            <input type="number" class="dw-qty" value="${qty}" min="1" max="99" title="Cantidad de dados">
+            <button class="dw-spin-btn dw-spin-dn" tabindex="-1">▼</button>
+        </div>
         <span class="dw-sep-d">×</span>
         <select class="dw-tipo" title="Tipo de dado">${_htmlTipoOpts(tipo)}</select>
         <span class="dw-sep-bono">+</span>
-        <input type="number" class="dw-bono" value="${bono}" min="-99" max="99" title="Bono">
+        <div class="dw-spinner-wrap">
+            <button class="dw-spin-btn dw-spin-up" tabindex="-1">▲</button>
+            <input type="number" class="dw-bono" value="${bono}" min="-99" max="99" title="Bono">
+            <button class="dw-spin-btn dw-spin-dn" tabindex="-1">▼</button>
+        </div>
         <button class="dw-btn-borrar" onclick="dadosWidgetBorrarFila(this)" title="Eliminar fila">×</button>`;
+
+    // Spinners: cantidad
+    const qtyInput  = fila.querySelector('.dw-qty');
+    const qtyWrap   = fila.querySelectorAll('.dw-spinner-wrap')[0];
+    qtyWrap.querySelector('.dw-spin-up').addEventListener('click', () => {
+        qtyInput.value = Math.min(99, (parseInt(qtyInput.value) || 1) + 1);
+    });
+    qtyWrap.querySelector('.dw-spin-dn').addEventListener('click', () => {
+        qtyInput.value = Math.max(1, (parseInt(qtyInput.value) || 1) - 1);
+    });
+
+    // Spinners: bono
+    const bonoInput = fila.querySelector('.dw-bono');
+    const bonoWrap  = fila.querySelectorAll('.dw-spinner-wrap')[1];
+    bonoWrap.querySelector('.dw-spin-up').addEventListener('click', () => {
+        bonoInput.value = Math.min(99, (parseInt(bonoInput.value) || 0) + 1);
+    });
+    bonoWrap.querySelector('.dw-spin-dn').addEventListener('click', () => {
+        bonoInput.value = Math.max(-99, (parseInt(bonoInput.value) || 0) - 1);
+    });
 
     // Actualizar data-tipo al cambiar el select
     fila.querySelector('.dw-tipo').addEventListener('change', function() {

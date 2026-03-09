@@ -52,7 +52,7 @@ body::before {
 }
 
 /* Todo el contenido por encima del fondo */
-body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget) { position: relative; z-index: 1; }
+body > *:not(#log-tiradas):not(#panel-flotante-acciones) { position: relative; z-index: 1; }
 
 /* ===================================================
    BARRA DE PESTAÑAS
@@ -2259,6 +2259,7 @@ kbd { background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 3px; paddin
 
 
 
+
 /* ===================================================
    QUINTA PÁGINA — ROLEPLAY
 =================================================== */
@@ -2983,7 +2984,6 @@ hr.sep-seccion {
 
 /* ── Pantallas muy grandes: dar más aire al layout ── */
 @media (min-width: 1600px) {
-    
     .log-contenedor {
         right: 28px;
         top: 76px;
@@ -3716,146 +3716,4 @@ html.tema-oscuro .log-entrada     { background: #16132a; border-color: var(--bor
 /* Scrollbar global */
 html.tema-oscuro * {
     scrollbar-color: #3a3260 #100e22;
-}
-
-
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE MÓVIL
-   768px: tablet pequeña / 480px: móvil
-═══════════════════════════════════════════════════════ */
-
-/* ── Tablet pequeña / landscape móvil  768px ── */
-@media (max-width: 768px) {
-    /* Barra de pestañas: más compacta, botones globales en fila */
-    .barra-pestanas {
-        padding: 6px 8px 0;
-        gap: 2px;
-        flex-wrap: wrap;
-    }
-    .pestana {
-        font-size: 11px;
-        padding: 5px 8px 5px 10px;
-        max-width: 110px;
-        border-radius: 6px 6px 0 0;
-    }
-    .pestana-nombre { max-width: 70px; }
-    .btn-nueva-pestana { font-size: 15px; padding: 4px 9px; }
-
-    .barra-acciones-globales {
-        gap: 4px;
-        padding-bottom: 5px;
-    }
-    .btn-global {
-        font-size: 10px;
-        padding: 4px 7px;
-        gap: 3px;
-    }
-
-    /* Log: pequeño, esquina superior derecha */
-    .log-contenedor {
-        top: auto;
-        bottom: 10px;
-        right: 8px;
-        width: 200px;
-        max-height: 40vh;
-        font-size: 10px;
-        border-radius: 8px;
-    }
-    #log-lista { padding: 5px; gap: 3px; }
-    .log-entrada { padding: 5px 7px; font-size: 10px; }
-    .res span { font-size: 16px; }
-    .res small { font-size: 9px; }
-
-    /* Panel flotante de acciones: horizontal en la parte inferior */
-    #panel-flotante-acciones {
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px;
-        width: auto;
-        max-width: calc(100vw - 220px); /* dejar espacio al log */
-    }
-    .btn-flotante {
-        width: auto;
-        min-width: 70px;
-        padding: 6px 8px;
-        font-size: 10px;
-        border-radius: 7px;
-        border-width: 1.5px;
-    }
-    .flotante-sep {
-        display: none; /* ocultar separador en fila horizontal */
-    }
-
-    /* Ficha: sin padding lateral */
-    #fichas-contenedor {
-        padding: 10px 4px 80px; /* padding-bottom para que no tape el panel */
-    }
-}
-
-/* ── Móvil portrait ≤ 480px ── */
-@media (max-width: 480px) {
-    .barra-pestanas {
-        padding: 4px 4px 0;
-        gap: 2px;
-    }
-    .pestana {
-        font-size: 10px;
-        padding: 4px 6px 4px 8px;
-        max-width: 90px;
-    }
-    .pestana-nombre { max-width: 52px; }
-    .pestana-cerrar { width: 13px; height: 13px; font-size: 10px; }
-    .btn-nueva-pestana { font-size: 13px; padding: 3px 7px; }
-
-    .btn-global {
-        font-size: 9px;
-        padding: 3px 6px;
-    }
-
-    /* Log: oculto por defecto en móvil pequeño, solo visible si ya existe */
-    .log-contenedor {
-        width: 170px;
-        right: 4px;
-        font-size: 9px;
-        max-height: 35vh;
-    }
-
-    /* Panel flotante: centrado, muy compacto */
-    #panel-flotante-acciones {
-        bottom: 6px;
-        max-width: calc(100vw - 185px);
-        gap: 3px;
-    }
-    .btn-flotante {
-        min-width: 58px;
-        padding: 5px 6px;
-        font-size: 9px;
-        border-radius: 6px;
-    }
-
-    #fichas-contenedor {
-        padding: 6px 2px 72px;
-    }
-}
-
-/* ── Mejoras touch generales ── */
-@media (hover: none) and (pointer: coarse) {
-    /* Agrandar zonas táctiles de los controles pequeños de la ficha */
-    .dot, input[type="checkbox"] {
-        min-width: 20px;
-        min-height: 20px;
-    }
-    .pestana-cerrar {
-        width: 20px;
-        height: 20px;
-    }
-    select, input[type="number"], input[type="text"] {
-        font-size: 16px; /* evita zoom automático en iOS */
-    }
-    /* El log en touch se cierra con el botón × — no hover */
-    .log-contenedor { max-height: 50vh; }
 }

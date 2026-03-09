@@ -1,0 +1,454 @@
+/* ═══════════════════════════════════════════════════════
+   WIDGET LANZADOR DE DADOS PERSONALIZADOS
+   Posición fija: esquina superior izquierda
+═══════════════════════════════════════════════════════ */
+
+#dados-widget {
+    position: fixed;
+    top: 60px;
+    left: 20px;
+    z-index: 900;
+    width: 250px;
+    background: #1a202c;
+    border: 2px solid #2d3748;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+    overflow: hidden;
+    transition: box-shadow 0.2s, width 0.25s ease;
+    font-family: inherit;
+}
+
+#dados-widget:hover {
+    box-shadow: 0 10px 36px rgba(0,0,0,0.55);
+}
+
+/* Colapsado: solo muestra la cabecera, ancho mínimo */
+#dados-widget.colapsado {
+    width: auto;
+    min-width: 0;
+}
+
+/* Cabecera del widget */
+.dados-widget-cab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px 7px;
+    background: #171e2b;
+    border-bottom: 2px solid #2d3748;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.dados-widget-titulo {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #f6ad55;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dados-widget-titulo .dw-icono {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.dados-widget-colapsar {
+    background: none;
+    border: none;
+    color: #718096;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+}
+
+.dados-widget-colapsar:hover {
+    color: #e2e8f0;
+    background: #2d3748;
+}
+
+/* Cuerpo del widget */
+.dados-widget-cuerpo {
+    padding: 10px 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease;
+    max-height: 600px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+#dados-widget.colapsado .dados-widget-cuerpo {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Ocultar borde inferior de la cabecera cuando está colapsado */
+#dados-widget.colapsado .dados-widget-cab {
+    border-bottom-color: transparent;
+}
+
+/* Lista de filas de dados */
+#dw-filas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4a5568 transparent;
+}
+
+#dw-filas-lista::-webkit-scrollbar { width: 4px; }
+#dw-filas-lista::-webkit-scrollbar-track { background: transparent; }
+#dw-filas-lista::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 2px; }
+
+/* Fila individual de dado */
+.dw-fila {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #2d3748;
+    border: 1px solid #3d4a5e;
+    border-radius: 7px;
+    padding: 5px 7px;
+    animation: dwFilaIn 0.15s ease;
+    position: relative;
+}
+
+@keyframes dwFilaIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Etiqueta de color del dado */
+.dw-fila-color {
+    width: 4px;
+    min-width: 4px;
+    height: 32px;
+    border-radius: 3px;
+    background: #4a5568;
+    transition: background 0.2s;
+}
+
+/* Selector de cantidad */
+.dw-qty {
+    width: 34px;
+    min-width: 34px;
+    background: #1a202c;
+    border: 1px solid #4a5568;
+    border-radius: 5px;
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    padding: 3px 2px;
+    -moz-appearance: textfield;
+}
+.dw-qty::-webkit-inner-spin-button,
+.dw-qty::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dw-qty:focus { outline: none; border-color: #f6ad55; }
+
+/* Separador "d" */
+.dw-sep-d {
+    color: #718096;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* Selector de tipo de dado */
+.dw-tipo {
+    flex: 1;
+    background: #1a202c;
+    border: 1px solid #4a5568;
+    border-radius: 5px;
+    color: #f6ad55;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 4px;
+    cursor: pointer;
+    min-width: 0;
+}
+.dw-tipo:focus { outline: none; border-color: #f6ad55; }
+.dw-tipo option { color: #e2e8f0; background: #1a202c; }
+
+/* Separador "+" */
+.dw-sep-bono {
+    color: #718096;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* Input bono */
+.dw-bono {
+    width: 36px;
+    min-width: 36px;
+    background: #1a202c;
+    border: 1px solid #4a5568;
+    border-radius: 5px;
+    color: #68d391;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    padding: 3px 2px;
+    -moz-appearance: textfield;
+}
+.dw-bono::-webkit-inner-spin-button,
+.dw-bono::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dw-bono:focus { outline: none; border-color: #68d391; }
+
+/* Wrapper spinner (cantidad y bono) */
+.dw-spinner-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+/* Botones de flecha del spinner */
+.dw-spin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 11px;
+    padding: 0;
+    background: #3d4a5e;
+    border: none;
+    border-radius: 3px;
+    color: #718096;
+    font-size: 7px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+    flex-shrink: 0;
+}
+.dw-spin-btn:hover {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+.dw-spin-btn:active {
+    background: #f6ad55;
+    color: #1a202c;
+}
+
+
+/* Botón borrar fila */
+.dw-btn-borrar {
+    background: none;
+    border: none;
+    color: #4a5568;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 2px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+}
+.dw-btn-borrar:hover {
+    color: #fc8181;
+    background: rgba(252,129,129,0.12);
+}
+
+/* Ocultar botón borrar si solo hay 1 fila */
+.dw-fila:only-child .dw-btn-borrar {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+/* Botón añadir fila */
+#dw-btn-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    padding: 5px 0;
+    background: transparent;
+    border: 1.5px dashed #3d4a5e;
+    border-radius: 7px;
+    color: #718096;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    margin-bottom: 8px;
+}
+#dw-btn-add:hover {
+    border-color: #f6ad55;
+    color: #f6ad55;
+    background: rgba(246,173,85,0.06);
+}
+
+/* Separador visual */
+.dw-divider {
+    height: 1px;
+    background: #2d3748;
+    margin: 0 0 8px;
+}
+
+/* Botones de acción */
+.dw-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#dw-btn-tirar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px 0;
+    background: linear-gradient(135deg, #c05621 0%, #dd6b20 60%, #f6ad55 100%);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(221,107,32,0.45);
+    transition: transform 0.1s, box-shadow 0.15s, filter 0.15s;
+}
+#dw-btn-tirar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(221,107,32,0.6);
+    filter: brightness(1.08);
+}
+#dw-btn-tirar:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(221,107,32,0.35);
+}
+#dw-btn-tirar .dw-dado-icono {
+    font-size: 15px;
+    animation: none;
+    transition: transform 0.3s;
+}
+#dw-btn-tirar.girando .dw-dado-icono {
+    animation: dwGirar 0.35s ease;
+}
+@keyframes dwGirar {
+    0%   { transform: rotate(0deg) scale(1); }
+    40%  { transform: rotate(180deg) scale(1.25); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+#dw-btn-reset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    padding: 6px 0;
+    background: transparent;
+    border: 1.5px solid #4a5568;
+    border-radius: 8px;
+    color: #718096;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+#dw-btn-reset:hover {
+    border-color: #fc8181;
+    color: #fc8181;
+    background: rgba(252,129,129,0.07);
+}
+
+/* Colores por tipo de dado */
+.dw-fila[data-tipo="d4"]  .dw-fila-color { background: #f6ad55; }
+.dw-fila[data-tipo="d6"]  .dw-fila-color { background: #68d391; }
+.dw-fila[data-tipo="d8"]  .dw-fila-color { background: #63b3ed; }
+.dw-fila[data-tipo="d10"] .dw-fila-color { background: #b794f4; }
+.dw-fila[data-tipo="d12"] .dw-fila-color { background: #fc8181; }
+.dw-fila[data-tipo="d20"] .dw-fila-color { background: #f6e05e; }
+.dw-fila[data-tipo="d100"] .dw-fila-color { background: #76e4f7; }
+
+/* TEMA CLARO — ajustes para html sin .tema-oscuro */
+html:not(.tema-oscuro) #dados-widget {
+    background: #f7fafc;
+    border-color: #4a5568;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+}
+html:not(.tema-oscuro) .dados-widget-cab {
+    background: #edf2f7;
+    border-bottom-color: #4a5568;
+}
+html:not(.tema-oscuro) .dados-widget-titulo { color: #2b6cb0; }
+html:not(.tema-oscuro) .dados-widget-colapsar { color: #718096; }
+html:not(.tema-oscuro) .dados-widget-colapsar:hover { background: #e2e8f0; color: #2d3748; }
+
+html:not(.tema-oscuro) .dw-fila {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+html:not(.tema-oscuro) .dw-qty,
+html:not(.tema-oscuro) .dw-tipo,
+html:not(.tema-oscuro) .dw-bono {
+    background: #fff;
+    border-color: #cbd5e0;
+    color: #2d3748;
+}
+html:not(.tema-oscuro) .dw-tipo { color: #2b6cb0; }
+html:not(.tema-oscuro) .dw-bono { color: #276749; }
+html:not(.tema-oscuro) .dw-sep-d,
+html:not(.tema-oscuro) .dw-sep-bono { color: #718096; }
+html:not(.tema-oscuro) .dw-btn-borrar { color: #a0aec0; }
+html:not(.tema-oscuro) #dw-btn-add { border-color: #cbd5e0; color: #718096; }
+html:not(.tema-oscuro) #dw-btn-add:hover { border-color: #3182ce; color: #3182ce; }
+html:not(.tema-oscuro) .dw-divider { background: #e2e8f0; }
+html:not(.tema-oscuro) #dw-btn-reset { border-color: #cbd5e0; color: #718096; }
+html:not(.tema-oscuro) #dw-btn-reset:hover { border-color: #fc8181; color: #e53e3e; }
+
+html:not(.tema-oscuro) .dw-spin-btn { background: #e2e8f0; color: #718096; }
+html:not(.tema-oscuro) .dw-spin-btn:hover { background: #bee3f8; color: #2b6cb0; }
+html:not(.tema-oscuro) .dw-spin-btn:active { background: #3182ce; color: #fff; }
+
+html:not(.tema-oscuro) #dw-btn-tirar {
+    background: linear-gradient(135deg, #2b6cb0 0%, #3182ce 60%, #63b3ed 100%);
+    box-shadow: 0 3px 12px rgba(49,130,206,0.45);
+}
+html:not(.tema-oscuro) #dw-btn-tirar:hover {
+    box-shadow: 0 5px 18px rgba(49,130,206,0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #dados-widget {
+        bottom: 190px;
+        left: 10px;
+        width: 190px;
+    }
+    #dados-widget.colapsado {
+        width: auto;
+    }
+}
+@media (max-width: 480px) {
+    #dados-widget {
+        bottom: 185px;
+        width: 175px;
+        left: 6px;
+    }
+    #dados-widget.colapsado {
+        width: auto;
+    }
+}

@@ -255,7 +255,7 @@ body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(
     background: var(--color-tab); border: 2px solid var(--color-borde);
     border-bottom: none; border-radius: 8px 8px 0 0;
     cursor: pointer; font-size: 13px; font-weight: 600;
-    color: var(--color-texto); transition: background 0.15s, color 0.15s;
+    color: var(--color-borde); transition: background 0.15s, color 0.15s;
     user-select: none; max-width: 200px;
     position: relative; bottom: -3px;
 }
@@ -273,7 +273,7 @@ body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(
     padding: 5px 13px; background: var(--color-tab);
     border: 2px solid var(--color-borde); border-bottom: none;
     border-radius: 8px 8px 0 0; font-size: 18px; font-weight: 700;
-    color: var(--color-texto-sub); cursor: pointer; transition: background 0.15s, color 0.15s;
+    color: var(--color-borde); cursor: pointer; transition: background 0.15s, color 0.15s;
     line-height: 1; position: relative; bottom: -3px; flex-shrink: 0;
 }
 .btn-nueva-pestana:hover { background: var(--acento); color: #fff; border-color: var(--acento-oscuro); }

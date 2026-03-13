@@ -1,0 +1,487 @@
+/* ═══════════════════════════════════════════════════════
+   WIDGET LANZADOR DE DADOS — Paleta integrada con la ficha
+   Posición fija: esquina superior izquierda
+═══════════════════════════════════════════════════════ */
+
+#dados-widget {
+    position: fixed;
+    top: 60px;
+    left: 20px;
+    z-index: 900;
+    width: 250px;
+    background: var(--color-marco, #F5F5F5);
+    border: 2px solid var(--color-borde, #2C2C2C);
+    border-radius: var(--r-lg, 12px);
+    box-shadow: var(--sombra-caja, 0 12px 32px rgba(0,0,0,0.18));
+    overflow: hidden;
+    transition: box-shadow 0.2s, width 0.25s ease;
+    font-family: inherit;
+}
+
+#dados-widget:hover {
+    box-shadow: 0 10px 36px rgba(0,0,0,0.22);
+}
+
+/* Colapsado */
+#dados-widget.colapsado {
+    width: auto;
+    min-width: 0;
+}
+
+/* ── Cabecera ── */
+.dados-widget-cab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px 6px;
+    background: var(--color-titulo-caja, #E74C3C);
+    border-bottom: 2px solid var(--color-borde, #2C2C2C);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.dados-widget-titulo {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dados-widget-titulo .dw-icono {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.dados-widget-colapsar {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 2px 4px;
+    border-radius: var(--r-sm, 4px);
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+}
+
+.dados-widget-colapsar:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.15);
+}
+
+/* ── Cuerpo ── */
+.dados-widget-cuerpo {
+    padding: 10px 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease;
+    max-height: 600px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+#dados-widget.colapsado .dados-widget-cuerpo {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#dados-widget.colapsado .dados-widget-cab {
+    border-bottom-color: transparent;
+}
+
+/* ── Lista de filas ── */
+#dw-filas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--acento, #C0392B) transparent;
+}
+
+#dw-filas-lista::-webkit-scrollbar { width: 4px; }
+#dw-filas-lista::-webkit-scrollbar-track { background: transparent; }
+#dw-filas-lista::-webkit-scrollbar-thumb { background: var(--acento, #C0392B); border-radius: 2px; }
+
+/* ── Fila individual ── */
+.dw-fila {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-sub-caja, #E2E2E2);
+    border: 1px solid var(--color-borde-sm, #BBBBBB);
+    border-radius: var(--r-sm, 7px);
+    padding: 5px 7px;
+    animation: dwFilaIn 0.15s ease;
+    position: relative;
+}
+
+@keyframes dwFilaIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Barra de color lateral */
+.dw-fila-color {
+    width: 4px;
+    min-width: 4px;
+    height: 32px;
+    border-radius: 3px;
+    background: var(--color-borde-sm, #BBBBBB);
+    transition: background 0.2s;
+}
+
+/* ── Inputs ── */
+.dw-qty {
+    width: 34px;
+    min-width: 34px;
+    background: var(--color-input, #EBEBEB);
+    border: 1px solid var(--color-input-borde, #BBBBBB);
+    border-radius: var(--r-sm, 5px);
+    color: var(--color-texto, #1A1A1A);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    padding: 3px 2px;
+    -moz-appearance: textfield;
+}
+.dw-qty::-webkit-inner-spin-button,
+.dw-qty::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dw-qty:focus { outline: none; border-color: var(--acento, #C0392B); }
+
+.dw-sep-d {
+    color: var(--color-texto-mute, #707070);
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.dw-tipo {
+    flex: 1;
+    background: var(--color-input, #EBEBEB);
+    border: 1px solid var(--color-input-borde, #BBBBBB);
+    border-radius: var(--r-sm, 5px);
+    color: var(--acento, #C0392B);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 4px;
+    cursor: pointer;
+    min-width: 0;
+}
+.dw-tipo:focus { outline: none; border-color: var(--acento, #C0392B); }
+.dw-tipo option { color: var(--color-texto, #1A1A1A); background: var(--color-input, #EBEBEB); }
+
+.dw-sep-bono {
+    color: var(--color-texto-mute, #707070);
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.dw-bono {
+    width: 36px;
+    min-width: 36px;
+    background: var(--color-input, #EBEBEB);
+    border: 1px solid var(--color-input-borde, #BBBBBB);
+    border-radius: var(--r-sm, 5px);
+    color: var(--color-exito, #38a169);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    padding: 3px 2px;
+    -moz-appearance: textfield;
+}
+.dw-bono::-webkit-inner-spin-button,
+.dw-bono::-webkit-outer-spin-button { -webkit-appearance: none; }
+.dw-bono:focus { outline: none; border-color: var(--color-exito, #38a169); }
+
+/* ── Spinners ── */
+.dw-spinner-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.dw-spin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 11px;
+    padding: 0;
+    background: var(--color-stat-bloque, #E0E0E0);
+    border: none;
+    border-radius: 3px;
+    color: var(--color-texto-mute, #707070);
+    font-size: 7px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+    flex-shrink: 0;
+}
+.dw-spin-btn:hover {
+    background: var(--color-borde-sm, #BBBBBB);
+    color: var(--color-texto, #1A1A1A);
+}
+.dw-spin-btn:active {
+    background: var(--acento, #C0392B);
+    color: #fff;
+}
+
+/* ── Botón borrar fila ── */
+.dw-btn-borrar {
+    background: none;
+    border: none;
+    color: var(--color-borde-sm, #BBBBBB);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 2px;
+    border-radius: var(--r-sm, 4px);
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+}
+.dw-btn-borrar:hover {
+    color: var(--acento, #C0392B);
+    background: var(--acento-bg, #FADBD8);
+}
+
+.dw-fila:only-child .dw-btn-borrar {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+/* ── Botón añadir fila ── */
+#dw-btn-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    padding: 5px 0;
+    background: transparent;
+    border: 1.5px dashed var(--color-borde-sm, #BBBBBB);
+    border-radius: var(--r-sm, 7px);
+    color: var(--color-texto-mute, #707070);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    margin-bottom: 8px;
+}
+#dw-btn-add:hover {
+    border-color: var(--acento, #C0392B);
+    color: var(--acento, #C0392B);
+    background: var(--acento-bg, #FADBD8);
+}
+
+/* ── Separador ── */
+.dw-divider {
+    height: 1px;
+    background: var(--color-borde-sm, #BBBBBB);
+    margin: 0 0 8px;
+}
+
+/* ── Botones de acción ── */
+.dw-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#dw-btn-tirar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px 0;
+    background: linear-gradient(135deg, var(--acento-oscuro, #922B21) 0%, var(--acento, #C0392B) 60%, var(--acento-claro, #E74C3C) 100%);
+    border: none;
+    border-radius: var(--r-md, 8px);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(192,57,43,0.35);
+    transition: transform 0.1s, box-shadow 0.15s, filter 0.15s;
+}
+#dw-btn-tirar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(192,57,43,0.5);
+    filter: brightness(1.08);
+}
+#dw-btn-tirar:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(192,57,43,0.25);
+}
+#dw-btn-tirar .dw-dado-icono {
+    font-size: 15px;
+    transition: transform 0.3s;
+}
+#dw-btn-tirar.girando .dw-dado-icono {
+    animation: dwGirar 0.35s ease;
+}
+@keyframes dwGirar {
+    0%   { transform: rotate(0deg) scale(1); }
+    40%  { transform: rotate(180deg) scale(1.25); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+#dw-btn-reset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    padding: 6px 0;
+    background: transparent;
+    border: 1.5px solid var(--color-borde-sm, #BBBBBB);
+    border-radius: var(--r-md, 8px);
+    color: var(--color-texto-mute, #707070);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+#dw-btn-reset:hover {
+    border-color: var(--acento, #C0392B);
+    color: var(--acento, #C0392B);
+    background: var(--acento-bg, #FADBD8);
+}
+
+/* ── Colores de acento lateral por tipo de dado ── */
+.dw-fila[data-tipo="d4"]   .dw-fila-color { background: #e67e22; }
+.dw-fila[data-tipo="d6"]   .dw-fila-color { background: var(--color-exito, #38a169); }
+.dw-fila[data-tipo="d8"]   .dw-fila-color { background: #3182ce; }
+.dw-fila[data-tipo="d10"]  .dw-fila-color { background: #805ad5; }
+.dw-fila[data-tipo="d12"]  .dw-fila-color { background: var(--acento, #C0392B); }
+.dw-fila[data-tipo="d20"]  .dw-fila-color { background: #2C2C2C; }
+.dw-fila[data-tipo="d100"] .dw-fila-color { background: #2b6cb0; }
+
+/* ═══════════════════════════════════════════════════════
+   TEMA OSCURO
+═══════════════════════════════════════════════════════ */
+html.tema-oscuro #dados-widget {
+    background: var(--bg-caja, #1c2840);
+    border-color: var(--border, #2d4060);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+html.tema-oscuro .dados-widget-cab {
+    background: var(--bg-widget, #131c2e);
+    border-bottom-color: var(--border, #2d4060);
+}
+
+html.tema-oscuro .dados-widget-titulo {
+    color: var(--acc-hover, #6aaff0);
+}
+
+html.tema-oscuro .dados-widget-colapsar {
+    color: var(--txt-muted, #7a9ab8);
+}
+html.tema-oscuro .dados-widget-colapsar:hover {
+    color: var(--txt-strong, #e8f0ff);
+    background: var(--bg-input, #1e2d45);
+}
+
+html.tema-oscuro .dw-fila {
+    background: var(--bg-input, #1e2d45);
+    border-color: var(--border, #2d4060);
+}
+
+html.tema-oscuro .dw-qty,
+html.tema-oscuro .dw-tipo,
+html.tema-oscuro .dw-bono {
+    background: var(--bg-widget, #131c2e);
+    border-color: var(--border, #2d4060);
+    color: var(--txt-base, #c8d8f0);
+}
+
+html.tema-oscuro .dw-tipo { color: var(--acc-hover, #6aaff0); }
+html.tema-oscuro .dw-bono { color: #68d391; }
+
+html.tema-oscuro .dw-sep-d,
+html.tema-oscuro .dw-sep-bono { color: var(--txt-muted, #7a9ab8); }
+
+html.tema-oscuro .dw-spin-btn {
+    background: var(--bg-widget, #131c2e);
+    color: var(--txt-muted, #7a9ab8);
+}
+html.tema-oscuro .dw-spin-btn:hover {
+    background: var(--border, #2d4060);
+    color: var(--txt-strong, #e8f0ff);
+}
+html.tema-oscuro .dw-spin-btn:active {
+    background: var(--acc-primary, #4a90d9);
+    color: #fff;
+}
+
+html.tema-oscuro .dw-btn-borrar { color: var(--border, #2d4060); }
+html.tema-oscuro .dw-btn-borrar:hover {
+    color: #fc8181;
+    background: rgba(252,129,129,0.12);
+}
+
+html.tema-oscuro #dw-btn-add {
+    border-color: var(--border, #2d4060);
+    color: var(--txt-muted, #7a9ab8);
+}
+html.tema-oscuro #dw-btn-add:hover {
+    border-color: var(--acc-primary, #4a90d9);
+    color: var(--acc-hover, #6aaff0);
+    background: rgba(74,144,217,0.08);
+}
+
+html.tema-oscuro .dw-divider { background: var(--border, #2d4060); }
+
+html.tema-oscuro #dw-btn-tirar {
+    background: linear-gradient(135deg, #1a3a6e 0%, var(--acc-primary, #4a90d9) 60%, var(--acc-hover, #6aaff0) 100%);
+    box-shadow: 0 3px 12px rgba(74,144,217,0.35);
+}
+html.tema-oscuro #dw-btn-tirar:hover {
+    box-shadow: 0 5px 18px rgba(74,144,217,0.5);
+}
+
+html.tema-oscuro #dw-btn-reset {
+    border-color: var(--border, #2d4060);
+    color: var(--txt-muted, #7a9ab8);
+}
+html.tema-oscuro #dw-btn-reset:hover {
+    border-color: #fc8181;
+    color: #fc8181;
+    background: rgba(252,129,129,0.07);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    #dados-widget {
+        bottom: 190px;
+        left: 10px;
+        width: 190px;
+    }
+    #dados-widget.colapsado { width: auto; }
+}
+@media (max-width: 480px) {
+    #dados-widget {
+        bottom: 185px;
+        width: 175px;
+        left: 6px;
+    }
+    #dados-widget.colapsado { width: auto; }
+}

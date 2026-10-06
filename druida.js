@@ -1,23 +1,24 @@
 /* ══════════════════════════════════════════════════════════════════
-   druida.js — Druida: rasgos de clase y subclases completas
+   druida.js — Druida: rasgos de clase y subclases
    ──────────────────────────────────────────────────────────────────
-   Fuentes:
-     PHB 2014 · PHB 2024
-     Xanathar's Guide to Everything (XGtE)
-     Tasha's Cauldron of Everything (TCE)
-     Guildmasters' Guide to Ravnica (GGtR)
-     Tal'Dorei Campaign Setting Reborn (TCSR)
+   Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
+   importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
+   fuente y la edición a la que corresponde.
+   Fuentes de subclases: PHB 2014 · XGtE · GGtR/TCE · TCE · PHB 2024
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (12 entradas):
-     Círculo de la Tierra       [PHB 2014] / [PHB 2024]
-     Círculo de la Luna         [PHB 2014] / [PHB 2024]
-     Círculo del Sueño          [XGtE]
-     Círculo del Pastor         [XGtE]
-     Círculo de las Esporas     [GGtR]     (📌 reimpreso en TCE)
-     Círculo de las Estrellas   [TCE]
-     Círculo de los Incendios   [TCE]
-     Círculo de la Ciudad       [TCE]
-     Círculo Marchito           [TCSR]
+   SUBCLASES (11 entradas):
+     Círculo de la Tierra         [PHB 2014] / [PHB 2024]
+     Círculo de la Luna           [PHB 2014] / [PHB 2024]
+     Círculo del Sueño            [XGtE]
+     Círculo del Pastor           [XGtE]
+     Círculo de las Esporas       [GGtR/TCE]
+     Círculo de las Estrellas     [TCE] / [PHB 2024]
+     Círculo de los Incendios     [TCE]
+     Círculo del Mar              [PHB 2024]
+   ──────────────────────────────────────────────────────────────────
+   Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
+     "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
+     limitados o decisión puntual) · combinable ("AB"). Sin `a` = rasgo pasivo.
 ══════════════════════════════════════════════════════════════════ */
 
 const CLASE_DRUIDA = {
@@ -29,398 +30,430 @@ const CLASE_DRUIDA = {
     {
       n: "Competencias",
       nv: 1,
-      d: "Armaduras ligeras y medias, escudos (no metálicos). Garrote, daga, dardo, jabalina, maza, bastón, cimitarra, hoz, honda, lanza. Herramientas de herborista. Salvaciones: INT y SAB. Habilidades: elige 2 entre Arcanos, Manejo de Animales, Medicina, Naturaleza, Percepción, Perspicacia, Religión y Supervivencia."
-    },
-    {
-      n: "Druídico",
-      nv: 1,
-      d: "Conoces el idioma secreto Druídico, usado para comunicarte con otros druidas. Puedes dejar mensajes ocultos en la naturaleza que solo otros druidas reconocen."
+      d: "Dado de golpe d8. Salvaciones: INT y SAB. Armaduras: ligeras y escudos (los druidas no llevan armadura ni escudos de metal por tradición). Armas: simples. Herramientas: kit de herboristería. Habilidades: elige 2 entre Arcanos, Trato con Animales, Perspicacia, Medicina, Naturaleza, Percepción, Religión y Supervivencia."
     },
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "SAB es tu característica de conjuro (CD = 8 + comp + mod SAB). El Druida es un lanzador completo. Prepara conjuros diariamente: mod SAB + nivel de Druida (mínimo 1) de la lista de Druida. Puede cambiar todos los conjuros preparados al terminar un Descanso Largo. Trucos conocidos: 2 (Nv.1) → 3 (Nv.4) → 4 (Nv.10)."
+      d: "Lanzador completo. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); usas un foco druídico. Trucos: 2 (3 en Nv.4, 4 en Nv.10). Preparas conjuros de la lista de Druida: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); cambias la lista tras un descanso largo. [2014: preparas SAB + nivel de Druida conjuros (mín. 1)]"
     },
     {
-      n: "Forma Salvaje",
-      nv: 2,
-      d: "Como Acción (o AA desde Nv.2 con PHB 2024) puedes transformarte en una bestia que hayas visto. CR máximo: 1/4 sin velocidades especiales (Nv.2), 1/2 con velocidad de natación (Nv.4), 1 con velocidad de vuelo (Nv.8). Puedes transformarte 2 veces por Descanso Corto o Largo. La transformación dura hasta que caigas a 0 PG, hasta que lo decidas, o hasta el amanecer. Mientras estás transformado: usas los atributos físicos de la bestia (FUE, DES, CON) pero mantienes INT, SAB y CAR; mantienes tus competencias de habilidades; conservas rasgos de clase que no requieran forma humanoide; no puedes lanzar conjuros (salvo rasgos específicos); si llevas equipo, se funde con la nueva forma."
+      n: "Druídico (Druidic)",
+      nv: 1,
+      d: "Conoces Druídico, el idioma secreto de los druidas, y siempre tienes preparado Speak with Animals. Puedes dejar mensajes ocultos: los hablantes de Druídico los detectan; otros necesitan una prueba de INT (Investigación) CD 15 y no pueden descifrarlos sin magia."
     },
     {
-      n: "Círculo Druídico",
+      n: "Orden Primigenio (Primal Order)",
+      nv: 1,
+      d: "Eliges un papel. Mago (Magician): conoces 1 truco de Druida adicional y sumas tu mod. SAB (mínimo +1) a tus pruebas de INT (Arcanos o Naturaleza). Guardián (Warden): competencia con armas marciales y entrenamiento con armadura media. [Sólo 2024]"
+    },
+    {
+      n: "Forma Salvaje (Wild Shape)",
       nv: 2,
-      d: "Eliges tu subclase (Círculo Druídico). Otorga rasgos en Nv.2, 6, 10 y 14."
+      a: "B",
+      d: "Como Acción Adicional adoptas la forma de una Bestia que hayas aprendido, durante horas = la mitad de tu nivel de Druida (o hasta que uses Forma Salvaje de nuevo, quedes Incapacitado o mueras; puedes salir como Acción Adicional). Usos: 2 (3 en Nv.6, 4 en Nv.17); recuperas 1 con un descanso corto y todos con uno largo. Formas conocidas: 4 (6 en Nv.4, 8 en Nv.8) con CR máximo 1/4 sin Velocidad de vuelo (1/2 en Nv.4; 1 en Nv.8 con vuelo); cambias una forma tras un descanso largo. Ganas PG temporales = tu nivel de Druida. Mantienes tipo de criatura, PG, INT/SAB/CAR, rasgos de clase, idiomas y dotes; usas las competencias o las de la Bestia (la mayor); no puedes lanzar conjuros pero conservas la concentración; el equipo cae, se fusiona o lo llevas. [2014: es una acción; sin PG temporales; al volver a tu forma recuperas tus PG previos y el exceso de daño pasa a ti; CR 1/4 sin nadar ni volar (1/2 sin volar en Nv.4, 1 en Nv.8); 2 usos por descanso corto o largo; no puedes lanzar conjuros]"
+    },
+    {
+      n: "Compañero Salvaje (Wild Companion)",
+      nv: 2,
+      a: "A",
+      d: "Como acción Mágica gastas un espacio de conjuro o un uso de Forma Salvaje para lanzar Find Familiar sin componentes materiales; el familiar es feérico y desaparece cuando terminas un descanso largo. [2014: rasgo opcional de TCE, gastando un uso de Forma Salvaje]"
+    },
+    {
+      n: "Subclase de Druida (Círculo Druídico)",
+      nv: 3,
+      d: "Eliges una subclase. Concede rasgos en Nv.3, 6, 10 y 14. [2014: Círculo Druídico, se elige en Nv.2 y concede rasgos en Nv.2, 6, 10 y 14]"
     },
     {
       n: "Mejora de Característica",
       nv: 4,
-      d: "+2 a una característica o +1 a dos (máx. 20). También en Nv.8, 12, 16 y 19. Puedes tomar una dote en su lugar."
+      d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]"
     },
     {
-      n: "Paso por el Bosque",
-      nv: 6,
-      d: "Moviéndote por vegetación no mágica no recibes penalización al movimiento ni daño aunque normalmente lo haría (zarzas, espinos, etc.)."
+      n: "Resurgimiento Salvaje (Wild Resurgence)",
+      nv: 5,
+      a: "O",
+      d: "Una vez en cada uno de tus turnos, si no te quedan usos de Forma Salvaje, puedes gastar un espacio de conjuro (sin acción) para recuperar un uso. Además puedes gastar un uso de Forma Salvaje (sin acción) para obtener un espacio de nivel 1, pero no puedes volver a hacerlo hasta un descanso largo. [Sólo 2024]"
     },
     {
-      n: "Sentido del Bosque",
-      nv: 6,
-      d: "(PHB 2014) Nunca puedes quedar perdido en terreno natural. En terreno natural siempre sabes exactamente dónde estás."
+      n: "Furia Elemental (Elemental Fury)",
+      nv: 7,
+      d: "Eliges una opción. Lanzamiento Potente: sumas tu mod. SAB al daño de tus trucos de Druida. Golpe Primigenio: una vez por turno, cuando impactas con un ataque con arma o con el ataque de una forma de Bestia en Forma Salvaje, infliges 1d8 de daño de frío, fuego, rayo o trueno adicional (a tu elección). [Sólo 2024]"
     },
     {
-      n: "Lengua de Bestias y Hojas",
-      nv: 10,
-      d: "Puedes comunicarte con bestias y plantas. Ellas pueden entenderte pero responden de forma limitada. Tienes ventaja en pruebas de CAR con bestias y plantas."
+      n: "Furia Elemental Mejorada (Improved Elemental Fury)",
+      nv: 15,
+      d: "Lanzamiento Potente: cuando lanzas un truco de Druida con alcance de 10 pies o más, su alcance aumenta 300 pies. Golpe Primigenio: el daño adicional pasa a 2d8. [Sólo 2024]"
     },
     {
-      n: "Forma Salvaje Mejorada",
+      n: "Conjuros de Bestia (Beast Spells)",
       nv: 18,
-      d: "Puedes usar Forma Salvaje para asumir la forma de una planta o elemental (además de bestias). CR máximo = nivel Druida ÷ 3 (redondeado abajo)."
+      d: "Mientras usas Forma Salvaje puedes lanzar conjuros, salvo los que tengan componentes materiales con coste indicado o que consuman su componente material. [2014: puedes realizar los componentes somáticos y verbales de tus conjuros de Druida en Forma Salvaje, y además Cuerpo Atemporal: envejeces 1 año por cada 10]"
     },
     {
-      n: "Archidruida",
-      nv: 20,
-      d: "(PHB 2014) Puedes usar Forma Salvaje un número ilimitado de veces. Además, ignoras los requisitos de componentes verbales y gestuales para los conjuros de Druida mientras estés en Forma Salvaje."
+      n: "Don Épico (Epic Boon)",
+      nv: 19,
+      d: "Ganas una dote de Don Épico (u otra dote para la que cumplas requisitos). [Sólo 2024; en 2014 es una mejora de característica más]"
     },
     {
-      n: "Archidruida [PHB 2024]",
+      n: "Archidruida (Archdruid)",
       nv: 20,
-      d: "(PHB 2024) Al usar Forma Salvaje, ganas PG temporales = 4 × nivel de Druida. Puedes lanzar conjuros de Druida de Nv.1-2 en Forma Salvaje sin recuperar la forma humanoide."
+      a: "O",
+      d: "Forma Salvaje Perenne: cuando tiras Iniciativa y no te quedan usos de Forma Salvaje, recuperas 1. Mago de la Naturaleza: una vez por descanso largo conviertes usos sin gastar de Forma Salvaje en un espacio de conjuro (sin acción; cada uso aporta 2 niveles). Longevidad: envejeces 1 año por cada 10. [2014: usos ilimitados de Forma Salvaje y puedes ignorar componentes verbales, somáticos y materiales sin coste de tus conjuros de Druida]"
     },
   ],
 
   /* ══════════════════════════════════════════════════════════════
-     SUBCLASES (CÍRCULOS DRUÍDICOS)
+     SUBCLASES
   ══════════════════════════════════════════════════════════════ */
   subclases: {
 
     /* ── PHB 2014 ── */
     "Círculo de la Tierra [PHB 2014]": [
       {
-        n: "Truco Adicional",
+        n: "Truco Adicional (Bonus Cantrip)",
         nv: 2,
-        d: "Aprendes un truco de Druida adicional a tu elección."
+        d: "Aprendes un truco de Druida adicional (no cuenta para tu límite)."
       },
       {
-        n: "Recuperación Natural",
+        n: "Recuperación Natural (Natural Recovery)",
         nv: 2,
-        d: "Una vez por Descanso Largo, durante un Descanso Corto puedes recuperar espacios de conjuro gastados. Los espacios recuperados suman un total de niveles ≤ la mitad de tu nivel de Druida (redondeado arriba). No puedes recuperar espacios de Nv.6 o superior."
+        a: "O",
+        d: "Durante un descanso corto recuperas espacios de conjuro gastados con nivel combinado ≤ la mitad de tu nivel de Druida (redondeado hacia arriba); ninguno de nivel 6 o superior. Una vez por descanso largo."
       },
       {
-        n: "Conjuros del Círculo",
+        n: "Conjuros del Círculo (Circle Spells)",
         nv: 3,
-        d: "Tu vínculo místico con la tierra te concede acceso a conjuros según el terreno elegido al unirte al Círculo. Estos conjuros están siempre preparados y no cuentan contra tu límite. Terrenos disponibles: Ártico, Costa, Desierto, Bosque, Pradera, Montaña, Pantano, Subterráneo (Underdark). Nv.3: 2 conjuros; Nv.5: 2 más; Nv.7: 2 más; Nv.9: 2 más."
+        d: "Eliges un tipo de terreno; ganas siempre preparados — Ártico: Nv.3 Hold Person, Spike Growth; Nv.5 Sleet Storm, Slow; Nv.7 Freedom of Movement, Ice Storm; Nv.9 Commune with Nature, Cone of Cold. Costa: Mirror Image, Misty Step; Water Breathing, Water Walk; Control Water, Freedom of Movement; Conjure Elemental, Scrying. Desierto: Blur, Silence; Create Food and Water, Protection from Energy; Blight, Hallucinatory Terrain; Insect Plague, Wall of Stone. Bosque: Barkskin, Spider Climb; Call Lightning, Plant Growth; Divination, Freedom of Movement; Commune with Nature, Tree Stride. Pradera: Invisibility, Pass without Trace; Daylight, Haste; Divination, Freedom of Movement; Dream, Insect Plague. Montaña: Spider Climb, Spike Growth; Lightning Bolt, Meld into Stone; Stone Shape, Stoneskin; Passwall, Wall of Stone. Pantano: Darkness, Melf's Acid Arrow; Water Walk, Stinking Cloud; Freedom of Movement, Locate Creature; Insect Plague, Scrying. Underdark: Spider Climb, Web; Gaseous Form, Stinking Cloud; Greater Invisibility, Stone Shape; Cloudkill, Insect Plague."
       },
       {
-        n: "Paso por la Tierra",
+        n: "Paso por la Tierra (Land's Stride)",
         nv: 6,
-        d: "Moverse a través de vegetación no mágica no requiere movimiento extra y no recibes daño por terreno natural difícil."
+        d: "Moverte por terreno difícil no mágico no cuesta movimiento adicional; atraviesas plantas no mágicas sin ralentizarte ni sufrir daño; ventaja en salvaciones contra plantas creadas o manipuladas mágicamente que impidan el movimiento."
       },
       {
-        n: "Mente de la Naturaleza",
+        n: "Resguardo de la Naturaleza (Nature's Ward)",
         nv: 10,
-        d: "No puedes ser Encantado ni Asustado por elementales o feroces. Además, eres inmune a veneno y enfermedad."
+        d: "No puedes ser Hechizado ni Asustado por elementales o feéricos, y eres inmune al veneno y a las enfermedades."
       },
       {
-        n: "Santuario de la Naturaleza",
+        n: "Santuario de la Naturaleza (Nature's Sanctuary)",
         nv: 14,
-        d: "Las bestias y plantas deben superar una salvación SAB (CD conjuro) o no podrán atacarte. Las criaturas que fallen son compelidas a elegir otro objetivo."
+        d: "Cuando una bestia o planta te ataca, debe hacer una salvación de SAB (tu CD): si falla, debe elegir otro objetivo o el ataque falla; si la supera, es inmune a este efecto 24 horas."
       },
     ],
 
     "Círculo de la Luna [PHB 2014]": [
       {
-        n: "Formas de Combate",
+        n: "Forma Salvaje de Combate (Combat Wild Shape)",
         nv: 2,
-        d: "Puedes usar Forma Salvaje como Acción Adicional (no como Acción completa). Puedes transformarte en bestias con CR hasta 1 desde Nv.2 (en lugar de 1/4). El CR máximo sube = nivel Druida ÷ 3 (redondeado abajo). Puedes transformarte en elementales (Aire, Tierra, Fuego, Agua) desde Nv.10."
+        a: "B",
+        d: "Puedes usar Forma Salvaje como Acción Adicional. Mientras estés transformado, puedes gastar un espacio de conjuro como Acción Adicional para recuperar 1d8 PG por nivel del espacio."
       },
       {
-        n: "Luna Llena",
+        n: "Formas del Círculo (Circle Forms)",
         nv: 2,
-        d: "Mientras estás en Forma Salvaje, puedes gastar espacios de conjuro para recuperar PG: cada espacio gastado restaura 1d8 PG por nivel del espacio."
+        d: "Puedes transformarte en bestias de CR hasta 1 (ignorando la columna de CR máximo de las Formas de Bestia); desde Nv.6 el CR máximo es tu nivel de Druida ÷ 3 (redondeado hacia abajo)."
       },
       {
-        n: "Forma Elemental",
-        nv: 10,
-        d: "Puedes usar 2 usos de Forma Salvaje para transformarte en un elemental (Elemental de Aire, Tierra, Fuego o Agua) en lugar de una bestia."
-      },
-      {
-        n: "Golpe Místico",
+        n: "Golpe Primigenio (Primal Strike)",
         nv: 6,
-        d: "Tus ataques en Forma Salvaje cuentan como mágicos a efectos de superar resistencias e inmunidades."
+        d: "Tus ataques en forma de bestia cuentan como mágicos para superar resistencias e inmunidades a ataques no mágicos."
       },
       {
-        n: "Forma Bestial Mejorada",
+        n: "Forma Salvaje Elemental (Elemental Wild Shape)",
+        nv: 10,
+        a: "B",
+        d: "Puedes gastar 2 usos de Forma Salvaje a la vez para transformarte en un elemental de aire, tierra, fuego o agua."
+      },
+      {
+        n: "Mil Formas (Thousand Forms)",
         nv: 14,
-        d: "Puedes lanzar muchos de tus conjuros de Druida mientras estás en Forma Salvaje. Los conjuros que no requieran componentes materiales costosos pueden lanzarse en forma animal (el druida habla/gesticula con la forma bestial)."
+        d: "Puedes lanzar Alter Self a voluntad."
       },
     ],
 
-    /* ── PHB 2024 ── */
-    "Círculo de la Tierra [PHB 2024]": [
-      {
-        n: "Truco Adicional",
-        nv: 2,
-        d: "Aprendes un truco de Druida adicional a tu elección. No cuenta contra tu límite de trucos."
-      },
-      {
-        n: "Recuperación Natural",
-        nv: 2,
-        d: "1/descanso largo durante un Descanso Corto: recuperas espacios de conjuro cuya suma de niveles ≤ mitad del nivel de Druida (redondeado arriba). Máximo espacio de Nv.5."
-      },
-      {
-        n: "Conjuros del Círculo",
-        nv: 3,
-        d: "Eliges un terreno (Ártico, Costa, Desierto, Bosque, Pradera, Montaña, Pantano, Subterráneo). Obtienes conjuros específicos de ese terreno siempre preparados que escalan con los niveles de conjuro que puedas lanzar."
-      },
-      {
-        n: "Paso por la Tierra",
-        nv: 6,
-        d: "Moverte por vegetación no mágica no cuesta movimiento adicional."
-      },
-      {
-        n: "Mente de la Naturaleza",
-        nv: 10,
-        d: "Inmunidad a veneno y a la condición Envenenado. No puedes ser Encantado por elementales ni bestias."
-      },
-      {
-        n: "Santuario de la Naturaleza",
-        nv: 14,
-        d: "Bestias y plantas deben superar salvación SAB (CD conjuro) o no pueden atacarte, eligiendo otro objetivo."
-      },
-    ],
 
-    "Círculo de la Luna [PHB 2024]": [
-      {
-        n: "Formas de Combate",
-        nv: 2,
-        d: "Puedes transformarte en Forma Salvaje como AA. CR máximo en Forma Salvaje = nivel Druida ÷ 3 (mínimo CR 1). Las formas bestiales cuentan como mágicas a efectos de resistencias desde el principio."
-      },
-      {
-        n: "Luna Llena",
-        nv: 2,
-        d: "Mientras estás en Forma Salvaje puedes gastar espacios de conjuro para recuperar PG = 1d8 por nivel del espacio."
-      },
-      {
-        n: "Golpe Místico",
-        nv: 6,
-        d: "Tus ataques en Forma Salvaje superan resistencias e inmunidades a daño no mágico."
-      },
-      {
-        n: "Forma Elemental",
-        nv: 10,
-        d: "Puedes usar 2 usos de Forma Salvaje para transformarte en un elemental (Aire, Tierra, Fuego o Agua)."
-      },
-      {
-        n: "Forma Bestial Mejorada",
-        nv: 14,
-        d: "Puedes lanzar conjuros de Druida que no requieran componentes materiales costosos mientras estás en Forma Salvaje."
-      },
-    ],
-
-    /* ── Xanathar's Guide to Everything ── */
+    /* ── XGtE ── */
     "Círculo del Sueño [XGtE]": [
       {
-        n: "Curación del Sueño",
+        n: "Bálsamo de la Corte de Verano (Balm of the Summer Court)",
         nv: 2,
-        d: "Cuando una criatura amistosa que puedas ver a 60 pies empieza su turno con 0 PG, puedes usar tu Reacción para gastar un uso de Forma Salvaje y estabilizarla, recuperando PG = 1d6 × (mitad del nivel de Druida) + mod SAB."
+        a: "B",
+        d: "Tienes una reserva de d6 = tu nivel de Druida. Como Acción Adicional eliges a un aliado que veas a 120 pies y gastas hasta la mitad de tu nivel de Druida en dados: tira y suma; el aliado recupera ese total de PG y gana 1 PG temporal por dado gastado. La reserva se recupera con un descanso largo."
       },
       {
-        n: "Guardián del Sueño",
-        nv: 2,
-        d: "Como parte de terminar un Descanso Corto, tú y hasta 5 aliados que descansen contigo recuperáis PG = 1d8 + mod SAB (adicionales al total normal). Si usas este rasgo, gastas un uso de Forma Salvaje."
-      },
-      {
-        n: "Paseo de Sueño Feérico",
+        n: "Hogar de Luz de Luna y Sombra (Hearth of Moonlight and Shadow)",
         nv: 6,
-        d: "Puedes enviar a una criatura dormida de Nv.1+ un mensaje onírico (como el conjuro Mensajero de los Sueños) sin coste ni concentración 1/descanso largo. Además, cuando lanzas el conjuro Mensajero de los Sueños usas SAB como característica."
+        a: "O",
+        d: "Durante un descanso corto o largo, tocas un punto y aparece una esfera invisible de 30 pies de radio: los aliados dentro tienen +5 a las pruebas de DES (Sigilo) y SAB (Percepción) y la luz de llamas abiertas no se ve fuera de ella."
       },
       {
-        n: "Sanador del Bosque",
+        n: "Caminos Ocultos (Hidden Paths)",
         nv: 10,
-        d: "Cuando una criatura amistosa que puedas ver falla una tirada de salvación, puedes usar tu Reacción y gastar un uso de Forma Salvaje para que repita la tirada. Debe usar el nuevo resultado."
+        a: "BA",
+        d: "Como Acción Adicional te teletransportas hasta 60 pies a un espacio libre que veas; o como acción teletransportas a una criatura voluntaria que toques hasta 30 pies. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Visitante de los Sueños",
+        n: "Caminante en Sueños (Walker in Dreams)",
         nv: 14,
-        d: "Puedes entrar físicamente en el espacio onírico de una criatura dormida a 1 milla (como un sueño lúcido). Mientras estás en el sueño: tu cuerpo permanece inconsciente, eres inmune a daño, puedes interactuar con el soñador y lanzar conjuros sobre él sin distancia. Sales del sueño a voluntad o si recibes daño en el mundo real. 1/descanso largo."
+        a: "O",
+        d: "Al terminar un descanso corto o largo puedes lanzar sin gastar espacio ni componentes materiales uno de estos: Dream (tú como mensajero), Scrying o Teleportation Circle. Una vez por descanso largo."
       },
     ],
 
     "Círculo del Pastor [XGtE]": [
       {
-        n: "Habla del Pastor",
+        n: "Habla del Bosque (Speech of the Woods)",
         nv: 2,
-        d: "Hablas con bestias y con espíritus de la naturaleza de forma fluida. Tienes ventaja en pruebas de CAR con bestias y obtienes el idioma Sylvan si no lo conocías."
+        d: "Aprendes Silvano; las bestias entienden tu habla y descifras sus sonidos y movimientos."
       },
       {
-        n: "Espíritu Invocado",
+        n: "Tótem Espiritual (Spirit Totem)",
         nv: 2,
-        d: "Cuando conjuras bestias o celestiales con un conjuro de Nv.1+, surge un espíritu en un espacio libre a 30 pies. El espíritu tiene un tipo que afecta a las invocaciones cercanas: Espíritu de Halcón — aliados a 30 pies tienen ventaja en Percepción y en ataques de oportunidad. Espíritu de Unicornio — aliados a 30 pies pueden curar PG adicionales = nivel del conjuro cuando gastan Dados de Golpe o reciben curación. Espíritu de Oso — las criaturas invocadas a 30 pies ganan PG temporales adicionales = nivel de Druida + mod SAB. El espíritu dura hasta que te muevas más de 100 pies de él o hasta que invocas otro."
+        a: "BR",
+        d: "Como Acción Adicional invocas un espíritu incorpóreo en un punto a 60 pies que crea un aura de 30 pies durante 1 minuto (puedes moverlo 60 pies como Acción Adicional). Espíritu del Oso: las criaturas de tu elección en el aura ganan PG temporales = 5 + nivel de Druida y tienen ventaja en pruebas y salvaciones de FUE. Espíritu del Halcón: reacción para dar ventaja a la tirada de ataque de una criatura del aura; ventaja en Percepción. Espíritu del Unicornio: ventaja en pruebas para detectar criaturas; tus conjuros de curación con espacio también curan a las criaturas del aura PG = nivel de Druida. Una vez por descanso corto o largo."
       },
       {
-        n: "Pastor Poderoso",
+        n: "Invocador Poderoso (Mighty Summoner)",
         nv: 6,
-        d: "Las criaturas que invocas o creas con conjuros tienen PG máximos en lugar de tirar dados."
+        d: "Las bestias y feéricos que invocas con un conjuro tienen 2 PG adicionales por Dado de Golpe y sus ataques naturales cuentan como mágicos."
       },
       {
-        n: "Guardia del Pastor",
+        n: "Espíritu Guardián (Guardian Spirit)",
         nv: 10,
-        d: "Puedes lanzar Hablar con los Muertos a voluntad sin gastar espacio, pero solo para comunicarte con bestias muertas. Además, tus criaturas invocadas tienen las tiradas de ataque siempre con tu bonificador de competencia (en lugar del de la criatura si fuera menor)."
+        d: "Las bestias y feéricos que invocas recuperan PG = la mitad de tu nivel de Druida al final de su turno si están en el aura de tu Tótem Espiritual."
       },
       {
-        n: "Fidelidad Mística",
+        n: "Invocaciones Fieles (Faithful Summons)",
         nv: 14,
-        d: "Las bestias y espíritus invocados por ti tienen ventaja en tiradas de salvación. Cuando una criatura invocada muere a 30 pies, puedes usar tu Reacción para gastar un uso de Forma Salvaje y devolverle 1 PG, reviviendo con el espíritu del pastor guiándola brevemente (actúa 1 turno más antes de morir definitivamente)."
+        a: "O",
+        d: "Cuando caes a 0 PG o quedas Incapacitado, ganas el efecto de Conjure Animals de nivel 9: invoca 4 bestias de CR 2 o menos a 20 pies que te protegen sin concentración durante 1 hora. Una vez por descanso largo."
       },
     ],
 
-    /* ── Guildmasters' Guide to Ravnica / Tasha's Cauldron ── */
+
+    /* ── GGtR/TCE ── */
     "Círculo de las Esporas [GGtR/TCE]": [
       {
-        n: "Halo de Esporas",
+        n: "Conjuros del Círculo (Circle Spells)",
         nv: 2,
-        d: "Reacción: cuando una criatura hostil a 10 pies comienza su turno, le infligas daño necrótico automático que escala: 1d4 (Nv.2), 1d6 (Nv.6), 1d8 (Nv.10), 1d10 (Nv.14). CD = tu CD de conjuro (salvación CON para reducir a la mitad)."
+        d: "Aprendes el truco Chill Touch. Siempre preparados (no cuentan para tu límite) — Nv.3: Blindness/Deafness, Gentle Repose. Nv.5: Animate Dead, Gaseous Form. Nv.7: Blight, Confusion. Nv.9: Cloudkill, Contagion."
       },
       {
-        n: "Forma Simbiótica",
+        n: "Halo de Esporas (Halo of Spores)",
         nv: 2,
-        d: "Como AA gastas un uso de Forma Salvaje para activar esporas que te infunden (no te transformas). Durante 10 minutos: ganas PG temporales = 4 × nivel de Druida, tus ataques cuerpo a cuerpo infligen 1d6 de daño necrótico adicional, y no puedes lanzar conjuros (salvo trucos)."
+        a: "R",
+        d: "Cuando una criatura que veas entra a 10 pies de ti o empieza su turno allí, puedes usar tu reacción para infligirle 1d4 de daño necrótico (salvación de CON para evitarlo); 1d6 en Nv.6, 1d8 en Nv.10, 1d10 en Nv.14."
       },
       {
-        n: "Fungal Infestation",
+        n: "Entidad Simbiótica (Symbiotic Entity)",
+        nv: 2,
+        a: "A",
+        d: "Como acción gastas un uso de Forma Salvaje para despertar las esporas: ganas 4 PG temporales por nivel de Druida, tiras dos veces el daño de Halo de Esporas y tus ataques cuerpo a cuerpo infligen 1d6 de daño necrótico adicional. Dura 10 minutos o hasta que pierdas los PG temporales."
+      },
+      {
+        n: "Infestación Fúngica (Fungal Infestation)",
         nv: 6,
-        d: "Cuando una bestia o humanoide muere a 10 pies, puedes usar tu Reacción para animarlo como un zombie de esporas (PG = 1, actúa en tu iniciativa, puede realizar la acción de Atacar). Dura 1 hora. Solo puedes tener activos un número de zombies = mod SAB (mínimo 1)."
+        a: "R",
+        d: "Cuando una bestia o humanoide Pequeño o Mediano muere a 10 pies de ti, puedes usar tu reacción para animarlo como zombi con 1 PG que te obedece (sólo puede Atacar) y dura 1 hora. Usos = mod. SAB por descanso largo."
       },
       {
-        n: "Esporas Viajeras",
+        n: "Esporas Expansivas (Spreading Spores)",
         nv: 10,
-        d: "Tu Halo de Esporas alcanza 30 pies. Además, cuando una criatura falla la salvación contra tu Halo, también queda Envenenada hasta el inicio de su siguiente turno."
+        a: "B",
+        d: "Mientras Entidad Simbiótica está activa, como Acción Adicional lanzas esporas a 30 pies que forman un cubo de 10 pies durante 1 minuto; las criaturas que entren o empiecen allí su turno sufren el daño de Halo. No puedes usar la reacción de Halo mientras esté activo."
       },
       {
-        n: "Forma Fúngica",
+        n: "Cuerpo Fúngico (Fungal Body)",
         nv: 14,
-        d: "Tu Forma Simbiótica mejora: la duración aumenta a 1 hora, el daño necrótico adicional sube a 2d6, y mientras esté activa eres inmune a Envenenado."
+        d: "No puedes ser Cegado, Ensordecido, Asustado ni Envenenado, y cualquier golpe crítico contra ti cuenta como normal, salvo que estés Incapacitado."
       },
     ],
 
-    /* ── Tasha's Cauldron of Everything ── */
+
+    /* ── TCE ── */
     "Círculo de las Estrellas [TCE]": [
       {
-        n: "Mapa Estelar",
+        n: "Mapa Estelar (Star Map)",
         nv: 2,
-        d: "Creas un mapa estelar mágico que sirve como foco de conjuro. Mientras lo llevas: puedes lanzar Orientación (Guidance) y Estrella del Presagio (Guiding Bolt) sin gastar espacio de conjuro (usos = mod SAB; recarga con Descanso Largo). Además, lanzas Adivinación una vez sin espacio por Descanso Largo."
+        d: "Creas un mapa estelar Diminuto que sirve de foco de conjuros. Mientras lo sostienes conoces Guidance y tienes preparado Guiding Bolt (no cuenta para tu límite), que puedes lanzar sin espacio comp. veces por descanso largo. Si lo pierdes, lo rehaces con un ritual de 1 hora."
       },
       {
-        n: "Forma Estelar",
+        n: "Forma Estelar (Starry Form)",
         nv: 2,
-        d: "Cuando usas Forma Salvaje, puedes optar por una Forma Estelar en lugar de transformarte en bestia. En Forma Estelar: tu cuerpo emite luz tenue en 10 pies; ganas un beneficio según la constelación elegida: Arquero — cuando lanzas un truco de Druida, puedes hacer un ataque de conjuro adicional (1d8+mod SAB radiante, alcance 60 pies). Cáliz — cuando lanzas un conjuro curativo de Nv.1+, tú o una criatura a 30 pies recupera PG = 1d8 + mod SAB. Dragón — resistencia a daño de conjuros; concentración no puede ser interrumpida por daño (tirada de salvación con ventaja)."
+        a: "B",
+        d: "Como Acción Adicional gastas un uso de Forma Salvaje para adoptar forma estelar (conservas tus estadísticas): emites luz brillante 10 pies y tenue 10 pies más durante 10 minutos. Eliges constelación: Arquero: como Acción Adicional haces un ataque de conjuro a distancia a 60 pies, 1d8 + mod. SAB radiante. Cáliz: cuando lanzas un conjuro de curación con espacio, tú o una criatura a 30 pies recuperáis 1d8 + mod. SAB PG. Dragón: un 9 o menos en el d20 cuenta como 10 en pruebas de INT y SAB y en salvaciones de CON para concentración."
       },
       {
-        n: "Twinkling Constellations",
+        n: "Presagio Cósmico (Cosmic Omen)",
         nv: 6,
-        d: "Los beneficios de tu Forma Estelar mejoran: Arquero — 2d8 en lugar de 1d8. Cáliz — el receptor de la curación gana vuelo 20 pies hasta el inicio de su siguiente turno. Dragón — puedes volar a 20 pies como parte del movimiento cada turno."
+        a: "R",
+        d: "Tras un descanso largo tiras un dado: par = Prosperidad (reacción: sumas 1d6 a una tirada de d20 de una criatura a 30 pies); impar = Infortunio (restas 1d6). Usos = comp. por descanso largo."
       },
       {
-        n: "Cosmos Omen",
+        n: "Constelaciones Centelleantes (Twinkling Constellations)",
         nv: 10,
-        d: "Al terminar un Descanso Largo, lanzas 1d6. Si es par (Augurio de Plenitud): tú y aliados a 30 pies añadís 1d6 a tiradas de ataque, pruebas de característica y salvaciones una vez cada uno. Si es impar (Augurio de Mengua): cuando una criatura hostil tira para atacar o superar salvación, puedes restarle 1d6 (Reacción). Cada efecto se recupera con Descanso Largo."
+        d: "El daño del Arquero y la curación del Cáliz pasan a 2d8. El Dragón concede Velocidad de vuelo 20 pies (flotando). Puedes cambiar de constelación al inicio de cada uno de tus turnos."
       },
       {
-        n: "Full of Stars",
+        n: "Lleno de Estrellas (Full of Stars)",
         nv: 14,
-        d: "Mientras estás en Forma Estelar, eres parcialmente incorpóreo: resistencia al daño contundente, perforante y cortante."
+        d: "Mientras estás en forma estelar tienes resistencia al daño contundente, perforante y cortante."
       },
     ],
 
     "Círculo de los Incendios [TCE]": [
       {
-        n: "Conjuros del Círculo",
+        n: "Conjuros del Círculo (Circle Spells)",
         nv: 2,
-        d: "Conjuros siempre preparados — Nv.3: Manos Ardientes, Ola Tronante. Nv.5: Flecha Ácida de Melf, Escorchar. Nv.7: Bola de Fuego, Planta Vegetal. Nv.9: Muro de Fuego, Plaga de Insectos. Nv.11: Incendiar (Incendiary Cloud), Llama Cremosa."
+        d: "Siempre preparados (no cuentan para tu límite) — Nv.2: Burning Hands, Cure Wounds. Nv.3: Flaming Sphere, Scorching Ray. Nv.5: Plant Growth, Revivify. Nv.7: Aura of Life, Fire Shield. Nv.9: Flame Strike, Mass Cure Wounds."
       },
       {
-        n: "Llama Salvaje",
+        n: "Invocar Espíritu de Fuego (Summon Wildfire Spirit)",
         nv: 2,
-        d: "Cuando entras en Forma Salvaje, creas un aura de fuego feérico que dura hasta que salgas. El aura ocupa tu espacio y el de tu nueva forma. Criaturas a 5 pies al inicio de su turno reciben 1d6 de fuego (salvación CON CD conjuro para reducir a la mitad). Las plantas, musgos y madera no mágica se incendian."
+        a: "A",
+        d: "Como acción gastas un uso de Forma Salvaje para invocar un espíritu de fuego a 30 pies; las criaturas a 10 pies hacen una salvación de DES (tu CD) o sufren 2d6 de fuego. El espíritu comparte tu iniciativa, usa Esquivar por defecto, obedece órdenes como Acción Adicional y dura 1 hora. Estadísticas: CA 13, PG 5 + 5 × nivel de Druida, Velocidad 30 pies/vuelo 30 pies (flotando), inmune al fuego e inmune a Hechizado, Asustado, Agarrado, Derribado y Apresado; Semilla de Llama (a distancia 60 pies, 1d6 + comp. de fuego) y Teletransporte Ígneo (15 pies; 1d6 + comp. de fuego a las criaturas cercanas)."
       },
       {
-        n: "Mejorar Llama Salvaje",
+        n: "Vínculo Reforzado (Enhanced Bond)",
         nv: 6,
-        d: "El daño de Llama Salvaje aumenta a 2d6. Además, el fuego feérico ilumina 30 pies de luz brillante y 30 pies más de luz tenue."
+        d: "Cuando lanzas un conjuro de fuego o curación mientras el espíritu está invocado, sumas 1d8 a una tirada de daño o curación. Un conjuro con alcance distinto de Personal puede originarse en ti o en el espíritu."
       },
       {
-        n: "Alma de Fuego",
+        n: "Llamas Cauterizantes (Cauterizing Flames)",
         nv: 10,
-        d: "Inmunidad al daño de fuego. Mientras estás en Forma Salvaje, cualquier criatura que te golpee con ataque cuerpo a cuerpo recibe 1d6 de daño de fuego."
+        a: "R",
+        d: "Cuando una criatura muere a 30 pies de ti o del espíritu, aparecen llamas espectrales en su espacio durante 1 minuto. Cuando una criatura entra en ellas, puedes usar tu reacción para curarla o dañarla con fuego 2d10 + mod. SAB. Usos = comp. por descanso largo."
       },
       {
-        n: "Renacimiento Ígneo",
+        n: "Renacimiento Ígneo (Blazing Revival)",
         nv: 14,
-        d: "Cuando caes a 0 PG en Forma Salvaje, puedes usar tu Reacción para salir de la Forma Salvaje y renacer entre las llamas: vuelves en tu forma normal con PG = 5 × nivel de Druida, y cada criatura a 30 pies recibe 10 de daño de fuego (salvación DEX CD conjuro para reducir a la mitad). 1/descanso largo."
+        a: "O",
+        d: "Si caes a 0 PG con el espíritu a 120 pies, puedes hacer que el espíritu pase a 0 PG: recuperas la mitad de tus PG máximos y te levantas si estás Derribado. Una vez por descanso largo."
       },
     ],
 
-    "Círculo de la Ciudad [TCE]": [
+
+    /* ── PHB 2024 ── */
+    "Círculo de la Tierra [PHB 2024]": [
       {
-        n: "Conjuros del Círculo",
-        nv: 2,
-        d: "Conjuros siempre preparados — Nv.3: Heroísmo, Proyectil Mágico. Nv.5: Invisibilidad, Paso Brumoso. Nv.7: Contrahechizo, Sigilo. Nv.9: Telepatía, Sendero Caminante. Nv.11: Arcane Gate, Visión Verdadera."
+        n: "Conjuros del Círculo de la Tierra",
+        nv: 3,
+        d: "Tras cada descanso largo eliges un tipo de terreno; siempre tienes preparados — Árido: Nv.3 Blur, Burning Hands, Fire Bolt; Nv.5 Fireball; Nv.7 Blight; Nv.9 Wall of Stone. Polar: Fog Cloud, Hold Person, Ray of Frost; Sleet Storm; Ice Storm; Cone of Cold. Templado: Misty Step, Shocking Grasp, Sleep; Lightning Bolt; Freedom of Movement; Tree Stride. Tropical: Acid Splash, Ray of Sickness, Web; Stinking Cloud; Polymorph; Insect Plague."
       },
       {
-        n: "Druida de la Ciudad",
-        nv: 2,
-        d: "Puedes usar la Forma Salvaje para asumir la forma de una criatura del tipo Bestia que viva en entornos urbanos (ratas, cuervos, palomas, perros callejeros, etc.). Además, cuando lanzas un conjuro mientras estás en Forma Salvaje de ciudad, puedes mantener la concentración aunque recibas daño (tirada de concentración con ventaja)."
+        n: "Ayuda de la Tierra (Land's Aid)",
+        nv: 3,
+        a: "A",
+        d: "Como acción Mágica gastas un uso de Forma Salvaje y eliges un punto a 60 pies: Esfera de 10 pies de radio; las criaturas de tu elección hacen una salvación de CON (tu CD): sufren 2d6 de daño necrótico (mitad si superan); y una criatura de tu elección en el área recupera 2d6 PG. Daño y curación: 3d6 en Nv.10, 4d6 en Nv.14."
       },
       {
-        n: "Vista de Alcantarilla",
-        nv: 2,
-        d: "Como AA puedes ver a través de los ojos de cualquier bestia doméstica o de ciudad que esté a 60 pies y no sea hostil. Puedes percibir así durante 1 minuto. Usos = mod SAB. Recarga con Descanso Largo."
-      },
-      {
-        n: "Naturaleza de la Ciudad",
+        n: "Recuperación Natural (Natural Recovery)",
         nv: 6,
-        d: "Tu vínculo con la naturaleza urbana te da ventaja en tiradas de Investigación y Percepción en entornos urbanos. Además, cuando descanses en una ciudad, recuperas Dados de Golpe adicionales = mod SAB."
+        a: "O",
+        d: "Puedes lanzar uno de tus conjuros de círculo preparados de nivel 1+ sin gastar espacio, una vez por descanso largo. Además, tras un descanso corto recuperas espacios de conjuro con nivel combinado ≤ la mitad de tu nivel de Druida (redondeado hacia arriba), sin nivel 6+; una vez por descanso largo."
       },
       {
-        n: "Guardián Urbano",
+        n: "Resguardo de la Naturaleza (Nature's Ward)",
         nv: 10,
-        d: "Como Acción puedes manifestar una avatar del espíritu de la ciudad en un radio de 60 pies: durante 1 minuto criaturas hostiles tienen desventaja en ataques contra aliados dentro del área, y aliados tienen ventaja en Sigilo y Juego de Manos. 1/descanso largo."
+        d: "Inmunidad a Envenenado. Resistencia al daño según tu terreno actual: fuego (árido), frío (polar), rayo (templado) o veneno (tropical)."
       },
       {
-        n: "Corazón de la Ciudad",
+        n: "Santuario de la Naturaleza (Nature's Sanctuary)",
         nv: 14,
-        d: "No puedes quedar perdido en ningún asentamiento habitado. Puedes lanzar Leyenda Lore sin espacio una vez por Descanso Largo, pero solo sobre la historia, habitantes o secretos del asentamiento donde te encuentres."
+        a: "A",
+        d: "Como acción Mágica gastas un uso de Forma Salvaje: creas un Cubo de 15 pies de terreno espectral a 120 pies durante 1 minuto. Tú y tus aliados tenéis cobertura media en él; los aliados ganan tu resistencia de Resguardo de la Naturaleza. Puedes mover el cubo 60 pies como Acción Adicional."
       },
     ],
 
-    /* ── Tal'Dorei Campaign Setting Reborn ── */
-    "Círculo Marchito [TCSR]": [
+    "Círculo de la Luna [PHB 2024]": [
       {
-        n: "Conjuros del Círculo",
-        nv: 2,
-        d: "Conjuros siempre preparados — Nv.3: Rayo de Debilidad, Infestación. Nv.5: Blight, Spike Growth. Nv.7: Marchitar (Wither and Bloom), Compeler Criaturas. Nv.9: Antipatía/Simpatía, Plaga de Insectos. Nv.11: Dedo de la Muerte, Círculo de la Muerte."
+        n: "Formas del Círculo (Circle Forms)",
+        nv: 3,
+        d: "Al usar Forma Salvaje: el CR máximo de la forma = tu nivel de Druida ÷ 3 (redondeado hacia abajo); tu CA es 13 + mod. SAB si supera la de la Bestia; y ganas PG temporales = 3 × tu nivel de Druida."
       },
       {
-        n: "Forma Marchita",
-        nv: 2,
-        d: "Cuando entras en Forma Salvaje, puedes manifestar una forma marchita en lugar de una bestia normal: tu cuerpo retiene apariencia humanoide pero se vuelve gris y cadavérico. En esta forma: inmunidad a veneno y enfermedad, resistencia al daño necrótico, y tus ataques infligen 1d6 de daño necrótico adicional. Gastas usos de Forma Salvaje normalmente."
+        n: "Conjuros del Círculo de la Luna",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Cure Wounds, Moonbeam, Starry Wisp. Nv.5: Conjure Animals. Nv.7: Fount of Moonlight. Nv.9: Mass Cure Wounds. Puedes lanzar estos conjuros en Forma Salvaje."
       },
       {
-        n: "Contacto Marchito",
+        n: "Formas del Círculo Mejoradas (Improved Circle Forms)",
         nv: 6,
-        d: "Cuando tocas a una criatura viva (ataque cuerpo a cuerpo o acción de tocar), puedes drenar su vitalidad: la criatura pierde PG = 3d6 + mod SAB y tú recuperas esa misma cantidad (salvación CON CD conjuro para reducir el daño a la mitad; la curación también se reduce). Usos = mod SAB. Recarga con Descanso Largo."
+        d: "En Forma Salvaje tus ataques pueden infligir daño radiante en lugar del normal (eliges cada impacto) y sumas tu mod. SAB a tus salvaciones de CON."
       },
       {
-        n: "Maldición de la Marchitez",
+        n: "Paso Lunar (Moonlight Step)",
         nv: 10,
-        d: "Cuando lanzas un conjuro que cause daño necrótico o de veneno, puedes marcar a uno de los objetivos afectados. La criatura marcada tiene vulnerabilidad al daño necrótico durante 1 minuto (salvación CON CD conjuro al inicio de cada turno para terminar el efecto). 1/descanso largo."
+        a: "B",
+        d: "Como Acción Adicional te teletransportas hasta 30 pies a un espacio libre que veas y tienes ventaja en tu siguiente tirada de ataque antes del final de ese turno. Usos = mod. SAB (mínimo 1); se recuperan con un descanso largo o gastando un espacio de nivel 2+ (sin acción)."
       },
       {
-        n: "Naturaleza Muerta",
+        n: "Forma Lunar (Lunar Form)",
         nv: 14,
-        d: "Tu Forma Marchita ya no requiere usos de Forma Salvaje (puedes activarla libremente). Además, mientras estás en Forma Marchita, cuando reduces a 0 PG a una criatura, recuperas PG = nivel de Druida + mod SAB."
+        d: "Una vez por turno, un ataque de tu Forma Salvaje inflige 2d10 de daño radiante adicional. Cuando usas Paso Lunar, puedes teletransportar también a una criatura voluntaria a 10 pies a un espacio libre a 10 pies de tu destino."
       },
     ],
 
-  }, // fin subclases
-}; // fin CLASE_DRUIDA
+    "Círculo del Mar [PHB 2024]": [
+      {
+        n: "Conjuros del Círculo del Mar",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Fog Cloud, Gust of Wind, Ray of Frost, Thunderwave. Nv.5: Lightning Bolt, Water Breathing. Nv.7: Control Water, Ice Storm. Nv.9: Conjure Elemental, Hold Monster."
+      },
+      {
+        n: "Ira del Mar (Wrath of the Sea)",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional gastas un uso de Forma Salvaje para manifestar una Emanación de 5 pies durante 10 minutos. En cada turno, como Acción Adicional, eliges a una criatura que veas en ella: hace una salvación de CON o sufre daño de frío (tiras mod. SAB d6, mínimo 1) y, si es Grande o menor, es empujada 15 pies."
+      },
+      {
+        n: "Afinidad Acuática (Aquatic Affinity)",
+        nv: 6,
+        d: "La emanación aumenta a 10 pies y ganas Velocidad de nadar = tu Velocidad."
+      },
+      {
+        n: "Nacido de la Tormenta (Stormborn)",
+        nv: 10,
+        d: "Mientras Ira del Mar está activa, tienes Velocidad de vuelo = tu Velocidad y resistencia al daño de frío, rayo y trueno."
+      },
+      {
+        n: "Don Oceánico (Oceanic Gift)",
+        nv: 14,
+        a: "O",
+        d: "Puedes manifestar la emanación alrededor de una criatura voluntaria a 60 pies en lugar de ti, o alrededor de ambos (gastando 2 usos de Forma Salvaje). La criatura obtiene todos los beneficios y usa tu CD de conjuros y tu mod. SAB."
+      },
+    ],
+
+    "Círculo de las Estrellas [PHB 2024]": [
+      {
+        n: "Mapa Estelar (Star Map)",
+        nv: 3,
+        d: "Creas un mapa estelar Diminuto que sirve de foco. Mientras lo sostienes tienes preparados Guidance y Guiding Bolt, y puedes lanzar Guiding Bolt sin espacio mod. SAB veces (mínimo 1) por descanso largo. Lo rehaces con una ceremonia de 1 hora."
+      },
+      {
+        n: "Forma Estelar (Starry Form)",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional gastas un uso de Forma Salvaje para volverte luminoso 10 minutos (luz brillante 10 pies, tenue 10 pies más). Eliges constelación: Arquero: ataque de conjuro a distancia a 60 pies, 1d8 + mod. SAB radiante (al activarla y como Acción Adicional en turnos posteriores). Cáliz: al lanzar un conjuro de curación, tú o una criatura a 30 pies recuperáis 1d8 + mod. SAB PG. Dragón: un 9 o menos en el d20 cuenta como 10 en pruebas de INT y SAB y salvaciones de CON para concentración."
+      },
+      {
+        n: "Presagio Cósmico (Cosmic Omen)",
+        nv: 6,
+        a: "R",
+        d: "Tras un descanso largo tiras un dado: par = Prosperidad (reacción: sumas 1d6 a una tirada de d20 de una criatura cercana); impar = Infortunio (restas 1d6). Usos = mod. SAB (mínimo 1) por descanso largo."
+      },
+      {
+        n: "Constelaciones Centelleantes (Twinkling Constellations)",
+        nv: 10,
+        d: "El daño del Arquero y la curación del Cáliz pasan a 2d8. El Dragón concede Velocidad de vuelo 20 pies (flotando). Puedes cambiar de constelación al inicio de cada turno."
+      },
+      {
+        n: "Lleno de Estrellas (Full of Stars)",
+        nv: 14,
+        d: "Mientras estás en forma estelar tienes resistencia al daño contundente, perforante y cortante."
+      },
+    ],
+  },
+};

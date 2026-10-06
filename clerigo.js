@@ -1,34 +1,30 @@
 /* ══════════════════════════════════════════════════════════════════
-   clerigo.js — Clérigo: rasgos de clase y subclases completas
+   clerigo.js — Clérigo: rasgos de clase y subclases
    ──────────────────────────────────────────────────────────────────
-   Fuentes:
-     PHB 2014 · PHB 2024
-     Xanathar's Guide to Everything (XGtE)
-     Tasha's Cauldron of Everything (TCE)
-     Sword Coast Adventurer's Guide (SCAG)
-     Guildmasters' Guide to Ravnica (GGtR)
-     Mythic Odysseys of Theros (MOoT)
-     Tal'Dorei Campaign Setting Reborn (TCSR)
+   Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
+   importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
+   fuente y la edición a la que corresponde.
+   Fuentes de subclases: PHB 2014 · DMG · SCAG · XGtE · TCE · PHB 2024 · HoF 2024
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (20 entradas):
-     Dominio de la Vida         [PHB 2014] / [PHB 2024]
-     Dominio de la Luz          [PHB 2014] / [PHB 2024]
-     Dominio de la Naturaleza   [PHB 2014]
-     Dominio de la Tempestad    [PHB 2014]
-     Dominio de la Guerra       [PHB 2014] / [PHB 2024]
-     Dominio del Conocimiento   [PHB 2014] / [PHB 2024]
-     Dominio del Engaño         [PHB 2014] / [PHB 2024]
-     Dominio de la Muerte       [PHB 2014]
-     Dominio de la Forja        [XGtE]
-     Dominio de las Tumbas      [XGtE]
-     Dominio de la Paz          [TCE]
-     Dominio del Orden          [TCE]
-     Dominio del Crepúsculo     [TCE]
-     Dominio Arcano             [SCAG]
-     Dominio de las Esporas     [GGtR]
-     Dominio del Hogar          [MOoT]
-     Dominio de la Sangre       [TCSR]
-     Dominio de la Luna         [TCSR]
+   SUBCLASES (19 entradas):
+     Dominio de la Vida           [PHB 2014] / [PHB 2024]
+     Dominio de la Luz            [PHB 2014] / [PHB 2024]
+     Dominio de la Naturaleza     [PHB 2014]
+     Dominio de la Tempestad      [PHB 2014]
+     Dominio de la Guerra         [PHB 2014] / [PHB 2024]
+     Dominio del Conocimiento     [PHB 2014] / [HoF 2024]
+     Dominio del Engaño           [PHB 2014] / [PHB 2024]
+     Dominio de la Muerte         [DMG]
+     Dominio Arcano               [SCAG]
+     Dominio de la Forja          [XGtE]
+     Dominio de las Tumbas        [XGtE]
+     Dominio de la Paz            [TCE]
+     Dominio del Orden            [TCE]
+     Dominio del Crepúsculo       [TCE]
+   ──────────────────────────────────────────────────────────────────
+   Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
+     "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
+     limitados o decisión puntual) · combinable ("AB"). Sin `a` = rasgo pasivo.
 ══════════════════════════════════════════════════════════════════ */
 
 const CLASE_CLERIGO = {
@@ -40,52 +36,85 @@ const CLASE_CLERIGO = {
     {
       n: "Competencias",
       nv: 1,
-      d: "Armaduras ligeras y medias, escudos. Todas las armas simples. Salvaciones: SAB y CAR. Habilidades: elige 2 entre Historia, Medicina, Persuasión, Perspicacia y Religión."
+      d: "Dado de golpe d8. Salvaciones: SAB y CAR. Armaduras: ligeras, medias y escudos. Armas: simples. Habilidades: elige 2 entre Historia, Perspicacia, Medicina, Persuasión y Religión."
     },
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "SAB es tu característica de conjuro (CD = 8 + comp + mod SAB). El Clérigo es un lanzador completo. Prepara conjuros diariamente: elige un número = mod SAB + nivel de Clérigo (mínimo 1) de la lista de Clérigo más los conjuros de dominio (siempre preparados). Conoce todos los trucos de Clérigo que elija al aprender (3 en Nv.1 → 4 en Nv.4 → 5 en Nv.10). Puede cambiar todos los conjuros preparados al terminar un Descanso Largo."
+      d: "Lanzador completo. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); puedes usar un símbolo sagrado como foco. Trucos: 3 (4 en Nv.4, 5 en Nv.10). Preparas conjuros de la lista de Clérigo: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); cambias uno al terminar un descanso largo. [2014: preparas SAB + nivel de Clérigo conjuros (mín. 1) de la lista completa]"
     },
     {
-      n: "Dominio Divino",
+      n: "Orden Divino (Divine Order)",
       nv: 1,
-      d: "Eliges tu subclase (Dominio Divino) al Nv.1. Cada dominio otorga conjuros de dominio (siempre preparados, no cuentan contra el límite), competencias adicionales y rasgos en Nv.1, 2, 6, 8 y 17."
+      d: "Eliges un papel sagrado. Protector: competencia con armas marciales y entrenamiento con armadura pesada. Taumaturgo: conoces 1 truco más de Clérigo y sumas tu mod. SAB (mínimo +1) a tus pruebas de INT (Arcanos o Religión). [Sólo 2024; en 2014 el dominio se elige en Nv.1]"
     },
     {
-      n: "Canalizar Divinidad",
-      nv: 2,
-      d: "Puedes canalizar energía divina para alimentar efectos mágicos. Usos: 1 (Nv.2-5) → 2 (Nv.6-17) → 3 (Nv.18+). Se recuperan con Descanso Corto o Largo."
+      n: "Dominio Divino (Divine Domain)",
+      nv: 1,
+      d: "[Sólo 2014] Eliges un Dominio (subclase) al Nv.1; concede conjuros de dominio siempre preparados y rasgos en Nv.1, 2, 6, 8 y 17. [2024: la subclase se elige en Nv.3]"
     },
     {
-      n: "Canalizar Divinidad: Expulsar No-Muertos",
+      n: "Canalizar Divinidad (Channel Divinity)",
       nv: 2,
-      d: "Como Acción, presentas tu símbolo sagrado. Cada no-muerto visible a 30 pies debe superar salvación SAB (CD conjuro) o quedará Asustado de ti durante 1 minuto. Una criatura asustada debe alejarse todo lo posible. En Nv.5 (Destruir No-Muertos) los de CR 1/2 o inferior son destruidos al fallar (CR umbral sube: 1 en Nv.8, 2 en Nv.11, 3 en Nv.14, 4 en Nv.17)."
+      d: "Canalizas energía divina de los Planos Exteriores. Usos: 2 (3 en Nv.6, 4 en Nv.18); recuperas 1 uso con un descanso corto y todos con uno largo. Opciones de clase: Chispa Divina y Expulsar No-Muertos; tu subclase añade más. [2014: 1 uso (2 en Nv.6, 3 en Nv.18) que se recupera con un descanso corto o largo]"
+    },
+    {
+      n: "Chispa Divina (Divine Spark)",
+      nv: 2,
+      a: "A",
+      d: "Como acción Mágica apuntas tu símbolo sagrado a una criatura que veas a 30 pies: tiras 1d8 + mod. SAB (2d8 en Nv.7, 3d8 en Nv.13, 4d8 en Nv.18) y o bien le restauras esos PG o la obligas a una salvación de CON; si falla sufre ese daño necrótico o radiante (a tu elección), la mitad si la supera. Gasta un uso de Canalizar Divinidad. [Sólo 2024]"
+    },
+    {
+      n: "Expulsar No-Muertos (Turn Undead)",
+      nv: 2,
+      a: "A",
+      d: "Como acción Mágica presentas tu símbolo sagrado: cada no-muerto de tu elección a 30 pies hace una salvación de SAB; si falla queda Asustado e Incapacitado 1 minuto y huye de ti lo más lejos que pueda. El efecto termina si recibe daño, si quedas Incapacitado o si mueres. Gasta un uso de Canalizar Divinidad. [2014: la criatura sólo queda Expulsada (no se acerca a menos de 30 pies ni usa reacciones; sólo puede Correr o escapar) 1 minuto]"
+    },
+    {
+      n: "Subclase de Clérigo (Dominio Divino)",
+      nv: 3,
+      d: "Eliges una subclase. Concede rasgos en Nv.3, 6 y 17 y conjuros que siempre tienes preparados. [2014: Dominio Divino, se elige en Nv.1]"
     },
     {
       n: "Mejora de Característica",
       nv: 4,
-      d: "+2 a una característica o +1 a dos (máx. 20). También en Nv.8, 12, 16 y 19. Puedes tomar una dote en su lugar."
+      d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]"
     },
     {
-      n: "Destruir No-Muertos",
+      n: "Fulgor contra No-Muertos (Sear Undead)",
       nv: 5,
-      d: "Cuando usas Expulsar No-Muertos y un no-muerto falla la salvación, es destruido si su CR es igual o inferior al umbral: CR 1/2 (Nv.5), CR 1 (Nv.8), CR 2 (Nv.11), CR 3 (Nv.14), CR 4 (Nv.17)."
+      d: "Cuando usas Expulsar No-Muertos tiras mod. SAB d8 (mínimo 1) y cada no-muerto que falle la salvación sufre ese daño radiante total (sin acabar el efecto). [2014: Destruir No-Muertos: los no-muertos que fallen la salvación son destruidos si su CR ≤ 1/2 (1 en Nv.8, 2 en Nv.11, 3 en Nv.14, 4 en Nv.17)]"
     },
     {
-      n: "Intervención Divina",
-      nv: 10,
-      d: "Como Acción, imploras ayuda a tu deidad. Lanzas percentil: si el resultado ≤ tu nivel de Clérigo, tu deidad interviene (el DM decide la forma). Si ocurre, no puedes usarlo de nuevo en 7 días. Si falla, recuperas el uso al terminar Descanso Largo. En Nv.20 la intervención ocurre automáticamente."
+      n: "Golpes Bendecidos (Blessed Strikes)",
+      nv: 7,
+      d: "Eliges una opción. Golpe Divino: una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño necrótico o radiante adicional (a tu elección). Lanzamiento Potente: sumas tu mod. SAB al daño de tus trucos de Clérigo. [2014: Golpe Divino (Nv.8) o Lanzamiento Potente (Nv.8) los concede el dominio]"
     },
     {
-      n: "Intervención Divina Mejorada [PHB 2024]",
+      n: "Intervención Divina (Divine Intervention)",
       nv: 10,
-      d: "(PHB 2024) Puedes lanzar cualquier conjuro de Clérigo de Nv.5 o inferior sin gastar espacio ni componentes materiales (1/descanso largo). El conjuro no requiere concentración y dura su duración completa."
+      a: "A",
+      d: "Como acción Mágica eliges un conjuro de Clérigo de nivel 5 o inferior que no requiera reacción y lo lanzas sin gastar espacio ni componentes materiales. No puedes volver a usarlo hasta un descanso largo. [2014: imploras ayuda a tu deidad como acción: tiras d100; si sacas ≤ tu nivel de Clérigo, el DM elige la intervención; si tiene éxito, no puedes usarlo en 7 días (si no, tras un descanso largo); en Nv.20 es éxito automático]"
+    },
+    {
+      n: "Golpes Bendecidos Mejorados (Improved Blessed Strikes)",
+      nv: 14,
+      d: "Golpe Divino: el daño adicional pasa a 2d8. Lanzamiento Potente: cuando lanzas un truco de Clérigo y dañas a una criatura, puedes dar PG temporales = el doble de tu mod. SAB a ti o a otra criatura a 60 pies. [Sólo 2024]"
+    },
+    {
+      n: "Don Épico (Epic Boon)",
+      nv: 19,
+      d: "Ganas una dote de Don Épico (u otra dote para la que cumplas requisitos). [Sólo 2024; en 2014 es una mejora de característica más]"
+    },
+    {
+      n: "Intervención Divina Mayor (Greater Divine Intervention)",
+      nv: 20,
+      d: "Al usar Intervención Divina puedes elegir Wish; si lo haces, no puedes volver a usar Intervención Divina hasta terminar 2d4 descansos largos. [Sólo 2024; en 2014 la Intervención Divina tiene éxito automático]"
     },
   ],
 
   /* ══════════════════════════════════════════════════════════════
-     SUBCLASES (DOMINIOS DIVINOS)
+     SUBCLASES
   ══════════════════════════════════════════════════════════════ */
   subclases: {
 
@@ -94,37 +123,38 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Bendecir, Curar Heridas. Nv.3: Restauración Menor, Arma Espiritual. Nv.5: Aura de Vitalidad, Revivificar. Nv.7: Guardián de la Fe, Curar Heridas en Masa. Nv.9: Restauración Mayor, Resucitar Muertos."
+        d: "Siempre preparados — Nv.1: Bless, Cure Wounds. Nv.3: Lesser Restoration, Spiritual Weapon. Nv.5: Beacon of Hope, Revivify. Nv.7: Death Ward, Guardian of Faith. Nv.9: Mass Cure Wounds, Raise Dead."
       },
       {
-        n: "Competencia con Armadura Pesada",
+        n: "Competencia Adicional",
         nv: 1,
-        d: "Obtienes competencia en armadura pesada."
+        d: "Ganas competencia con armadura pesada."
       },
       {
-        n: "Discípulo de la Vida",
+        n: "Discípulo de la Vida (Disciple of Life)",
         nv: 1,
-        d: "Cuando lanzas un conjuro de Nv.1 o superior que restaure PG, esa criatura recupera PG adicionales = 2 + el nivel del espacio usado."
+        d: "Cuando un conjuro de nivel 1 o superior restaura PG a una criatura, ésta recupera PG adicionales = 2 + nivel del conjuro."
       },
       {
-        n: "Canalizar Divinidad: Preservar Vida",
+        n: "Canalizar Divinidad: Preservar Vida (Preserve Life)",
         nv: 2,
-        d: "Como Acción, restauras un total de PG = 5 × nivel de Clérigo distribuidos entre criaturas visibles a 30 pies. Solo puedes curar a cada criatura hasta la mitad de su máximo. No funciona en no-muertos ni constructos."
+        a: "A",
+        d: "Como acción presentas tu símbolo sagrado y repartes hasta 5 × nivel de Clérigo PG entre criaturas a 30 pies; ninguna puede quedar con más de la mitad de sus PG máximos. No sirve con no-muertos ni constructos."
       },
       {
-        n: "Curador Bendecido",
+        n: "Sanador Bendecido (Blessed Healer)",
         nv: 6,
-        d: "Cuando lanzas un conjuro de Nv.1+ que cure PG a una criatura distinta de ti, también recuperas PG = 2 + nivel del espacio."
+        d: "Cuando lanzas un conjuro de nivel 1+ que restaura PG a otra criatura, recuperas PG = 2 + nivel del conjuro."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 radiante (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño radiante adicional (2d8 en Nv.14)."
       },
       {
-        n: "Curación Suprema",
+        n: "Curación Suprema (Supreme Healing)",
         nv: 17,
-        d: "Cuando lanzas un conjuro curativo, usas el número máximo de cada dado en lugar de tirarlos."
+        d: "Cuando tirarías dados para restaurar PG con un conjuro, usas el valor máximo de cada dado."
       },
     ],
 
@@ -132,37 +162,41 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Manos Ardientes, Luz de las Hadas. Nv.3: Rayo Llameante, Escorchar. Nv.5: Bola de Fuego, Luz del Día. Nv.7: Guardián de la Fe, Muro de Fuego. Nv.9: Llama, Rayo de Sol."
+        d: "Siempre preparados — Nv.1: Burning Hands, Faerie Fire. Nv.3: Flaming Sphere, Scorching Ray. Nv.5: Daylight, Fireball. Nv.7: Guardian of Faith, Wall of Fire. Nv.9: Flame Strike, Scrying."
       },
       {
         n: "Truco Adicional",
         nv: 1,
-        d: "Aprendes el truco Luz. Si ya lo conoces, aprendes otro truco de Clérigo a tu elección."
+        d: "Aprendes el truco Light (no cuenta para tu límite)."
       },
       {
-        n: "Destellos Protectores",
+        n: "Fulgor Protector (Warding Flare)",
         nv: 1,
-        d: "Reacción: cuando una criatura a 30 pies va a ser golpeada, impones desventaja al atacante. Usos = mod SAB (mínimo 1). Recarga con Descanso Largo."
+        a: "R",
+        d: "Cuando una criatura que veas a 30 pies te ataca, puedes usar tu reacción para imponerle desventaja en la tirada (las criaturas inmunes a Cegado no se ven afectadas). Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Canalizar Divinidad: Brillantez Radiante",
+        n: "Canalizar Divinidad: Resplandor del Alba (Radiance of the Dawn)",
         nv: 2,
-        d: "Acción: criaturas hostiles a 30 pies que te vean superan salvación CON (CD conjuro) o reciben 2d10 radiante y quedan Cegadas hasta el fin de tu siguiente turno."
+        a: "A",
+        d: "Como acción presentas tu símbolo sagrado, disipas la oscuridad mágica a 30 pies y las criaturas hostiles en esa área hacen una salvación de CON: sufren 2d10 + nivel de Clérigo de daño radiante (mitad si superan). Las criaturas con cobertura total no se ven afectadas."
       },
       {
-        n: "Corona de Luz",
+        n: "Fulgor Mejorado (Improved Flare)",
         nv: 6,
-        d: "Acción: emites luz brillante (60 pies) + tenue (30 pies) durante 1 minuto. Atacantes que dependan de la vista tienen desventaja al atacarte. Puedes desactivarla como AA."
+        a: "R",
+        d: "Puedes usar Fulgor Protector también cuando una criatura a 30 pies ataca a una criatura distinta de ti."
       },
       {
-        n: "Golpe Divino",
+        n: "Lanzamiento Potente (Potent Spellcasting)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 radiante o fuego (→2d8 en Nv.14)."
+        d: "Sumas tu mod. SAB al daño de tus trucos de Clérigo."
       },
       {
-        n: "Llamarada Solar",
+        n: "Corona de Luz (Corona of Light)",
         nv: 17,
-        d: "Criaturas que fallen contra Brillantez Radiante quedan Cegadas permanentemente hasta recibir curación mágica."
+        a: "A",
+        d: "Como acción activas una aura de luz solar durante 1 minuto (o hasta que la termines): luz brillante en 60 pies y tenue 30 pies más. Tus enemigos en la luz brillante tienen desventaja en las salvaciones contra tus conjuros de daño de fuego o radiante."
       },
     ],
 
@@ -170,37 +204,40 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Enredar, Hablar con Animales. Nv.3: Barrera de Espinas, Muro de Viento. Nv.5: Convocar Relámpago, Crecer Plantas. Nv.7: Dominar Bestia, Zancada Arbórea. Nv.9: Comunión con la Naturaleza, Plaga de Insectos."
+        d: "Siempre preparados — Nv.1: Animal Friendship, Speak with Animals. Nv.3: Barkskin, Spike Growth. Nv.5: Plant Growth, Wind Wall. Nv.7: Dominate Beast, Grasping Vine. Nv.9: Insect Plague, Tree Stride."
       },
       {
-        n: "Acólito de la Naturaleza",
+        n: "Acólito de la Naturaleza (Acolyte of Nature)",
         nv: 1,
-        d: "Aprendes un truco de Druida a tu elección. Ganas competencia en Atletismo, Naturaleza, Percepción o Supervivencia (elige 1)."
+        d: "Aprendes un truco de Druida (cuenta como de Clérigo y no cuenta para tu límite) y ganas competencia en Trato con Animales, Naturaleza o Supervivencia (elige una)."
       },
       {
-        n: "Competencia con Armadura Pesada",
+        n: "Competencia Adicional",
         nv: 1,
-        d: "Obtienes competencia en armadura pesada."
+        d: "Ganas competencia con armadura pesada."
       },
       {
-        n: "Canalizar Divinidad: Encanto de Bestias y Plantas",
+        n: "Canalizar Divinidad: Hechizar Animales y Plantas (Charm Animals and Plants)",
         nv: 2,
-        d: "Acción: bestias y plantas visibles a 30 pies superan salvación SAB (CD conjuro) o quedan Encantadas durante 1 minuto. Las criaturas encantadas son amistosas y obedecen tus indicaciones. El efecto termina si reciben daño."
+        a: "A",
+        d: "Como acción presentas tu símbolo sagrado: cada bestia o planta que veas a 30 pies hace una salvación de SAB o queda Hechizada 1 minuto (o hasta recibir daño); te trata como amigo."
       },
       {
-        n: "Defensor de la Naturaleza",
+        n: "Atenuar Elementos (Dampen Elements)",
         nv: 6,
-        d: "Reacción: cuando una criatura golpea a un aliado a 30 pies, puedes hacer que el atacante supere salvación FUE (CD conjuro) o quede Enredado hasta el fin de su turno."
+        a: "R",
+        d: "Cuando tú o una criatura a 30 pies recibe daño de ácido, frío, fuego, rayo o trueno, puedes usar tu reacción para otorgarle resistencia a ese daño."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 veneno (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño de frío, fuego o rayo adicional (a tu elección); 2d8 en Nv.14."
       },
       {
-        n: "Señor de la Naturaleza",
+        n: "Señor de la Naturaleza (Master of Nature)",
         nv: 17,
-        d: "Inmunidad a veneno y a las condiciones Encantado y Asustado. Bestias y plantas siempre te tratan como amistoso."
+        a: "B",
+        d: "Mientras criaturas sigan Hechizadas por Hechizar Animales y Plantas, puedes usar una Acción Adicional para ordenarles verbalmente qué hacer en su siguiente turno."
       },
     ],
 
@@ -208,37 +245,39 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Ola Tronante, Niebla. Nv.3: Rayo, Ráfaga de Viento. Nv.5: Convocar Relámpago, Muro de Viento. Nv.7: Control del Agua, Tormenta de Hielo. Nv.9: Destruir y Matar, Tormenta de Venganza."
+        d: "Siempre preparados — Nv.1: Fog Cloud, Thunderwave. Nv.3: Gust of Wind, Shatter. Nv.5: Call Lightning, Sleet Storm. Nv.7: Control Water, Ice Storm. Nv.9: Destructive Wave, Insect Plague."
       },
       {
-        n: "Competencias de Combate",
+        n: "Competencias Adicionales",
         nv: 1,
-        d: "Obtienes competencia en armas marciales y armadura pesada."
+        d: "Ganas competencia con armas marciales y armadura pesada."
       },
       {
-        n: "Corazón de Tormenta",
+        n: "Ira de la Tormenta (Wrath of the Storm)",
         nv: 1,
-        d: "Cuando lanzas un conjuro de Nv.1+ que cause daño de rayo o trueno, puedes usar tu Reacción para empujar a criaturas a 10 pies del origen hasta 10 pies lejos."
+        a: "R",
+        d: "Cuando una criatura a 5 pies que veas te impacta con un ataque, puedes usar tu reacción para que haga una salvación de DES: sufre 2d8 de daño de rayo o trueno (a tu elección), la mitad si la supera. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Canalizar Divinidad: Ira Destructiva",
+        n: "Canalizar Divinidad: Ira Destructiva (Destructive Wrath)",
         nv: 2,
-        d: "Cuando tiras daño de rayo o trueno, puedes usar Canalizar Divinidad para causar el daño máximo posible en lugar de tirar."
+        a: "O",
+        d: "Cuando tiras daño de rayo o trueno, puedes usar Canalizar Divinidad para infligir el daño máximo en lugar de tirar."
       },
       {
-        n: "Tormenta Furiosa",
+        n: "Golpe Atronador (Thunderous Strike)",
         nv: 6,
-        d: "Cuando una criatura recibe daño de rayo/trueno de tus conjuros, recibe 10 adicionales del mismo tipo (→14 en Nv.14)."
+        d: "Cuando infliges daño de rayo a una criatura Grande o menor, puedes empujarla hasta 10 pies lejos de ti."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 trueno (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño de trueno adicional (2d8 en Nv.14)."
       },
       {
-        n: "Ojo de la Tormenta",
+        n: "Nacido de la Tormenta (Stormborn)",
         nv: 17,
-        d: "Velocidad de vuelo 60 pies. Inmunidad a rayo y trueno. Reacción para añadir 2d6 de rayo o trueno a una criatura que los reciba a 30 pies."
+        d: "Tienes Velocidad de vuelo igual a tu Velocidad actual siempre que no estés bajo tierra ni en interior."
       },
     ],
 
@@ -246,35 +285,38 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Favor Divino, Escudo de Fe. Nv.3: Arma Espiritual, Ira del Guerrero. Nv.5: Cruzada, Arma Elemental. Nv.7: Libertad de Movimiento, Golpe de Poder. Nv.9: Llama, Mantener Monstruo."
+        d: "Siempre preparados — Nv.1: Divine Favor, Shield of Faith. Nv.3: Magic Weapon, Spiritual Weapon. Nv.5: Crusader's Mantle, Spirit Guardians. Nv.7: Freedom of Movement, Stoneskin. Nv.9: Flame Strike, Hold Monster."
       },
       {
-        n: "Competencias de Combate",
+        n: "Competencias Adicionales",
         nv: 1,
-        d: "Obtienes competencia en armas marciales y armadura pesada."
+        d: "Ganas competencia con armas marciales y armadura pesada."
       },
       {
-        n: "Sacerdote de Guerra",
+        n: "Sacerdote de Guerra (War Priest)",
         nv: 1,
-        d: "Cuando usas la acción de Atacar, puedes realizar un ataque con arma adicional como AA. Usos = mod SAB (mínimo 1). Recarga con Descanso Largo."
+        a: "B",
+        d: "Cuando realizas la acción de Atacar, puedes hacer un ataque con arma como Acción Adicional. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Canalizar Divinidad: Golpe Guiado",
+        n: "Canalizar Divinidad: Golpe Guiado (Guided Strike)",
         nv: 2,
-        d: "Cuando realizas una tirada de ataque, puedes gastar Canalizar Divinidad para ganar +10 a esa tirada (decidido tras ver el resultado, antes de saber si impacta)."
+        a: "O",
+        d: "Cuando haces una tirada de ataque, puedes usar Canalizar Divinidad para sumarle +10 (tras ver la tirada, antes de saber si impacta)."
       },
       {
-        n: "Canalizar Divinidad: Bendición del Dios de la Guerra",
+        n: "Canalizar Divinidad: Bendición del Dios de la Guerra (War God's Blessing)",
         nv: 6,
-        d: "Reacción: cuando un aliado a 30 pies realiza una tirada de ataque, gastas Canalizar Divinidad para darle +10 (mismo mecanismo que Golpe Guiado)."
+        a: "R",
+        d: "Cuando una criatura a 30 pies hace una tirada de ataque, puedes usar tu reacción y Canalizar Divinidad para darle +10 (tras ver la tirada)."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 del tipo del arma (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño adicional del mismo tipo que el arma (2d8 en Nv.14)."
       },
       {
-        n: "Avatar de la Batalla",
+        n: "Avatar de la Batalla (Avatar of Battle)",
         nv: 17,
         d: "Resistencia al daño contundente, perforante y cortante de ataques no mágicos."
       },
@@ -284,37 +326,35 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Comando, Identificar. Nv.3: Sugestión, Detectar Pensamientos. Nv.5: No-Detección, Hablar con los Muertos. Nv.7: Confusión, Ojo Arcano. Nv.9: Leyenda Lore, Sugestión en Masa."
+        d: "Siempre preparados — Nv.1: Command, Identify. Nv.3: Augury, Suggestion. Nv.5: Nondetection, Speak with Dead. Nv.7: Arcane Eye, Confusion. Nv.9: Legend Lore, Scrying."
       },
       {
-        n: "Bendiciones del Conocimiento",
+        n: "Bendiciones del Conocimiento (Blessings of Knowledge)",
         nv: 1,
-        d: "Aprendes 2 idiomas adicionales. Ganas competencia en 2 de estas habilidades: Arcanos, Historia, Naturaleza o Religión. Con las elegidas, tu bonificador de competencia se duplica."
+        d: "Aprendes 2 idiomas a tu elección y ganas competencia en 2 habilidades entre Arcanos, Historia, Naturaleza y Religión; tu bonificador de competencia se duplica en ellas."
       },
       {
-        n: "Canalizar Divinidad: Conocimiento de las Eras",
+        n: "Canalizar Divinidad: Conocimiento de las Eras (Knowledge of the Ages)",
         nv: 2,
-        d: "Acción: elige una habilidad o herramienta. Tienes competencia en ella durante 10 minutos. Si ya la tenías, la doblas."
+        a: "A",
+        d: "Como acción eliges una habilidad o herramienta: durante 10 minutos tienes competencia en ella."
       },
       {
-        n: "Canalizar Divinidad: Leer Pensamientos",
-        nv: 2,
-        d: "Acción: una criatura a 60 pies supera salvación SAB o puedes leer sus pensamientos superficiales durante 1 minuto. Como Acción puedes lanzar Sugestión sobre ella sin espacio y sin salvación."
-      },
-      {
-        n: "Conocimiento Sobrenatural",
+        n: "Canalizar Divinidad: Leer Pensamientos (Read Thoughts)",
         nv: 6,
-        d: "Cuando ves a una criatura usar una habilidad o herramienta, puedes copiar temporalmente esa competencia durante 1 hora (1/descanso largo)."
+        a: "A",
+        d: "Eliges una criatura que veas a 60 pies: hace una salvación de SAB; si falla, durante 1 minuto lees sus pensamientos superficiales mientras esté a 60 pies y puedes usar tu acción para terminar este efecto y lanzar Suggestion sobre ella sin espacio (falla automáticamente la salvación)."
       },
       {
-        n: "Golpe Divino",
+        n: "Lanzamiento Potente (Potent Spellcasting)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 psíquico (→2d8 en Nv.14)."
+        d: "Sumas tu mod. SAB al daño de tus trucos de Clérigo."
       },
       {
-        n: "Conocimiento Visionario",
+        n: "Visiones del Pasado (Visions of the Past)",
         nv: 17,
-        d: "Lanzas Visión Verdadera a voluntad. Puedes lanzar un conjuro de adivinación sin espacio 1/descanso largo."
+        a: "O",
+        d: "Puedes meditar (concentración, hasta tu SAB en minutos) para tener visiones de un objeto que sostienes o de una zona en la que estás, de hasta tantos días atrás como tu puntuación de SAB. Una vez por descanso corto o largo."
       },
     ],
 
@@ -322,295 +362,154 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Disfrazarse, Invisibilidad. Nv.3: Imagen Menor, Paso Brumoso. Nv.5: No-Detección, Parpadeo. Nv.7: Gran Invisibilidad, Polimorfismo. Nv.9: Dominación, Alucinación de Terreno."
+        d: "Siempre preparados — Nv.1: Charm Person, Disguise Self. Nv.3: Mirror Image, Pass without Trace. Nv.5: Blink, Dispel Magic. Nv.7: Dimension Door, Polymorph. Nv.9: Dominate Person, Modify Memory."
       },
       {
-        n: "Bendición del Embaucador",
+        n: "Bendición del Embaucador (Blessing of the Trickster)",
         nv: 1,
-        d: "Ganas competencia en Engaño y Sigilo."
+        a: "A",
+        d: "Como acción tocas a otra criatura voluntaria: tiene ventaja en pruebas de DES (Sigilo) durante 1 hora o hasta que uses este rasgo de nuevo."
       },
       {
-        n: "Canalizar Divinidad: Invocar Duplicado",
+        n: "Canalizar Divinidad: Invocar Duplicidad (Invoke Duplicity)",
         nv: 2,
-        d: "Acción: creas una copia ilusoria perfecta tuya en un espacio vacío a 30 pies. Dura 1 minuto. Como AA la mueves 30 pies. Puedes lanzar conjuros desde su posición. Desaparece si la golpean."
+        a: "A",
+        d: "Como acción creas una ilusión perfecta de ti a 30 pies durante 1 minuto (concentración). Puedes moverla 30 pies como Acción Adicional (hasta 120 pies de ti) y lanzar conjuros desde su espacio usando tus sentidos. Tienes ventaja en ataques contra criaturas a 5 pies de la ilusión que también vean a la ilusión."
       },
       {
-        n: "Canalizar Divinidad: Manto del Ilusionista",
-        nv: 2,
-        d: "Acción: te vuelves Invisible durante 1 hora o hasta que ataques o lances un conjuro."
-      },
-      {
-        n: "Embaucador Sombra",
+        n: "Canalizar Divinidad: Manto de Sombras (Cloak of Shadows)",
         nv: 6,
-        d: "Puedes lanzar conjuros desde la posición del Duplicado. Criaturas a 5 pies del duplicado tienen desventaja en ataques contra ti."
+        a: "A",
+        d: "Como acción te vuelves invisible hasta el final de tu siguiente turno (terminas si atacas o lanzas un conjuro)."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 veneno (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño de veneno adicional (2d8 en Nv.14)."
       },
       {
-        n: "Maestro del Engaño",
+        n: "Duplicidad Mejorada (Improved Duplicity)",
         nv: 17,
-        d: "Polimorfismo sobre ti mismo a voluntad (1/descanso corto, CR 1 o inferior). El Duplicado Invocado puede infligir 2d10 psíquico a criaturas adyacentes."
+        d: "Con Invocar Duplicidad creas hasta 4 duplicados en lugar de 1; puedes mover cualquier número de ellos hasta 30 pies como Acción Adicional (hasta 120 pies de ti)."
       },
     ],
 
-    "Dominio de la Muerte [PHB 2014]": [
+
+    /* ── DMG ── */
+    "Dominio de la Muerte [DMG]": [
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Palabra Falsa de los Muertos, Rayo de Debilidad. Nv.3: Nube Ciega, Toque del Vampiro. Nv.5: Animar Muertos, Hablar con los Muertos. Nv.7: Blight, Muerte Apacible. Nv.9: Antipatía/Simpatía, Dedo de la Muerte."
+        d: "Siempre preparados — Nv.1: False Life, Ray of Sickness. Nv.3: Blindness/Deafness, Ray of Enfeeblement. Nv.5: Animate Dead, Vampiric Touch. Nv.7: Blight, Death Ward. Nv.9: Antilife Shell, Cloudkill."
       },
       {
-        n: "Competencia con Armas Marciales",
+        n: "Competencia Adicional",
         nv: 1,
-        d: "Obtienes competencia en armas marciales."
+        d: "Ganas competencia con armas marciales."
       },
       {
-        n: "Segador",
+        n: "Segador (Reaper)",
         nv: 1,
-        d: "Aprendes un truco de nigromancia de cualquier lista. Cuando lanzas un truco de nigromancia que afecta a una criatura, puedes afectar a 2 criaturas a 5 pies entre sí dentro del alcance."
+        d: "Aprendes un truco de nigromancia de cualquier lista de conjuros. Cuando lanzas un truco de nigromancia que normalmente tiene un solo objetivo, puede afectar a dos criaturas dentro del alcance y a 5 pies entre sí."
       },
       {
-        n: "Canalizar Divinidad: Toque de Muerte",
+        n: "Canalizar Divinidad: Toque de Muerte (Touch of Death)",
         nv: 2,
-        d: "Al golpear con un ataque cuerpo a cuerpo, gastas Canalizar Divinidad para infligir daño de nigromancia adicional = 5 × nivel de Clérigo."
+        a: "O",
+        d: "Cuando impactas a una criatura con un ataque cuerpo a cuerpo, puedes usar Canalizar Divinidad para infligir 5 + el doble de tu nivel de Clérigo de daño necrótico adicional."
       },
       {
-        n: "Ataques de No-Muertos",
+        n: "Destrucción Ineludible (Inescapable Destruction)",
         nv: 6,
-        d: "Los no-muertos que controles añaden tu bonificador de competencia al daño de sus ataques (una vez por turno por criatura)."
+        d: "El daño necrótico de tus conjuros de Clérigo y opciones de Canalizar Divinidad ignora la resistencia al daño necrótico."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 necrótico (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño necrótico adicional (2d8 en Nv.14)."
       },
       {
-        n: "Cosecha de Muerte Mejorada",
+        n: "Segador Mejorado (Improved Reaper)",
         nv: 17,
-        d: "Cuando lanzas Animar Muertos, puedes crear 2 no-muertos adicionales por espacio. Tus no-muertos tienen el máximo de PG posibles."
+        d: "Cuando lanzas un conjuro de nigromancia de nivel 1 a 5 de un solo objetivo, puede afectar a dos criaturas a 5 pies entre sí (debes aportar los componentes materiales para cada objetivo si se consumen)."
       },
     ],
 
-    /* ── PHB 2024 ── */
-    "Dominio de la Vida [PHB 2024]": [
+
+    /* ── SCAG ── */
+    "Dominio Arcano [SCAG]": [
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Bendecir, Curar Heridas. Nv.3: Ayuda, Restauración Menor. Nv.5: Aura de Vitalidad, Revivificar. Nv.7: Muerte Apacible, Curar Heridas en Masa. Nv.9: Restauración Mayor, Resucitar Muertos."
+        d: "Siempre preparados — Nv.1: Detect Magic, Magic Missile. Nv.3: Magic Weapon, Nystul's Magic Aura. Nv.5: Dispel Magic, Magic Circle. Nv.7: Arcane Eye, Leomund's Secret Chest. Nv.9: Planar Binding, Teleportation Circle."
       },
       {
-        n: "Discípulo de la Vida",
+        n: "Iniciado Arcano (Arcane Initiate)",
         nv: 1,
-        d: "Cuando lanzas un conjuro de Nv.1+ que restaure PG, la criatura recupera PG adicionales = 2 + nivel del espacio."
+        d: "Ganas competencia en Arcanos y 2 trucos de la lista de Mago, que cuentan como trucos de Clérigo."
       },
       {
-        n: "Preservar Vida (Canalizar Divinidad)",
+        n: "Canalizar Divinidad: Abjuración Arcana (Arcane Abjuration)",
         nv: 2,
-        d: "Acción: distribuyes hasta 5 × nivel de Clérigo PG entre criaturas visibles a 30 pies (máx. mitad de PG máx. por criatura). No funciona en no-muertos ni constructos."
+        a: "A",
+        d: "Como acción presentas tu símbolo sagrado: un celestial, elemental, feérico o infernal a 30 pies hace una salvación de SAB; si falla queda Expulsado 1 minuto (o hasta recibir daño): se aleja, no puede acabar su turno a 30 pies de ti ni usar reacciones, y sólo puede Correr o intentar escapar. Desde Nv.5 las criaturas que fallen son desterradas a su plano de origen si su CR ≤ 1/2 (1 en Nv.8, 2 en Nv.11, 3 en Nv.14, 4 en Nv.17)."
       },
       {
-        n: "Curador Bendecido",
+        n: "Rompehechizos (Spell Breaker)",
         nv: 6,
-        d: "Al curar a otra criatura con conjuro de Nv.1+, también recuperas PG = 2 + nivel del espacio."
+        d: "Cuando restauras PG a un aliado con un conjuro de nivel 1+, puedes terminar un conjuro de tu elección sobre esa criatura cuyo nivel no supere el del espacio gastado."
       },
       {
-        n: "Golpe Divino",
+        n: "Lanzamiento Potente (Potent Spellcasting)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 radiante (→2d8 en Nv.14)."
+        d: "Sumas tu mod. SAB al daño de tus trucos de Clérigo."
       },
       {
-        n: "Curación Suprema",
+        n: "Maestría Arcana (Arcane Mastery)",
         nv: 17,
-        d: "Cuando lanzas un conjuro curativo, usas el máximo de cada dado en lugar de tirarlos."
+        d: "Eliges un conjuro de Mago de nivel 6, uno de nivel 7, uno de 8 y uno de 9; se añaden a tus conjuros de dominio (siempre preparados) y cuentan como conjuros de Clérigo."
       },
     ],
 
-    "Dominio de la Luz [PHB 2024]": [
-      {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Manos Ardientes, Luz de las Hadas. Nv.3: Rayo Llameante, Escorchar. Nv.5: Bola de Fuego, Luz del Día. Nv.7: Guardián de la Fe, Muro de Fuego. Nv.9: Llama, Rayo de Sol."
-      },
-      {
-        n: "Destellos Protectores",
-        nv: 1,
-        d: "Reacción: cuando una criatura a 30 pies va a ser golpeada, impones desventaja al atacante. Usos = mod SAB. Recarga con Descanso Largo."
-      },
-      {
-        n: "Brillantez Radiante (Canalizar Divinidad)",
-        nv: 2,
-        d: "Acción: criaturas hostiles a 30 pies superan salvación CON (CD conjuro) o reciben 2d10 radiante y quedan Cegadas hasta el fin de tu siguiente turno."
-      },
-      {
-        n: "Corona de Luz",
-        nv: 6,
-        d: "Acción: luz brillante 60 pies + tenue 30 pies durante 1 minuto. Atacantes con visión tienen desventaja al atacarte. Desactivable como AA."
-      },
-      {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear: +1d8 radiante o fuego (→2d8 en Nv.14)."
-      },
-      {
-        n: "Llamarada Solar",
-        nv: 17,
-        d: "Criaturas que fallen Brillantez Radiante quedan Cegadas permanentemente hasta recibir curación mágica."
-      },
-    ],
 
-    "Dominio de la Guerra [PHB 2024]": [
-      {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Favor Divino, Escudo de Fe. Nv.3: Arma Espiritual, Ira del Guerrero. Nv.5: Cruzada, Arma Elemental. Nv.7: Libertad de Movimiento, Golpe de Poder. Nv.9: Llama, Mantener Monstruo."
-      },
-      {
-        n: "Competencias de Combate",
-        nv: 1,
-        d: "Obtienes competencia en armas marciales y armadura pesada."
-      },
-      {
-        n: "Sacerdote de Guerra",
-        nv: 1,
-        d: "Cuando usas la acción de Atacar, puedes realizar un ataque con arma adicional como AA. Usos = mod SAB (mínimo 1). Recarga con Descanso Largo."
-      },
-      {
-        n: "Golpe Guiado (Canalizar Divinidad)",
-        nv: 2,
-        d: "+10 a una tirada de ataque (después de ver el resultado, antes de conocer si impacta). También aplicable a aliados a 30 pies como Reacción (Bendición del Dios de la Guerra)."
-      },
-      {
-        n: "Escudo de Guerra",
-        nv: 6,
-        d: "Reacción: cuando un aliado a 30 pies recibe un golpe crítico, conviertes ese crítico en un golpe normal."
-      },
-      {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear con arma: +1d8 del tipo del arma (→2d8 en Nv.14)."
-      },
-      {
-        n: "Avatar de la Batalla",
-        nv: 17,
-        d: "Resistencia al daño contundente, perforante y cortante de ataques no mágicos."
-      },
-    ],
-
-    "Dominio del Conocimiento [PHB 2024]": [
-      {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Comando, Identificar. Nv.3: Sugestión, Detectar Pensamientos. Nv.5: No-Detección, Hablar con los Muertos. Nv.7: Confusión, Ojo Arcano. Nv.9: Leyenda Lore, Sugestión en Masa."
-      },
-      {
-        n: "Bendiciones del Conocimiento",
-        nv: 1,
-        d: "Aprendes 2 idiomas. Ganas dominio (doble bonificador) en 2 de estas habilidades: Arcanos, Historia, Naturaleza o Religión."
-      },
-      {
-        n: "Conocimiento de las Eras (Canalizar Divinidad)",
-        nv: 2,
-        d: "Acción: competencia en una habilidad o herramienta durante 10 minutos (o dominio si ya la tenías)."
-      },
-      {
-        n: "Leer Pensamientos (Canalizar Divinidad)",
-        nv: 2,
-        d: "Acción: una criatura a 60 pies supera salvación SAB o puedes leer sus pensamientos durante 1 minuto y lanzar Sugestión sobre ella sin espacio ni salvación."
-      },
-      {
-        n: "Conocimiento Sobrenatural",
-        nv: 6,
-        d: "Copias temporalmente la competencia de una criatura observada durante 1 hora. 1/descanso largo."
-      },
-      {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear: +1d8 psíquico (→2d8 en Nv.14)."
-      },
-      {
-        n: "Conocimiento Visionario",
-        nv: 17,
-        d: "Visión Verdadera a voluntad. 1/descanso largo: lanzas un conjuro de adivinación sin espacio."
-      },
-    ],
-
-    "Dominio del Engaño [PHB 2024]": [
-      {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Disfrazarse, Invisibilidad. Nv.3: Imagen Menor, Paso Brumoso. Nv.5: No-Detección, Parpadeo. Nv.7: Gran Invisibilidad, Polimorfismo. Nv.9: Dominación, Alucinación de Terreno."
-      },
-      {
-        n: "Bendición del Embaucador",
-        nv: 1,
-        d: "Competencia en Engaño y Sigilo."
-      },
-      {
-        n: "Invocar Duplicado (Canalizar Divinidad)",
-        nv: 2,
-        d: "Acción: copia ilusoria perfecta tuya en espacio vacío a 30 pies. Dura 1 minuto. AA para moverla 30 pies. Puedes lanzar conjuros desde su posición. Desaparece si la golpean."
-      },
-      {
-        n: "Manto del Ilusionista (Canalizar Divinidad)",
-        nv: 2,
-        d: "Acción: Invisibilidad durante 1 hora o hasta que ataques o lances un conjuro."
-      },
-      {
-        n: "Embaucador Sombra",
-        nv: 6,
-        d: "Conjuros lanzados desde la posición del Duplicado. Criaturas a 5 pies del duplicado tienen desventaja en ataques contra ti."
-      },
-      {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear: +1d8 psíquico (→2d8 en Nv.14)."
-      },
-      {
-        n: "Maestro del Engaño",
-        nv: 17,
-        d: "Polimorfismo a voluntad sobre ti mismo (1/descanso corto, bestia CR 1 o inferior). El Duplicado puede infligir 2d10 psíquico a criaturas adyacentes."
-      },
-    ],
-
-    /* ── Xanathar's Guide to Everything ── */
+    /* ── XGtE ── */
     "Dominio de la Forja [XGtE]": [
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Identificar, Manos Ardientes. Nv.3: Arma Mágica, Calor del Metal. Nv.5: Arma Elemental, Protección contra Energía. Nv.7: Fabricar, Muro de Fuego. Nv.9: Animar Objetos, Piel de Piedra."
+        d: "Siempre preparados — Nv.1: Identify, Searing Smite. Nv.3: Heat Metal, Magic Weapon. Nv.5: Elemental Weapon, Protection from Energy. Nv.7: Fabricate, Wall of Fire. Nv.9: Animate Objects, Creation."
       },
       {
-        n: "Competencias de Forja",
+        n: "Competencias Adicionales",
         nv: 1,
-        d: "Competencia en armadura pesada y herramientas de herrero. Puedes lanzar Identificar como ritual sin materiales."
+        d: "Ganas competencia con armadura pesada y herramientas de herrero."
       },
       {
-        n: "Bendición de la Forja",
+        n: "Bendición de la Forja (Blessing of the Forge)",
         nv: 1,
-        d: "Al terminar un Descanso Largo, tocas un arma o armadura no mágica: se vuelve mágica (+1 ataque y daño para armas; +1 CA para armaduras) mientras estés vivo. Solo 1 objeto a la vez."
+        a: "O",
+        d: "Al terminar un descanso largo tocas un arma simple o marcial no mágica o una armadura no mágica: hasta tu siguiente descanso largo es mágica y concede +1 a la CA (armadura) o +1 a ataque y daño (arma)."
       },
       {
-        n: "Canalizar Divinidad: Bendición del Artesano",
+        n: "Canalizar Divinidad: Bendición del Artesano (Artisan's Blessing)",
         nv: 2,
-        d: "En 1 hora de ritual creas un objeto metálico no mágico de hasta 100 po de valor (arma, armadura, herramienta u objeto metálico ordinario)."
+        a: "O",
+        d: "Con un ritual de 1 hora y metal por el valor, creas un objeto metálico no mágico (armas, armaduras, herramientas, municiones…) de valor máximo 100 po."
       },
       {
-        n: "Alma de la Forja",
+        n: "Alma de la Forja (Soul of the Forge)",
         nv: 6,
-        d: "Resistencia al daño de fuego. Mientras lleves armadura, +1 a CA."
+        d: "Resistencia al daño de fuego. Con armadura pesada, +1 a la CA."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 fuego (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño de fuego adicional (2d8 en Nv.14)."
       },
       {
-        n: "Santo del Forjador",
+        n: "Santo de la Forja y el Fuego (Saint of Forge and Fire)",
         nv: 17,
-        d: "Inmunidad al daño de fuego. Con armadura puesta, resistencia al daño contundente, perforante y cortante no mágico."
+        d: "Inmunidad al daño de fuego. Con armadura pesada, resistencia al daño contundente, perforante y cortante de ataques no mágicos."
       },
     ],
 
@@ -618,76 +517,84 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Falsa Muerte, Palabra de Curación. Nv.3: Gentle Repose, Silencio. Nv.5: Hablar con los Muertos, Caminar por el Viento. Nv.7: Aura de Vida, Muerte Apacible. Nv.9: Antipatía/Simpatía, Raising the Dead."
+        d: "Siempre preparados — Nv.1: Bane, False Life. Nv.3: Gentle Repose, Ray of Enfeeblement. Nv.5: Revivify, Vampiric Touch. Nv.7: Blight, Death Ward. Nv.9: Antilife Shell, Raise Dead."
       },
       {
-        n: "Guardián del Umbral",
+        n: "Círculo de Mortalidad (Circle of Mortality)",
         nv: 1,
-        d: "Competencia en Medicina. Aprendes Taumaturgia si no la conoces."
+        a: "B",
+        d: "Cuando tirarías dados para restaurar PG con un conjuro a una criatura con 0 PG, usas el valor máximo de cada dado. Además aprendes Spare the Dying (no cuenta para tu límite), con alcance de 30 pies y que puedes lanzar como Acción Adicional."
       },
       {
-        n: "Ojos ante la Muerte",
+        n: "Ojos de la Tumba (Eyes of the Grave)",
         nv: 1,
-        d: "Acción: durante 1 minuto percibes la vitalidad de criaturas a 30 pies (PG aproximados, si están envenenadas, malditas o enfermas). Usos = mod SAB. Recarga con Descanso Largo."
+        a: "A",
+        d: "Como acción detectas no-muertos a 60 pies (no tras cobertura total ni protegidos contra adivinación) hasta el final de tu siguiente turno. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Canalizar Divinidad: Guardián de las Almas",
+        n: "Canalizar Divinidad: Camino a la Tumba (Path to the Grave)",
         nv: 2,
-        d: "Reacción: cuando una criatura a 60 pies va a morir, la preservas en 1 PG en lugar de 0. 1/descanso corto o largo."
+        a: "A",
+        d: "Como acción maldices a una criatura a 30 pies hasta el final de tu siguiente turno: el siguiente ataque de ti o de un aliado que le impacte la hace vulnerable al daño de ese ataque, y la maldición termina."
       },
       {
-        n: "Centinela del Umbral",
+        n: "Centinela en el Umbral de la Muerte (Sentinel at Death's Door)",
         nv: 6,
-        d: "Resistencia al daño infligido por no-muertos. Tus conjuros curativos restauran el máximo al lanzarlos sobre criaturas a 0 PG."
+        a: "R",
+        d: "Cuando una criatura a 30 pies sufre un golpe crítico, puedes usar tu reacción para convertirlo en un impacto normal. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Golpe Divino",
+        n: "Lanzamiento Potente (Potent Spellcasting)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 necrótico (→2d8 en Nv.14)."
+        d: "Sumas tu mod. SAB al daño de tus trucos de Clérigo."
       },
       {
-        n: "Guardianes de las Almas",
+        n: "Guardián de las Almas (Keeper of Souls)",
         nv: 17,
-        d: "Cuando expulsas o destruyes no-muertos, recuperas PG = 2 × CR de la criatura destruida. Puedes lanzar Antipatía/Simpatía centrado en ti sin espacio (1/descanso largo)."
+        d: "Cuando un enemigo muere a 30 pies de ti, tú o un aliado que veas a 30 pies recupera PG = al número de Dados de Golpe del enemigo. Una vez por turno si no estás Incapacitado."
       },
     ],
 
-    /* ── Tasha's Cauldron of Everything ── */
+
+    /* ── TCE ── */
     "Dominio de la Paz [TCE]": [
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Heroísmo, Santuario. Nv.3: Ayuda, Restauración Menor. Nv.5: Aura de Vitalidad, Vínculo Protector. Nv.7: Aura de Pureza, Guardián de la Fe. Nv.9: Restauración Mayor, Resurrección."
+        d: "Siempre preparados — Nv.1: Heroism, Sanctuary. Nv.3: Aid, Warding Bond. Nv.5: Beacon of Hope, Sending. Nv.7: Aura of Purity, Otiluke's Resilient Sphere. Nv.9: Greater Restoration, Rary's Telepathic Bond."
       },
       {
-        n: "Implemento de la Paz",
+        n: "Herramienta de Paz (Implement of Peace)",
         nv: 1,
-        d: "Competencia en Perspicacia, Actuación o Persuasión (elige 1)."
+        d: "Ganas competencia en Perspicacia, Interpretación o Persuasión (elige una)."
       },
       {
-        n: "Vínculo de Armonía",
+        n: "Vínculo Envalentonador (Emboldening Bond)",
         nv: 1,
-        d: "Ritual de 1 minuto: estableces un vínculo con una criatura voluntaria a 30 pies. Mientras el vínculo esté activo y a 30 pies: como Reacción puedes transferirte 1d4 del daño que reciba. Máximo de vínculos = bonificador de competencia. Se rompen con Descanso Largo."
+        a: "A",
+        d: "Como acción eliges hasta comp. criaturas voluntarias a 30 pies: durante 10 minutos están vinculadas. Mientras estén a 30 pies entre sí pueden tirar 1d4 y sumarlo a una tirada de ataque, prueba o salvación (una vez por turno). Usos = comp.; se recuperan con un descanso largo."
       },
       {
-        n: "Canalizar Divinidad: Balada Apaciguadora",
+        n: "Canalizar Divinidad: Bálsamo de Paz (Balm of Peace)",
         nv: 2,
-        d: "Acción: aura de paz en 30 pies durante 1 minuto (concentración). Criaturas hostiles al inicio de su turno en el aura superan salvación SAB (CD conjuro) o quedan Incapacitadas hasta el fin de ese turno."
+        a: "A",
+        d: "Como acción te mueves hasta tu Velocidad sin provocar ataques de oportunidad; cuando pasas a 5 pies de otra criatura puedes restaurarle 2d6 + mod. SAB PG (mínimo 1)."
       },
       {
-        n: "Escudo de Protección",
+        n: "Vínculo Protector (Protective Bond)",
         nv: 6,
-        d: "Reacción: cuando una criatura vinculada va a ser golpeada, le añades mod SAB a su CA hasta el inicio de tu siguiente turno."
+        a: "R",
+        d: "Cuando una criatura vinculada recibe daño, otra criatura vinculada a 30 pies puede usar su reacción para teletransportarse a un espacio a 5 pies de la primera y recibir todo el daño."
       },
       {
-        n: "Golpe Protector",
+        n: "Lanzamiento Potente (Potent Spellcasting)",
         nv: 8,
-        d: "1/turno al golpear con arma: otorgas PG temporales = 1d8 + mod SAB a una criatura a 30 pies (→2d8 en Nv.14)."
+        d: "Sumas tu mod. SAB al daño de tus trucos de Clérigo."
       },
       {
-        n: "Presencia Calmante",
+        n: "Vínculo Expansivo (Expansive Bond)",
         nv: 17,
-        d: "Criaturas amistosas a 60 pies son inmunes a Asustado y Encantado. Acción: terminas cualquier efecto de Miedo o Encantamiento en todos los aliados a 30 pies."
+        d: "Vínculo Envalentonador y Vínculo Protector funcionan a 60 pies; quien use Vínculo Protector recibe resistencia al daño que absorbe."
       },
     ],
 
@@ -695,37 +602,41 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Comando, Heroísmo. Nv.3: Mantener Persona, Zona de Verdad. Nv.5: Imagen Mayor, Lentitud. Nv.7: Compulsión, Localizar Criatura. Nv.9: Dominación, Mantener Monstruo."
+        d: "Siempre preparados — Nv.1: Command, Heroism. Nv.3: Hold Person, Zone of Truth. Nv.5: Mass Healing Word, Slow. Nv.7: Compulsion, Locate Creature. Nv.9: Commune, Dominate Person."
       },
       {
-        n: "Competencias del Orden",
+        n: "Competencias Adicionales",
         nv: 1,
-        d: "Competencia en armadura pesada y en Intimidación o Persuasión (elige 1)."
+        d: "Ganas competencia con armadura pesada y en Intimidación o Persuasión (elige una)."
       },
       {
-        n: "Voz del Orden",
+        n: "Voz de Autoridad (Voice of Authority)",
         nv: 1,
-        d: "Cuando lanzas un conjuro de encantamiento de Nv.1+, un aliado a 30 pies puede como Reacción realizar un ataque con arma o moverse hasta su velocidad."
+        a: "O",
+        d: "Si lanzas un conjuro con espacio de nivel 1+ que tenga como objetivo a un aliado, éste puede usar su reacción inmediatamente después para hacer un ataque con arma contra una criatura de tu elección que veas."
       },
       {
-        n: "Canalizar Divinidad: Orden Sagrada",
+        n: "Canalizar Divinidad: Exigencia del Orden (Order's Demand)",
         nv: 2,
-        d: "Acción: una criatura a 30 pies supera salvación SAB (CD conjuro) o queda Encantada durante 1 minuto. Mientras esté Encantada, debes darle una orden al inicio de cada turno; si no la sigue, queda Incapacitada."
+        a: "A",
+        d: "Como acción presentas tu símbolo sagrado: cada criatura de tu elección que pueda verte u oírte a 30 pies hace una salvación de SAB o queda Hechizada hasta el final de tu siguiente turno (o hasta recibir daño); además puedes hacer que suelte lo que sostenga."
       },
       {
-        n: "Guardia del Orden",
+        n: "Encarnación de la Ley (Embodiment of the Law)",
         nv: 6,
-        d: "Reacción: cuando una criatura Encantada por ti (o aliada) va a ser atacada, el atacante supera salvación SAB (CD conjuro) o el ataque falla automáticamente."
+        a: "O",
+        d: "Si lanzas un conjuro de encantamiento de nivel 1+ con tiempo de lanzamiento de 1 acción, puedes lanzarlo como Acción Adicional. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 psíquico (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño psíquico adicional (2d8 en Nv.14)."
       },
       {
-        n: "Dominio Absoluto",
+        n: "Ira del Orden (Order's Wrath)",
         nv: 17,
-        d: "Comando puede afectar a cualquier número de criaturas a 30 pies. Orden Sagrada ya no requiere Canalizar Divinidad: usos = mod SAB por Descanso Largo."
+        a: "O",
+        d: "Si infliges daño de Golpe Divino a una criatura en tu turno, puedes maldecirla hasta el inicio de tu siguiente turno: el siguiente ataque de un aliado que le impacte le inflige 2d8 de daño psíquico adicional y termina la maldición. Sólo una vez por turno."
       },
     ],
 
@@ -733,228 +644,202 @@ const CLASE_CLERIGO = {
       {
         n: "Conjuros de Dominio",
         nv: 1,
-        d: "Nv.1: Luz de las Hadas, Sueño. Nv.3: Invisibilidad en Masa, Luna (Moonbeam). Nv.5: Aura de Vitalidad, Oscuridad. Nv.7: Aura de Vida, Gran Invisibilidad. Nv.9: Círculo de Poder, Modificar Memoria."
+        d: "Siempre preparados — Nv.1: Faerie Fire, Sleep. Nv.3: Moonbeam, See Invisibility. Nv.5: Aura of Vitality, Leomund's Tiny Hut. Nv.7: Aura of Life, Greater Invisibility. Nv.9: Circle of Power, Mislead."
       },
       {
-        n: "Ojos del Crepúsculo",
+        n: "Competencias Adicionales",
         nv: 1,
-        d: "Visión en oscuridad normal y mágica hasta 300 pies. No puedes ser Sorprendido mientras no estés Incapacitado."
+        d: "Ganas competencia con armas marciales y armadura pesada."
       },
       {
-        n: "Santuario del Crepúsculo",
+        n: "Ojos de la Noche (Eyes of Night)",
         nv: 1,
-        d: "Acción: esfera de luz tenue de 30 pies centrada en ti durante 1 minuto (concentración). Dentro: criaturas de tu elección tienen ventaja en salvaciones; criaturas hostiles tienen desventaja en ataques contra criaturas dentro. Usos = mod SAB. Recarga con Descanso Largo."
+        a: "A",
+        d: "Visión en la oscuridad 300 pies (ves la luz tenue como brillante y la oscuridad como tenue). Como acción compartes esa visión 1 hora con hasta mod. SAB (mínimo 1) criaturas voluntarias a 10 pies; se recupera con un descanso largo o gastando un espacio de conjuro."
       },
       {
-        n: "Canalizar Divinidad: Paso Crepuscular",
+        n: "Bendición Vigilante (Vigilant Blessing)",
+        nv: 1,
+        a: "A",
+        d: "Como acción das a una criatura que toques (puedes ser tú) ventaja en su siguiente tirada de iniciativa."
+      },
+      {
+        n: "Canalizar Divinidad: Santuario del Crepúsculo (Twilight Sanctuary)",
         nv: 2,
-        d: "AA: te teletransportas hasta 30 pies a espacio visible. Puedes llevar hasta 5 criaturas voluntarias visibles, cada una a un espacio vacío a 10 pies del destino."
+        a: "A",
+        d: "Como acción presentas tu símbolo sagrado: una esfera de crepúsculo de 30 pies (luz tenue) te sigue durante 1 minuto o hasta que quedes Incapacitado o mueras. Al final de cada turno, cada criatura de tu elección en ella gana 1d6 + nivel de Clérigo PG temporales o termina un efecto de Hechizado o Asustado."
       },
       {
-        n: "Pasos en Duermevela",
+        n: "Pasos de la Noche (Steps of Night)",
         nv: 6,
-        d: "Mientras el Santuario del Crepúsculo esté activo, tú y los aliados dentro podéis volar a 30 pies."
+        a: "B",
+        d: "Cuando estás en luz tenue u oscuridad, como Acción Adicional ganas Velocidad de vuelo = tu Velocidad durante 1 minuto. Usos = comp. por descanso largo."
       },
       {
-        n: "Golpe Divino",
+        n: "Golpe Divino (Divine Strike)",
         nv: 8,
-        d: "1/turno al golpear con arma: +1d8 psíquico (→2d8 en Nv.14)."
+        d: "Una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño radiante adicional (2d8 en Nv.14)."
       },
       {
-        n: "Vigil Eterno",
+        n: "Manto del Crepúsculo (Twilight Shroud)",
         nv: 17,
-        d: "No necesitas dormir ni puedes ser dormido mágicamente. Los aliados en tu Santuario tampoco pueden ser dormidos."
+        d: "Tú y tus aliados tenéis cobertura media mientras estéis en la esfera de Santuario del Crepúsculo."
       },
     ],
 
-    /* ── Sword Coast Adventurer's Guide ── */
-    "Dominio Arcano [SCAG]": [
+
+    /* ── PHB 2024 ── */
+    "Dominio de la Vida [PHB 2024]": [
       {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Proyectil Mágico, Detectar Magia. Nv.3: Proyectil Llameante, Nube de Dagas. Nv.5: Proyectil Llameante (3º), Dispersar Magia. Nv.7: Ojo Arcano, Gran Invisibilidad. Nv.9: Túnel, Telekinesis."
+        n: "Discípulo de la Vida (Disciple of Life)",
+        nv: 3,
+        d: "Cuando un conjuro que lanzas con un espacio restaura PG a una criatura, ésta recupera PG adicionales = 2 + nivel del espacio."
       },
       {
-        n: "Inicia Arcana",
-        nv: 1,
-        d: "Aprendes 2 trucos de Mago. Puedes lanzar estos trucos como si fueran de Clérigo, usando SAB como característica de conjuro."
+        n: "Conjuros del Dominio de la Vida",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Aid, Bless, Cure Wounds, Lesser Restoration. Nv.5: Mass Healing Word, Revivify. Nv.7: Aura of Life, Death Ward. Nv.9: Greater Restoration, Mass Cure Wounds."
       },
       {
-        n: "Magia Arcana",
-        nv: 1,
-        d: "Cuando preparas conjuros de Clérigo, puedes sustituir uno de ellos por un conjuro de Mago del mismo nivel. Ese conjuro arcano cuenta como conjuro de Clérigo para ti."
+        n: "Preservar Vida (Preserve Life)",
+        nv: 3,
+        a: "A",
+        d: "Como acción Mágica gastas un uso de Canalizar Divinidad: restauras PG = 5 × tu nivel de Clérigo, repartidos entre criaturas Malheridas (por debajo de la mitad de PG) a 30 pies (puedes incluirte); ninguna puede superar la mitad de sus PG máximos."
       },
       {
-        n: "Canalizar Divinidad: Conjuro Arcano",
-        nv: 2,
-        d: "Cuando lanzas un conjuro de Clérigo que cause daño, puedes usar Canalizar Divinidad para que ese conjuro ignore la resistencia al tipo de daño que inflija (no ignora la inmunidad)."
-      },
-      {
-        n: "Recuperación Arcana",
+        n: "Sanador Bendecido (Blessed Healer)",
         nv: 6,
-        d: "Una vez por Descanso Largo, cuando terminas un Descanso Corto, recuperas espacios de conjuro gastados cuya suma de niveles sea igual o inferior a la mitad de tu nivel de Clérigo (redondeado arriba). No puedes recuperar espacios de Nv.6 o superior con este rasgo."
+        d: "Justo después de lanzar un conjuro con espacio que restaura PG a una o más criaturas distintas de ti, recuperas PG = 2 + nivel del espacio."
       },
       {
-        n: "Potencia Mágica",
-        nv: 8,
-        d: "Cuando lanzas un conjuro de Clérigo que cause daño, añades tu modificador de SAB al daño una vez por lanzamiento."
-      },
-      {
-        n: "Conjuro Supremo",
+        n: "Curación Suprema (Supreme Healing)",
         nv: 17,
-        d: "Cuando lanzas un conjuro de daño de Clérigo o Mago usando un espacio de Nv.5 o inferior, puedes lanzarlo de nuevo con la misma acción sin gastar otro espacio. 1/descanso largo."
+        d: "Cuando tirarías dados para restaurar PG con un conjuro o Canalizar Divinidad, usas el valor máximo de cada dado."
       },
     ],
 
-    /* ── Guildmasters' Guide to Ravnica ── */
-    "Dominio de las Esporas [GGtR]": [
+    "Dominio de la Luz [PHB 2024]": [
       {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Brote de Cuchillas, Enredar. Nv.3: Crecer Plantas, Forma Gaseosa. Nv.5: Animar Muertos, Blight. Nv.7: Confusión, Plaga de Insectos. Nv.9: Comunión con la Naturaleza, Dedo de la Muerte."
+        n: "Resplandor del Alba (Radiance of the Dawn)",
+        nv: 3,
+        a: "A",
+        d: "Como acción Mágica gastas un uso de Canalizar Divinidad: emites luz en una Emanación de 30 pies, disipas la oscuridad mágica y las criaturas de tu elección hacen una salvación de CON: sufren 2d10 + nivel de Clérigo de daño radiante (mitad si superan)."
       },
       {
-        n: "Círculo de Esporas",
-        nv: 1,
-        d: "Aprendes el truco Taumaturgia. Cuando una criatura hostil a 10 pies comienza su turno, puedes usar Reacción para infligirle daño necrótico automático que escala con nivel: 1d4 (Nv.1-5), 1d6 (Nv.6-9), 1d8 (Nv.10-13), 1d10 (Nv.14+)."
+        n: "Fulgor Protector (Warding Flare)",
+        nv: 3,
+        a: "R",
+        d: "Cuando una criatura que veas a 30 pies hace una tirada de ataque, puedes usar tu reacción para imponerle desventaja. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Halo de Esporas",
-        nv: 1,
-        d: "Cuando una criatura en tu aura de esporas falla una salvación de CON para mantener concentración, puedes usar tu Reacción para que el fallo sea automático."
+        n: "Conjuros del Dominio de la Luz",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Burning Hands, Faerie Fire, Scorching Ray, See Invisibility. Nv.5: Daylight, Fireball. Nv.7: Arcane Eye, Wall of Fire. Nv.9: Flame Strike, Scrying."
       },
       {
-        n: "Canalizar Divinidad: Infundir Esporas",
-        nv: 2,
-        d: "Reacción: cuando una criatura Grande o menor muere a 10 pies, la animas con esporas. Se levanta con 1 PG y actúa en tu iniciativa (ataque: +3, 1d6+1 perforante). Dura 1 hora o hasta 0 PG."
-      },
-      {
-        n: "Proliferación de Esporas",
+        n: "Fulgor Protector Mejorado (Improved Warding Flare)",
         nv: 6,
-        d: "El aura de Círculo de Esporas alcanza 30 pies. Puedes otorgar PG temporales = nivel de Clérigo a aliados que entren en el aura (1 vez por criatura por turno)."
+        d: "Recuperas los usos de Fulgor Protector también con un descanso corto. Al usarlo, el objetivo del ataque gana 2d6 + mod. SAB PG temporales."
       },
       {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear con arma: +1d8 necrótico (→2d8 en Nv.14)."
-      },
-      {
-        n: "Forma Fúngica",
+        n: "Corona de Luz (Corona of Light)",
         nv: 17,
-        d: "Lanzas Gaseous Form sobre ti mismo 1/descanso largo sin espacio. En esta forma emites esporas que infligen 3d6 necrótico a criaturas a 5 pies al inicio de su turno (CON CD conjuro para reducir a la mitad)."
+        a: "A",
+        d: "Como acción Mágica activas una aura durante 1 minuto (terminable): luz brillante en 60 pies y tenue 30 pies más. Tus enemigos en la luz brillante tienen desventaja en las salvaciones contra Resplandor del Alba y contra tus conjuros de daño de fuego o radiante. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
     ],
 
-    /* ── Mythic Odysseys of Theros ── */
-    "Dominio del Hogar [MOoT]": [
+    "Dominio del Engaño [PHB 2024]": [
       {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Crear o Destruir Agua, Curar Heridas. Nv.3: Fortalecer, Restauración Menor. Nv.5: Aura de Vitalidad, Crear Comida y Agua. Nv.7: Localizar Criatura, Guardián de la Fe. Nv.9: Comunión, Curar Heridas en Masa."
+        n: "Bendición del Embaucador (Blessing of the Trickster)",
+        nv: 3,
+        a: "A",
+        d: "Como acción Mágica eliges a ti o a una criatura voluntaria a 30 pies: tiene ventaja en pruebas de DES (Sigilo) hasta que termines un descanso largo o uses este rasgo de nuevo."
       },
       {
-        n: "Protector del Hogar",
-        nv: 1,
-        d: "Competencia en Medicina y Perspicacia. Puedes lanzar Reparar (Mending) a voluntad como ritual para reparar objetos dañados."
+        n: "Invocar Duplicidad (Invoke Duplicity)",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional gastas un uso de Canalizar Divinidad y creas una ilusión perfecta de ti en un espacio libre a 30 pies (intangible, 1 minuto; termina si la despides o quedas Incapacitado). Puedes lanzar conjuros desde su espacio usando tus sentidos; tienes ventaja en ataques cuando tú y la ilusión estáis a 5 pies de una criatura que la ve; y como Acción Adicional la mueves 30 pies a un espacio libre a 120 pies."
       },
       {
-        n: "Canalizar Divinidad: Corazón del Hogar",
-        nv: 2,
-        d: "Acción: designas un área de hasta 1.000 pies cuadrados como hogar sagrado durante 24 horas. Dentro: criaturas hostiles tienen desventaja en ataques contra aliados tuyos; aliados recuperan 1d4 PG adicionales al gastar Dados de Golpe."
+        n: "Conjuros del Dominio del Engaño",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Charm Person, Disguise Self, Invisibility, Pass without Trace. Nv.5: Hypnotic Pattern, Nondetection. Nv.7: Confusion, Dimension Door. Nv.9: Dominate Person, Modify Memory."
       },
       {
-        n: "Guardián del Umbral",
+        n: "Transposición del Embaucador (Trickster's Transposition)",
         nv: 6,
-        d: "En tu Corazón del Hogar eres inmune a Asustado y tienes ventaja en salvaciones contra conjuros. Criaturas que intenten entrar sin ser invitadas superan salvación SAB (CD conjuro) o quedan Asustadas e incapaces de entrar."
+        d: "Cuando usas una Acción Adicional para crear o mover tu ilusión de Invocar Duplicidad, puedes teletransportarte intercambiando posición con ella."
       },
       {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear con arma: +1d8 radiante (→2d8 en Nv.14)."
-      },
-      {
-        n: "Santidad del Hogar",
+        n: "Duplicidad Mejorada (Improved Duplicity)",
         nv: 17,
-        d: "Tu Corazón del Hogar dura indefinidamente. Criaturas amistosas dentro son inmunes a enfermedades y venenos. Expulsar No-Muertos funciona a 60 pies dentro del área."
+        d: "Tu ilusión gana: Distracción Compartida (tú y tus aliados tenéis ventaja en ataques contra criaturas a 5 pies de ella) y Ilusión Sanadora (cuando termina, tú o una criatura cercana recupera PG = tu nivel de Clérigo)."
       },
     ],
 
-    /* ── Tal'Dorei Campaign Setting Reborn ── */
-    "Dominio de la Sangre [TCSR]": [
+    "Dominio de la Guerra [PHB 2024]": [
       {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Falso Vida, Ray of Sickness. Nv.3: Rayo de Debilidad, Spike Growth. Nv.5: Haste, Slow. Nv.7: Blight, Stoneskin. Nv.9: Dominar Persona, Infestación."
+        n: "Golpe Guiado (Guided Strike)",
+        nv: 3,
+        a: "O",
+        d: "Cuando tú o una criatura a 30 pies falla una tirada de ataque, puedes gastar un uso de Canalizar Divinidad para darle +10, quizá haciéndola impactar."
       },
       {
-        n: "Escucha de la Sangre",
-        nv: 1,
-        d: "Puedes lanzar Detectar el Mal y el Bien y Detectar Magia a voluntad sin espacio de conjuro, pero solo para detectar criaturas vivas con sangre o efectos que alteren la sangre."
+        n: "Sacerdote de Guerra (War Priest)",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional puedes hacer un ataque con un arma o un ataque desarmado. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
-        n: "Sangre como Combustible",
-        nv: 1,
-        d: "Cuando una criatura a 30 pies pierde PG (no PG temporales), puedes usar tu Reacción para ganar PG temporales = la mitad del daño infligido (máximo = mod SAB). Estos PG temporales duran hasta el siguiente Descanso Corto o Largo."
+        n: "Conjuros del Dominio de la Guerra",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Guiding Bolt, Magic Weapon, Shield of Faith, Spiritual Weapon. Nv.5: Crusader's Mantle, Spirit Guardians. Nv.7: Fire Shield, Freedom of Movement. Nv.9: Hold Monster, Steel Wind Strike."
       },
       {
-        n: "Canalizar Divinidad: Torrente de Sangre",
-        nv: 2,
-        d: "Acción: una criatura a 30 pies que tengas marcada pierde PG = 2d6 + mod SAB (sin salvación). Puedes redistribuir la mitad de ese daño como curación a una criatura amistosa a 30 pies."
-      },
-      {
-        n: "Vínculo Sanguíneo",
+        n: "Bendición del Dios de la Guerra (War God's Blessing)",
         nv: 6,
-        d: "Cuando lanzas un conjuro que restaure PG, puedes aumentar la curación en 1d8 adicional por cada criatura a 30 pies que tenga menos de la mitad de sus PG máximos (máximo bonus = mod SAB adicionales)."
+        a: "O",
+        d: "Puedes lanzar Shield of Faith o Spiritual Weapon gastando un uso de Canalizar Divinidad en lugar de un espacio; el conjuro no requiere concentración: dura 1 minuto y termina antes si lo lanzas de nuevo, quedas Incapacitado o mueres."
       },
       {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear con arma: +1d8 necrótico (→2d8 en Nv.14)."
-      },
-      {
-        n: "Maestro de la Sangre",
+        n: "Avatar de la Batalla (Avatar of Battle)",
         nv: 17,
-        d: "Las criaturas que fallan una salvación contra tus conjuros de nigromancia o encantamiento también comienzan a sangrar: pierden 1d6 PG al inicio de cada turno durante 1 minuto (CON CD conjuro para terminar). Inmunidad a daño necrótico."
+        d: "Resistencia al daño contundente, perforante y cortante."
       },
     ],
 
-    "Dominio de la Luna [TCSR]": [
+
+    /* ── HoF 2024 ── */
+    "Dominio del Conocimiento [HoF 2024]": [
       {
-        n: "Conjuros de Dominio",
-        nv: 1,
-        d: "Nv.1: Luz de las Hadas, Sueño. Nv.3: Luna (Moonbeam), Silencio. Nv.5: Convocar Relámpago, No-Detección. Nv.7: Guardián de la Fe, Gran Invisibilidad. Nv.9: Comunión, Transmutación de Formas."
+        n: "Bendiciones del Conocimiento (Blessings of Knowledge)",
+        nv: 3,
+        d: "Ganas competencia con un tipo de herramientas de artesano y en 2 habilidades entre Arcanos, Historia, Naturaleza y Religión; tienes Pericia en esas 2 habilidades."
       },
       {
-        n: "Danza del Claro de Luna",
-        nv: 1,
-        d: "Aprendes el truco Taumaturgia. Cuando lanzas un conjuro que crea luz brillante o tenue, puedes elegir una criatura dentro de la luz para que tenga desventaja en su siguiente tirada de ataque o salvación (1 vez por conjuro)."
+        n: "Magia de la Mente (Mind Magic)",
+        nv: 3,
+        a: "A",
+        d: "Como acción Mágica gastas un uso de Canalizar Divinidad: eliges un conjuro de adivinación de la lista de conjuros del Dominio del Conocimiento que tengas preparado y lo lanzas sin gastar espacio ni componentes materiales."
       },
       {
-        n: "Bendición Lunar",
-        nv: 1,
-        d: "Al terminar un Descanso Largo bajo el cielo nocturno (o en entorno donde la luna sea visible), tú y hasta mod SAB aliados voluntarios que puedas ver recuperáis PG adicionales = nivel de Clérigo."
+        n: "Conjuros del Dominio del Conocimiento",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Command, Comprehend Languages, Detect Magic, Detect Thoughts, Identify, Mind Spike. Nv.5: Dispel Magic, Nondetection, Tongues. Nv.7: Arcane Eye, Banishment, Confusion. Nv.9: Legend Lore, Scrying, Synaptic Static."
       },
       {
-        n: "Canalizar Divinidad: Luz de Luna",
-        nv: 2,
-        d: "Acción: proyectas una explosión de luz lunar en 30 pies. Criaturas hostiles superan salvación CON (CD conjuro) o quedan Cegadas hasta el inicio de tu siguiente turno y reciben 2d6 de daño radiante. Las criaturas licántropas tienen desventaja en esta salvación."
-      },
-      {
-        n: "Guía del Claro de Luna",
+        n: "Mente Desatada (Unfettered Mind)",
         nv: 6,
-        d: "Mientras haya luz brillante (natural o mágica) a 60 pies de ti, puedes usar Reacción cuando un aliado falle una tirada de ataque para darle ventaja en la siguiente tirada de ataque que haga antes del fin de tu siguiente turno."
+        d: "Telepatía a 60 pies; puedes contactar simultáneamente a mod. SAB criaturas (mínimo 1). Además ganas competencia en salvaciones de INT (si ya la tenías, eliges otra característica en la que no la tengas)."
       },
       {
-        n: "Golpe Divino",
-        nv: 8,
-        d: "1/turno al golpear con arma: +1d8 radiante (→2d8 en Nv.14)."
-      },
-      {
-        n: "Forma Lunar",
+        n: "Presciencia Divina (Divine Foreknowledge)",
         nv: 17,
-        d: "Como Acción puedes transformarte en un ser de luz lunar durante 1 minuto: vuelo 60 pies, inmunidad a Cegado y daño radiante, y emites luz brillante en 30 pies que inflige 2d10 radiante a criaturas hostiles al inicio de su turno (CON para reducir a la mitad). 1/descanso largo."
+        a: "B",
+        d: "Como Acción Adicional expandes tu mente hacia el futuro: durante 1 hora tienes ventaja en las pruebas de d20. Una vez por descanso largo, o gastando un espacio de nivel 6+ (sin acción) para recuperarlo."
       },
     ],
-
-  }, // fin subclases
-}; // fin CLASE_CLERIGO
+  },
+};

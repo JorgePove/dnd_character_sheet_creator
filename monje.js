@@ -1,27 +1,28 @@
 /* ══════════════════════════════════════════════════════════════════
-   monje.js — Monje: rasgos de clase y subclases completas
+   monje.js — Monje: rasgos de clase y subclases
    ──────────────────────────────────────────────────────────────────
-   Fuentes:
-     PHB 2014 · PHB 2024
-     Xanathar's Guide to Everything (XGtE)
-     Tasha's Cauldron of Everything (TCE)
-     Sword Coast Adventurer's Guide (SCAG)
-     Fizban's Treasury of Dragons (FToD)
-     Tal'Dorei Campaign Setting Reborn (TCSR)
+   Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
+   importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
+   fuente y la edición a la que corresponde.
+   Fuentes de subclases: PHB 2014 · SCAG · SCAG/XGtE · XGtE · TCE · FToD · TCSR · PHB 2024
    ──────────────────────────────────────────────────────────────────
    SUBCLASES (15 entradas):
      Camino de la Mano Abierta    [PHB 2014] / [PHB 2024]
      Camino de las Sombras        [PHB 2014] / [PHB 2024]
      Camino de los Cuatro Elementos [PHB 2014]
-     Camino del Guerrero Elemental  [PHB 2024] ← revisión de Cuatro Elementos
      Camino de la Larga Muerte    [SCAG]
-     Camino del Alma del Sol      [SCAG]     (📌 reimpreso en XGtE)
+     Camino del Alma del Sol      [SCAG/XGtE]
      Camino del Maestro Borracho  [XGtE]
      Camino del Kensei            [XGtE]
-     Camino de la Misericordia    [TCE]      / [PHB 2024]
+     Camino de la Misericordia    [TCE] / [PHB 2024]
      Camino del Ser Astral        [TCE]
      Camino del Dragón Ascendente [FToD]
      Camino del Alma Cobalt       [TCSR]
+     Camino del Guerrero Elemental [PHB 2024]
+   ──────────────────────────────────────────────────────────────────
+   Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
+     "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
+     limitados o decisión puntual) · combinable ("AB"). Sin `a` = rasgo pasivo.
 ══════════════════════════════════════════════════════════════════ */
 
 const CLASE_MONJE = {
@@ -33,491 +34,596 @@ const CLASE_MONJE = {
     {
       n: "Competencias",
       nv: 1,
-      d: "Armaduras: ninguna. Armas: armas simples, espadas cortas. Herramientas: un tipo de herramienta artesana o instrumento musical a tu elección. Salvaciones: FUE y DES. Habilidades: elige 2 entre Acrobacias, Atletismo, Historia, Perspicacia, Religión y Sigilo."
+      d: "Dado de golpe d8. Salvaciones: FUE y DES. Armaduras: ninguna. Armas: simples y marciales con la propiedad Ligera. Herramientas: una herramienta de artesano o instrumento musical. Habilidades: elige 2 entre Acrobacias, Atletismo, Historia, Perspicacia, Religión y Sigilo. [2014: armas: simples y espadas cortas; 2 habilidades entre Acrobacias, Atletismo, Historia, Perspicacia, Religión y Sigilo]"
     },
     {
-      n: "Defensa sin Armadura",
+      n: "Defensa sin Armadura (Unarmored Defense)",
       nv: 1,
-      d: "Sin armadura ni escudo: CA = 10 + mod DES + mod SAB."
+      d: "Mientras no llevas armadura ni escudo, tu CA = 10 + mod. DES + mod. SAB."
     },
     {
-      n: "Artes Marciales",
+      n: "Artes Marciales (Martial Arts)",
       nv: 1,
-      d: "Con ataques desarmados o armas de monje (armas simples cuerpo a cuerpo sin la propiedad pesada ni a dos manos, y espadas cortas): puedes usar DES en lugar de FUE para ataque y daño; el dado de daño mínimo es el Dado de Artes Marciales (d4 → d6 Nv.5 → d8 Nv.11 → d10 Nv.17); cuando usas la acción de Atacar con arma de monje o desarmado, puedes hacer un ataque desarmado adicional como AA."
+      a: "B",
+      d: "Mientras no llevas armadura ni escudo: usas DES (en lugar de FUE) para ataques y daño con golpes sin armas y armas de monje (armas simples cuerpo a cuerpo y marciales Ligeras); tu dado de Artes Marciales es d6 (d8 en Nv.5, d10 en Nv.11, d12 en Nv.17) y sustituye el daño base del golpe sin arma; y cuando realizas la acción Atacar con un golpe sin arma o un arma de monje, puedes hacer un golpe sin arma como Acción Adicional. [2014: dados d4, d6 (Nv.5), d8 (Nv.11), d10 (Nv.17); el golpe adicional lo haces tras la acción Atacar con un golpe sin arma o arma de monje]"
     },
     {
-      n: "Ki / Puntos de Enfoque [PHB 2024]",
+      n: "Foco del Monje (Monk's Focus)",
       nv: 2,
-      d: "Tienes un número de puntos de Ki = tu nivel de Monje. Se recuperan con Descanso Corto o Largo. Usos básicos: Lluvia de Golpes (AA: dos ataques desarmados adicionales, 1 Ki), Defensa Paciente (AA: Esquivar, 1 Ki), Viento que Golpea (AA: Desengancharse o Correr, 1 Ki). PHB 2024 renombra 'Ki' como 'Puntos de Enfoque' y añade Golpe Impactante (Ki Fueled Attack): si lanzas un conjuro de monje como AA puedes hacer un ataque desarmado gratuito."
+      a: "B",
+      d: "Tienes Puntos de Enfoque (PE) = tu nivel de Monje (desde Nv.2); los recuperas todos con un descanso corto o largo. CD de salvación de Enfoque = 8 + comp. + mod. SAB. Con ellos: Ráfaga de Golpes (Flurry of Blows): gastas 1 PE para hacer 2 golpes sin armas con tu Acción Adicional de Artes Marciales en lugar de 1. Defensa Paciente (Patient Defense): Acción Adicional, Retirarse gratis; con 1 PE también Esquivar. Paso del Viento (Step of the Wind): Acción Adicional, Correr gratis; con 1 PE también Retirarse y tu distancia de salto se duplica. [2014: Ki, mismos usos con 1 punto de ki cada uno: Ráfaga de Golpes y Paso del Viento como Acción Adicional, Defensa Paciente = Esquivar]"
     },
     {
-      n: "Movimiento sin Armadura",
+      n: "Movimiento sin Armadura (Unarmored Movement)",
       nv: 2,
-      d: "+10 pies a velocidad de caminar sin armadura ni escudo (→+15 Nv.6 →+20 Nv.10 →+25 Nv.14 →+30 Nv.18). En Nv.9: puedes correr por superficies verticales y sobre líquidos sin caer durante el movimiento."
+      d: "Mientras no llevas armadura ni escudo, tu Velocidad aumenta: +10 pies (Nv.2), +15 (Nv.6), +20 (Nv.10), +25 (Nv.14), +30 (Nv.18)."
     },
     {
-      n: "Tradición Monástica",
-      nv: 3,
-      d: "Eliges tu subclase (Tradición Monástica / Camino Monástico). Otorga rasgos en Nv.3, 6, 11 y 17."
+      n: "Metabolismo Sobrenatural (Uncanny Metabolism)",
+      nv: 2,
+      a: "O",
+      d: "Cuando tiras iniciativa, puedes recuperar todos tus Puntos de Enfoque gastados; además tiras tu dado de Artes Marciales y recuperas PG = tu nivel de Monje + el resultado. Una vez por descanso largo. [Sólo 2024]"
     },
     {
-      n: "Desviar Proyectiles",
+      n: "Subclase de Monje (Tradición Monástica)",
       nv: 3,
-      d: "Reacción: al recibir un ataque de proyectil a distancia, reduces el daño en 1d10 + mod DES + nivel de Monje. Si lo reduces a 0, puedes gastar 1 Ki para devolver el proyectil (ataque a distancia 20/60 con competencia, como arma de monje)."
+      d: "Eliges una subclase. Concede rasgos en Nv.3, 6, 11 y 17. [2014: Tradición Monástica, mismos niveles]"
+    },
+    {
+      n: "Desviar Ataques (Deflect Attacks)",
+      nv: 3,
+      a: "R",
+      d: "Cuando un ataque te impacta y causa daño contundente, perforante o cortante, usas tu Reacción para reducir el daño en 1d10 + mod. DES + nivel de Monje. Si lo reduces a 0, puedes gastar 1 PE para redirigirlo: una criatura que veas a 5 pies (ataque cuerpo a cuerpo) o 60 pies (a distancia) hace una salvación de DES (CD de Enfoque) o sufre 2 dados de Artes Marciales + mod. DES de daño del mismo tipo (la mitad si la supera). [2014: Desviar Proyectiles: sólo ataques a distancia con arma; reduces 1d10 + mod. DES + nivel de Monje y, si llega a 0, puedes atrapar el proyectil y gastar 1 ki para devolverlo como ataque a distancia (20/60 pies) con la misma Reacción]"
     },
     {
       n: "Mejora de Característica",
       nv: 4,
-      d: "+2 a una característica o +1 a dos (máx. 20). También en Nv.8, 12, 16 y 19. Puedes tomar una dote en su lugar."
+      d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]"
     },
     {
-      n: "Golpe Aturdidor",
-      nv: 5,
-      d: "Al golpear con ataque de arma de monje o desarmado, gastas 1 Ki: el objetivo supera salvación CON (CD = 8 + comp + mod SAB) o queda Aturdido hasta el inicio de tu siguiente turno."
-    },
-    {
-      n: "Golpe Ki",
-      nv: 6,
-      d: "Tus ataques de arma de monje y desarmados cuentan como mágicos a efectos de superar resistencias e inmunidades."
-    },
-    {
-      n: "Evasión",
-      nv: 7,
-      d: "Cuando haces una tirada de salvación de DES contra un efecto que causa daño en éxito: si superas no recibes daño; si fallas solo recibes la mitad."
-    },
-    {
-      n: "Calma de la Mente",
-      nv: 7,
-      d: "No puedes ser Encantado ni Asustado."
-    },
-    {
-      n: "Caída Lenta",
+      n: "Caída Lenta (Slow Fall)",
       nv: 4,
-      d: "Reacción: reduces el daño de caída en 5 × nivel de Monje."
+      a: "R",
+      d: "Cuando caes, usas tu Reacción para reducir el daño de la caída en 5 × tu nivel de Monje."
     },
     {
-      n: "Cuerpo Puro",
+      n: "Ataque Extra (Extra Attack)",
+      nv: 5,
+      a: "A",
+      d: "Atacas dos veces al realizar la acción Atacar."
+    },
+    {
+      n: "Golpe Aturdidor (Stunning Strike)",
+      nv: 5,
+      a: "O",
+      d: "Una vez por turno, cuando impactas con un arma de monje o un golpe sin arma, puedes gastar 1 PE: el objetivo hace una salvación de CON (CD de Enfoque); si falla queda Aturdido hasta el inicio de tu siguiente turno; si la supera, su Velocidad se reduce a la mitad hasta el inicio de tu siguiente turno y el siguiente ataque contra él tiene Ventaja. [2014: gastas 1 ki; si falla queda aturdido hasta el final de tu siguiente turno; sin efecto si la supera]"
+    },
+    {
+      n: "Golpes Potenciados (Empowered Strikes)",
+      nv: 6,
+      d: "Tus golpes sin armas pueden infligir daño de fuerza en lugar de su tipo normal. [2014: Golpes Imbuidos de Ki: tus golpes sin armas cuentan como mágicos para superar resistencias e inmunidades]"
+    },
+    {
+      n: "Evasión (Evasion)",
+      nv: 7,
+      d: "Cuando una salvación de DES permite la mitad de daño, no sufres daño si la superas y sólo la mitad si fallas (no funciona si estás Incapacitado)."
+    },
+    {
+      n: "Quietud de Mente (Stillness of Mind)",
+      nv: 7,
+      d: "Con una acción, terminas un efecto sobre ti que te tenga hechizado o asustado. [Sólo 2014; en 2024 lo cubre Autorrestauración]"
+    },
+    {
+      n: "Movimiento Acrobático (Acrobatic Movement)",
+      nv: 9,
+      d: "Mientras no llevas armadura ni escudo, te mueves por superficies verticales y sobre líquidos durante tu turno sin caer."
+    },
+    {
+      n: "Concentración Elevada (Heightened Focus)",
       nv: 10,
-      d: "Inmunidad a enfermedades y veneno."
+      d: "Mejoras tus opciones de Foco: Ráfaga de Golpes hace 3 golpes sin armas por 1 PE; Defensa Paciente concede además PG temporales = 2 tiradas de tu dado de Artes Marciales; Paso del Viento permite llevar contigo a una criatura voluntaria Grande o menor adyacente. [Sólo 2024]"
     },
     {
-      n: "Lengua del Sol y la Luna",
+      n: "Autorrestauración (Self-Restoration)",
+      nv: 10,
+      d: "Al final de tu turno puedes terminar en ti una condición de Hechizado, Asustado o Envenenado. Además no sufres agotamiento por no comer ni beber. [Sólo 2024]"
+    },
+    {
+      n: "Pureza Corporal (Purity of Body)",
+      nv: 10,
+      d: "Eres inmune a enfermedades y veneno. [Sólo 2014]"
+    },
+    {
+      n: "Desviar Energía (Deflect Energy)",
       nv: 13,
-      d: "Entiendes todos los idiomas hablados y cualquier criatura que hable un idioma puede entenderte."
+      d: "Desviar Ataques funciona contra daño de cualquier tipo. [Sólo 2024]"
     },
     {
-      n: "Alma de Diamante",
+      n: "Lengua del Sol y la Luna (Tongue of the Sun and Moon)",
+      nv: 13,
+      d: "Entiendes todos los idiomas hablados y cualquier criatura que hable un idioma puede entenderte. [Sólo 2014]"
+    },
+    {
+      n: "Superviviente Disciplinado (Disciplined Survivor)",
       nv: 14,
-      d: "Competencia en todas las tiradas de salvación. Cuando falles una, puedes gastar 1 Ki para repetirla y usar el nuevo resultado."
+      a: "O",
+      d: "Ganas competencia en todas las salvaciones. Cuando fallas una salvación, puedes gastar 1 PE para repetirla y usar el nuevo resultado. [2014: Alma de Diamante: competencia en todas las salvaciones y gastas 1 ki para repetir una salvación fallida]"
     },
     {
-      n: "Alma Eterna",
+      n: "Concentración Perfecta (Perfect Focus)",
       nv: 15,
-      d: "No envejeces y no puedes ser envejecido mágicamente."
+      d: "Cuando tiras iniciativa y no usas Metabolismo Sobrenatural, recuperas Puntos de Enfoque hasta tener 4 si tienes menos. [Sólo 2024]"
     },
     {
-      n: "Cuerpo Vacío",
+      n: "Cuerpo Atemporal (Timeless Body)",
+      nv: 15,
+      d: "Tu cuerpo no envejece por magia ni sufre sus efectos; no necesitas comer ni beber. [Sólo 2014]"
+    },
+    {
+      n: "Defensa Superior (Superior Defense)",
       nv: 18,
-      d: "Gastas 4 Ki para volverte Invisible durante 1 minuto. Durante ese tiempo tienes resistencia a todo daño excepto el de fuerza. Además, puedes gastar 8 Ki para lanzar Proyección Astral sobre ti mismo (sin gastar espacio ni materiales)."
+      a: "O",
+      d: "Al inicio de tu turno puedes gastar 3 PE: durante 1 minuto (o hasta quedar Incapacitado) tienes resistencia a todo daño salvo de fuerza. [Sólo 2024]"
     },
     {
-      n: "Ser Perfecto",
-      nv: 20,
-      d: "(PHB 2014) Al tirar Iniciativa sin Ki, recuperas Ki = mod SAB (mínimo 4)."
+      n: "Cuerpo Vacío (Empty Body)",
+      nv: 18,
+      d: "Con una acción gastas 4 ki: 1 minuto invisible y con resistencia a todo daño salvo fuerza. Además puedes gastar 8 ki para lanzar Astral Projection sin componentes (sólo a ti). [Sólo 2014]"
     },
     {
-      n: "Ser Perfecto [PHB 2024]",
+      n: "Don Épico (Epic Boon)",
+      nv: 19,
+      d: "Ganas una dote de Don Épico (u otra dote para la que cumplas requisitos). [Sólo 2024; en 2014 es una mejora de característica más]"
+    },
+    {
+      n: "Cuerpo y Mente (Body and Mind)",
       nv: 20,
-      d: "(PHB 2024) Al tirar Iniciativa, si tienes menos de 4 Puntos de Enfoque, recuperas hasta tener 4."
+      d: "Tu DES y tu SAB aumentan en 4 (máx. 25). [Sólo 2024]"
+    },
+    {
+      n: "Yo Perfecto (Perfect Self)",
+      nv: 20,
+      d: "Cuando tiras iniciativa y no te quedan puntos de ki, recuperas 4. [Sólo 2014]"
     },
   ],
 
   /* ══════════════════════════════════════════════════════════════
-     SUBCLASES (TRADICIONES MONÁSTICAS)
+     SUBCLASES
   ══════════════════════════════════════════════════════════════ */
   subclases: {
 
     /* ── PHB 2014 ── */
     "Camino de la Mano Abierta [PHB 2014]": [
       {
-        n: "Técnica de la Mano Abierta",
+        n: "Técnica de la Mano Abierta (Open Hand Technique)",
         nv: 3,
-        d: "Cuando golpeas con uno de los ataques de Lluvia de Golpes, puedes imponer uno de los siguientes efectos al objetivo: Derribar (salvación DES o queda Tumbado), Empujar (salvación FUE o es empujado hasta 15 pies), Impedir (no puede usar Reacciones hasta el inicio de tu siguiente turno, sin salvación)."
+        a: "O",
+        d: "Cada vez que impactas con un ataque de tu Ráfaga de Golpes, puedes imponer uno de estos efectos: salvación de DES o queda Derribado; salvación de FUE o es empujado hasta 15 pies; no puede usar Reacciones hasta el final de tu siguiente turno."
       },
       {
-        n: "Integridad del Cuerpo",
+        n: "Integridad Corporal (Wholeness of Body)",
         nv: 6,
-        d: "Acción: te curas PG = 3 × nivel de Monje. 1/descanso largo."
+        a: "A",
+        d: "Con una acción recuperas PG = 3 × tu nivel de Monje. Una vez usado, necesitas un descanso largo."
       },
       {
-        n: "Tranquilidad",
+        n: "Tranquilidad (Tranquility)",
         nv: 11,
-        d: "Al terminar un Descanso Largo, ganas el efecto del conjuro Santuario (duración hasta el inicio del siguiente combate o tu próximo Descanso Largo). CD de salvación = 8 + comp + mod SAB."
+        d: "Al final de un descanso largo ganas el efecto de Sanctuary hasta el siguiente descanso largo (CD de salvación = 8 + comp. + mod. SAB)."
       },
       {
-        n: "Palma Vibrante",
+        n: "Palma Vibrante (Quivering Palm)",
         nv: 17,
-        d: "Al golpear con un ataque desarmado, gastas 3 Ki para establecer vibraciones letales que duran días = tu nivel de Monje. Como Acción puedes terminarlas: el objetivo sufre 10d10 de daño (salvación CON CD = 8 + comp + mod SAB para reducir a la mitad). Las vibraciones terminan si usas esta acción, si el objetivo las recibe de nuevo o al acabar su duración."
+        a: "A",
+        d: "Al impactar con un golpe sin arma, gastas 3 ki para implantar vibraciones imperceptibles que duran días = tu nivel de Monje. Más tarde, con una acción, las terminas: el objetivo hace una salvación de CON; si falla, cae a 0 PG; si la supera, sufre 10d10 de daño necrótico. Sólo una criatura a la vez; puedes terminarlas sin daño si quieres."
       },
     ],
 
     "Camino de las Sombras [PHB 2014]": [
       {
-        n: "Artes de las Sombras",
+        n: "Artes de las Sombras (Shadow Arts)",
         nv: 3,
-        d: "Puedes gastar 2 Ki para lanzar Oscuridad, Darkvision, Pasar sin Rastro o Silencio sin componentes materiales."
+        a: "A",
+        d: "Con una acción gastas 2 ki para lanzar Darkness, Darkvision, Pass Without Trace o Silence sin componentes materiales. Además aprendes el truco Minor Illusion."
       },
       {
-        n: "Paso en las Sombras",
+        n: "Paso de las Sombras (Shadow Step)",
         nv: 6,
-        d: "AA: cuando estás en oscuridad o luz tenue, te teletransportas hasta 60 pies a otro espacio de oscuridad o luz tenue visible. Luego tienes ventaja en el primer ataque cuerpo a cuerpo del turno."
+        a: "B",
+        d: "Mientras estés en luz tenue u oscuridad, como Acción Adicional te teletransportas hasta 60 pies a un espacio libre que veas también en luz tenue u oscuridad; tienes Ventaja en el primer ataque cuerpo a cuerpo que hagas antes del final del turno."
       },
       {
-        n: "Manto de Sombras",
+        n: "Manto de Sombras (Cloak of Shadows)",
         nv: 11,
-        d: "AA + 1 Ki: te vuelves Invisible hasta el inicio de tu siguiente turno."
+        a: "A",
+        d: "Mientras estés en luz tenue u oscuridad, con una acción te vuelves invisible hasta que ataques, lances un conjuro o estés en luz brillante."
       },
       {
-        n: "Oportunista en las Sombras",
+        n: "Oportunista (Opportunist)",
         nv: 17,
-        d: "Reacción: cuando una criatura a 5 pies es atacada por otro ser, puedes atacarla con un ataque desarmado."
+        a: "R",
+        d: "Cuando una criatura a 5 pies de ti recibe un impacto de un ataque de otra criatura distinta de ti, usas tu Reacción para hacerle un ataque cuerpo a cuerpo."
       },
     ],
 
     "Camino de los Cuatro Elementos [PHB 2014]": [
       {
-        n: "Discípulo de los Elementos",
+        n: "Discípulo de los Elementos (Disciple of the Elements)",
         nv: 3,
-        d: "Aprendes Sintonía Elemental (gratis) y 2 Disciplinas Elementales de la lista. Ganas más disciplinas en Nv.6 (1), Nv.11 (1) y Nv.17 (1). Muchas disciplinas son equivalentes a conjuros que se lanzan gastando Ki (2 Ki = espacio Nv.1; Ki adicional para niveles superiores). Disciplinas disponibles: Sintonía Elemental, Ola de Viento Rugiente, Colmillo de Serpiente de Fuego, Puño del Viento Ininterrumpido, Caballera de Llamas, Forma del Río Fluyente, Latigazo de Agua, Montura del Viento, Muro de Sombras, Golpe de Cuatro Truenos, Llamas del Fénix, Jinete del Viento, Ola de Tierra Rodante, Vuelta del Viento, Toque del Dragón Negro, Control de la Llama, Terremoto, Marejada Helada, Respiración de Invierno."
-      },
-      {
-        n: "Disciplinas adicionales",
-        nv: 6,
-        d: "Aprendes 1 Disciplina Elemental adicional. Además, puedes gastar Ki adicional para lanzar disciplinas a niveles de conjuro superiores (1 Ki por nivel adicional)."
-      },
-      {
-        n: "Golpe Elemental",
-        nv: 11,
-        d: "Aprendes 1 Disciplina adicional. Cuando golpeas con un ataque de arma de monje, puedes gastar 1 Ki para infligir 1d6 adicional del tipo elemental de una disciplina conocida."
-      },
-      {
-        n: "Cuerpo del Avatar",
-        nv: 17,
-        d: "Aprendes 1 Disciplina adicional. Eres inmune al veneno y a la enfermedad. Además, cuentas como elemental para efectos que afecten a elementales."
+        a: "A",
+        d: "Conoces Atunamiento Elemental (Elemental Attunement: con una acción creas un efecto sensorial inofensivo de aire, tierra, agua o fuego, enciendes o apagas una vela, enfrías o calientas 1 libra de material o moldeas elementos) y una disciplina elemental más; aprendes otra en Nv.6, 11 y 17 (puedes cambiar una al aprender otra). Las disciplinas que lanzan conjuros no requieren componentes materiales. Desde Nv.5, puedes gastar ki adicional para subir el nivel del conjuro (+1 por ki; máximo de ki por conjuro: 3 en Nv.5-8, 4 en 9-12, 5 en 13-16, 6 en 17-20). Cualquier nivel: Colmillos de la Serpiente de Fuego (1 ki: alcance +10 pies y daño de fuego; +1 ki al impactar = +1d10), Puño de los Cuatro Truenos (2 ki: Thunderwave), Puño del Aire Inquebrantable (2+ ki: salvación de FUE a 30 pies, 3d10 contundente +1d10 por ki extra, empuja 20 pies y derriba), Ráfaga de los Espíritus del Vendaval (2 ki: Gust of Wind), Dar Forma al Río Fluyente (1 ki: controlas agua/hielo en 30 pies), Golpe Barrido de Ceniza (2 ki: Burning Hands), Látigo de Agua (2+ ki: salvación de DES a 30 pies, 3d10 contundente +1d10 por ki extra, derriba o atrae 25 pies). Nv.6: Agarre del Viento del Norte (3 ki: Hold Person), Gong de la Cumbre (3 ki: Shatter). Nv.11: Llamas del Fénix (4 ki: Fireball), Postura de Niebla (4 ki: Gaseous Form), Cabalgar el Viento (4 ki: Fly). Nv.17: Aliento del Invierno (6 ki: Cone of Cold), Defensa de la Montaña Eterna (5 ki: Stoneskin), Río de Llama Hambrienta (5 ki: Wall of Fire), Ola de Tierra Rodante (6 ki: Wall of Stone)."
       },
     ],
 
-    /* ── PHB 2024 ── */
-    "Camino de la Mano Abierta [PHB 2024]": [
-      {
-        n: "Técnica de la Mano Abierta",
-        nv: 3,
-        d: "Al golpear con un ataque de Lluvia de Golpes, impones uno de los siguientes efectos: Aturdir (sin acción de reacción hasta el inicio de tu siguiente turno), Empujar (salvación FUE o empujado hasta 15 pies), Derribar (salvación DES o cae Tumbado)."
-      },
-      {
-        n: "Integridad del Cuerpo",
-        nv: 6,
-        d: "AA: tiras tu Dado de Artes Marciales y recuperas PG = resultado + mod SAB (mínimo 1 PG)."
-      },
-      {
-        n: "Tranquilidad",
-        nv: 11,
-        d: "Al terminar un Descanso Largo, ganas el efecto de Santuario hasta el inicio del siguiente combate. CD = 8 + comp + mod SAB."
-      },
-      {
-        n: "Palma Vibrante",
-        nv: 17,
-        d: "Al golpear con un ataque desarmado, gastas 3 Ki para establecer vibraciones letales. Como Acción las terminas: el objetivo sufre 10d10 daño (CON para la mitad). Duración = nivel de Monje en días."
-      },
-    ],
 
-    "Camino de las Sombras [PHB 2024]": [
-      {
-        n: "Artes de las Sombras",
-        nv: 3,
-        d: "Aprendes los trucos Tinieblas Menores (Minor Darkness) y Toque de los Muertos (Chill Touch). Puedes gastar 1 Ki para lanzar Oscuridad o Pasar sin Rastro sin componentes materiales."
-      },
-      {
-        n: "Paso en las Sombras",
-        nv: 6,
-        d: "AA: en oscuridad o luz tenue, teletransportación de hasta 60 pies a otro punto de oscuridad o luz tenue. Tienes ventaja en el primer ataque cuerpo a cuerpo de ese turno."
-      },
-      {
-        n: "Manto de Sombras",
-        nv: 11,
-        d: "AA + 1 Ki: Invisible hasta el inicio de tu siguiente turno."
-      },
-      {
-        n: "Oportunista en las Sombras",
-        nv: 17,
-        d: "Reacción: cuando una criatura a 5 pies es atacada por otro ser, puedes hacerle un ataque desarmado."
-      },
-    ],
-
-    "Camino del Guerrero Elemental [PHB 2024]": [
-      {
-        n: "Discípulo de los Elementos",
-        nv: 3,
-        d: "Aprendes el truco Elementalismo (Elementalism) y 2 Disciplinas Elementales. Nuevas disciplinas en Nv.6 (1 total 3), Nv.11 (1 total 4) y Nv.17 (1 total 5). Cada disciplina tiene coste en Ki y produce efectos elementales (ácido, frío, fuego, rayo o trueno). Las disciplinas son versiones simplificadas y mejoradas respecto a la versión 2014: menores costes de Ki y efectos más claros."
-      },
-      {
-        n: "Golpe Elemental",
-        nv: 6,
-        d: "Cuando golpeas con un ataque de arma de monje o desarmado, puedes gastar 1 Ki para infligir 1d6 adicional de un tipo elemental de una de tus disciplinas conocidas."
-      },
-      {
-        n: "Impulso Elemental",
-        nv: 11,
-        d: "Cuando dañas a una criatura con una disciplina elemental, puedes empujarla hasta 10 pies o hacerla caer Tumbada (salvación FUE o DES, CD conjuro). Además, aprendes 1 disciplina adicional."
-      },
-      {
-        n: "Cuerpo del Avatar",
-        nv: 17,
-        d: "Resistencia permanente a ácido, frío, fuego, rayo y trueno. Aprendes 1 disciplina adicional."
-      },
-    ],
-
-    "Camino de la Misericordia [PHB 2024]": [
-      {
-        n: "Manos de Curación",
-        nv: 3,
-        d: "Competencia en Medicina e Introspección (Insight). Cuando usas Lluvia de Golpes, puedes reemplazar uno de los golpes por un toque curativo: el objetivo recupera PG = 1 Dado de Artes Marciales + mod SAB (mínimo 1). No funciona en constructos ni no-muertos."
-      },
-      {
-        n: "Manos de Daño",
-        nv: 3,
-        d: "Cuando golpeas con un ataque desarmado, puedes gastar 1 Ki para infligir daño necrótico adicional = 1 Dado de Artes Marciales + mod SAB. Además puedes aplicar la condición Envenenado durante 1 minuto (salvación CON para evitarlo)."
-      },
-      {
-        n: "Médico del Alma",
-        nv: 6,
-        d: "Puedes gastar 5 Ki para lanzar Restauración Menor o Lesser Restoration. Además, cuando usas Manos de Curación, también eliminas una de estas condiciones: Cegado, Ensordecido, Paralizdo, Envenenado o un efecto de reducción de velocidad."
-      },
-      {
-        n: "Toque de la Muerte",
-        nv: 11,
-        d: "Cuando reduces a 0 PG a una criatura con Manos de Daño, puedes gastar 1 Ki para que un aliado a 30 pies recupere PG = tu Dado de Artes Marciales + mod SAB."
-      },
-      {
-        n: "Médico Misericordioso",
-        nv: 17,
-        d: "Puedes gastar 10 Ki y 1 acción para lanzar Revivificar sin componentes materiales. Puedes hacerlo una vez por Descanso Largo sin gastar Ki."
-      },
-    ],
-
-    /* ── Sword Coast Adventurer's Guide ── */
+    /* ── SCAG ── */
     "Camino de la Larga Muerte [SCAG]": [
       {
-        n: "Toque de la Muerte",
+        n: "Toque de la Muerte (Touch of Death)",
         nv: 3,
-        d: "Cuando reduces a 0 PG a una criatura a 5 pies (no constructo ni no-muerto), ganas PG temporales = mod SAB + nivel de Monje."
+        a: "O",
+        d: "Cuando reduces a una criatura a 0 PG a 5 pies de ti, ganas PG temporales = mod. SAB + nivel de Monje (mín. 1)."
       },
       {
-        n: "Hora de la Cosecha",
+        n: "Hora de la Cosecha (Hour of Reaping)",
         nv: 6,
-        d: "Acción: cada criatura hostil a 30 pies supera salvación SAB (CD = 8 + comp + mod SAB) o queda Asustada de ti hasta el fin de tu siguiente turno. 1/descanso corto o largo."
+        a: "A",
+        d: "Con una acción, cada criatura a 30 pies que pueda verte hace una salvación de SAB o queda Asustada hasta el final de tu siguiente turno."
       },
       {
-        n: "Escudo Maseante de Muerte",
+        n: "Maestría sobre la Muerte (Mastery of Death)",
         nv: 11,
-        d: "Cuando una criatura a 5 pies te golpea, puedes gastar 1 Ki para reducir el daño en 1d10 + mod SAB. Si el daño se reduce a 0, la criatura recibe ese mismo valor como daño necrótico."
+        a: "O",
+        d: "Cuando te reducen a 0 PG, puedes gastar 1 ki (sin acción) para quedarte a 1 PG."
       },
       {
-        n: "Toque Superior de la Muerte",
+        n: "Toque de la Larga Muerte (Touch of the Long Death)",
         nv: 17,
-        d: "Al principio de cada uno de tus turnos, si tienes 0 PG y no has muerto, puedes gastar Ki para recuperar PG: cada 1 Ki = 5 PG, hasta tu máximo. No puedes usarlo si estás muerto. Además, Toque de la Muerte ya no tiene restricción de tipo (funciona con constructos y no-muertos también)."
+        a: "A",
+        d: "Con una acción, tocas a una criatura a 5 pies y gastas de 1 a 10 ki: hace una salvación de CON y sufre 2d10 de daño necrótico por ki gastado (la mitad si la supera)."
       },
     ],
 
+
+    /* ── SCAG/XGtE ── */
     "Camino del Alma del Sol [SCAG/XGtE]": [
       {
-        n: "Rayo Radiante",
+        n: "Rayo de Sol Radiante (Radiant Sun Bolt)",
         nv: 3,
-        d: "Puedes lanzar Lanza de Fuego (Fire Bolt) y Luz de las Hadas (Sacred Flame) a voluntad. Además, cuando haces un ataque de arma de monje desarmado, puedes gastar 1 Ki para que infliga daño radiante en lugar del normal y añadir 1d4 al daño."
+        a: "O",
+        d: "Ganas un ataque especial de conjuro a distancia (alcance 30 pies, eres competente) que haces con la acción Atacar en lugar de un golpe: usa DES para ataque y daño, daño radiante con tu dado de Artes Marciales. Cuando lo usas como parte de Atacar, puedes gastar 1 ki para hacerlo dos veces como Acción Adicional."
       },
       {
-        n: "Tormenta Radiante",
+        n: "Golpe de Arco Abrasador (Searing Arc Strike)",
         nv: 6,
-        d: "Gastas 2 Ki para crear una explosión solar de 20 pies de radio centrada en ti: daño radiante = 2d10 + mod SAB a cada criatura en el área (salvación DEX para reducir a la mitad)."
+        a: "B",
+        d: "Tras realizar la acción Atacar, puedes gastar 2 ki para lanzar Burning Hands como Acción Adicional; cada ki adicional sube el nivel del conjuro en 1 (máximo de ki gastable = la mitad de tu nivel de Monje)."
       },
       {
-        n: "Esfera Solar",
+        n: "Estallido Solar Abrasador (Searing Sunburst)",
         nv: 11,
-        d: "Gastas 4 Ki para lanzar una esfera ardiente a un espacio visible a 60 pies: la esfera inflige 20d6 de daño radiante en una explosión de 20 pies (salvación DEX para reducir a la mitad) y permanece durante 1 minuto emitiendo luz. Gastas 2 Ki adicionales para moverla 30 pies como AA."
+        a: "A",
+        d: "Con una acción lanzas una esfera hasta un punto a 150 pies que estalla en 20 pies de radio: salvación de CON o 2d6 de daño radiante (sin cobertura total opaca). Puedes gastar hasta 3 ki: +2d6 de daño por ki."
       },
       {
-        n: "Explosión del Sol",
+        n: "Escudo Solar (Sun Shield)",
         nv: 17,
-        d: "Gastas 4 Ki para lanzar un rayo de luz solar que atraviesa hasta tres criaturas en una línea de 60×5 pies: 10d10 de daño radiante (salvación CON para reducir a la mitad). Las criaturas que fallen quedan Cegadas hasta el inicio de su siguiente turno."
+        a: "B",
+        d: "Emites luz brillante 30 pies y tenue 30 pies más (la activas o apagas con Acción Adicional). Cuando una criatura te impacta con un ataque cuerpo a cuerpo, usas tu Reacción para infligirle 5 + mod. SAB de daño radiante."
       },
     ],
 
-    /* ── Xanathar's Guide to Everything ── */
+
+    /* ── XGtE ── */
     "Camino del Maestro Borracho [XGtE]": [
       {
-        n: "Borrachera del Arte",
+        n: "Competencias Adicionales (Bonus Proficiencies)",
         nv: 3,
-        d: "Competencia en Actuación. Cuando usas Lluvia de Golpes, puedes gastar 1 Ki para que parezca accidental e inesperado. Las criaturas a 5 pies de tu objetivo tienen desventaja en ataques de oportunidad contra ti hasta el inicio de tu siguiente turno."
+        d: "Ganas competencia en Interpretación y en suministros de cervecero (si no las tenías)."
       },
       {
-        n: "Tambaleante",
+        n: "Técnica del Borracho (Drunken Technique)",
         nv: 3,
-        d: "Cuando usas Desengancharse como AA (Viento que Golpea), puedes gastar 1 Ki adicional para hacer que un atacante que te haya fallado este turno no pueda hacer ataques de oportunidad contra ti hasta el inicio de su siguiente turno."
+        d: "Cuando usas Ráfaga de Golpes, ganas los beneficios de la acción Retirarse y tu Velocidad aumenta 10 pies hasta el final del turno."
       },
       {
-        n: "Golpe Redirigido",
+        n: "Balanceo Ebrio (Tipsy Sway)",
         nv: 6,
-        d: "Reacción: cuando fallas un ataque, puedes gastar 2 Ki y redirigir el ataque hacia otra criatura a 5 pies del objetivo original (tirada de ataque enfrentada; si el nuevo objetivo es más fácil de golpear, el ataque impacta automáticamente)."
+        a: "R",
+        d: "Levantarte de Derribado te cuesta 5 pies de movimiento (no la mitad de tu Velocidad). Además, cuando una criatura falla un ataque cuerpo a cuerpo contra ti, usas tu Reacción y gastas 1 ki para que ese ataque impacte a otra criatura de tu elección (no el atacante) que veas a 5 pies de ti."
       },
       {
-        n: "Paso de la Grulla Borracha",
+        n: "Suerte del Borracho (Drunkard's Luck)",
         nv: 11,
-        d: "Puedes moverte a través de espacios de criaturas hostiles sin penalización. Además, cuando usas Lluvia de Golpes, los ataques no provocan ataques de oportunidad hasta el final de tu turno."
+        a: "O",
+        d: "Cuando haces una prueba de característica, tirada de ataque o salvación con Desventaja, puedes gastar 2 ki para anular la Desventaja en esa tirada."
       },
       {
-        n: "Jarro Inagotable",
+        n: "Frenesí de Ebriedad (Intoxicated Frenzy)",
         nv: 17,
-        d: "Cuando usas Lluvia de Golpes y golpeas a una criatura, puedes gastar 1 Ki para que esa criatura necesite superar una salvación de CON (CD = 8 + comp + mod SAB) o quede Aturdida hasta el final de su próximo turno (como Golpe Aturdidor, pero sin coste de Ki adicional)."
+        d: "Al usar Ráfaga de Golpes, puedes hacer hasta 3 ataques adicionales (hasta 5 en total), siempre que cada ataque de la Ráfaga apunte a una criatura distinta este turno."
       },
     ],
 
     "Camino del Kensei [XGtE]": [
       {
-        n: "Armas del Kensei",
+        n: "Camino del Kensei (Path of the Kensei)",
         nv: 3,
-        d: "Elige 2 tipos de arma (una cuerpo a cuerpo, una a distancia); se convierten en armas de Kensei para ti (tratatadas como armas de monje). Ganas una arma de Kensei adicional en Nv.6, 11 y 17. Si el arma es cuerpo a cuerpo: cuando atacas con ella puedes gastar 1 Ki para añadir 1d4 a la tirada de daño hasta el final del turno. Si es a distancia: puedes usarla como parte de Lluvia de Golpes. Llevar el arma de Kensei: +2 CA hasta el inicio de tu siguiente turno (Destreza del Kensei)."
+        a: "B",
+        d: "Armas de Kensei: eliges 2 tipos de arma (uno cuerpo a cuerpo y uno a distancia; simples o marciales sin Pesada ni Especial; el arco largo vale) y ganas competencia con ellas; cuentan como armas de monje (otro tipo más en Nv.6, 11 y 17). Parada Ágil: si haces un golpe sin arma como parte de Atacar y llevas un arma cuerpo a cuerpo de Kensei, ganas +2 a la CA hasta el inicio de tu siguiente turno. Disparo del Kensei: como Acción Adicional, tus ataques a distancia con arma de Kensei infligen +1d4 de daño este turno. Camino del Pincel: competencia con suministros de caligrafía o pintura."
       },
       {
-        n: "Un con la Hoja",
-        nv: 3,
-        d: "Las armas de Kensei cuentan como armas de monje (puedes usar DES y el Dado de Artes Marciales con ellas). Además, cuando las empuñas, no cuentan como armas de doble mano ni pesadas para ti a efectos de las restricciones del Monje."
-      },
-      {
-        n: "Golpe Afilado",
+        n: "Uno con la Hoja (One with the Blade)",
         nv: 6,
-        d: "Tus ataques con armas de Kensei cuentan como mágicos. También puedes usar tu AA después de atacar con arma de Kensei para hacer un ataque desarmado adicional."
+        a: "O",
+        d: "Tus ataques con armas de Kensei cuentan como mágicos. Además, al impactar con un arma de Kensei, puedes gastar 1 ki para infligir tu dado de Artes Marciales de daño adicional (una vez por turno)."
       },
       {
-        n: "Paso de Viento",
+        n: "Afilar la Hoja (Sharpen the Blade)",
         nv: 11,
-        d: "Cuando gastas Ki, tu velocidad de movimiento aumenta 10 pies hasta el final del turno y los ataques de oportunidad tienen desventaja contra ti."
+        a: "B",
+        d: "Como Acción Adicional gastas hasta 3 ki para dar a un arma de Kensei que toques un bonificador al ataque y al daño = ki gastados, durante 1 minuto o hasta usarlo de nuevo. No afecta a armas mágicas con bonificador."
       },
       {
-        n: "Maestro de la Espada",
+        n: "Precisión Infalible (Unerring Accuracy)",
         nv: 17,
-        d: "Tus ataques críticos con armas de Kensei hacen el daño máximo en lugar de doblar los dados. Además, cuando realizas Lluvia de Golpes con arma de Kensei, puedes añadir 1d10 de daño del tipo del arma a todos los ataques de esa lluvia."
+        a: "O",
+        d: "Una vez por turno, si fallas un ataque con un arma de monje, puedes repetir la tirada de ataque."
       },
     ],
 
-    /* ── Tasha's Cauldron of Everything ── */
+
+    /* ── TCE ── */
     "Camino de la Misericordia [TCE]": [
       {
-        n: "Manos de Curación",
+        n: "Implementos de Misericordia (Implements of Mercy)",
         nv: 3,
-        d: "Competencia en Medicina e Introspección. Al usar Lluvia de Golpes, puedes reemplazar un golpe por un toque que cura = 1 Dado de Artes Marciales + mod SAB. No funciona en constructos ni no-muertos."
+        d: "Ganas competencia en Perspicacia, Medicina y herramientas de herborista; recibes una máscara especial (cuervo, blanca lisa, rostro llorón, rostro risueño, calavera o mariposa)."
       },
       {
-        n: "Manos de Daño",
+        n: "Manos de Curación (Hand of Healing)",
         nv: 3,
-        d: "Al golpear con un ataque desarmado, gastas 1 Ki para infligir 1 Dado de Artes Marciales adicional de daño necrótico, y aplica Envenenado durante 1 minuto (salvación CON para evitarlo)."
+        a: "A",
+        d: "Con una acción gastas 1 ki para tocar a una criatura y restaurarle PG = 1 dado de Artes Marciales + mod. SAB. Puedes sustituir un golpe de tu Ráfaga de Golpes por este efecto sin gastar ki."
       },
       {
-        n: "Médico del Alma",
+        n: "Manos de Daño (Hand of Harm)",
+        nv: 3,
+        a: "O",
+        d: "Una vez por turno, al impactar con un golpe sin arma, puedes gastar 1 ki para infligir daño necrótico adicional = 1 dado de Artes Marciales + mod. SAB."
+      },
+      {
+        n: "Toque del Médico (Physician's Touch)",
         nv: 6,
-        d: "Gastas 5 Ki para lanzar Restauración Menor. Al usar Manos de Curación, también eliminas una de las siguientes condiciones: Cegado, Ensordecido, Paralizado, Envenenado, o reducción de velocidad."
+        d: "Manos de Curación también puede terminar una enfermedad o una condición: cegado, ensordecido, paralizado, envenenado o aturdido. Manos de Daño puede dejar al objetivo envenenado hasta el final de tu siguiente turno."
       },
       {
-        n: "Toque de la Muerte",
+        n: "Ráfaga de Curación y Daño (Flurry of Healing and Harm)",
         nv: 11,
-        d: "Cuando reduces a 0 PG con Manos de Daño, un aliado a 30 pies recupera PG = Dado de Artes Marciales + mod SAB."
+        a: "O",
+        d: "Al usar Ráfaga de Golpes, puedes sustituir cada golpe por Manos de Curación sin gastar ki, y usar Manos de Daño en los golpes de la Ráfaga sin gastar su ki (sigue limitado a una vez por turno)."
       },
       {
-        n: "Médico Misericordioso",
+        n: "Mano de la Misericordia Suprema (Hand of Ultimate Mercy)",
         nv: 17,
-        d: "Gastas 10 Ki para lanzar Revivificar sin materiales. 1/descanso largo sin coste."
+        a: "A",
+        d: "Con una acción tocas el cadáver de una criatura muerta hace menos de 24 horas y gastas 5 ki: vuelve a la vida con 4d10 + mod. SAB PG y se eliminan cegado, ensordecido, paralizado, envenenado y aturdido. Una vez por descanso largo."
       },
     ],
 
     "Camino del Ser Astral [TCE]": [
       {
-        n: "Brazos del Ser Astral",
+        n: "Brazos del Ser Astral (Arms of the Astral Self)",
         nv: 3,
-        d: "Gastas 1 Ki como AA para invocar brazos astrales que duran 10 minutos. Con ellos: puedes hacer ataques desarmados adicionales a 5 pies (usan SAB para ataque y daño), y el dado de daño es siempre el Dado de Artes Marciales (incluso para ataques a distancia en el rango de 10 pies). Los brazos te permiten usar Lluvia de Golpes con SAB."
+        a: "B",
+        d: "Como Acción Adicional gastas 1 ki: durante 10 minutos aparecen brazos espectrales. Al invocarlos, criaturas a 10 pies hacen salvación de DES o sufren daño de fuerza = 2 dados de Artes Marciales. Mientras duran: usas SAB en lugar de FUE en pruebas y salvaciones de FUE; puedes hacer golpes sin armas con ellos con 5 pies más de alcance, usando SAB para ataque y daño, y el daño es de fuerza."
       },
       {
-        n: "Visage del Ser Astral",
+        n: "Rostro del Ser Astral (Visage of the Astral Self)",
         nv: 6,
-        d: "Gastas 1 Ki como AA para invocar el visage de tu ser astral durante 10 minutos: ventaja en Perspicacia e Intimidación, puedes ver criaturas invisibles hasta 30 pies, eres inmune a condiciones de Asustado y Encantado."
+        a: "B",
+        d: "Como Acción Adicional gastas 1 ki (o con Brazos) para invocar un rostro espectral 10 minutos: Visión Astral (ves 120 pies en oscuridad mágica o no), Sabiduría del Espíritu (Ventaja en Perspicacia y Intimidación) y Palabra del Espíritu (hablas a una criatura a 60 pies o a todos en 600 pies, sólo audible para quien elijas)."
       },
       {
-        n: "Cuerpo del Ser Astral",
+        n: "Cuerpo del Ser Astral (Body of the Astral Self)",
         nv: 11,
-        d: "Gastas 1 Ki adicional al invocar los Brazos para manifestar también el torso astral: ganas resistencia a daño contundente, perforante y cortante; cuando una criatura a 5 pies te golpea, puede recibir daño de fuerza = tu Dado de Artes Marciales + mod SAB."
+        a: "R",
+        d: "Con Brazos y Rostro activos aparece un cuerpo espectral. Desviar Energía: usas tu Reacción para reducir daño de ácido, frío, fuego, fuerza, rayo o trueno en 1d10 + mod. SAB (mín. 1). Brazos Potenciados: una vez por turno, al impactar con los brazos astrales, +1 dado de Artes Marciales de daño."
       },
       {
-        n: "Ser Astral Completo",
+        n: "Ser Astral Despierto (Awakened Astral Self)",
         nv: 17,
-        d: "Gastas 10 Ki para manifestar tu ser astral completo durante 10 minutos: obtienes todos los beneficios de Brazos, Visage y Cuerpo del Ser Astral simultáneamente sin coste adicional. Velocidad de vuelo = velocidad de caminar."
+        a: "B",
+        d: "Como Acción Adicional gastas 5 ki: invocas brazos, rostro y cuerpo despiertos 10 minutos. Armadura del Espíritu: +2 a la CA. Ráfaga Astral: al usar Ataque Extra atacas tres veces en lugar de dos si todos los ataques usan los brazos astrales."
       },
     ],
 
-    /* ── Fizban's Treasury of Dragons ── */
+
+    /* ── FToD ── */
     "Camino del Dragón Ascendente [FToD]": [
       {
-        n: "Herencia Dracónica",
+        n: "Discípulo Dracónico (Draconic Disciple)",
         nv: 3,
-        d: "Aprendes el idioma Dracónico. Eliges un tipo de dragón cromático o metálico que determina el tipo de daño elemental de tus habilidades. Puedes cambiar el tipo al terminar un Descanso Largo."
+        a: "O",
+        d: "Presencia Dracónica: si fallas una prueba de CAR (Intimidación o Persuasión), puedes repetirla con tu Reacción (una vez por descanso largo). Golpe Dracónico: tus golpes sin armas pueden infligir daño ácido, frío, fuego, rayo o veneno. Lengua de Dragones: aprendes Dracónico u otro idioma."
       },
       {
-        n: "Aspecto del Dragón",
+        n: "Aliento del Dragón (Breath of the Dragon)",
         nv: 3,
-        d: "Cuando haces Lluvia de Golpes, puedes manifestar rasgos dracónicos: tus ataques infligen tu tipo de daño elemental en lugar del normal, y puedes empujar 10 pies a un objetivo (FUE para resistir). Gastas 1 Ki para que ambos ataques de la Lluvia de Golpes tengan el beneficio elemental."
+        a: "O",
+        d: "Sustituyes un ataque de la acción Atacar por un cono de 20 pies o línea de 30 pies × 5 pies de energía dracónica: salvación de DES (CD de ki) o sufren 2 dados de Artes Marciales de daño (la mitad si la superan); 3 dados desde Nv.11. Usos = tu bonificador de competencia por descanso largo; puedes gastar 2 ki para usos extra."
       },
       {
-        n: "Aliento del Dragón",
+        n: "Alas Desplegadas (Wings Unfurled)",
         nv: 6,
-        d: "Gastas 2 Ki como AA para exhalar un cono de 30 pies de energía elemental: daño = 3 Dados de Artes Marciales del tipo de tu herencia (salvación DEX o CON —a tu elección— para reducir a la mitad). CD = 8 + comp + mod SAB."
+        a: "O",
+        d: "Al usar Paso del Viento, despliegas alas espectrales y tienes Velocidad de vuelo igual a tu Velocidad hasta el final del turno. Usos = tu bonificador de competencia por descanso largo."
       },
       {
-        n: "Alas del Dragón",
+        n: "Aspecto del Wyrm (Aspect of the Wyrm)",
         nv: 11,
-        d: "Gastas 2 Ki como AA para manifestar alas de dragón durante 10 minutos: velocidad de vuelo = velocidad de caminar."
+        a: "B",
+        d: "Como Acción Adicional creas un aura de 10 pies durante 1 minuto: Presencia Aterradora (criatura en el aura hace salvación de SAB o queda asustada 1 minuto) o Resistencia (tú y tus aliados tenéis resistencia a ácido, frío, fuego, rayo o veneno, a tu elección). Una vez por descanso largo o gastando 3 ki."
       },
       {
-        n: "Aspecto del Wyrm",
+        n: "Aspecto Ascendente (Ascendant Aspect)",
         nv: 17,
-        d: "Gastas 6 Ki para asumir el Aspecto del Wyrm durante 1 minuto: todas las habilidades dracónicas mejoradas simultáneamente; aura de 30 pies que aterra a criaturas hostiles (salvación SAB o Asustadas); resistencia al tipo de daño de tu herencia; criaturas derribadas por tus ataques quedan también Asustadas 1 turno."
+        d: "Aliento Aumentado: gastas 1 ki para que tu Aliento del Dragón sea cono de 60 pies o línea de 90 pies con 4 dados de Artes Marciales. Vista Ciega 10 pies. Furia Explosiva: criaturas de tu elección en el aura de Aspecto del Wyrm hacen salvación de DES o sufren 3d10 de daño ácido, frío, fuego, rayo o veneno."
       },
     ],
 
-    /* ── Tal'Dorei Campaign Setting Reborn ── */
+
+    /* ── TCSR ── */
     "Camino del Alma Cobalt [TCSR]": [
       {
-        n: "Erudición Mística",
+        n: "Erudición Mística (Mystical Erudition)",
         nv: 3,
-        d: "Aprendes 1 idioma y ganas competencia en una de las siguientes habilidades: Arcanos, Historia, Investigación, Naturaleza o Religión. Si ya tienes competencia en la elegida, puedes doblar tu bonificador de competencia en ella. Repites este rasgo en Nv.6, 11 y 17 (acumulando hasta 4 idiomas y habilidades)."
+        d: "Aprendes un idioma y ganas competencia en una habilidad (Arcanos, Historia, Investigación, Naturaleza o Religión); si ya eras competente, duplicas tu bonificador. Ganas otro idioma y habilidad en Nv.11 y 17."
       },
       {
-        n: "Extraer Aspectos",
+        n: "Extraer Aspectos (Extract Aspects)",
         nv: 3,
-        d: "Cuando golpeas con uno de los ataques de Lluvia de Golpes, aprendes las vulnerabilidades, resistencias, inmunidades al daño e inmunidades a condiciones del objetivo. Además, mientras la criatura esté marcada y te ataque, puedes usar Reacción para hacerle un ataque desarmado cuando falle. Usos = 1 (Nv.3) → 2 (Nv.6) → 3 (Nv.17) por descanso corto o largo."
+        a: "R",
+        d: "Cuando impactas con un ataque de tu Ráfaga de Golpes puedes analizar a la criatura: aprendes sus vulnerabilidades, resistencias, inmunidades al daño y a condiciones. Si una criatura analizada te falla un ataque, usas tu Reacción para hacerle un golpe sin arma si está a tu alcance (dura hasta un descanso)."
       },
       {
-        n: "Contraataque Preternatural",
+        n: "Extorsionar la Verdad (Extort Truth)",
         nv: 6,
-        d: "Reacción: cuando una criatura falla un ataque contra ti, puedes realizarle inmediatamente un ataque desarmado. Además, al usar Extraer Aspectos sobre una criatura, puedes gastar 1 Ki para que tenga desventaja en la salvación CON de Golpe Aturdidor hasta tu siguiente turno."
+        a: "O",
+        d: "Al impactar con un golpe sin arma, gastas 1 ki para forzar una salvación de CAR: si falla, no puede mentir deliberadamente y las pruebas de CAR contra ella tienen Ventaja hasta 10 minutos. Sabes el resultado de la salvación; puedes tocarla sin dañarla."
       },
       {
-        n: "Mente de Mercurio",
+        n: "Mente de Mercurio (Mind of Mercury)",
         nv: 11,
-        d: "Una vez por turno, si ya usaste tu Reacción, puedes gastar 1 Ki para tomar una Reacción adicional. Solo puedes usar una Reacción por desencadenante."
+        a: "O",
+        d: "Una vez por turno, si ya has usado tu Reacción, puedes gastar 1 ki para usar una Reacción adicional."
       },
       {
-        n: "Descarga Debilitante",
+        n: "Descarga Debilitante (Debilitating Barrage)",
         nv: 17,
-        d: "Cuando golpeas con uno de los ataques de Lluvia de Golpes, puedes gastar 3 Ki para imponer vulnerabilidad a un tipo de daño a tu elección durante 1 minuto (o hasta que reciba daño de ese tipo). La criatura debe fallar una salvación de CON (CD = 8 + comp + mod SAB) para ser afectada."
+        a: "O",
+        d: "Al impactar con un golpe sin arma, gastas 3 ki para dar a la criatura vulnerabilidad a un tipo de daño durante 1 minuto (o hasta que sufra ese daño); una resistencia se suprime; la inmunidad no cambia. No puedes afectar a la misma criatura de nuevo en 24 horas."
       },
     ],
 
-  }, // fin subclases
-}; // fin CLASE_MONJE
+
+    /* ── PHB 2024 ── */
+    "Camino de la Mano Abierta [PHB 2024]": [
+      {
+        n: "Técnica de la Mano Abierta (Open Hand Technique)",
+        nv: 3,
+        a: "O",
+        d: "Cada vez que impactas con un ataque de tu Ráfaga de Golpes, puedes imponer un efecto: Aturdir (Addle): el objetivo no puede hacer Ataques de Oportunidad hasta el inicio de su siguiente turno. Empujar (Push): salvación de FUE o es empujado hasta 15 pies. Derribar (Topple): salvación de DES o queda Derribado."
+      },
+      {
+        n: "Integridad Corporal (Wholeness of Body)",
+        nv: 6,
+        a: "B",
+        d: "Como Acción Adicional tiras tu dado de Artes Marciales y recuperas PG = resultado + mod. SAB (mín. 1). Usos = mod. SAB (mín. 1) por descanso largo."
+      },
+      {
+        n: "Paso Veloz (Fleet Step)",
+        nv: 11,
+        d: "Cuando usas una Acción Adicional que no sea Paso del Viento, puedes usar Paso del Viento inmediatamente después de ella."
+      },
+      {
+        n: "Palma Vibrante (Quivering Palm)",
+        nv: 17,
+        a: "O",
+        d: "Al impactar con un golpe sin arma, gastas 4 PE para implantar vibraciones imperceptibles durante días = tu nivel de Monje. Después, las terminas (sin acción): el objetivo hace una salvación de CON; si falla sufre 10d12 de daño de fuerza, si la supera la mitad. Sólo una criatura a la vez."
+      },
+    ],
+
+    "Camino de las Sombras [PHB 2024]": [
+      {
+        n: "Artes de las Sombras (Shadow Arts)",
+        nv: 3,
+        d: "Oscuridad: gastas 1 PE para lanzar Darkness sin componentes y ver dentro de ella; al inicio de tu turno puedes mover el área hasta 60 pies. Visión en la Oscuridad: ganas 60 pies de Visión en la oscuridad (o +60 pies si ya la tenías). Figuras Sombrías: conoces Minor Illusion (SAB es tu característica de lanzamiento)."
+      },
+      {
+        n: "Paso de las Sombras (Shadow Step)",
+        nv: 6,
+        a: "B",
+        d: "Mientras estés totalmente en luz tenue u oscuridad, como Acción Adicional te teletransportas hasta 60 pies a un espacio libre que veas también en luz tenue u oscuridad; tienes Ventaja en el siguiente ataque cuerpo a cuerpo antes del final del turno."
+      },
+      {
+        n: "Paso de las Sombras Mejorado (Improved Shadow Step)",
+        nv: 11,
+        d: "Al usar Paso de las Sombras, puedes gastar 1 PE para eliminar el requisito de empezar y terminar en luz tenue u oscuridad; además puedes hacer un golpe sin arma inmediatamente después de teletransportarte."
+      },
+      {
+        n: "Capa de Sombras (Cloak of Shadows)",
+        nv: 17,
+        a: "A",
+        d: "Con una acción Mágica, totalmente en luz tenue u oscuridad, gastas 3 PE para envolverte en sombras 1 minuto (termina si quedas Incapacitado o terminas tu turno en luz brillante): ganas Invisibilidad, atraviesas espacios ocupados como terreno difícil y usas Ráfaga de Golpes sin gastar PE."
+      },
+    ],
+
+    "Camino del Guerrero Elemental [PHB 2024]": [
+      {
+        n: "Sintonía Elemental (Elemental Attunement)",
+        nv: 3,
+        a: "O",
+        d: "Al inicio de tu turno puedes gastar 1 PE para obtener energía elemental durante 10 minutos o hasta quedar Incapacitado. Alcance: tus golpes sin armas tienen +10 pies de alcance. Golpes Elementales: infliges daño de ácido, frío, fuego, rayo o trueno en lugar del normal, y el objetivo hace una salvación de FUE o lo mueves hasta 10 pies hacia ti o alejándolo."
+      },
+      {
+        n: "Manipular Elementos (Manipulate Elements)",
+        nv: 3,
+        d: "Conoces el conjuro Elementalism (SAB es tu característica de lanzamiento)."
+      },
+      {
+        n: "Estallido Elemental (Elemental Burst)",
+        nv: 6,
+        a: "A",
+        d: "Con una acción Mágica gastas 2 PE: estalla energía elemental en una esfera de 20 pies de radio a 120 pies; salvación de DES o sufren 3 dados de Artes Marciales de daño ácido, frío, fuego, rayo o trueno (a tu elección); la mitad si la superan."
+      },
+      {
+        n: "Zancada de los Elementos (Stride of the Elements)",
+        nv: 11,
+        d: "Mientras tu Sintonía Elemental está activa, tienes Velocidad de vuelo y de nado iguales a tu Velocidad."
+      },
+      {
+        n: "Epítome Elemental (Elemental Epitome)",
+        nv: 17,
+        d: "Mientras tu Sintonía Elemental está activa: tienes resistencia a un tipo de daño (ácido, frío, fuego, rayo o trueno) que puedes cambiar al inicio de tu turno; Paso del Viento aumenta tu Velocidad 20 pies y las criaturas cercanas al moverte sufren 1 dado de Artes Marciales de daño; una vez por turno añades 1 dado de Artes Marciales al daño de tus golpes sin armas."
+      },
+    ],
+
+    "Camino de la Misericordia [PHB 2024]": [
+      {
+        n: "Mano de Daño (Hand of Harm)",
+        nv: 3,
+        a: "O",
+        d: "Una vez por turno, al impactar a una criatura con un golpe sin arma y causar daño, puedes gastar 1 PE para infligir daño necrótico adicional = 1 dado de Artes Marciales + mod. SAB."
+      },
+      {
+        n: "Mano de Curación (Hand of Healing)",
+        nv: 3,
+        a: "A",
+        d: "Con una acción Mágica, gastas 1 PE para tocar a una criatura y restaurarle PG = 1 dado de Artes Marciales + mod. SAB. Puedes sustituir un golpe de tu Ráfaga de Golpes por este efecto sin gastar PE."
+      },
+      {
+        n: "Implementos de Misericordia (Implements of Mercy)",
+        nv: 3,
+        d: "Ganas competencia en Perspicacia y Medicina, y con herramientas de herborista."
+      },
+      {
+        n: "Toque del Médico (Physician's Touch)",
+        nv: 6,
+        d: "Mano de Daño impone además Envenenado hasta el final de tu siguiente turno. Mano de Curación puede terminar una condición: Cegado, Ensordecido, Paralizado, Envenenado o Aturdido."
+      },
+      {
+        n: "Ráfaga de Curación y Daño (Flurry of Healing and Harm)",
+        nv: 11,
+        a: "O",
+        d: "Al usar Ráfaga de Golpes, puedes sustituir cada golpe por Mano de Curación sin gastar PE; Mano de Daño funciona con los golpes de la Ráfaga sin gastar PE (sigue limitado a una vez por turno). Usos = mod. SAB por descanso largo."
+      },
+      {
+        n: "Mano de la Misericordia Suprema (Hand of Ultimate Mercy)",
+        nv: 17,
+        a: "A",
+        d: "Con una acción Mágica tocas el cadáver de una criatura muerta hace menos de 24 horas y gastas 5 PE: vuelve a la vida con 4d10 + mod. SAB PG y se eliminan Cegado, Ensordecido, Paralizado, Envenenado y Aturdido. Una vez por descanso largo."
+      },
+    ],
+  },
+};

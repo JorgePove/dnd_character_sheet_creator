@@ -27,12 +27,13 @@ function _crearWidget() {
     const widget = document.createElement('div');
     widget.id = 'dados-widget';
     widget.innerHTML = `
-        <div class="dados-widget-cab" onclick="dadosWidgetToggle()">
+        <div class="dados-widget-cab" onclick="dadosWidgetToggle()" role="button" tabindex="0"
+             aria-expanded="true" aria-label="Lanzador de dados" title="Minimizar el lanzador de dados">
             <div class="dados-widget-titulo">
                 <span class="dw-icono">⚄</span>
-                Lanzador de Dados
+                <span class="dw-titulo-txt">Lanzador de Dados</span>
             </div>
-            <button class="dados-widget-colapsar" title="Colapsar/Expandir" onclick="dadosWidgetToggle();event.stopPropagation()">▲</button>
+            <button class="dados-widget-colapsar" tabindex="-1" aria-hidden="true" onclick="dadosWidgetToggle();event.stopPropagation()">▲</button>
         </div>
         <div class="dados-widget-cuerpo">
             <div id="dw-filas-lista"></div>
@@ -49,16 +50,21 @@ function _crearWidget() {
 
     document.body.appendChild(widget);
 
-    // Restaurar estado de colapso
+    // Teclado: Enter / Espacio sobre la cabecera abren y cierran el widget
+    widget.querySelector('.dados-widget-cab').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.dadosWidgetToggle(); }
+    });
+
+    // Restaurar estado de colapso. Sin preferencia guardada, en pantallas pequeñas
+    // arranca minimizado para no tapar la ficha.
     (function() {
+        let colapsar = window.innerWidth <= 768;
         try {
             const guardado = localStorage.getItem('dnd_dados_colapsado');
-            if (guardado === '1') {
-                widget.classList.add('colapsado');
-                const btn = widget.querySelector('.dados-widget-colapsar');
-                if (btn) btn.textContent = '▼';
-            }
+            if (guardado === '1') colapsar = true;
+            else if (guardado === '0') colapsar = false;
         } catch(e) {}
+        _aplicarColapso(widget, colapsar);
     })();
 
     // Añadir fila inicial por defecto
@@ -130,13 +136,24 @@ function _addFila(tipo, qty, bono) {
     lista.scrollTop = lista.scrollHeight;
 }
 
+/* ── Estado colapsado: botón mínimo con solo el icono del dado ── */
+function _aplicarColapso(widget, colapsado) {
+    widget.classList.toggle('colapsado', colapsado);
+    const cab = widget.querySelector('.dados-widget-cab');
+    const btn = widget.querySelector('.dados-widget-colapsar');
+    if (btn) btn.textContent = colapsado ? '▼' : '▲';
+    if (cab) {
+        cab.setAttribute('aria-expanded', colapsado ? 'false' : 'true');
+        cab.title = colapsado ? 'Abrir el lanzador de dados' : 'Minimizar el lanzador de dados';
+    }
+}
+
 /* ── Toggle colapsar/expandir ───────────────────────── */
 window.dadosWidgetToggle = function() {
     const widget = document.getElementById('dados-widget');
     if (!widget) return;
-    const colapsado = widget.classList.toggle('colapsado');
-    const btn = widget.querySelector('.dados-widget-colapsar');
-    if (btn) btn.textContent = colapsado ? '▼' : '▲';
+    const colapsado = !widget.classList.contains('colapsado');
+    _aplicarColapso(widget, colapsado);
     try { localStorage.setItem('dnd_dados_colapsado', colapsado ? '1' : '0'); } catch(e) {}
 };
 
@@ -241,7 +258,7 @@ function _registrarEnLog(filas, granTotal) {
 
 /* ── Helper para escapar HTML (misma que script.js) ─── */
 function _esc(str) {
-    return (str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(str == null ? '' : str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 /* ── Reiniciar dados ────────────────────────────────── */

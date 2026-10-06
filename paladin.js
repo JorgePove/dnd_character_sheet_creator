@@ -1,24 +1,26 @@
 /* ══════════════════════════════════════════════════════════════════
-   paladin.js — Paladín: rasgos de clase y subclases completas
+   paladin.js — Paladín: rasgos de clase y subclases
    ──────────────────────────────────────────────────────────────────
-   Fuentes:
-     PHB 2014 · PHB 2024
-     Dungeon Master's Guide (DMG)
-     Sword Coast Adventurer's Guide (SCAG)
-     Xanathar's Guide to Everything (XGtE)
-     Tasha's Cauldron of Everything (TCE)
-     Mythic Odysseys of Theros (MOoT)
+   Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
+   importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
+   fuente y la edición a la que corresponde.
+   Fuentes de subclases: PHB 2014 · SCAG · XGtE · TCE · DMG · MOoT/TCE · PHB 2024 · HoF 2024
    ──────────────────────────────────────────────────────────────────
    SUBCLASES (14 entradas):
-     Juramento de Devoción      [PHB 2014] / [PHB 2024]
-     Juramento de los Ancestros [PHB 2014] / [PHB 2024]
-     Juramento de Venganza      [PHB 2014] / [PHB 2024]
-     Juramento de la Corona     [SCAG]
-     Juramento de Conquista     [XGtE]
-     Juramento de Redención     [XGtE]
-     Juramento de Gloria        [MOoT/TCE] / [PHB 2024]
-     Juramento de los Vigilantes [TCE]
-     Paladín Apóstata           [DMG]
+     Juramento de Devoción        [PHB 2014] / [PHB 2024]
+     Juramento de los Ancestros   [PHB 2014] / [PHB 2024]
+     Juramento de Venganza        [PHB 2014] / [PHB 2024]
+     Juramento de la Corona       [SCAG]
+     Juramento de Conquista       [XGtE]
+     Juramento de Redención       [XGtE]
+     Juramento de los Vigilantes  [TCE]
+     Paladín Apóstata             [DMG]
+     Juramento de Gloria          [MOoT/TCE] / [PHB 2024]
+     Juramento de los Nobles Genios [HoF 2024]
+   ──────────────────────────────────────────────────────────────────
+   Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
+     "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
+     limitados o decisión puntual) · combinable ("AB"). Sin `a` = rasgo pasivo.
 ══════════════════════════════════════════════════════════════════ */
 
 const CLASE_PALADIN = {
@@ -30,491 +32,622 @@ const CLASE_PALADIN = {
     {
       n: "Competencias",
       nv: 1,
-      d: "Todas las armaduras y escudos. Armas simples y marciales. Salvaciones: SAB y CAR. Habilidades: elige 2 entre Atletismo, Perspicacia, Intimidación, Medicina, Persuasión y Religión."
+      d: "Dado de golpe d10. Salvaciones: SAB y CAR. Armaduras: ligeras, medias, pesadas y escudos. Armas: simples y marciales. Habilidades: elige 2 entre Atletismo, Perspicacia, Intimidación, Medicina, Persuasión y Religión."
     },
     {
-      n: "Sentido Divino",
+      n: "Imponer Manos (Lay On Hands)",
       nv: 1,
-      d: "Como Acción puedes abrir tu conciencia a la presencia de bien y mal intensos. Hasta el final de tu siguiente turno, sabes la ubicación de cualquier celestial, fiend o no-muerto a 60 pies que no esté detrás de cobertura total. Sabes su tipo pero no su identidad. También detectas la presencia de cualquier lugar u objeto consagrado o maldecido dentro del mismo rango. Usos = 1 + mod CAR (mínimo 1) por Descanso Largo."
+      a: "B",
+      d: "Tienes una reserva de poder curativo = 5 × tu nivel de Paladín (se rellena con un descanso largo). Como Acción Adicional tocas a una criatura y le restauras PG a gastar de la reserva, o gastas 5 PG de la reserva para terminar su condición de Envenenado. [2014: es una acción; por cada 5 puntos de la reserva curas una enfermedad o neutralizas un veneno]"
     },
     {
-      n: "Imponer Manos",
+      n: "Sentido Divino (Divine Sense)",
       nv: 1,
-      d: "Tienes una reserva de poder curativo = 5 × nivel de Paladín. Como Acción tocas a una criatura para restaurar PG de tu reserva (cualquier cantidad). Puedes gastar 5 PG de la reserva para curar una enfermedad o neutralizar un veneno. No funciona en constructos ni no-muertos. La reserva se recupera con Descanso Largo."
-    },
-    {
-      n: "Estilo de Combate",
-      nv: 2,
-      d: "Elige un estilo: Defensa (+1 CA con armadura), Duelo (+2 daño con arma de una mano sin otra arma), Protección (Reacción: desventaja al atacante contra aliado a 5 pies con escudo), Armas a Dos Manos (repite 1 o 2 en dados de daño de armas a dos manos), Combate Bendecido [TCE/PHB2024] (aprendes un truco de Clérigo o Druida usando CAR)."
+      a: "B",
+      d: "Como Acción Adicional detectas hasta el final de tu siguiente turno la ubicación de celestiales, infernales y no-muertos a 60 pies y sabes su tipo, y también lugares consagrados o profanados. [2024: es una opción de Canalizar Divinidad (Nv.3) y gasta un uso; 2014: es una acción con 1 + mod. CAR usos por descanso largo, desde Nv.1]"
     },
     {
       n: "Lanzamiento de Conjuros",
+      nv: 1,
+      d: "Lanzador mitad. CAR es tu característica de conjuros (CD = 8 + comp. + mod. CAR); usas un símbolo sagrado. Preparas conjuros de la lista de Paladín: 2 en Nv.1 (3, 4, 5, 6, 6, 7, 7, 9, 9, 10, 10, 11, 11, 12, 12, 14, 14, 15, 15 en Nv.2-20). Espacios como lanzador mitad (Nv.1: 2 espacios de nivel 1). [2014: lanzas conjuros desde Nv.2; preparas mod. CAR + la mitad de tu nivel de Paladín (redondeado hacia abajo, mín. 1); sin trucos]"
+    },
+    {
+      n: "Maestría con Armas (Weapon Mastery)",
+      nv: 1,
+      d: "Puedes usar las propiedades de maestría de 2 tipos de armas simples o marciales a tu elección; puedes cambiar uno tras un descanso largo. [Sólo 2024]"
+    },
+    {
+      n: "Estilo de Combate (Fighting Style)",
       nv: 2,
-      d: "CAR es tu característica de conjuro (CD = 8 + comp + mod CAR). El Paladín es un lanzador de medio nivel. Prepara conjuros = mod CAR + mitad nivel Paladín (redondeado abajo). Los conjuros de juramento siempre están preparados y no cuentan contra el límite. Espacios de conjuro de progresión de medio lanzador (hasta Nv.5)."
+      d: "Ganas una dote de Estilo de Combate (p. ej. Defensa, Duelo, Armas Grandes, Protección) o Guerrero Bendecido (Blessed Warrior: 2 trucos de Clérigo). [2014: eliges un estilo: Defensa, Duelo, Combate con Armas Grandes o Protección; opciones de TCE: Guerrero Bendecido, Combate a Ciegas, Interceptación, Lucha con Armas Arrojadizas, Lucha Sin Armas, Superior…]"
     },
     {
-      n: "Golpe Divino",
+      n: "Golpe Divino del Paladín (Paladin's Smite)",
       nv: 2,
-      d: "Gastas un espacio de conjuro como AA antes de golpear con arma cuerpo a cuerpo. Daño adicional radiante = 2d8 por nivel del espacio (máximo 5d8 con espacio Nv.5). PHB 2024: Golpe Divino es ahora siempre parte del primer ataque del turno (no como AA), y escala a 1d8 por nivel de Paladín ÷ 4 (redondeado abajo, máximo 5d8)."
+      a: "B",
+      d: "Siempre tienes preparado el conjuro Divine Smite (Acción Adicional, tras impactar con un arma cuerpo a cuerpo: 2d8 radiante +1d8 por nivel de espacio superior a 1, +1d8 contra infernales y no-muertos). Además puedes lanzarlo una vez sin gastar espacio (recuperas el uso con un descanso largo). [2014: Golpe Divino: tras impactar con un arma cuerpo a cuerpo gastas un espacio de conjuro (sin acción) para infligir 2d8 radiante (+1d8 por nivel superior a 1, máx. 5d8; +1d8 contra infernales y no-muertos)]"
     },
     {
-      n: "Salud Divina",
+      n: "Canalizar Divinidad (Channel Divinity)",
       nv: 3,
-      d: "La magia divina que fluye en ti te hace inmune a las enfermedades."
+      d: "Tienes 2 usos de Canalizar Divinidad (3 en Nv.11): recuperas 1 con un descanso corto y todos con uno largo. Con Sentido Divino y las opciones de tu subclase. [2014: 1 uso que recuperas con un descanso corto o largo; opcional de TCE: Aprovechar el Poder Divino]"
     },
     {
-      n: "Juramento Sagrado",
+      n: "Subclase de Paladín (Juramento Sagrado)",
       nv: 3,
-      d: "Eliges tu subclase (Juramento Sagrado). Otorga Conjuros de Juramento (siempre preparados), 2 opciones de Canalizar Divinidad, y rasgos en Nv.3, 7, 15 y 20."
+      d: "Eliges una subclase. Concede rasgos en Nv.3, 7, 15 y 20. [2014: Juramento Sagrado, mismos niveles]"
     },
     {
-      n: "Canalizar Divinidad",
+      n: "Salud Divina (Divine Health)",
       nv: 3,
-      d: "Tienes 1 uso de Canalizar Divinidad que se recupera con Descanso Corto o Largo (→2 en Nv.11 con PHB 2024)."
+      d: "La magia divina que fluye en ti te hace inmune a las enfermedades. [Sólo 2014]"
     },
     {
       n: "Mejora de Característica",
       nv: 4,
-      d: "+2 a una característica o +1 a dos (máx. 20). También en Nv.8, 12, 16 y 19. Puedes tomar una dote en su lugar."
+      d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]"
     },
     {
-      n: "Ataque Extra",
+      n: "Ataque Extra (Extra Attack)",
       nv: 5,
-      d: "Atacas dos veces cuando usas la acción de Atacar."
+      a: "A",
+      d: "Atacas dos veces al realizar la acción Atacar."
     },
     {
-      n: "Aura de Protección",
+      n: "Montura Fiel (Faithful Steed)",
+      nv: 5,
+      d: "Siempre tienes preparado el conjuro Find Steed y puedes lanzarlo una vez sin gastar espacio (recuperas el uso con un descanso largo). [Sólo 2024]"
+    },
+    {
+      n: "Aura de Protección (Aura of Protection)",
       nv: 6,
-      d: "Tú y las criaturas amistosas a 10 pies añadís mod CAR (mínimo +1) a todas las tiradas de salvación mientras estés consciente. En Nv.18 el aura aumenta a 30 pies."
+      d: "Tú y los aliados en tu aura (emanación de 10 pies; 30 pies en Nv.18) sumáis tu mod. CAR (mín. +1) a todas las salvaciones. Deja de funcionar si quedas Incapacitado."
     },
     {
-      n: "Aura de Valentía",
+      n: "Expulsar a los Enemigos (Abjure Foes)",
+      nv: 9,
+      a: "A",
+      d: "Con una acción Mágica gastas 1 uso de Canalizar Divinidad y presentas tu símbolo sagrado: hasta mod. CAR (mín. 1) criaturas que veas a 60 pies hacen una salvación de SAB o quedan Asustadas durante 1 minuto o hasta que sufran daño; mientras estén asustadas así, en su turno sólo pueden mover, usar una acción o una Acción Adicional. [Sólo 2024]"
+    },
+    {
+      n: "Aura de Valentía (Aura of Courage)",
       nv: 10,
-      d: "Tú y las criaturas amistosas a 10 pies no pueden ser Asustadas mientras estés consciente. En Nv.18 el aura aumenta a 30 pies."
+      d: "Tú y los aliados en tu aura de protección sois inmunes a la condición de Asustado mientras estés consciente."
     },
     {
-      n: "Golpe Divino Mejorado",
+      n: "Golpes Radiantes (Radiant Strikes)",
       nv: 11,
-      d: "(PHB 2014) Cuando golpeas con un ataque de arma cuerpo a cuerpo, infligas 1d8 de daño radiante adicional."
+      d: "Cuando impactas con un arma cuerpo a cuerpo o un golpe sin arma, infliges 1d8 de daño radiante adicional. [2014: Golpe Divino Mejorado: 1d8 radiante extra en cada impacto cuerpo a cuerpo]"
     },
     {
-      n: "Pureza del Espíritu",
-      nv: 15,
-      d: "(PHB 2014) Siempre estás bajo el efecto del conjuro Protección contra el Mal y el Bien."
+      n: "Toque Restaurador (Restoring Touch)",
+      nv: 14,
+      d: "Al usar Imponer Manos, puedes quitar también una o más de estas condiciones por 5 PG cada una de la reserva: Cegado, Hechizado, Ensordecido, Asustado, Paralizado o Aturdido. [2014: Toque Purificador: con una acción terminas un conjuro sobre ti o una criatura voluntaria que toques; mod. CAR (mín. 1) usos por descanso largo]"
     },
     {
-      n: "Nimbo Sagrado",
-      nv: 20,
-      d: "(PHB 2014) Acción (1/descanso largo): durante 1 minuto emites luz brillante en 30 pies. Los enemigos que empiecen su turno en esa luz reciben 10 de daño radiante. Ventaja en salvaciones contra conjuros de fiends y no-muertos."
+      n: "Expansión del Aura (Aura Expansion)",
+      nv: 18,
+      d: "El radio de tus auras de Paladín (Protección, Valentía y las de subclase) aumenta a 30 pies."
+    },
+    {
+      n: "Don Épico (Epic Boon)",
+      nv: 19,
+      d: "Ganas una dote de Don Épico (u otra dote para la que cumplas requisitos). [Sólo 2024; en 2014 es una mejora de característica más]"
     },
   ],
 
   /* ══════════════════════════════════════════════════════════════
-     SUBCLASES (JURAMENTOS SAGRADOS)
+     SUBCLASES
   ══════════════════════════════════════════════════════════════ */
   subclases: {
 
     /* ── PHB 2014 ── */
     "Juramento de Devoción [PHB 2014]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Protección contra el Bien y el Mal, Santuario. Nv.5: Restauración Menor, Zona de Verdad. Nv.9: Faro de Esperanza, Dispersar Magia. Nv.13: Libertad de Movimiento, Guardián de la Fe. Nv.17: Comunión, Guardián de los Espíritus."
+        d: "Siempre tienes preparados: Nv.3: Protection from Evil and Good, Sanctuary. Nv.5: Lesser Restoration, Zone of Truth. Nv.9: Beacon of Hope, Dispel Magic. Nv.13: Freedom of Movement, Guardian of Faith. Nv.17: Commune, Flame Strike."
       },
       {
-        n: "Canalizar Divinidad: Arma Sagrada",
+        n: "Canalizar Divinidad: Arma Sagrada (Sacred Weapon)",
         nv: 3,
-        d: "Acción: imbuyes un arma con poder divino durante 1 minuto. El arma emite luz brillante (20 pies) + tenue (20 pies más). Añades mod CAR a las tiradas de ataque con ella. El arma se vuelve mágica. Termina si sueltas el arma."
+        a: "A",
+        d: "Con una acción imbuyes un arma que lleves durante 1 minuto: sumas tu mod. CAR (mín. +1) a las tiradas de ataque con ella, emite luz brillante 20 pies y tenue otros 20 pies, y es mágica si no lo era. Termina si la sueltas o quedas inconsciente."
       },
       {
-        n: "Canalizar Divinidad: Expulsar al Impío",
+        n: "Canalizar Divinidad: Expulsar al Impío (Turn the Unholy)",
         nv: 3,
-        d: "Acción: presentas tu símbolo sagrado y pronuncias una oración. Los fiends y no-muertos a 30 pies que puedan verte u oírte superan salvación SAB (CD conjuro) o quedan Asustados durante 1 minuto o hasta recibir daño."
+        a: "A",
+        d: "Con una acción presentas tu símbolo sagrado: infernales y no-muertos a 30 pies que te oigan hacen una salvación de SAB o quedan expulsados 1 minuto o hasta sufrir daño (se alejan, no pueden acercarse a 30 pies, ni usar Reacciones; sólo Correr o escapar)."
       },
       {
-        n: "Aura de Devoción",
+        n: "Aura de Devoción (Aura of Devotion)",
         nv: 7,
-        d: "Tú y las criaturas amistosas a 10 pies no podéis ser Encantadas mientras estés consciente. En Nv.18 el aura aumenta a 30 pies."
+        d: "Tú y los aliados a 10 pies no podéis ser hechizados mientras estés consciente (30 pies en Nv.18)."
       },
       {
-        n: "Pureza del Espíritu",
+        n: "Pureza de Espíritu (Purity of Spirit)",
         nv: 15,
-        d: "Siempre estás bajo el efecto del conjuro Protección contra el Mal y el Bien."
+        d: "Siempre estás bajo el efecto de Protection from Evil and Good."
       },
       {
-        n: "Nimbo Sagrado",
+        n: "Nimbo Sagrado (Holy Nimbus)",
         nv: 20,
-        d: "Acción (1/descanso largo): durante 1 minuto emites luz brillante en 30 pies. Los enemigos que comiencen su turno en esa luz reciben 10 de daño radiante. Ventaja en salvaciones contra conjuros de fiends y no-muertos."
+        a: "A",
+        d: "Con una acción emanas un aura de luz solar 1 minuto: luz brillante 30 pies y tenue 30 pies más; los enemigos que empiecen su turno en la luz brillante sufren 10 de daño radiante; tienes Ventaja en salvaciones contra conjuros de infernales y no-muertos. Una vez por descanso largo."
       },
     ],
 
     "Juramento de los Ancestros [PHB 2014]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Hablar con los Animales, Enredar. Nv.5: Luz de Luna, Paso Brumoso. Nv.9: Crecer Plantas, Protección contra la Energía. Nv.13: Tormenta de Hielo, Zancada Arbórea. Nv.17: Comunión con la Naturaleza, Transmutación de Formas."
+        d: "Siempre tienes preparados: Nv.3: Ensnaring Strike, Speak with Animals. Nv.5: Moonbeam, Misty Step. Nv.9: Plant Growth, Protection from Energy. Nv.13: Ice Storm, Stoneskin. Nv.17: Commune with Nature, Tree Stride."
       },
       {
-        n: "Canalizar Divinidad: Ira de la Naturaleza",
+        n: "Canalizar Divinidad: Ira de la Naturaleza (Nature's Wrath)",
         nv: 3,
-        d: "Acción: las plantas y zarcillos a 10 pies agarran a los enemigos. Criaturas hostiles en el radio superan salvación FUE o DES (su elección, CD conjuro) o quedan Aferradas durante 1 minuto."
+        a: "A",
+        d: "Con una acción, enredaderas espectrales sujetan a una criatura a 10 pies: salvación de FUE o DES (a su elección) o queda Apresada; repite la salvación al final de sus turnos."
       },
       {
-        n: "Canalizar Divinidad: Expulsar al Devolver",
+        n: "Canalizar Divinidad: Expulsar a los Infieles (Turn the Faithless)",
         nv: 3,
-        d: "Acción: prestas tu símbolo sagrado. Los fiends y no-muertos a 30 pies superan SAB (CD conjuro) o son Asustados durante 1 minuto. Los Asustados que fallen de nuevo son empujados al Plano Feérico o Sombrío (el más cercano)."
+        a: "A",
+        d: "Con una acción presentas tu símbolo sagrado: feéricos e infernales a 30 pies que te oigan hacen una salvación de SAB o quedan expulsados 1 minuto o hasta sufrir daño; si la verdadera forma de una criatura está oculta por una ilusión o un cambio de forma, se revela mientras esté expulsada."
       },
       {
-        n: "Aura de Valentía de los Ancestros",
+        n: "Aura de Protección Ancestral (Aura of Warding)",
         nv: 7,
-        d: "Tú y las criaturas amistosas a 10 pies tenéis resistencia a los daños de los conjuros de fiends y no-muertos. En Nv.18 el aura aumenta a 30 pies."
+        d: "Tú y los aliados a 10 pies tenéis resistencia al daño de conjuros (30 pies en Nv.18)."
       },
       {
-        n: "Centinela Eterno",
+        n: "Centinela Inmortal (Undying Sentinel)",
         nv: 15,
-        d: "Cuando caes a 0 PG y no mueres, puedes elegir quedar en 1 PG en su lugar. 1/descanso largo."
+        a: "O",
+        d: "Cuando caes a 0 PG sin morir, puedes quedar a 1 PG en su lugar. Una vez por descanso largo. Además no sufres los efectos de la edad ni puedes envejecer por magia."
       },
       {
-        n: "Campeón Anciano",
+        n: "Campeón Ancestral (Elder Champion)",
         nv: 20,
-        d: "Acción (1/descanso largo): durante 1 minuto te transformas: regeneras 10 PG al inicio de cada turno, las plantas brotan a tus pies (terreno difícil para enemigos a 10 pies), puedes lanzar como AA cualquier conjuro de Paladín de tiempo de lanzamiento 1 acción, y los enemigos a 10 pies tienen desventaja en salvaciones contra tus conjuros."
+        a: "A",
+        d: "Con una acción te transformas 1 minuto: recuperas 10 PG al inicio de cada uno de tus turnos; lanzas conjuros de Paladín de 1 acción como Acción Adicional; los enemigos a 10 pies tienen Desventaja en las salvaciones contra tus conjuros y opciones de Canalizar Divinidad. Una vez por descanso largo."
       },
     ],
 
     "Juramento de Venganza [PHB 2014]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Tormento, Golpe del Cazador. Nv.5: Mantener Persona, Paso Brumoso. Nv.9: Hipnotizar, Protección contra la Energía. Nv.13: Destierro, Dimensión Door. Nv.17: Mantener Monstruo, Convocar Ángel Deva."
+        d: "Siempre tienes preparados: Nv.3: Bane, Hunter's Mark. Nv.5: Hold Person, Misty Step. Nv.9: Haste, Protection from Energy. Nv.13: Banishment, Dimension Door. Nv.17: Hold Monster, Scrying."
       },
       {
-        n: "Canalizar Divinidad: Juramento del Enemigo",
+        n: "Canalizar Divinidad: Abjurar al Enemigo (Abjure Enemy)",
         nv: 3,
-        d: "AA: designas una criatura a 10 pies como tu Enemigo Jurado durante 1 minuto. Tienes ventaja en ataques contra ella. Si la criatura intenta moverse fuera de tu alcance, puedes usar Reacción para moverte junto a ella sin coste (no provoca ataques de oportunidad)."
+        a: "A",
+        d: "Con una acción presentas tu símbolo sagrado contra una criatura a 60 pies: salvación de SAB (Desventaja si es infernal o no-muerto); si falla queda Asustada 1 minuto o hasta sufrir daño y su Velocidad es 0; si la supera, su Velocidad se reduce a la mitad durante 1 minuto o hasta sufrir daño."
       },
       {
-        n: "Canalizar Divinidad: Misericordia Divina",
+        n: "Canalizar Divinidad: Voto de Enemistad (Vow of Enmity)",
         nv: 3,
-        d: "Acción: presentas tu símbolo sagrado. Los fiends y no-muertos a 30 pies que fallen SAB (CD conjuro) quedan Asustados y Paralziados durante 1 minuto (una tirada de SAB al inicio de cada turno para finalizar el Paralizado; el Asustado dura 1 minuto completo)."
+        a: "B",
+        d: "Como Acción Adicional eliges a una criatura a 10 pies: tienes Ventaja en las tiradas de ataque contra ella durante 1 minuto o hasta que caiga a 0 PG o quede inconsciente."
       },
       {
-        n: "Perseguidor Implacable",
+        n: "Vengador Implacable (Relentless Avenger)",
         nv: 7,
-        d: "Si el Enemigo Jurado intenta abandonar tu alcance, puedes moverlos contigo como Reacción (igual velocidad), y sus intentos de escapar dan ventaja a tus ataques de oportunidad contra él."
+        d: "Cuando impactas con un ataque de oportunidad, puedes moverte hasta la mitad de tu Velocidad inmediatamente después, como parte de la misma Reacción (sin provocar ataques de oportunidad)."
       },
       {
-        n: "Alma de Venganza",
+        n: "Alma de Venganza (Soul of Vengeance)",
         nv: 15,
-        d: "Cuando el Enemigo Jurado es golpeado por una maldición o falla una salvación contra uno de tus conjuros, puedes usar tu Reacción para hacerle un ataque con arma."
+        a: "R",
+        d: "Cuando una criatura bajo tu Voto de Enemistad ataca, usas tu Reacción para hacerle un ataque cuerpo a cuerpo con arma si está a tu alcance."
       },
       {
-        n: "Vengador Implacable",
+        n: "Ángel Vengador (Avenging Angel)",
         nv: 20,
-        d: "Acción (1/descanso largo): durante 1 hora tus ataques con arma tienen un rango de crítico de 18-20, y tienes resistencia a todos los daños. Cuando matas a un enemigo, recuperas PG = mod CAR + nivel Paladín (mínimo 1)."
+        a: "A",
+        d: "Con una acción te transformas 1 hora: Velocidad de vuelo 60 pies y un aura de amenaza de 30 pies; los enemigos que entren o empiecen su turno en ella hacen una salvación de SAB o quedan Asustados 1 minuto o hasta sufrir daño; las tiradas de ataque contra criaturas Asustadas por ti tienen Ventaja. Una vez por descanso largo."
       },
     ],
 
-    /* ── PHB 2024 ── */
-    "Juramento de Devoción [PHB 2024]": [
-      {
-        n: "Conjuros de Juramento",
-        nv: 3,
-        d: "Nv.3: Protección contra el Bien y el Mal, Santuario. Nv.5: Aid, Zona de Verdad. Nv.9: Faro de Esperanza, Dispersar Magia. Nv.13: Libertad de Movimiento, Guardián de la Fe. Nv.17: Comunión, Guardián de los Espíritus."
-      },
-      {
-        n: "Arma Sagrada (Canalizar Divinidad)",
-        nv: 3,
-        d: "AA: imbuyes un arma con poder divino durante 1 minuto. Añades mod CAR a las tiradas de ataque con esa arma y emite luz brillante en 20 pies. El arma se vuelve mágica."
-      },
-      {
-        n: "Juramento Sagrado (Canalizar Divinidad)",
-        nv: 3,
-        d: "Acción: pronuncias el juramento ante los fiends y no-muertos. Criaturas de esos tipos a 30 pies superan SAB (CD conjuro) o quedan Asustadas durante 1 minuto o hasta recibir daño."
-      },
-      {
-        n: "Aura de Devoción",
-        nv: 7,
-        d: "Tú y las criaturas amistosas a 10 pies (→30 pies Nv.18) no pueden ser Encantadas mientras estés consciente."
-      },
-      {
-        n: "Pureza del Espíritu",
-        nv: 15,
-        d: "Efecto permanente de Protección contra el Mal y el Bien sobre ti."
-      },
-      {
-        n: "Nimbo Sagrado",
-        nv: 20,
-        d: "Acción (1/descanso largo): durante 1 minuto, luz brillante en 30 pies; enemigos en la luz reciben 10 daño radiante al inicio de su turno; ventaja en salvaciones contra conjuros de fiends y no-muertos."
-      },
-    ],
 
-    "Juramento de los Ancestros [PHB 2024]": [
-      {
-        n: "Conjuros de Juramento",
-        nv: 3,
-        d: "Nv.3: Hablar con los Animales, Enredar. Nv.5: Luz de Luna, Paso Brumoso. Nv.9: Crecer Plantas, Protección contra la Energía. Nv.13: Tormenta de Hielo, Zancada Arbórea. Nv.17: Comunión con la Naturaleza, Transmutación de Formas."
-      },
-      {
-        n: "Ira de la Naturaleza (Canalizar Divinidad)",
-        nv: 3,
-        d: "Acción: plantas y zarcillos a 10 pies atrapan enemigos. Salvación FUE o DES (CD conjuro) o quedan Aferrados 1 minuto."
-      },
-      {
-        n: "Expulsar al Devolver (Canalizar Divinidad)",
-        nv: 3,
-        d: "Acción: fiends y no-muertos a 30 pies superan SAB o quedan Asustados. Los que fallen de nuevo son empujados al Plano Feérico o Sombrío."
-      },
-      {
-        n: "Aura de Valentía Ancestral",
-        nv: 7,
-        d: "Tú y aliados a 10 pies (→30 pies Nv.18) tenéis resistencia a daños de conjuros de fiends y no-muertos."
-      },
-      {
-        n: "Centinela Eterno",
-        nv: 15,
-        d: "1/descanso largo: en lugar de caer a 0 PG, caes a 1 PG."
-      },
-      {
-        n: "Campeón Anciano",
-        nv: 20,
-        d: "Acción (1/descanso largo, 1 minuto): regeneras 10 PG/turno, plantas dificultan el movimiento enemigo a 10 pies, puedes lanzar conjuros de Paladín como AA, enemigos a 10 pies tienen desventaja en salvaciones contra tus conjuros."
-      },
-    ],
-
-    "Juramento de Venganza [PHB 2024]": [
-      {
-        n: "Conjuros de Juramento",
-        nv: 3,
-        d: "Nv.3: Tormento, Golpe del Cazador. Nv.5: Mantener Persona, Paso Brumoso. Nv.9: Hipnotizar, Protección contra la Energía. Nv.13: Destierro, Dimensión Door. Nv.17: Mantener Monstruo, Convocar Ángel Deva."
-      },
-      {
-        n: "Juramento del Enemigo (Canalizar Divinidad)",
-        nv: 3,
-        d: "AA: marcas a una criatura a 10 pies como Enemigo Jurado durante 1 minuto. Ventaja en ataques contra ella; cuando intenta alejarse puedes seguirla sin coste como Reacción."
-      },
-      {
-        n: "Misericordia Divina (Canalizar Divinidad)",
-        nv: 3,
-        d: "Acción: fiends y no-muertos a 30 pies superan SAB o quedan Asustados y Paralizados 1 minuto (tirada de SAB al inicio de cada turno para salir del Paralizado)."
-      },
-      {
-        n: "Perseguidor Implacable",
-        nv: 7,
-        d: "Reacción cuando el Enemigo Jurado huye: te mueves junto a él. Ataques de oportunidad contra él tienen ventaja."
-      },
-      {
-        n: "Alma de Venganza",
-        nv: 15,
-        d: "Reacción cuando el Enemigo Jurado falla una salvación o sufre una maldición: realizas un ataque con arma contra él."
-      },
-      {
-        n: "Vengador Implacable",
-        nv: 20,
-        d: "Acción (1/descanso largo, 1 hora): crítico 18-20, resistencia a todo daño, recuperas PG al matar enemigos = mod CAR + nivel Paladín."
-      },
-    ],
-
-    "Juramento de Gloria [MOoT/TCE/PHB 2024]": [
-      {
-        n: "Conjuros de Juramento",
-        nv: 3,
-        d: "Nv.3: Heroísmo, Guiding Bolt. Nv.5: Mejorar Estadísticas (Enhance Ability), Golpe Espiritual (Spiritual Weapon). Nv.9: Aura de Vitalidad, Protección contra la Energía. Nv.13: Compulsión, Libertad de Movimiento. Nv.17: Leyenda Lore, Pasaje Legendario."
-      },
-      {
-        n: "Inspiración Gloriosa (Canalizar Divinidad)",
-        nv: 3,
-        d: "AA: tú y criaturas amistosas a 30 pies ganan PG temporales = mod CAR + nivel Paladín (mínimo 1). Duran 1 hora."
-      },
-      {
-        n: "Movimiento Sobrenatural (Canalizar Divinidad)",
-        nv: 3,
-        d: "Acción: criaturas de tu elección a 30 pies ganan +10 pies a la velocidad y pueden usar Acrobacias/Atletismo con ventaja durante 10 minutos."
-      },
-      {
-        n: "Aura de la Gloria",
-        nv: 7,
-        d: "Tú y las criaturas amistosas a 10 pies (→30 pies Nv.18) tenéis ventaja en tiradas de habilidad de FUE, DES y CAR mientras estés consciente."
-      },
-      {
-        n: "Leyenda Viviente",
-        nv: 15,
-        d: "Cuando fallas una prueba de CAR, puedes tratar el d20 como si hubiera sacado 10. Además, cuando una criatura intenta ver a través de ilusión o averiguar tu identidad real, la información que comparte de ti es siempre gloriosa (aunque sea falsa)."
-      },
-      {
-        n: "Héroe del Tiempo",
-        nv: 20,
-        d: "Acción (1/descanso largo, 1 hora): eres inmune a Asustado y Encantado, tienes ventaja en todas las tiradas de ataque, y cuando tienes 0 PG (no muerto) puedes levantarte con PG = mod CAR × 5 (1 vez durante la duración)."
-      },
-    ],
-
-    /* ── Sword Coast Adventurer's Guide ── */
+    /* ── SCAG ── */
     "Juramento de la Corona [SCAG]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Comando, Compeler Duelo. Nv.5: Aguantar Persona, Zona de Verdad. Nv.9: Aura de Vitalidad, Guardián de los Espíritus. Nv.13: Destierro, Guardián de la Fe. Nv.17: Círculo de Poder, Dominación."
+        d: "Siempre tienes preparados: Nv.3: Command, Compelled Duel. Nv.5: Warding Bond, Zone of Truth. Nv.9: Aura of Vitality, Spirit Guardians. Nv.13: Banishment, Guardian of Faith. Nv.17: Circle of Power, Geas."
       },
       {
-        n: "Canalizar Divinidad: Desafío del Campeón",
+        n: "Canalizar Divinidad: Desafío del Campeón (Champion Challenge)",
         nv: 3,
-        d: "AA: criaturas hostiles de tu elección a 30 pies superan SAB (CD conjuro) o no pueden alejarse voluntariamente más de 30 pies de ti. El efecto termina si estás Incapacitado, mueres o la criatura ya está a más de 30 pies."
+        a: "B",
+        d: "Como Acción Adicional, las criaturas que elijas a 30 pies hacen una salvación de SAB o no pueden alejarse voluntariamente más de 30 pies de ti (termina si quedas Incapacitado o a más de 30 pies)."
       },
       {
-        n: "Canalizar Divinidad: Girar la Marea",
+        n: "Canalizar Divinidad: Girar la Marea (Turn the Tide)",
         nv: 3,
-        d: "AA: criaturas amistosas de tu elección que puedan oírte a 30 pies y que tengan la mitad o menos de sus PG máximos recuperan PG = 1d6 + mod CAR (mínimo 1)."
+        a: "B",
+        d: "Como Acción Adicional, cada criatura que elijas a 30 pies con menos de la mitad de sus PG recupera 1d6 + mod. CAR (mín. 1) PG."
       },
       {
-        n: "Lealtad Divina",
+        n: "Lealtad Divina (Divine Allegiance)",
         nv: 7,
-        d: "Reacción: cuando una criatura a 5 pies recibe daño, tomas tú ese daño en su lugar. Este daño no puede reducirse ni prevenirse de ninguna forma."
+        a: "R",
+        d: "Cuando una criatura a 5 pies de ti sufre daño, usas tu Reacción para sufrir tú ese daño en su lugar."
       },
       {
-        n: "Bastión de Ley",
+        n: "Santo Inquebrantable (Unyielding Saint)",
         nv: 15,
-        d: "Ventaja en salvaciones para evitar quedar Paralizado o Aturdido."
+        d: "Ventaja en salvaciones contra estar paralizado o aturdido."
       },
       {
-        n: "Campeón Exaltado",
+        n: "Campeón Exaltado (Exalted Champion)",
         nv: 20,
-        d: "Acción (1/descanso largo, 1 hora): resistencia a daño contundente, perforante y cortante no mágico; tus aliados a 30 pies tienen ventaja en tiradas de salvación de la muerte; tú y tus aliados a 30 pies tenéis ventaja en salvaciones de SAB."
+        a: "A",
+        d: "Con una acción te vuelves un campeón 1 hora: resistencia al daño contundente, perforante y cortante no mágico; tú y tus aliados a 30 pies tenéis Ventaja en las salvaciones contra muerte y en salvaciones de SAB. Una vez por descanso largo."
       },
     ],
 
-    /* ── Xanathar's Guide to Everything ── */
+
+    /* ── XGtE ── */
     "Juramento de Conquista [XGtE]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Armadura de Agonía (Armor of Agathys), Mando. Nv.5: Retener Persona, Espíritu Espectral. Nv.9: Miedo, Bola de Fuego. Nv.13: Dominar Bestia, Muro de Fuego. Nv.17: Dominar Persona, Insecto Plaga."
+        d: "Siempre tienes preparados: Nv.3: Armor of Agathys, Command. Nv.5: Hold Person, Spiritual Weapon. Nv.9: Bestow Curse, Fear. Nv.13: Dominate Beast, Stoneskin. Nv.17: Cloudkill, Dominate Person."
       },
       {
-        n: "Canalizar Divinidad: Presencia Conquistadora",
+        n: "Canalizar Divinidad: Presencia Conquistadora (Conquering Presence)",
         nv: 3,
-        d: "Acción: criaturas hostiles a 30 pies superan SAB (CD conjuro) o quedan Asustadas durante 1 minuto. Las criaturas Asustadas quedan Paralizadas mientras haya luz brillante alrededor suyo."
+        a: "A",
+        d: "Con una acción, cada criatura que elijas a 30 pies hace una salvación de SAB o queda Asustada de ti 1 minuto (repite la salvación al final de cada uno de sus turnos)."
       },
       {
-        n: "Canalizar Divinidad: Golpe Guiado",
+        n: "Canalizar Divinidad: Golpe Guiado (Guided Strike)",
         nv: 3,
-        d: "Tras ver el resultado de tu tirada de ataque y antes de saber si impacta, gastas la Canalizar Divinidad para añadir +10 a esa tirada."
+        a: "O",
+        d: "Al hacer una tirada de ataque, ganas +10 a ella (decides tras ver la tirada, antes de saber si impacta)."
       },
       {
-        n: "Aura de la Conquista",
+        n: "Aura de Conquista (Aura of Conquest)",
         nv: 7,
-        d: "Las criaturas Asustadas de ti tienen velocidad 0 mientras estén a 10 pies de ti (→30 pies Nv.18). Cuando una criatura Asustada empieza su turno a 10 pies, recibe daño psíquico = mod CAR (mínimo 1)."
+        d: "Aura de 10 pies (30 pies en Nv.18): las criaturas Asustadas de ti en el aura tienen Velocidad 0 y sufren daño psíquico = la mitad de tu nivel de Paladín al inicio de sus turnos."
       },
       {
-        n: "Manto Persistente",
+        n: "Reprimenda Desdeñosa (Scornful Rebuke)",
         nv: 15,
-        d: "Cuando una criatura te golpea con un ataque, recibe daño psíquico = mod CAR (mínimo 1)."
+        d: "Cuando una criatura te impacta con un ataque, sufre daño psíquico = mod. CAR (mín. 1), si no estás Incapacitado."
       },
       {
-        n: "Conquistador Invencible",
+        n: "Conquistador Invencible (Invincible Conqueror)",
         nv: 20,
-        d: "Acción (1/descanso largo, 1 minuto): resistencia a todos los daños, tus ataques cuerpo a cuerpo tienen rango de crítico 19-20, puedes hacer un ataque adicional con la acción de Atacar (3 ataques totales)."
+        a: "A",
+        d: "Con una acción te conviertes 1 minuto en un avatar de la conquista: resistencia a todo daño; un ataque adicional al realizar la acción Atacar; tus ataques con arma son críticos con 19-20. Una vez por descanso largo."
       },
     ],
 
     "Juramento de Redención [XGtE]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Santuario, Golpe del Viento. Nv.5: Calmar Emociones, Mantener Persona. Nv.9: Contador de Hechizos, Hipnotizar. Nv.13: Destierro, Otiluke's Resilient Sphere. Nv.17: Mantener Monstruo, Muro de Fuerza."
+        d: "Siempre tienes preparados: Nv.3: Sanctuary, Sleep. Nv.5: Calm Emotions, Hold Person. Nv.9: Counterspell, Hypnotic Pattern. Nv.13: Otiluke's Resilient Sphere, Stoneskin. Nv.17: Hold Monster, Wall of Force."
       },
       {
-        n: "Canalizar Divinidad: Emissario de la Paz",
+        n: "Canalizar Divinidad: Emisario de la Paz (Emissary of Peace)",
         nv: 3,
-        d: "AA: ganas +5 a las pruebas de Persuasión durante los próximos 10 minutos."
+        a: "B",
+        d: "Como Acción Adicional ganas +5 a las pruebas de CAR (Persuasión) durante 10 minutos."
       },
       {
-        n: "Canalizar Divinidad: Rebuke the Violent",
+        n: "Canalizar Divinidad: Reprender al Violento (Rebuke the Violent)",
         nv: 3,
-        d: "Reacción: cuando una criatura a 30 pies inflige daño a otra con un ataque, haces que el atacante supere una salvación SAB (CD conjuro) o reciba daño radiante = el daño infligido (la mitad si supera la salvación)."
+        a: "R",
+        d: "Cuando una criatura a 30 pies que veas inflige daño con un ataque a otra criatura que no seas tú, usas tu Reacción: el atacante hace una salvación de SAB o sufre daño radiante igual al daño que infligió (la mitad si la supera)."
       },
       {
-        n: "Protector Abnegado",
+        n: "Aura del Guardián (Aura of the Guardian)",
         nv: 7,
-        d: "Reacción: cuando un aliado a 1 pie tuyo va a recibir daño, puedes hacer que te afecte a ti en su lugar. El daño no puede reducirse. En Nv.18 la distancia aumenta a 30 pies."
+        a: "R",
+        d: "Cuando una criatura a 10 pies de ti sufre daño, usas tu Reacción para sufrir tú ese daño en su lugar (no se reduce por resistencia o inmunidad). Radio 30 pies en Nv.18."
       },
       {
-        n: "Mente Serena",
+        n: "Espíritu Protector (Protective Spirit)",
         nv: 15,
-        d: "Eres inmune a las condiciones Encantado y Asustado."
+        d: "Al final de tu turno, si estás por debajo de la mitad de tus PG y no Incapacitado, recuperas 1d6 + la mitad de tu nivel de Paladín en PG."
       },
       {
-        n: "Emissario de la Redención",
+        n: "Emisario de la Redención (Emissary of Redemption)",
         nv: 20,
-        d: "Pasivo: tienes resistencia a todos los daños causados por otras criaturas (pero no por trampas, terreno, etc.). Cuando una criatura te golpea, recibe daño radiante = mod CAR (mínimo 1). Si atacas a una criatura, pierdes estas ventajas contra ella durante 1 minuto."
+        d: "Tienes resistencia a todo daño infligido por otras criaturas; además, cuando una criatura te daña, sufre daño radiante igual a la mitad del daño que sufres. El rasgo termina si atacas o infliges daño con un conjuro a otra criatura."
       },
     ],
 
-    /* ── Tasha's Cauldron of Everything ── */
+
+    /* ── TCE ── */
     "Juramento de los Vigilantes [TCE]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Alarma, Detectar Magia. Nv.5: Moonbeam, Ver la Invisibilidad. Nv.9: Dispersar Magia, Proyección Nondetection. Nv.13: Ojo Arcano, Destierro. Nv.17: Mantener Monstruo, Hold Monster (ya está), Escudriñar."
+        d: "Siempre tienes preparados: Nv.3: Alarm, Detect Magic. Nv.5: Moonbeam, See Invisibility. Nv.9: Counterspell, Nondetection. Nv.13: Aura of Purity, Banishment. Nv.17: Hold Monster, Scrying."
       },
       {
-        n: "Canalizar Divinidad: Voluntad del Vigilante",
+        n: "Canalizar Divinidad: Voluntad del Vigilante (Watcher's Will)",
         nv: 3,
-        d: "Acción: criaturas de tu elección a 30 pies pueden añadir mod SAB a sus tiradas de iniciativa durante las próximas 24 horas."
+        a: "A",
+        d: "Con una acción eliges hasta mod. CAR criaturas (incluido tú) a 30 pies: durante 1 minuto tienen Ventaja en salvaciones de INT, SAB y CAR."
       },
       {
-        n: "Canalizar Divinidad: Abjuración Apotropaica",
+        n: "Canalizar Divinidad: Abjurar a los Extraplanares (Abjure the Extraplanar)",
         nv: 3,
-        d: "Acción: criaturas aberrantes, celestiales, elementales, hadas, fiends o no-muertos a 30 pies superan SAB (CD conjuro) o quedan Asustadas durante 1 minuto. Las criaturas de CR ≤ 1/4 son destruidas si fallan."
+        a: "A",
+        d: "Con una acción presentas tu símbolo sagrado: aberraciones, celestiales, elementales, feéricos e infernales a 30 pies que te oigan hacen una salvación de SAB o quedan expulsados 1 minuto o hasta sufrir daño."
       },
       {
-        n: "Aura del Centinela",
+        n: "Aura del Centinela (Aura of the Sentinel)",
         nv: 7,
-        d: "Tú y las criaturas amistosas a 10 pies (→30 pies Nv.18) añadís tu bonificador de competencia a la Iniciativa mientras estés consciente."
+        d: "Tú y las criaturas que elijas a 10 pies sumáis tu bonificador de competencia a la iniciativa (30 pies en Nv.18)."
       },
       {
-        n: "Reprensión Vigilante",
+        n: "Reprimenda Vigilante (Vigilant Rebuke)",
         nv: 15,
-        d: "Reacción: cuando una criatura a 30 pies obliga a hacer una tirada de salvación de INT, SAB o CAR, puedes hacer que reciba 2d8 + mod CAR de daño radiante (sin importar si supera o falla la salvación)."
+        a: "R",
+        d: "Cuando tú o una criatura que veas a 30 pies superáis una salvación de INT, SAB o CAR, usas tu Reacción para infligir 2d8 + mod. CAR de daño de fuerza a la criatura que la provocó."
       },
       {
-        n: "Baluarte Mortal",
+        n: "Baluarte Mortal (Mortal Bulwark)",
         nv: 20,
-        d: "AA (1/descanso largo, 1 minuto): tus ojos brillan. Eres inmune a Encantado; criaturas aberrantes, elementales, hadas, fiends y no-muertos a 30 pies tienen desventaja en tiradas de ataque; puedes usar Acción para hacer que una de esas criaturas vuelva a su plano de origen (SAB para resistir, CD conjuro)."
+        a: "B",
+        d: "Como Acción Adicional ganas 1 minuto: Visión verdadera 120 pies; Ventaja en ataques contra aberraciones, celestiales, elementales, feéricos e infernales; y al impactar a uno puedes forzar una salvación de CAR o es desterrado a su plano natal. Una vez por descanso largo o gastando un espacio de Nv.5."
       },
     ],
 
-    /* ── Dungeon Master's Guide ── */
+
+    /* ── DMG ── */
     "Paladín Apóstata [DMG]": [
       {
-        n: "Conjuros de Juramento",
+        n: "Conjuros de Juramento (Oath Spells)",
         nv: 3,
-        d: "Nv.3: Maldición de Hellish Rebuke, Oscuridad. Nv.5: Locura de la Corona, Golpe del Vampiro. Nv.9: Animar Muertos, Blight. Nv.13: Augurio de la Muerte, Marchitar. Nv.17: Antipatía/Simpatía, Convocar No-Muerto."
+        d: "Siempre tienes preparados: Nv.3: Hellish Rebuke, Inflict Wounds. Nv.5: Crown of Madness, Darkness. Nv.9: Animate Dead, Bestow Curse. Nv.13: Blight, Confusion. Nv.17: Contagion, Dominate Person."
       },
       {
-        n: "Canalizar Divinidad: Control de los No-Muertos",
+        n: "Canalizar Divinidad: Controlar No-Muertos (Control Undead)",
         nv: 3,
-        d: "Acción: presentas tu símbolo profano. Cada no-muerto a 30 pies que puedas ver superan SAB (CD conjuro) o quedan bajo tu control durante 24 horas o hasta que uses este rasgo de nuevo. Una criatura controlada sigue tus órdenes al límite de su comprensión."
+        a: "A",
+        d: "Con una acción eliges un no-muerto a 30 pies: salvación de SAB (inmune si su CR ≥ tu nivel de Paladín); si falla, te obedece 24 horas."
       },
       {
-        n: "Canalizar Divinidad: Golpe Espectral",
+        n: "Canalizar Divinidad: Aspecto Pavoroso (Dreadful Aspect)",
         nv: 3,
-        d: "Acción: golpeas la mente de un enemigo a 5 pies. Superan salvación INT (CD conjuro) o reciben 3d10 de daño psíquico y tienen desventaja en todas las tiradas hasta el final de su siguiente turno."
+        a: "A",
+        d: "Con una acción, cada criatura que elijas a 30 pies que pueda verte hace una salvación de SAB o queda Asustada 1 minuto (puede repetir la salvación si termina su turno a más de 30 pies)."
       },
       {
-        n: "Aura de Odio",
+        n: "Aura de Odio (Aura of Hate)",
         nv: 7,
-        d: "Tú y los fiends y no-muertos amistosos a 10 pies (→30 pies Nv.18) añadís mod CAR a las tiradas de daño de ataques con arma cuerpo a cuerpo (mínimo +1)."
+        d: "Tú y los infernales y no-muertos a 10 pies sumáis tu mod. CAR (mín. +1) al daño de armas cuerpo a cuerpo (30 pies en Nv.18). Sólo un aura de este tipo por criatura."
       },
       {
-        n: "Inmortalidad Espectral",
+        n: "Resistencia Sobrenatural (Supernatural Resistance)",
         nv: 15,
-        d: "Eres inmune a los daños de veneno y de la condición Asustado. Cuando mueres no caes: en su lugar quedas Incapacitado con 1 PG. Cuando comienzas tu turno con PG entre 1 y la mitad de tu máximo, recuperas PG = mod CAR (mínimo 1)."
+        d: "Resistencia al daño contundente, perforante y cortante de armas no mágicas."
       },
       {
-        n: "Señor Tenebroso",
+        n: "Señor Tenebroso (Dread Lord)",
         nv: 20,
-        d: "Acción (1/descanso largo, 1 minuto): oscuridad mágica en 30 pies (solo tú ves a través de ella); criaturas hostiles en ella tienen desventaja en ataques; los no-muertos de CR 5 o inferior que entren en la zona suman su turno completo a tu mando."
+        a: "AB",
+        d: "Con una acción te rodeas de un aura de pesadumbre 1 minuto (30 pies): la luz brillante pasa a tenue; los enemigos Asustados que empiecen su turno en ella sufren 4d10 de daño psíquico; los ataques contra ti y las criaturas que elijas en el aura tienen Desventaja. Mientras dure, como Acción Adicional las sombras atacan: ataque cuerpo a cuerpo de conjuro contra una criatura del aura, 3d10 + mod. CAR de daño necrótico. Una vez por descanso largo."
       },
     ],
 
-  }, // fin subclases
-}; // fin CLASE_PALADIN
+
+    /* ── MOoT/TCE ── */
+    "Juramento de Gloria [MOoT/TCE]": [
+      {
+        n: "Conjuros de Juramento (Oath Spells)",
+        nv: 3,
+        d: "Siempre tienes preparados: Nv.3: Guiding Bolt, Heroism. Nv.5: Enhance Ability, Magic Weapon. Nv.9: Haste, Protection from Energy. Nv.13: Compulsion, Freedom of Movement. Nv.17: Commune, Flame Strike."
+      },
+      {
+        n: "Canalizar Divinidad: Atleta sin Igual (Peerless Athlete)",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional, durante 10 minutos tienes Ventaja en Atletismo (FUE) y Acrobacias (DES), tu capacidad de carga se duplica y tus saltos de longitud y altura aumentan 10 pies."
+      },
+      {
+        n: "Canalizar Divinidad: Golpe Inspirador (Inspiring Smite)",
+        nv: 3,
+        a: "O",
+        d: "Tras lanzar Golpe Divino, usas Canalizar Divinidad para repartir 2d8 + tu nivel de Paladín PG temporales entre criaturas a 30 pies (a tu elección)."
+      },
+      {
+        n: "Aura de Celeridad (Aura of Alacrity)",
+        nv: 7,
+        d: "Tu Velocidad aumenta 10 pies. Los aliados que empiezan su turno en tu aura (5 pies; 10 pies en Nv.18) ganan +10 pies de Velocidad hasta el final de ese turno."
+      },
+      {
+        n: "Defensa Gloriosa (Glorious Defense)",
+        nv: 15,
+        a: "R",
+        d: "Cuando tú o un aliado a 10 pies sois impactados, usas tu Reacción para dar +mod. CAR (mín. +1) a la CA contra ese ataque; si falla, puedes hacer un ataque con arma contra el atacante. Usos = mod. CAR (mín. 1) por descanso largo."
+      },
+      {
+        n: "Leyenda Viviente (Living Legend)",
+        nv: 20,
+        a: "B",
+        d: "Como Acción Adicional ganas 1 minuto: Ventaja en pruebas de CAR; una vez por turno, un ataque con arma fallado pasa a impactar; y puedes usar tu Reacción para repetir una salvación fallida. Una vez por descanso largo o gastando un espacio de Nv.5."
+      },
+    ],
+
+
+    /* ── PHB 2024 ── */
+    "Juramento de Devoción [PHB 2024]": [
+      {
+        n: "Conjuros de Juramento (Oath Spells)",
+        nv: 3,
+        d: "Siempre tienes preparados: Nv.3: Protection from Evil and Good, Shield of Faith. Nv.5: Aid, Zone of Truth. Nv.9: Beacon of Hope, Dispel Magic. Nv.13: Freedom of Movement, Guardian of Faith. Nv.17: Commune, Flame Strike."
+      },
+      {
+        n: "Arma Sagrada (Sacred Weapon)",
+        nv: 3,
+        a: "O",
+        d: "Al realizar la acción Atacar, puedes gastar 1 uso de Canalizar Divinidad para imbuir un arma cuerpo a cuerpo que lleves durante 10 minutos: sumas tu mod. CAR (mín. +1) a las tiradas de ataque con ella; sus impactos infligen daño normal o radiante (a tu elección); emite luz brillante 20 pies y tenue otros 20 pies."
+      },
+      {
+        n: "Aura de Devoción (Aura of Devotion)",
+        nv: 7,
+        d: "Tú y tus aliados sois inmunes a la condición de Hechizado mientras estéis en tu aura de protección."
+      },
+      {
+        n: "Golpe de Protección (Smite of Protection)",
+        nv: 15,
+        d: "Cuando lanzas Divine Smite, tú y tus aliados tenéis Cobertura media en tu aura de protección hasta el inicio de tu siguiente turno."
+      },
+      {
+        n: "Nimbo Sagrado (Holy Nimbus)",
+        nv: 20,
+        a: "B",
+        d: "Como Acción Adicional imbuyes tu aura de protección 10 minutos: Protección Sagrada (Ventaja en salvaciones contra infernales y no-muertos); Daño Radiante (los enemigos que empiezan su turno en el aura sufren daño radiante = mod. CAR + bonificador de competencia); Luz Solar (el aura se llena de luz brillante solar). Una vez por descanso largo o gastando un espacio de Nv.5."
+      },
+    ],
+
+    "Juramento de los Ancestros [PHB 2024]": [
+      {
+        n: "Conjuros de Juramento (Oath Spells)",
+        nv: 3,
+        d: "Siempre tienes preparados: Nv.3: Ensnaring Strike, Speak with Animals. Nv.5: Misty Step, Moonbeam. Nv.9: Plant Growth, Protection from Energy. Nv.13: Ice Storm, Stoneskin. Nv.17: Commune with Nature, Tree Stride."
+      },
+      {
+        n: "Ira de la Naturaleza (Nature's Wrath)",
+        nv: 3,
+        a: "A",
+        d: "Con una acción Mágica gastas 1 uso de Canalizar Divinidad: cada criatura que elijas a 15 pies hace una salvación de FUE o queda Apresada 1 minuto (repite la salvación al final de sus turnos)."
+      },
+      {
+        n: "Aura de Protección Ancestral (Aura of Warding)",
+        nv: 7,
+        d: "Tú y tus aliados tenéis resistencia al daño necrótico, psíquico y radiante mientras estéis en tu aura de protección."
+      },
+      {
+        n: "Centinela Inmortal (Undying Sentinel)",
+        nv: 15,
+        a: "O",
+        d: "Cuando caes a 0 PG sin morir, quedas a 1 PG y recuperas PG = 3 × tu nivel de Paladín. Una vez por descanso largo. Además no puedes envejecer por magia ni muestras envejecimiento."
+      },
+      {
+        n: "Campeón Ancestral (Elder Champion)",
+        nv: 20,
+        a: "B",
+        d: "Como Acción Adicional potencias tu aura de protección 1 minuto: Disminuir Desafío (los enemigos tienen Desventaja en salvaciones contra tus conjuros y Canalizar Divinidad); Regeneración (recuperas 10 PG al inicio de tu turno); Conjuros Veloces (lanzas conjuros de acción con Acción Adicional). Una vez por descanso largo o gastando un espacio de Nv.5."
+      },
+    ],
+
+    "Juramento de Venganza [PHB 2024]": [
+      {
+        n: "Conjuros de Juramento (Oath Spells)",
+        nv: 3,
+        d: "Siempre tienes preparados: Nv.3: Bane, Hunter's Mark. Nv.5: Hold Person, Misty Step. Nv.9: Haste, Protection from Energy. Nv.13: Banishment, Dimension Door. Nv.17: Hold Monster, Scrying."
+      },
+      {
+        n: "Voto de Enemistad (Vow of Enmity)",
+        nv: 3,
+        a: "O",
+        d: "Al realizar la acción Atacar, puedes gastar 1 uso de Canalizar Divinidad para pronunciar un voto contra una criatura que veas a 30 pies: Ventaja en las tiradas de ataque contra ella durante 1 minuto o hasta que lo uses de nuevo. Si cae a 0 PG, transfieres el voto (sin acción) a otra criatura a 30 pies."
+      },
+      {
+        n: "Vengador Implacable (Relentless Avenger)",
+        nv: 7,
+        d: "Cuando impactas con un ataque de oportunidad, puedes reducir su Velocidad a 0 hasta el final del turno y moverte hasta la mitad de tu Velocidad como parte de la misma Reacción (sin provocar ataques de oportunidad)."
+      },
+      {
+        n: "Alma de Venganza (Soul of Vengeance)",
+        nv: 15,
+        a: "R",
+        d: "Inmediatamente después de que una criatura bajo tu Voto de Enemistad impacte o falle con una tirada de ataque, usas tu Reacción para hacerle un ataque cuerpo a cuerpo si está a tu alcance."
+      },
+      {
+        n: "Ángel Vengador (Avenging Angel)",
+        nv: 20,
+        a: "B",
+        d: "Como Acción Adicional te transformas 10 minutos: Vuelo (Velocidad de vuelo 60 pies, flotas) y Aura Aterradora (los enemigos que empiezan su turno en tu aura de protección hacen una salvación de SAB o quedan Asustados 1 minuto o hasta sufrir daño; las tiradas de ataque contra criaturas Asustadas tienen Ventaja). Una vez por descanso largo o gastando un espacio de Nv.5."
+      },
+    ],
+
+    "Juramento de Gloria [PHB 2024]": [
+      {
+        n: "Conjuros de Juramento (Oath Spells)",
+        nv: 3,
+        d: "Siempre tienes preparados: Nv.3: Guiding Bolt, Heroism. Nv.5: Enhance Ability, Magic Weapon. Nv.9: Haste, Protection from Energy. Nv.13: Compulsion, Freedom of Movement. Nv.17: Legend Lore, Yolande's Regal Presence."
+      },
+      {
+        n: "Golpe Inspirador (Inspiring Smite)",
+        nv: 3,
+        a: "O",
+        d: "Tras lanzar Divine Smite, puedes gastar 1 uso de Canalizar Divinidad para repartir PG temporales entre criaturas a 30 pies (a tu elección): total = 2d8 + tu nivel de Paladín."
+      },
+      {
+        n: "Atleta sin Igual (Peerless Athlete)",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional gastas 1 uso de Canalizar Divinidad: durante 1 hora tienes Ventaja en Atletismo (FUE) y Acrobacias (DES) y tus saltos de longitud y altura aumentan 10 pies."
+      },
+      {
+        n: "Aura de Celeridad (Aura of Alacrity)",
+        nv: 7,
+        d: "Tu Velocidad aumenta 10 pies. Cuando un aliado entra en tu aura de protección o empieza su turno en ella, su Velocidad aumenta 10 pies hasta el final de su siguiente turno."
+      },
+      {
+        n: "Defensa Gloriosa (Glorious Defense)",
+        nv: 15,
+        a: "R",
+        d: "Cuando una criatura a 10 pies de ti es impactada por un ataque, usas tu Reacción para dar un bonificador a su CA = mod. CAR (mín. +1) contra ese ataque; si falla, puedes hacer un ataque con arma contra el atacante. Usos = mod. CAR (mín. 1) por descanso largo."
+      },
+      {
+        n: "Leyenda Viviente (Living Legend)",
+        nv: 20,
+        a: "B",
+        d: "Como Acción Adicional ganas 10 minutos: Ventaja en todas las pruebas de CAR; puedes repetir una salvación fallida con tu Reacción; y una vez por turno un ataque con arma fallado pasa a impactar. Una vez por descanso largo o gastando un espacio de Nv.5."
+      },
+    ],
+
+
+    /* ── HoF 2024 ── */
+    "Juramento de los Nobles Genios [HoF 2024]": [
+      {
+        n: "Conjuros de Genio (Genie Spells)",
+        nv: 3,
+        d: "Siempre tienes preparados: Nv.3: Chromatic Orb, Elementalism, Thunderous Smite. Nv.5: Mirror Image, Phantasmal Force. Nv.9: Fly, Gaseous Form. Nv.13: Conjure Minor Elementals, Summon Elemental. Nv.17: Banishing Smite, Contact Other Plane."
+      },
+      {
+        n: "Golpe Elemental (Elemental Smite)",
+        nv: 3,
+        a: "O",
+        d: "Tras lanzar Divine Smite, puedes gastar 1 uso de Canalizar Divinidad para uno de estos efectos: Aplastamiento del Dao: el objetivo queda Agarrado (CD de escape = CD de tus conjuros) y Apresado mientras esté agarrado. Escape del Djinni: te teletransportas 30 pies y quedas semi-incorpóreo hasta el final de tu siguiente turno (resistencia a daño contundente, perforante y cortante; inmune a Agarrado, Derribado y Apresado). Furia del Efreeti: el objetivo sufre 2d4 de fuego y otra criatura a 30 pies sufre 2d4 de fuego. Oleada del Marid: el objetivo y las criaturas en una emanación de 10 pies hacen una salvación de FUE o son empujados 15 pies y quedan Derribados."
+      },
+      {
+        n: "Esplendor del Genio (Genie's Splendor)",
+        nv: 3,
+        d: "Sin armadura, tu CA base = 10 + mod. DES + mod. CAR (puedes usar escudo). Ganas competencia en Acrobacias, Intimidación, Interpretación o Persuasión."
+      },
+      {
+        n: "Aura de Protección Elemental (Aura of Elemental Shielding)",
+        nv: 7,
+        d: "Eliges resistencia a ácido, frío, fuego, rayo o trueno para ti y tus aliados en tu aura de protección; cambias el tipo al inicio de tu turno (sin acción)."
+      },
+      {
+        n: "Réplica Elemental (Elemental Rebuke)",
+        nv: 15,
+        a: "R",
+        d: "Cuando te impactan, usas tu Reacción para reducir a la mitad el daño; el atacante hace una salvación de DES (CD de tus conjuros) o sufre 2d10 + mod. CAR de daño de ácido, frío, fuego, rayo o trueno (a tu elección). Usos = mod. CAR (mín. 1) por descanso largo."
+      },
+      {
+        n: "Noble Descendiente (Noble Scion)",
+        nv: 20,
+        a: "B",
+        d: "Como Acción Adicional ganas 10 minutos: Velocidad de vuelo 60 pies (flotas); y cuando un aliado falla una Tirada de d20, usas tu Reacción para hacer que la supere. Una vez por descanso largo o gastando un espacio de Nv.5."
+      },
+    ],
+  },
+};

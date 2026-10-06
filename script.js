@@ -12,9 +12,32 @@ function panelActual() {
     return fichas.find(f => f.id === fichaActual)?.panel || null;
 }
 
-function nuevaFicha(datosGuardados) {
+/* ── Identificadores de ficha ──
+   Un id solo se reutiliza (al cargar desde localStorage) si es válido y no
+   está ya en uso. Al importar o abrir un enlace compartido se genera SIEMPRE
+   uno nuevo (opciones.nuevoId), de modo que jamás puedan existir dos fichas
+   con el mismo id. */
+function _idFichaValido(id) {
+    return typeof id === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(id);
+}
+function _idFichaLibre(id) {
+    return !fichas.some(f => f.id === id)
+        && !document.querySelector(`.pestana[data-ficha-id="${id}"]`)
+        && !document.querySelector(`.ficha-panel[data-ficha-id="${id}"]`);
+}
+
+/* nuevaFicha(datosGuardados?, opciones?)
+   opciones.nuevoId → ignora el id que traigan los datos y genera uno nuevo.
+   Devuelve { id, panel, errores } donde errores lista las secciones de los
+   datos que no se pudieron restaurar (nunca lanza por datos mal formados). */
+function nuevaFicha(datosGuardados, opciones) {
+    opciones = opciones || {};
     contadorFichas++;
-    const id = datosGuardados?.id || ('ficha-' + contadorFichas);
+    let id = datosGuardados && datosGuardados.id;
+    if (opciones.nuevoId || !_idFichaValido(id) || !_idFichaLibre(id)) {
+        id = 'ficha-' + contadorFichas;
+        while (!_idFichaLibre(id)) { contadorFichas++; id = 'ficha-' + contadorFichas; }
+    }
     const tpl = document.getElementById('plantilla-ficha');
     const clone = tpl.content.cloneNode(true);
     const panel = clone.querySelector('.ficha-panel');
@@ -28,7 +51,7 @@ function nuevaFicha(datosGuardados) {
     tab.className = 'pestana';
     tab.dataset.fichaId = id;
     tab.innerHTML = `<span class="pestana-nombre">Personaje ${contadorFichas}</span><button class="pestana-cerrar" onclick="cerrarFicha(event,'${id}')" title="Cerrar ficha">✕</button>`;
-    tab.addEventListener('click', () => activarFicha(id));
+    tab.addEventListener('click', () => { activarFicha(id); guardarDebounced(); });
     barra.insertBefore(tab, btnNueva);
 
     // Init primer grupo dados de golpe
@@ -36,6 +59,7 @@ function nuevaFicha(datosGuardados) {
         const wrap = panel.querySelector('.dg-grupos-wrap');
         if (wrap && wrap.children.length === 0) {
             const g = dgCrearGrupo('d8', 1);
+            g.dataset.auto = '1';   // lo gestionan las clases: se ajusta/borra al elegir clase
             wrap.appendChild(g);
             actualizarDadosGolpePanel(g.querySelector('.dg-total'));
         }
@@ -49,7 +73,8 @@ function nuevaFicha(datosGuardados) {
     _hookAutoAcciones(panel);
     activarFicha(id);
 
-    if (datosGuardados) cargarDatosEnPanel(panel, datosGuardados);
+    const errores = datosGuardados ? cargarDatosEnPanel(panel, datosGuardados) : [];
+    return { id, panel, errores };
 }
 
 function activarFicha(id) {
@@ -152,7 +177,8 @@ function _ajustarFuenteNombre(input) {
 function getPanel(el) { return el.closest('.ficha-panel'); }
 function fmtMod(n) { return (n >= 0 ? '+' : '') + n; }
 function _esc(str) {
-    return (str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // Acepta cualquier tipo (número, null, undefined…) sin lanzar
+    return String(str == null ? '' : str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -164,19 +190,27 @@ function actualizarAtributo(input) {
     const score = parseInt(input.value) || 10;
     const mod   = Math.floor((score - 10) / 2);
     panel.querySelector(`[data-mod="${stat}"]`).innerText = fmtMod(mod);
-    if (stat === 'dex') {
-        var iniEl = panel.querySelector('.ini-val');
-        var prevMod = iniEl.dataset.prevDexMod !== undefined ? parseInt(iniEl.dataset.prevDexMod) : mod;
-        var curIni = parseInt(iniEl.value) || 0;
-        var bonus = iniEl.dataset.iniBonus !== undefined ? parseInt(iniEl.dataset.iniBonus) : (curIni - prevMod);
-        if (isNaN(bonus)) bonus = 0;
-        iniEl.dataset.iniBonus = bonus;
-        iniEl.dataset.prevDexMod = mod;
-        iniEl.value = mod + bonus;
-    }
+    // La iniciativa y la CA con armadura se recalculan dentro de actualizarTodoPanel
     actualizarTodoPanel(panel);
     if (stat === 'con') calcularHPMaxAuto(panel);
     guardarDebounced();
+}
+
+/* ── Modificador de DES de un panel ── */
+function _modDes(panel) {
+    const score = parseInt(panel.querySelector('.stat-score[data-stat="dex"]')?.value) || 10;
+    return Math.floor((score - 10) / 2);
+}
+
+/* ── Iniciativa = mod. DES + bono propio (data-ini-bonus) ──
+   El bono solo cambia cuando el jugador escribe en el campo (actualizarIniBonus);
+   el total se recalcula siempre que cambia la DES, desde cualquier sitio. */
+function _sincronizarIniciativa(panel) {
+    const iniEl = panel.querySelector('.ini-val');
+    if (!iniEl) return;
+    const bonus = parseInt(iniEl.dataset.iniBonus) || 0;
+    iniEl.dataset.iniBonus = bonus;
+    iniEl.value = _modDes(panel) + bonus;
 }
 
 function validarExpertise(chk) {
@@ -245,6 +279,10 @@ function actualizarTodoPanel(panel) {
         const mod = Math.floor((score - 10) / 2);
         panel.querySelector(`[data-mod="${stat}"]`).innerText = fmtMod(mod);
     });
+
+    // Iniciativa (sigue siempre a la DES) y CA derivada de la armadura equipada
+    _sincronizarIniciativa(panel);
+    _recalcularCA(panel);
 
     // Salvaciones: base + offset
     stats.forEach(stat => {
@@ -387,11 +425,9 @@ function tirarSalvacionStat(el, nombre) {
 }
 
 function actualizarIniBonus(input) {
-    var panel = getPanel(input);
-    var dexEl = panel.querySelector('.stat-score[data-stat="dex"]');
-    var dexMod = Math.floor(((parseInt(dexEl ? dexEl.value : '10') || 10) - 10) / 2);
-    input.dataset.iniBonus = (parseInt(input.value) || 0) - dexMod;
-    input.dataset.prevDexMod = dexMod;
+    const panel = getPanel(input);
+    // Lo que escribe el jugador = mod. DES + bono propio → se guarda el bono
+    input.dataset.iniBonus = (parseInt(input.value) || 0) - _modDes(panel);
     guardarDebounced();
 }
 
@@ -472,6 +508,7 @@ function actualizarVidaPanel(input) {
     barra.classList.remove('hp-media', 'hp-baja');
     if (pct <= 0.25)     barra.classList.add('hp-baja');
     else if (pct <= 0.5) barra.classList.add('hp-media');
+    guardarDebounced();   // la vida actual/temporal/máx. también se persiste al instante
 }
 
 function modificarVidaPanel(btn, tipo) {
@@ -545,6 +582,9 @@ function dgCrearGrupo(tipo, total) {
 
 function dgTipoCambia(sel) {
     const grupo = sel.closest('.dg-grupo');
+    // Si el jugador cambia el tipo a mano, el grupo deja de estar gestionado por las clases
+    delete grupo.dataset.auto;
+    grupo.dataset.manual = '1';
     grupo.setAttribute('style', dgColorCSS(sel.value));
     // Recolorear los checkboxes existentes
     grupo.querySelectorAll('.dg-check-item input').forEach(c => {
@@ -800,7 +840,7 @@ function registrarLog(nombre, total, detalle, mod, clase) {
     const log = document.getElementById('log-lista');
     const div = document.createElement('div');
     div.className = `log-entrada ${clase}`;
-    div.innerHTML = `<strong>${nombre}</strong><div class="res"><span>${total}</span><small>(${detalle}) ${mod >= 0 ? '+' : ''}${mod}</small></div>`;
+    div.innerHTML = `<strong>${_esc(nombre)}</strong><div class="res"><span>${total}</span><small>(${detalle}) ${mod >= 0 ? '+' : ''}${mod}</small></div>`;
     log.prepend(div);
 }
 
@@ -996,7 +1036,7 @@ function tirarArma(iconEl) {
     const div = document.createElement('div');
     div.className = `log-entrada arma${esCrit?' critico':''}`;
     div.innerHTML = `
-        <strong>${nombre}${esCrit?' — ¡CRÍTICO!':''}</strong>
+        <strong>${_esc(nombre)}${esCrit?' — ¡CRÍTICO!':''}</strong>
         <div class="res"><span class="${impColor}">${totalImpacto}</span><small>🎯 ${impLabel} (${detalleImpacto} ${bonoStr})</small></div>
         <hr class="log-sep">${dañoHTML}`;
     log.prepend(div);
@@ -1102,26 +1142,143 @@ function _poblarSelectoresCabecera(panel) {
     }
 }
 
+/* ═══════════════════════════════════════════════════════
+   GUARDADO AUTOMÁTICO (localStorage)
+   ─────────────────────────────────────────────────────
+   · guardarDebounced() agenda un guardado a los 600 ms.
+   · Si la pestaña se cierra/oculta con un guardado pendiente, se
+     vuelca inmediatamente (pagehide / visibilitychange / beforeunload).
+   · Nunca se escribe una lista vacía de fichas ni se sobrescribe un
+     almacenamiento ilegible sin haber conservado antes una copia.
+   · Los fallos (cuota llena, almacenamiento bloqueado…) se avisan UNA
+     sola vez en un panel con botón de copia de seguridad completa.
+═══════════════════════════════════════════════════════ */
+let _guardadoPendiente = false;
+let _guardadoBloqueado = false;   // true si el almacenamiento original no se pudo respaldar
+let _ultimoGuardado    = null;    // último JSON escrito (evita reescrituras idénticas)
+
 function guardarDebounced() {
+    _guardadoPendiente = true;
     clearTimeout(_guardandoTimeout);
     _guardandoTimeout = setTimeout(guardarTodo, 600);
 }
 
-function guardarTodo() {
+/* Vuelca ya el guardado pendiente (cierre de pestaña, cambio a otra app…) */
+function _volcarGuardadoPendiente() {
+    if (_guardadoPendiente) guardarTodo();
+}
+
+/* ── Avisos flotantes (contenedor único → nunca se apilan duplicados) ── */
+function _mostrarAviso(id, mensaje, botones, color) {
+    let cont = document.getElementById('avisos-app');
+    if (!cont) {
+        cont = document.createElement('div');
+        cont.id = 'avisos-app';
+        cont.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:440px';
+        document.body.appendChild(cont);
+    }
+    let el = document.getElementById(id);
+    if (!el) { el = document.createElement('div'); el.id = id; cont.appendChild(el); }
+    el.style.cssText = `background:${color || '#e53e3e'};color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;line-height:1.4;box-shadow:0 2px 10px rgba(0,0,0,0.35)`;
+    el.textContent = '';
+    const txt = document.createElement('div');
+    txt.textContent = mensaje;
+    el.appendChild(txt);
+    if (botones && botones.length) {
+        const fila = document.createElement('div');
+        fila.style.cssText = 'margin-top:8px;display:flex;gap:6px;flex-wrap:wrap';
+        botones.forEach(b => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = b.texto;
+            btn.style.cssText = 'background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.55);color:#fff;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer';
+            btn.addEventListener('click', () => { try { b.accion(el); } catch (e) { console.warn(e); } });
+            fila.appendChild(btn);
+        });
+        el.appendChild(fila);
+    }
+    return el;
+}
+function _quitarAviso(id) { document.getElementById(id)?.remove(); }
+
+/* ── Descargas de copias de seguridad ── */
+function _descargarTexto(texto, nombreArchivo) {
+    const blob = new Blob([texto], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = nombreArchivo;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+function _sufijoFecha() { return new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-'); }
+
+/* Copia de seguridad de TODAS las fichas abiertas (se puede volver a importar) */
+function descargarCopiaCompleta() {
     try {
         const datos = fichas.map(f => leerFicha(f.panel));
-        localStorage.setItem('dnd_fichas', JSON.stringify(datos));
-        localStorage.setItem('dnd_contador', contadorFichas);
+        _descargarTexto(JSON.stringify(datos, null, 2), `dnd_fichas_copia_${_sufijoFecha()}.json`);
+    } catch (e) {
+        _mostrarToast('No se pudo crear la copia: ' + e.message, 'error');
+    }
+}
+
+function _mensajeFalloGuardado(e) {
+    const cuota = e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22 || e.code === 1014);
+    return cuota
+        ? '⚠ No se pudo guardar: el almacenamiento del navegador está lleno. Tus últimos cambios NO están guardados. Descarga una copia y libera espacio (por ejemplo, quitando imágenes grandes).'
+        : '⚠ No se pudo guardar en el navegador (' + (e && e.name ? e.name : 'error desconocido') + '). Tus últimos cambios NO están guardados. Descarga una copia de seguridad.';
+}
+
+function guardarTodo() {
+    clearTimeout(_guardandoTimeout);
+    _guardandoTimeout = null;
+    _guardadoPendiente = false;
+    // Nunca escribir "nada": evita borrar los datos si la carga falló o aún no terminó
+    if (_guardadoBloqueado || fichas.length === 0) return false;
+
+    // 1. Serializar (si UNA ficha falla al leerse, se conserva su última versión guardada)
+    let json;
+    try {
+        let previas = null;
+        const datos = fichas.map(f => {
+            try {
+                return leerFicha(f.panel);
+            } catch (err) {
+                console.warn('No se pudo leer la ficha', f.id, err);
+                if (previas === null) {
+                    try { previas = JSON.parse(_ultimoGuardado || localStorage.getItem('dnd_fichas') || '[]'); }
+                    catch (_) { previas = []; }
+                }
+                const anterior = Array.isArray(previas) ? previas.find(p => p && p.id === f.id) : null;
+                if (anterior) return anterior;
+                throw err;
+            }
+        });
+        json = JSON.stringify(datos);
+    } catch (e) {
+        console.warn('No se pudo preparar el guardado:', e);
+        _mostrarAviso('aviso-guardado', '⚠ No se pudo guardar: error al leer una ficha (' + e.message + ').',
+            [{ texto: '⬇ Descargar copia', accion: descargarCopiaCompleta }]);
+        return false;
+    }
+
+    // 2. Escribir
+    try {
+        if (json !== _ultimoGuardado) localStorage.setItem('dnd_fichas', json);
+        localStorage.setItem('dnd_contador', String(contadorFichas));
         localStorage.setItem('dnd_activa', fichaActual);
-    } catch(e) {
+        _ultimoGuardado = json;
+        _quitarAviso('aviso-guardado');
+        return true;
+    } catch (e) {
         console.warn('No se pudo guardar:', e);
-        if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-            const aviso = document.createElement('div');
-            aviso.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#e53e3e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.3)';
-            aviso.textContent = '⚠ No se pudo guardar: almacenamiento lleno. Exporta tus fichas a JSON como copia de seguridad.';
-            document.body.appendChild(aviso);
-            setTimeout(() => aviso.remove(), 6000);
-        }
+        _mostrarAviso('aviso-guardado', _mensajeFalloGuardado(e), [
+            { texto: '⬇ Descargar copia de todas las fichas', accion: descargarCopiaCompleta },
+            { texto: 'Cerrar', accion: () => _quitarAviso('aviso-guardado') },
+        ]);
+        return false;
     }
 }
 
@@ -1136,8 +1293,8 @@ function leerFicha(panel) {
     d.retratoCab  = panel.querySelector('.retrato-cab-img')?.src?.startsWith('data:') ? panel.querySelector('.retrato-cab-img').src : '';
     d.pb          = panel.querySelector('.pb-input')?.value || '2';
     d.inspiracion = panel.querySelector('.bloque-inspiracion')?.classList.contains('activo') || false;
-    // Multiclase
-    d.multiclases = leerMulticlases(panel);
+    // Multiclase (solo clase y nivel; la subclase se guarda en caract.mcClases)
+    d.multiclases = leerMulticlases(panel).map(mc => ({ clase: mc.clase, nivel: mc.nivel }));
 
     // Stats y salvaciones
     d.stats = {}; d.salvs = {}; d.salvOffsets = {};
@@ -1166,6 +1323,7 @@ function leerFicha(panel) {
     // Combate inline
     const csis = panel.querySelectorAll('.csi-input');
     d.ca  = csis[0]?.value || '10';
+    d.caBonus  = csis[0]?.dataset.caBonus ?? '0';   // ajuste manual sobre la CA calculada por armadura
     d.ini      = csis[1]?.value || '0';
     d.iniBonus = csis[1]?.dataset.iniBonus ?? '0';
     d.vels = Array.from(panel.querySelectorAll('.vel-inline-input')).map(v => v.value);
@@ -1190,7 +1348,8 @@ function leerFicha(panel) {
     d.dgGrupos = Array.from(panel.querySelectorAll('.dg-grupo')).map(g => ({
         tipo:   g.querySelector('.dg-tipo')?.value || 'd8',
         total:  g.querySelector('.dg-total')?.value || '0',
-        checks: Array.from(g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]')).map(c => c.checked)
+        checks: Array.from(g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]')).map(c => c.checked),
+        auto:   g.dataset.auto === '1'      // grupo gestionado por las clases (no añadido a mano)
     }));
 
     // Salvaciones de muerte
@@ -1306,17 +1465,37 @@ function leerFicha(panel) {
     return d;
 }
 
+/* Traduce una clave guardada con un nombre antiguo (subclase, especie o trasfondo
+   renombrados al revisar el contenido contra el material oficial) a la clave actual.
+   Si no hay equivalencia, devuelve el valor tal cual. */
+function _traducirClaveVieja(tipo, valor, clase) {
+    return (typeof resolverAlias === 'function') ? resolverAlias(tipo, valor, clase) : valor;
+}
+
+/* Restaura una ficha desde sus datos guardados. Cada sección se carga por separado:
+   si una está mal formada (p. ej. un campo con un tipo inesperado) se anota y las
+   demás se cargan igualmente. Devuelve la lista de secciones que fallaron (vacía = todo bien). */
 function cargarDatosEnPanel(panel, d) {
+    const errores = [];
+    const _secc = (nombre, fn) => {
+        try { fn(); }
+        catch (e) {
+            console.warn('Error cargando la sección "' + nombre + '":', e);
+            errores.push(nombre + ': ' + (e && e.message ? e.message : e));
+        }
+    };
+
+    _secc('cabecera', () => {
     // Cabecera
     if (d.nombre) { panel.querySelector('.input-nombre').value = d.nombre; onNombreCambia(panel.querySelector('.input-nombre')); }
     // Selectores especie y trasfondo en cabecera
     if (d.especie) {
         const selE = panel.querySelector('.sel-especie-cab');
-        if (selE) { selE.value = d.especie; }
+        if (selE) { selE.value = _traducirClaveVieja('especie', d.especie); }
     }
     if (d.trasfondo) {
         const selT = panel.querySelector('.sel-trasfondo-cab');
-        if (selT) { selT.value = d.trasfondo; }
+        if (selT) { selT.value = _traducirClaveVieja('trasfondo', d.trasfondo); }
     }
     // Retrato de cabecera
     if (d.retratoCab) {
@@ -1335,7 +1514,9 @@ function cargarDatosEnPanel(panel, d) {
         const nivel = m ? parseInt(m[2]) : 1;
         cargarMulticlases(panel, [{ clase: claseNombre, nivel }]);
     }
+    });
 
+    _secc('atributos', () => {
     // Stats y salvaciones
     if (d.stats) ['str','dex','con','int','wis','cha'].forEach(s => {
         const el = panel.querySelector(`.stat-score[data-stat="${s}"]`);
@@ -1351,7 +1532,9 @@ function cargarDatosEnPanel(panel, d) {
         const salvEl = panel.querySelector(`[data-salv="${s}"]`);
         if (salvEl) salvEl.dataset.salvOffset = off;
     });
+    });
 
+    _secc('habilidades', () => {
     // Habilidades
     if (d.habilidades) panel.querySelectorAll('.fila-skill').forEach((fila, i) => {
         const h = d.habilidades[i]; if (!h) return;
@@ -1372,21 +1555,25 @@ function cargarDatosEnPanel(panel, d) {
         }
         if (modEl && h.modOffset) modEl.dataset.modOffset = h.modOffset;
     });
+    });
 
+    _secc('combate', () => {
     // Combate
     const csis = panel.querySelectorAll('.csi-input');
     if (d.ca  && csis[0]) csis[0].value = d.ca;
-    if (d.ini && csis[1]) {
-        csis[1].value = d.ini;
-        var _dexScore = parseInt(panel.querySelector('.stat-score[data-stat="dex"]')?.value) || 10;
-        var _dexMod = Math.floor((_dexScore - 10) / 2);
-        var _bonus = d.iniBonus !== undefined ? parseInt(d.iniBonus) : (parseInt(d.ini) - _dexMod);
+    if (csis[1]) {
+        // La iniciativa = mod. DES + bono propio. Se guarda solo el bono y el total se recalcula siempre.
+        const _dexMod = _modDes(panel);
+        let _bonus = d.iniBonus !== undefined ? parseInt(d.iniBonus)
+                   : (d.ini !== undefined ? (parseInt(d.ini) || 0) - _dexMod : 0);
         if (isNaN(_bonus)) _bonus = 0;
         csis[1].dataset.iniBonus = _bonus;
-        csis[1].dataset.prevDexMod = _dexMod;
+        csis[1].value = _dexMod + _bonus;
     }
     if (d.vels) panel.querySelectorAll('.vel-inline-input').forEach((v,i) => { if (d.vels[i]!==undefined) v.value=d.vels[i]; });
+    });
 
+    _secc('vida', () => {
     // Vida
     if (d.hpActual) panel.querySelector('.hp-actual').value    = d.hpActual;
     if (d.hpMax)    panel.querySelector('.hp-max').value       = d.hpMax;
@@ -1398,45 +1585,58 @@ function cargarDatosEnPanel(panel, d) {
         hpMaxEl.dataset.hpAuto = esAuto ? 'true' : 'false';
         _hpAutoLabelVisible(panel, esAuto);
     }
+    });
 
+    _secc('resistencias', () => {
     // Resistencias (3 textareas separadas)
     const resTasLoad = panel.querySelectorAll('.res-textarea');
     if (resTasLoad[0] && d.resistenciaDaño      !== undefined) resTasLoad[0].value = d.resistenciaDaño;
     if (resTasLoad[1] && d.inmunidadDaño        !== undefined) resTasLoad[1].value = d.inmunidadDaño;
     if (resTasLoad[2] && d.inmunidadCondiciones !== undefined) resTasLoad[2].value = d.inmunidadCondiciones;
+    });
 
+    _secc('condiciones', () => {
     // Condiciones
     if (d.condiciones) panel.querySelectorAll('.condicion-chk').forEach((c,i) => { c.checked = d.condiciones[i]||false; });
     if (d.agotamiento) panel.querySelectorAll('.agotamiento-bolita').forEach((b,i) => { b.classList.toggle('activo', !!d.agotamiento[i]); });
+    });
 
+    _secc('dados de golpe', () => {
     // Dados de golpe — restaurar grupos
     (function() {
         const wrap = panel.querySelector('.dg-grupos-wrap');
         if (!wrap) return;
         wrap.innerHTML = '';
-        const grupos = (d.dgGrupos && d.dgGrupos.length)
+        const grupos = (Array.isArray(d.dgGrupos) && d.dgGrupos.length)
             ? d.dgGrupos
             : [{ tipo: d.dgTipo || 'd8', total: d.dgTotal || '1', checks: d.dgChecks || [] }];
         grupos.forEach(gd => {
             const g = dgCrearGrupo(gd.tipo || 'd8', gd.total || '1');
+            if (gd.auto) g.dataset.auto = '1';
             wrap.appendChild(g);
             actualizarDadosGolpePanel(g.querySelector('.dg-total'));
             const chks = g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]');
-            if (gd.checks) chks.forEach((c,i) => { c.checked = gd.checks[i] !== undefined ? gd.checks[i] : true; });
+            if (Array.isArray(gd.checks)) chks.forEach((c,i) => { c.checked = gd.checks[i] !== undefined ? !!gd.checks[i] : true; });
         });
     })();
+    });
 
+    _secc('salvaciones de muerte', () => {
     // Salvaciones de muerte
     if (d.exitosMuerte) panel.querySelectorAll('.circulos-exito .circulo-muerte').forEach((c,i) => c.classList.toggle('activo', d.exitosMuerte[i]||false));
     if (d.fallosMuerte) panel.querySelectorAll('.circulos-fallo .circulo-muerte').forEach((c,i) => c.classList.toggle('activo', d.fallosMuerte[i]||false));
+    });
 
+    _secc('monedas', () => {
     // Monedas
     if (d.monedas) ['cobre','plata','oro','platino'].forEach(m => {
         const el = panel.querySelector(`.moneda.${m} input`); if (el) el.value = d.monedas[m]||'0';
     });
+    });
 
+    _secc('inventario', () => {
     // Items
-    if (d.items && d.items.length > 0) {
+    if (Array.isArray(d.items) && d.items.length > 0) {
         const cont = panel.querySelector('.contenedor-items');
         cont.innerHTML = '';
         d.items.forEach(item => {
@@ -1452,7 +1652,9 @@ function cargarDatosEnPanel(panel, d) {
             cont.appendChild(div);
         });
     }
+    });
 
+    _secc('sentidos y competencias', () => {
     // Sentidos
     const se = panel.querySelector('.sentidos-extra');
     if (se && d.sentidosExtra) se.value = d.sentidosExtra;
@@ -1462,9 +1664,11 @@ function cargarDatosEnPanel(panel, d) {
     if (tas[0]) tas[0].value = d.idiomas        || '';
     if (tas[1]) tas[1].value = d.herramientas   || '';
     if (tas[2]) tas[2].value = d.armasArmaduras || '';
+    });
 
+    _secc('armas', () => {
     // Armas
-    if (d.armas && d.armas.length > 0) {
+    if (Array.isArray(d.armas) && d.armas.length > 0) {
         const lista = panel.querySelector('.armas-lista');
         lista.innerHTML = '';
         d.armas.forEach(arma => {
@@ -1476,7 +1680,7 @@ function cargarDatosEnPanel(panel, d) {
             fila.querySelector('.arma-alcance-input').value  = arma.alcance   || '';
             fila.querySelector('.arma-notas-input').value    = arma.notas     || '';
 
-            if (arma.bloques && arma.bloques.length > 0) {
+            if (Array.isArray(arma.bloques) && arma.bloques.length > 0) {
                 const wrap    = fila.querySelector('.arma-daños-wrap');
                 const primero = wrap.querySelector('.arma-daño-bloque');
                 const b0 = arma.bloques[0];
@@ -1511,11 +1715,13 @@ function cargarDatosEnPanel(panel, d) {
             recalcArma(fila.querySelector('.arma-stat-sel'));
         });
     }
+    });
 
+    _secc('acciones', () => {
     // Acciones
     ['actions','bonus','reactions','otros'].forEach(tipo => {
         const arr = d[`acciones_${tipo}`];
-        if (!arr || arr.length === 0) return;
+        if (!Array.isArray(arr) || arr.length === 0) return;
         const panelAcc = panel.querySelector(`.accion-panel[data-panel="${tipo}"]`);
         if (!panelAcc) return;
         const lista = panelAcc.querySelector('.acciones-lista');
@@ -1529,7 +1735,9 @@ function cargarDatosEnPanel(panel, d) {
             lista.appendChild(div);
         });
     });
+    });
 
+    _secc('recursos', () => {
     // Restaurar Recursos (crear filas extra si había más de 4)
     if (d.recursos && Array.isArray(d.recursos)) {
         const _wrap = panel.querySelector('.recursos-extra-wrap');
@@ -1568,7 +1776,9 @@ function cargarDatosEnPanel(panel, d) {
             if (btnL)   btnL.classList.toggle('activo-largo',  !!r.recargaLargo);
         });
     }
+    });
 
+    _secc('características', () => {
     // Características de personaje
     if (d.caract && typeof initCaractSelectores === 'function') {
         // Los selectores ya están inicializados por nuevaFicha→initCaractSelectores
@@ -1588,20 +1798,21 @@ function cargarDatosEnPanel(panel, d) {
                         opt.value = sub; opt.textContent = sub;
                         selSub.appendChild(opt);
                     });
-                    if (c.subclaseSelect) selSub.value = c.subclaseSelect;
+                    if (c.subclaseSelect) selSub.value = _traducirClaveVieja('subclase', c.subclaseSelect, c.claseSelect);
                 }
             }
         }
         if (c.especieSelect) {
             const sel = panel.querySelector('.sel-especie');
             if (sel) {
-                sel.value = c.especieSelect;
-                _syncEspecieDropdownTrigger(panel, c.especieSelect);
+                const _esp = _traducirClaveVieja('especie', c.especieSelect);
+                sel.value = _esp;
+                _syncEspecieDropdownTrigger(panel, _esp);
             }
         }
         if (c.trasfondoSelect) {
             const sel = panel.querySelector('.sel-trasfondo');
-            if (sel) sel.value = c.trasfondoSelect;
+            if (sel) sel.value = _traducirClaveVieja('trasfondo', c.trasfondoSelect);
         }
 
         // Restaurar datos multiclase
@@ -1628,29 +1839,49 @@ function cargarDatosEnPanel(panel, d) {
             if (c.tfPrevBonos) tfWrap.dataset.prevBonos = c.tfPrevBonos;
         }
     }
+    });
 
+    _secc('recálculo', () => {
     // Recalcular todo al final
     actualizarTodoPanel(panel);
+    });
 
+    _secc('multiclase y conjuros', () => {
     // Spellcasting: primero ejecutar multiclaseActualizar para que
     // _sincronizarSpellCounts genere los .spell-prep-bloque, luego
     // cargarSpellcasting restaura los valores guardados en ellos.
     multiclaseActualizar(panel);
     cargarSpellcasting(panel, d);
+    });
 
-    // Armadura
+    _secc('armadura', () => {
+    // Armadura y CA
     const armSel = panel.querySelector('.armadura-sel');
     const escSel = panel.querySelector('.escudo-sel');
-    if (armSel && d.armaduraSel !== undefined) armSel.value = d.armaduraSel;
+    const caInput = panel.querySelector('.csi-input');
+    if (armSel && d.armaduraSel !== undefined) _seleccionarArmaduraGuardada(armSel, d.armaduraSel);
     if (escSel && d.escudoSel   !== undefined) escSel.value = d.escudoSel;
-    if (d.armaduraSel && armSel) onArmaduraChange(armSel);
-    if (d.ca) {
-        const caInput = panel.querySelector('.csi-input');
-        if (caInput) caInput.value = d.ca;
+    if (armSel && armSel.value && caInput) {
+        // CA derivada de armadura + DES + escudo + ajuste manual (caBonus)
+        let bonus;
+        if (d.caBonus !== undefined) {
+            bonus = parseInt(d.caBonus);
+        } else if (d.ca !== undefined) {
+            // Fichas guardadas antes de existir caBonus: conservar la CA que tenía
+            // la ficha (calculada con los valores de armadura con los que se guardó)
+            bonus = (parseInt(d.ca) || 0) - _caFormula(panel, d.armaduraSel);
+        }
+        if (isNaN(bonus) || bonus === undefined) bonus = 0;
+        caInput.dataset.caBonus = bonus;
+        _aplicarArmadura(panel);
+    } else if (d.ca && caInput) {
+        caInput.value = d.ca;   // sin armadura elegida: la CA es manual
     }
+    });
 
-    cargarRoleplay(panel, d.roleplay);
+    _secc('roleplay', () => { cargarRoleplay(panel, d.roleplay); });
 
+    _secc('bonos de armas', () => {
     // Recalcular bono de ataque de todas las armas DESPUÉS de que
     // multiclaseActualizar haya fijado el PB definitivo. Sin esto,
     // el arma-bono-total podría haberse calculado con el PB provisional
@@ -1659,11 +1890,16 @@ function cargarDatosEnPanel(panel, d) {
         const sel = fila.querySelector('.arma-stat-sel');
         if (sel) recalcArma(sel);
     });
+    });
 
     setTimeout(() => {
-        regenerarAccionesAuto(panel);
-        cargarAutoNotas(panel, d.autoNotas);
+        try {
+            regenerarAccionesAuto(panel);
+            cargarAutoNotas(panel, d.autoNotas);
+        } catch (e) { console.warn('Error cargando acciones/notas automáticas:', e); }
     }, 0);
+
+    return errores;
 }
 
 
@@ -1740,27 +1976,146 @@ function recursosAñadirFila(btn) {
 /* ═══════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════ */
-window.onload = function () {
-    // Si hay una ficha compartida en el hash, cargarla y saltarse el localStorage
-    if (location.hash.startsWith('#ficha=')) {
-        _detectarFichaCompartida();
-        return;
+/* ── Rescate de datos que no se pudieron cargar ──────────────────────
+   Si al arrancar alguna ficha guardada está dañada o incompleta, sus datos
+   ORIGINALES se conservan en localStorage ('dnd_rescate') y se ofrece
+   descargarlos, de modo que el autosave no los pise sin dejar rastro. */
+let _rescateActual = null;   // { fecha, items:[{indice, motivo, datos}], raw? }
+
+function _descargarRescate() {
+    if (!_rescateActual) return;
+    const r = _rescateActual;
+    if (typeof r.raw === 'string') {
+        _descargarTexto(r.raw, `dnd_rescate_almacenamiento_${_sufijoFecha()}.json`);
+    } else {
+        _descargarTexto(JSON.stringify(r.items.map(i => i.datos), null, 2), `dnd_rescate_fichas_${_sufijoFecha()}.json`);
     }
+}
+
+function _mostrarAvisoRescate() {
+    const r = _rescateActual;
+    if (!r) return;
+    const n = r.items ? r.items.length : 0;
+    const msg = typeof r.raw === 'string'
+        ? '⚠ Los datos guardados estaban dañados y no se pudieron leer. Se ha conservado una copia de seguridad. Descárgala por si quieres recuperarla.'
+        : `⚠ ${n} ficha${n === 1 ? '' : 's'} no se ${n === 1 ? 'pudo' : 'pudieron'} cargar por completo. Se conservan los datos originales: descárgalos y, si quieres, impórtalos desde "Importar".`;
+    _mostrarAviso('aviso-rescate', msg, [
+        { texto: '⬇ Descargar datos originales', accion: () => {
+            _descargarRescate();
+            _guardadoBloqueado = false;   // ya hay copia: se puede guardar con normalidad
+        } },
+        { texto: 'Descartar copia', accion: () => {
+            try { localStorage.removeItem('dnd_rescate'); } catch (_) {}
+            _rescateActual = null;
+            _guardadoBloqueado = false;
+            _quitarAviso('aviso-rescate');
+        } },
+    ], '#c05621');
+}
+
+function _guardarRescate(payload) {
+    _rescateActual = payload;
     try {
-        const guardado = localStorage.getItem('dnd_fichas');
-        const contador = localStorage.getItem('dnd_contador');
-        const activa   = localStorage.getItem('dnd_activa');
-        if (guardado) {
-            const datos = JSON.parse(guardado);
-            if (datos && datos.length > 0) {
-                if (contador) contadorFichas = parseInt(contador) - datos.length;
-                datos.forEach(d => nuevaFicha(d));
-                if (activa && fichas.find(f => f.id === activa)) activarFicha(activa);
-                return;
-            }
+        localStorage.setItem('dnd_rescate', JSON.stringify(payload));
+    } catch (e) {
+        // Sin sitio para la copia: no se sobrescribe nada hasta que el usuario la descargue
+        if (typeof payload.raw === 'string') _guardadoBloqueado = true;
+        console.warn('No se pudo guardar la copia de rescate:', e);
+    }
+    _mostrarAvisoRescate();
+}
+
+/* Carga las fichas de localStorage. Devuelve cuántas fichas quedaron abiertas.
+   Una ficha dañada NUNCA impide cargar las demás. */
+function _cargarFichasGuardadas() {
+    let guardado = null, contador = null, activa = null;
+    try {
+        guardado = localStorage.getItem('dnd_fichas');
+        contador = localStorage.getItem('dnd_contador');
+        activa   = localStorage.getItem('dnd_activa');
+    } catch (e) {
+        console.warn('No se pudo acceder al almacenamiento:', e);
+        return 0;
+    }
+
+    // Copia de rescate pendiente de una sesión anterior → volver a avisar
+    try {
+        const prev = localStorage.getItem('dnd_rescate');
+        if (prev) { _rescateActual = JSON.parse(prev); _mostrarAvisoRescate(); }
+    } catch (_) {}
+
+    if (!guardado) return 0;
+
+    let datos;
+    try {
+        datos = JSON.parse(guardado);
+    } catch (e) {
+        console.warn('Datos guardados ilegibles:', e);
+        _guardarRescate({ fecha: new Date().toISOString(), raw: guardado, items: [] });
+        return 0;
+    }
+    if (datos && !Array.isArray(datos) && typeof datos === 'object') datos = [datos];
+    if (!Array.isArray(datos) || datos.length === 0) return 0;
+
+    const n = parseInt(contador);
+    contadorFichas = (!isNaN(n) && n >= datos.length) ? n - datos.length : 0;
+
+    const rescate = [];
+    datos.forEach((d, i) => {
+        if (!d || typeof d !== 'object' || Array.isArray(d)) {
+            rescate.push({ indice: i, motivo: 'Entrada no válida', datos: d });
+            return;
         }
-    } catch(e) { console.warn('Error cargando datos:', e); }
-    nuevaFicha();
+        try {
+            const r = nuevaFicha(d);
+            if (r && r.errores && r.errores.length) {
+                rescate.push({ indice: i, motivo: r.errores.join('; '), datos: d });
+            }
+        } catch (e) {
+            console.warn('Error cargando la ficha', i, e);
+            rescate.push({ indice: i, motivo: e.message, datos: d });
+        }
+    });
+
+    if (activa && fichas.find(f => f.id === activa)) activarFicha(activa);
+
+    if (rescate.length) {
+        const previos = (_rescateActual && Array.isArray(_rescateActual.items)) ? _rescateActual.items : [];
+        // Evitar duplicar la misma ficha si se recarga varias veces sin que se llegue a guardar
+        const firmas = new Set(previos.map(it => JSON.stringify(it.datos)));
+        const nuevos = rescate.filter(it => !firmas.has(JSON.stringify(it.datos)));
+        if (nuevos.length || !_rescateActual) {
+            _guardarRescate({ fecha: new Date().toISOString(), items: previos.concat(nuevos) });
+        }
+    }
+    return fichas.length;
+}
+
+/* Guardado robusto: captura cualquier cambio dentro de las fichas (aunque un
+   control no tenga su propio handler) y vuelca el guardado al cerrar/ocultar. */
+function _initGuardadoRobusto() {
+    const cont = document.getElementById('fichas-contenedor');
+    if (cont) {
+        ['input', 'change', 'click'].forEach(ev =>
+            cont.addEventListener(ev, () => guardarDebounced()));
+    }
+    window.addEventListener('pagehide', _volcarGuardadoPendiente);
+    window.addEventListener('beforeunload', _volcarGuardadoPendiente);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') _volcarGuardadoPendiente();
+    });
+}
+
+window.onload = function () {
+    _initGuardadoRobusto();
+    const hayCompartida = location.hash.startsWith('#ficha=');
+    // Las fichas guardadas se cargan SIEMPRE; una ficha compartida se añade como pestaña nueva
+    const cargadas = _cargarFichasGuardadas();
+    if (hayCompartida) {
+        _detectarFichaCompartida();
+    } else if (cargadas === 0) {
+        nuevaFicha();
+    }
 };
 // DND_SPELLS cargado desde hechizos.js
 
@@ -1855,7 +2210,7 @@ function _nivelMaxHechizo(nivelEfectivo) {
 
 function _refrescarFiltroNivelHechizos(fichaPanel) {
     const mcs = leerMulticlases(fichaPanel).filter(mc => mc.clase);
-    const hayLanzador = mcs.some(mc => _getClaseData(mc.clase).casting !== 'none');
+    const hayLanzador = mcs.some(mc => _castingDe(mc) !== 'none');
     const nivelEfectivo = calcNivelEfectivoSpell(mcs);
     const warlockMC = mcs.find(mc => _getClaseData(mc.clase).casting === 'warlock');
     let maxWarlock = 0;
@@ -2478,6 +2833,15 @@ function exportarFichasJSON() {
     URL.revokeObjectURL(url);
 }
 
+/* ¿Tiene pinta de ser una ficha de este programa? */
+function _pareceFicha(d) {
+    return !!d && typeof d === 'object' && !Array.isArray(d)
+        && ['stats', 'multiclases', 'nombre', 'caract', 'hpMax', 'dgGrupos', 'habilidades', 'armas']
+            .some(k => d[k] !== undefined);
+}
+
+/* Importar: cada ficha del archivo se añade como una PESTAÑA NUEVA con un id nuevo.
+   Nunca toca ni sustituye las fichas que ya estén abiertas. */
 function importarFichasJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -2485,14 +2849,29 @@ function importarFichasJSON(event) {
     reader.onload = function(e) {
         try {
             const raw = JSON.parse(e.target.result);
-            const lista = Array.isArray(raw) ? raw : [raw];
-            if (!lista.length) throw new Error('Formato inválido');
-            lista.forEach(d => nuevaFicha(d));
+            const lista = (Array.isArray(raw) ? raw : [raw]).filter(_pareceFicha);
+            if (!lista.length) throw new Error('No se encontró ninguna ficha en el archivo.');
+            let importadas = 0, conAvisos = 0;
+            lista.forEach(d => {
+                try {
+                    const r = nuevaFicha(d, { nuevoId: true });
+                    importadas++;
+                    if (r && r.errores && r.errores.length) conAvisos++;
+                } catch (errFicha) {
+                    console.warn('No se pudo importar una ficha:', errFicha);
+                }
+            });
+            if (!importadas) throw new Error('No se pudo importar ninguna ficha.');
             guardarTodo();
+            _mostrarToast(
+                `✔ ${importadas} ficha${importadas === 1 ? '' : 's'} importada${importadas === 1 ? '' : 's'} en pestaña${importadas === 1 ? ' nueva' : 's nuevas'}.` +
+                (conAvisos ? ` (${conAvisos} con datos que no se pudieron restaurar del todo)` : ''),
+                conAvisos ? 'error' : undefined);
         } catch(err) {
             alert('Error al importar: el archivo no es válido.\n' + err.message);
         }
     };
+    reader.onerror = function() { alert('Error al importar: no se pudo leer el archivo.'); };
     reader.readAsText(file);
     event.target.value = '';
 }
@@ -2520,8 +2899,14 @@ async function _comprimirABase64(str) {
     const out = new Uint8Array(totalLen);
     let offset = 0;
     for (const chunk of chunks) { out.set(chunk, offset); offset += chunk.length; }
-    // Convertir a base64url (sin +/= para uso seguro en URL)
-    let b64 = btoa(String.fromCharCode(...out));
+    // Convertir a base64url (sin +/= para uso seguro en URL).
+    // Por bloques: String.fromCharCode(...out) revienta la pila con fichas grandes.
+    let bin = '';
+    const BLOQUE = 0x8000;
+    for (let i = 0; i < out.length; i += BLOQUE) {
+        bin += String.fromCharCode.apply(null, out.subarray(i, i + BLOQUE));
+    }
+    let b64 = btoa(bin);
     return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
@@ -2589,29 +2974,63 @@ async function compartirFicha() {
             return;
         }
 
-        await navigator.clipboard.writeText(url);
-        _mostrarToast('✔ URL copiada al portapapeles. Las imágenes no se incluyen.');
+        if (await _copiarAlPortapapeles(url)) {
+            _mostrarToast('✔ URL copiada al portapapeles. Las imágenes no se incluyen.');
+        } else {
+            // Sin acceso al portapapeles (p. ej. abierto como archivo local): mostrar el enlace para copiarlo a mano
+            window.prompt('No se pudo copiar automáticamente. Copia este enlace (Ctrl+C):', url);
+        }
     } catch (err) {
         _mostrarToast('Error al generar la URL: ' + err.message, 'error');
+    }
+}
+
+/* Copia texto al portapapeles; devuelve true/false (con alternativa para contextos no seguros) */
+async function _copiarAlPortapapeles(texto) {
+    try {
+        if (navigator.clipboard && window.isSecureContext !== false) {
+            await navigator.clipboard.writeText(texto);
+            return true;
+        }
+    } catch (_) { /* seguir con la alternativa */ }
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove();
+        return !!ok;
+    } catch (_) {
+        return false;
     }
 }
 
 /* Al cargar la página, detectar hash con datos de ficha compartida */
 async function _detectarFichaCompartida() {
     const hash = location.hash;
-    if (!hash.startsWith('#ficha=')) return;
+    if (!hash.startsWith('#ficha=')) { if (fichas.length === 0) nuevaFicha(); return; }
     const b64 = hash.slice('#ficha='.length);
-    if (!b64) return;
     // Limpiar el hash de la URL sin recargar
-    history.replaceState(null, '', location.pathname + location.search);
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (_) {}
+    if (!b64) { if (fichas.length === 0) nuevaFicha(); return; }
     try {
         const json = await _descomprimirDeBase64(b64);
         const datos = JSON.parse(json);
-        nuevaFicha(datos);
+        if (!_pareceFicha(datos)) throw new Error('el enlace no contiene una ficha válida');
+        // Pestaña NUEVA con id propio: las fichas que ya tengas no se tocan
+        const r = nuevaFicha(datos, { nuevoId: true });
         guardarTodo();
-        _mostrarToast('✔ Ficha compartida cargada correctamente.');
+        if (r && r.errores && r.errores.length) {
+            _mostrarToast('Ficha compartida cargada, pero algunos datos no se pudieron restaurar.', 'error');
+        } else {
+            _mostrarToast('✔ Ficha compartida añadida en una pestaña nueva.');
+        }
     } catch (err) {
         _mostrarToast('Error al cargar la ficha compartida: ' + err.message, 'error');
+        if (fichas.length === 0) nuevaFicha();   // nunca dejar la app sin ninguna ficha
     }
 }
 
@@ -2724,14 +3143,18 @@ const CLASE_DATA = {
     'Druida':       { diceHit:'d8',  casting:'full',    spellStat:'SAB', knownCaster:false,
                       preparedFormula:(nv,mod) => nv + mod },
     'Explorador':   { diceHit:'d10', casting:'half',    spellStat:'SAB', knownCaster:true  },
-    'Guerrero':     { diceHit:'d10', casting:'none' },
+    // Caballero Arcano: lanzador de un tercio (solo con esa subclase)
+    'Guerrero':     { diceHit:'d10', casting:'none',    spellStat:'INT', knownCaster:true,
+                      subclaseCasting:{ 'Caballero Arcano':'third' } },
     'Hechicero':    { diceHit:'d6',  casting:'full',    spellStat:'CAR', knownCaster:true  },
     'Mago':         { diceHit:'d6',  casting:'full',    spellStat:'INT', knownCaster:true,
                       preparedFormula:(nv,mod) => nv + mod },
     'Monje':        { diceHit:'d8',  casting:'none' },
     'Paladín':      { diceHit:'d10', casting:'half',    spellStat:'CAR', knownCaster:false,
                       preparedFormula:(nv,mod) => Math.floor(nv/2) + mod },
-    'Pícaro':       { diceHit:'d8',  casting:'third',   spellStat:'INT', knownCaster:true  },
+    // Tramposo Arcano: lanzador de un tercio (solo con esa subclase)
+    'Pícaro':       { diceHit:'d8',  casting:'none',    spellStat:'INT', knownCaster:true,
+                      subclaseCasting:{ 'Tramposo Arcano':'third' } },
 };
 
 /* ── Tabla de slots por nivel efectivo (PHB 2024 multiclase) ──
@@ -2807,8 +3230,10 @@ const CANTRIPS_CONOCIDOS = {
     'Mago':      [3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5],
     // Paladín: sin cantrips
     'Paladín':   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    // Pícaro: sin cantrips (Arcane Trickster no tiene cantrips de clase)
-    'Pícaro':    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    // Guerrero (solo subclase Caballero Arcano, nv.3+): 2 trucos, 3 a nivel 10
+    'Guerrero':  [0,0,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3],
+    // Pícaro (solo subclase Tramposo Arcano, nv.3+): 3 trucos (incl. Mano de Mago), 4 a nivel 10
+    'Pícaro':    [0,0,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4],
 };
 
 /* Hechizos Preparados por clase y nivel (PHB 2024, tablas oficiales de capturas) */
@@ -2831,8 +3256,9 @@ const HECHIZOS_PREPARADOS_2024 = {
     'Mago':      [4,5,6,7,9,10,11,12,14,15,16,16,17,18,19,21,22,23,24,25],
     // Paladín: 2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
     'Paladín':   [2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15],
-    // Pícaro: sin columna explícita en tabla, usa Arcane Trickster (third caster)
-    'Pícaro':    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    // Guerrero (Caballero Arcano) y Pícaro (Tramposo Arcano), nv.3+: 3,4,4,4,5,6,6,7,8,8,9,10,10,11,11,11,12,13
+    'Guerrero':  [0,0,3,4,4,4,5,6,6,7,8,8,9,10,10,11,11,11,12,13],
+    'Pícaro':    [0,0,3,4,4,4,5,6,6,7,8,8,9,10,10,11,11,11,12,13],
 };
 
 /* ── Bono de Competencia por nivel total ── */
@@ -2844,16 +3270,40 @@ function calcPB(nivelTotal) {
     return 2;
 }
 
-/* ── Nivel efectivo de lanzamiento multiclase ── */
+/* Tipo de lanzamiento EFECTIVO de una entrada {clase, nivel, subclase}:
+   Guerrero y Pícaro solo lanzan conjuros con la subclase adecuada. */
+function _castingDe(mc) {
+    if (!mc || !mc.clase) return 'none';
+    const data = _getClaseData(mc.clase);
+    if (data.subclaseCasting) {
+        const sub = String(mc.subclase || '');
+        for (const [prefijo, tipo] of Object.entries(data.subclaseCasting)) {
+            if (sub.startsWith(prefijo)) return tipo;
+        }
+    }
+    return data.casting;
+}
+
+/* ── Nivel efectivo de lanzamiento (PHB 2024) ──
+   · Lanzadores completos: todos sus niveles.
+   · Mitad (Paladín, Explorador, Artificer): mitad de sus niveles REDONDEADA HACIA ARRIBA.
+   · Tercio (Caballero Arcano, Tramposo Arcano): empiezan a lanzar en nivel 3;
+       con UNA sola clase lanzadora se usa su tabla de clase (= tercio hacia arriba);
+       en multiclase cuentan un tercio de sus niveles redondeado HACIA ABAJO.
+   · Brujo (Magia de Pacto) se trata aparte. */
 function calcNivelEfectivoSpell(multiclases) {
+    const lanzadoras = multiclases.filter(mc => {
+        const t = _castingDe(mc);
+        return t === 'full' || t === 'half' || (t === 'third' && (parseInt(mc.nivel) || 0) >= 3);
+    });
+    const unica = lanzadoras.length === 1;
     let efectivo = 0;
-    multiclases.forEach(mc => {
-        const data = _getClaseData(mc.clase);
+    lanzadoras.forEach(mc => {
+        const tipo = _castingDe(mc);
         const nv   = parseInt(mc.nivel) || 0;
-        if (data.casting === 'full')    efectivo += nv;
-        else if (data.casting === 'half')  efectivo += Math.floor(nv / 2);
-        else if (data.casting === 'third') efectivo += Math.floor(nv / 3);
-        // warlock se trata aparte; none no suma
+        if (tipo === 'full')      efectivo += nv;
+        else if (tipo === 'half') efectivo += Math.ceil(nv / 2);
+        else                      efectivo += unica ? Math.ceil(nv / 3) : Math.floor(nv / 3);
     });
     return Math.min(efectivo, 20);
 }
@@ -2955,12 +3405,27 @@ function multiclaseAñadir(btn) {
 /* ── Leer datos actuales — widget superior es la fuente de verdad.
    Si el superior está vacío, leer del inferior (Características) como fallback.
    Esto garantiza que siempre hay datos disponibles. ── */
+/* Subclase elegida para cada clase (se elige en el widget inferior, Características) */
+function _mapaSubclases(fichaPanel) {
+    const mapa = {};
+    fichaPanel.querySelectorAll('.caract-mc-body .mc-pagina').forEach(pag => {
+        const c = pag.querySelector('.mc-sel-clase')?.value;
+        if (c) mapa[c] = pag.querySelector('.mc-sel-subclase')?.value || '';
+    });
+    return mapa;
+}
+
 function leerMulticlases(fichaPanel) {
     const filas = fichaPanel.querySelectorAll('.multiclase-fila');
-    const desdeSup = Array.from(filas).map(f => ({
-        clase: f.querySelector('.multiclase-sel')?.value || '',
-        nivel: parseInt(f.querySelector('.multiclase-nivel')?.value) || 1,
-    })).filter(mc => mc.clase);
+    const subs  = _mapaSubclases(fichaPanel);
+    const desdeSup = Array.from(filas).map(f => {
+        const clase = f.querySelector('.multiclase-sel')?.value || '';
+        return {
+            clase,
+            nivel: parseInt(f.querySelector('.multiclase-nivel')?.value) || 1,
+            subclase: subs[clase] || '',
+        };
+    }).filter(mc => mc.clase);
 
     if (desdeSup.length > 0) return desdeSup;
 
@@ -2971,6 +3436,7 @@ function leerMulticlases(fichaPanel) {
         const desdeInf = Array.from(paginas).map(pag => ({
             clase: pag.querySelector('.mc-sel-clase')?.value  || '',
             nivel: parseInt(pag.querySelector('.mc-nivel-sel')?.value) || 1,
+            subclase: pag.querySelector('.mc-sel-subclase')?.value || '',
         })).filter(mc => mc.clase);
         if (desdeInf.length > 0) return desdeInf;
     }
@@ -3029,7 +3495,21 @@ function syncWidgetsSupToInf(fichaPanel) {
                 const sel = pag.querySelector('.mc-sel-clase');
                 const ta  = pag.querySelector('.mc-ta-clase');
                 if (sel && sel.value && ta && ta.value === '') {
+                    // El onchange de la clase borra la subclase (pensado para un cambio de clase).
+                    // Aquí la clase no ha cambiado, solo falta rellenar su texto: se conserva la
+                    // subclase elegida (y su texto) para no perderla al recargar o sincronizar.
+                    const selSub = pag.querySelector('.mc-sel-subclase');
+                    const taSub  = pag.querySelector('.mc-ta-subclase');
+                    const subPrev = selSub ? selSub.value : '';
+                    const subTxtPrev = taSub ? taSub.value : '';
                     sel.dispatchEvent(new Event('change'));
+                    if (selSub && subPrev && Array.from(selSub.options).some(o => o.value === subPrev)) {
+                        selSub.value = subPrev;
+                        if (subTxtPrev) { if (taSub) taSub.value = subTxtPrev; }
+                        else selSub.dispatchEvent(new Event('change'));
+                    } else if (taSub && subTxtPrev) {
+                        taSub.value = subTxtPrev;
+                    }
                 }
             });
 
@@ -3225,39 +3705,46 @@ function hpReactivarAuto(btn) {
     calcularHPMaxAuto(fichaPanel);
 }
 
-/* ── Sincronizar dados de golpe ── */
+/* ── Sincronizar dados de golpe ──
+   Reconcilia los grupos con las clases SIN reconstruir lo que ya existe:
+   · se conservan los dados gastados (checks) de cada grupo,
+   · los grupos añadidos a mano (sin data-auto) no se tocan,
+   · solo se crean/borran/redimensionan los grupos gestionados por las clases (data-auto="1"). */
 function _sincronizarDadosGolpe(fichaPanel, mcs) {
     const wrap = fichaPanel.querySelector('.dg-grupos-wrap');
     if (!wrap) return;
 
-    // Leer checks actuales para preservarlos por tipo
-    const checksPrevios = {};
-    wrap.querySelectorAll('.dg-grupo').forEach(g => {
-        const tipo = g.querySelector('.dg-tipo')?.value;
-        const chks = Array.from(g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]')).map(c => c.checked);
-        if (tipo) checksPrevios[tipo] = chks;
-    });
-
-    // Fusionar clases que comparten el mismo tipo de dado
-    const fusionado = {};
+    // Total de dados por tipo según las clases (las que comparten tipo se fusionan)
+    const deseado = {};
     mcs.forEach(mc => {
-        const data = _getClaseData(mc.clase);
-        const tipo = data.diceHit || 'd8';
+        const tipo = _getClaseData(mc.clase).diceHit || 'd8';
         const nv = parseInt(mc.nivel) || 1;
-        fusionado[tipo] = (fusionado[tipo] || 0) + nv;
+        deseado[tipo] = (deseado[tipo] || 0) + nv;
     });
 
-    wrap.innerHTML = '';
+    const grupos = Array.from(wrap.querySelectorAll('.dg-grupo'));
+    const tipoDe = g => g.querySelector('.dg-tipo')?.value;
+    const usados = new Set();   // grupos que ya cubren un tipo deseado
 
-    Object.entries(fusionado).forEach(([tipo, total]) => {
-        const g = dgCrearGrupo(tipo, total);
-        wrap.appendChild(g);
-        // Restaurar checks si los había
-        if (checksPrevios[tipo]) {
-            const chkEls = g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]');
-            checksPrevios[tipo].forEach((val, i) => { if (chkEls[i]) chkEls[i].checked = val; });
+    Object.entries(deseado).forEach(([tipo, total]) => {
+        // 1º un grupo ya gestionado por las clases con ese tipo; 2º uno sin marcar con ese tipo
+        // (fichas guardadas antes de existir la marca: se "adopta" en lugar de duplicarlo)
+        let g = grupos.find(x => !usados.has(x) && x.dataset.auto === '1' && tipoDe(x) === tipo)
+             || grupos.find(x => !usados.has(x) && x.dataset.auto !== '1' && tipoDe(x) === tipo && x.dataset.manual !== '1');
+        if (!g) {
+            g = dgCrearGrupo(tipo, total);
+            wrap.appendChild(g);
         }
-        actualizarDadosGolpePanel(g.querySelector('.dg-total'));
+        g.dataset.auto = '1';
+        usados.add(g);
+        const inp = g.querySelector('.dg-total');
+        inp.value = total;
+        actualizarDadosGolpePanel(inp);   // añade casillas marcadas o quita las sobrantes; conserva el resto
+    });
+
+    // Grupos gestionados por las clases que ya no corresponden a ninguna clase → fuera
+    grupos.forEach(g => {
+        if (!usados.has(g) && g.dataset.auto === '1') g.remove();
     });
 }
 
@@ -3295,13 +3782,15 @@ function _sincronizarSpellSlots(fichaPanel, mcs, nivelTotal) {
         // ¿Es un slot warlock este nivel?
         const esWarlock = warlockMC && nivel === warlockNivel + 1 && warlockSlots > 0;
 
-        // Limpiar y reconstruir slots
+        // Limpiar y reconstruir slots (conservando cuáles estaban gastados, por posición)
+        const gastadosPrevios = Array.from(checksDiv.querySelectorAll('.slot-chk')).map(c => c.checked);
         checksDiv.innerHTML = '';
         for (let i = 0; i < Math.min(cantidad, 9); i++) {
             const wrap = document.createElement('div');
             wrap.className = 'slot-check-wrap' + (esWarlock ? ' slot-warlock' : '');
             const chk = document.createElement('input');
-            chk.type = 'checkbox'; chk.className = 'slot-chk'; chk.checked = true;
+            chk.type = 'checkbox'; chk.className = 'slot-chk';
+            chk.checked = gastadosPrevios[i] !== undefined ? gastadosPrevios[i] : true;
             chk.addEventListener('change', () => guardarDebounced());
             const del = document.createElement('button');
             del.className = 'slot-del-btn'; del.textContent = '×'; del.title = 'Quitar slot';
@@ -3321,9 +3810,8 @@ function _sincronizarSpellCounts(fichaPanel, mcs) {
     // ── Cantrips: suma de todas las clases lanzadoras ──
     let totalCantrips = 0;
     mcs.forEach(mc => {
-        const data = _getClaseData(mc.clase);
         const nv = Math.max(1, Math.min(20, parseInt(mc.nivel) || 0));
-        if (data.casting === 'none') return;
+        if (_castingDe(mc) === 'none') return;
         const tabla = CANTRIPS_CONOCIDOS[mc.clase] || [];
         totalCantrips += tabla[nv - 1] || 0;
     });
@@ -3342,10 +3830,7 @@ function _sincronizarSpellCounts(fichaPanel, mcs) {
 
     container.innerHTML = '';
 
-    const clasesLanzadoras = mcs.filter(mc => {
-        const data = _getClaseData(mc.clase);
-        return data.casting !== 'none' && mc.clase;
-    });
+    const clasesLanzadoras = mcs.filter(mc => mc.clase && _castingDe(mc) !== 'none');
 
     clasesLanzadoras.forEach(mc => {
         const nv    = Math.max(1, Math.min(20, parseInt(mc.nivel) || 0));
@@ -4065,40 +4550,36 @@ async function tirarHechizo(sp, panel) {
    ACCIONES AUTO-GENERADAS DESDE CARACTERÍSTICAS Y HECHIZOS
 ═══════════════════════════════════════════════════════ */
 
-/* ── Clasificador de tipo de acción ─────────────────────
-   Devuelve 'actions' | 'bonus' | 'reactions' | 'otros'
-   según palabras clave en el texto de descripción.       */
-function _clasificarAccion(texto) {
-    if (!texto) return 'otros';
-    const t = texto.toLowerCase();
-
-    // ── Bonus Action (más específico, primero) ──
-    if (/acci[oó]n adicional|bonus action|acción bonus|\bcomo aa\b/.test(t)) return 'bonus';
-
-    // ── Reaction ──
-    if (/\breacci[oó]n\b|reaction/.test(t)) return 'reactions';
-
-    // ── Action ──
-    // Patrones explícitos de uso de acción
-    if (/\bcomo acci[oó]n\b/.test(t)) return 'actions';             // "Como Acción, ..."
-    if (/\bacci[oó]n:\s/.test(t)) return 'actions';                 // "Acción: ..." (formato corto)
-    if (/\bpuedes usar (tu|una) acci[oó]n\b/.test(t)) return 'actions'; // "puedes usar tu acción para"
-    if (/\busa(r|ndo) (tu|la|una) acci[oó]n\b/.test(t)) return 'actions';
-    if (/\bgastas? (una|tu) acci[oó]n\b/.test(t)) return 'actions';
-    if (/\btomar la acci[oó]n\b/.test(t)) return 'actions';
-    // "la acción de Atacar" → acción
-    if (/\bacci[oó]n de atacar\b/.test(t)) return 'actions';
-
-    return 'otros';
+/* ── Tipo de acción de cada rasgo ───────────────────────
+   Cada rasgo de los archivos de datos (clases, subclases, especies, dotes) lleva
+   su propio campo `a`, escrito a mano tras contrastarlo con las reglas oficiales:
+       a: "A"  → Acción (incluye la acción Mágica)
+       a: "B"  → Acción Adicional
+       a: "R"  → Reacción
+       a: "O"  → Otros: no gasta acción (uso gratuito, con usos limitados, o un
+                 momento concreto en que decides usarlo: repetir una salvación, etc.)
+       Se pueden combinar si el rasgo se usa de varias formas: a: "AB".
+   Sin campo `a` el rasgo es pasivo (competencias, bonos fijos, resistencias, elegir
+   subclase...) y no se lista en este panel; ya aparece completo en «Características».
+   Nada se deduce del texto de la descripción: así no hay falsos positivos. */
+const _PANEL_DE_TIPO = { A: 'actions', B: 'bonus', R: 'reactions', O: 'otros' };
+function _panelesDeRasgo(r) {
+    if (!r || typeof r.a !== 'string') return [];
+    const paneles = [];
+    for (const c of r.a.toUpperCase()) {
+        const p = _PANEL_DE_TIPO[c];
+        if (p && !paneles.includes(p)) paneles.push(p);
+    }
+    return paneles;
 }
 
-/* Clasifica un hechizo según su campo casting */
+/* Clasifica un hechizo según su tiempo de lanzamiento */
 function _clasificarCasting(castingStr) {
-    if (!castingStr) return 'actions';
-    const c = castingStr.toLowerCase();
-    if (/adicional|bonus/.test(c)) return 'bonus';
-    if (/reacci[oó]n|reaction/.test(c)) return 'reactions';
-    return 'actions';
+    const c = String(castingStr || '').toLowerCase();
+    if (/^1\s*acci[oó]n\s+adicional|^1\s*bonus/.test(c)) return 'bonus';
+    if (/^1\s*reacci[oó]n/.test(c)) return 'reactions';
+    if (/^1\s*acci[oó]n/.test(c)) return 'actions';
+    return c ? 'otros' : 'actions';   // 1 minuto, 10 minutos, 1 hora...: no es una acción de combate
 }
 
 /* ── Construye la lista de entradas auto desde la ficha ──
@@ -4106,11 +4587,14 @@ function _clasificarCasting(castingStr) {
    Lee TODAS las clases multiclase y filtra por nivel seleccionado. */
 function _recogerEntradasAuto(fichaPanel) {
     const entradas = [];
+    const añadir = (r, origen) => {
+        _panelesDeRasgo(r).forEach(tipo => entradas.push({ nombre: r.n, desc: r.d, origen, tipo }));
+    };
 
     // ── Todas las clases multiclase (con filtro de nivel) ────────
     if (typeof DND_CLASES !== 'undefined' && typeof leerMcDatos === 'function') {
         const mcDatos = leerMcDatos(fichaPanel);
-        const vistoNombres = new Set();
+        const vistos = new Set();
 
         mcDatos.forEach(mc => {
             const claseKey = mc.clase;
@@ -4121,10 +4605,9 @@ function _recogerEntradasAuto(fichaPanel) {
             (DND_CLASES[claseKey].rasgos || []).forEach(r => {
                 if ((r.nv || 1) > nivelMax) return;
                 const unico = `${claseKey}::${r.n}`;
-                if (vistoNombres.has(unico)) return;
-                vistoNombres.add(unico);
-                const tipo = _clasificarAccion(r.d);
-                entradas.push({ nombre: r.n, desc: r.d, origen: claseKey, tipo });
+                if (vistos.has(unico)) return;
+                vistos.add(unico);
+                añadir(r, claseKey);
             });
 
             // Rasgos de subclase — solo hasta nivelMax
@@ -4132,11 +4615,10 @@ function _recogerEntradasAuto(fichaPanel) {
             if (subKey && DND_CLASES[claseKey]?.subclases?.[subKey]) {
                 (DND_CLASES[claseKey].subclases[subKey] || []).forEach(r => {
                     if ((r.nv || 1) > nivelMax) return;
-                    const unico = `${subKey}::${r.n}`;
-                    if (vistoNombres.has(unico)) return;
-                    vistoNombres.add(unico);
-                    const tipo = _clasificarAccion(r.d);
-                    entradas.push({ nombre: r.n, desc: r.d, origen: subKey, tipo });
+                    const unico = `${claseKey}::${subKey}::${r.n}`;
+                    if (vistos.has(unico)) return;
+                    vistos.add(unico);
+                    añadir(r, subKey);
                 });
             }
         });
@@ -4145,20 +4627,33 @@ function _recogerEntradasAuto(fichaPanel) {
     // ── Especie ────────────────────────────────────────
     const especieKey = fichaPanel.querySelector('.sel-especie')?.value || '';
     if (especieKey && typeof DND_ESPECIES !== 'undefined' && DND_ESPECIES[especieKey]) {
-        (DND_ESPECIES[especieKey] || []).forEach(r => {
-            const tipo = _clasificarAccion(r.d);
-            entradas.push({ nombre: r.n, desc: r.d, origen: especieKey, tipo });
-        });
+        (DND_ESPECIES[especieKey] || []).forEach(r => añadir(r, especieKey));
     }
 
-    // ── Dotes (parseamos el textarea de dotes) ─────────
+    // ── Dotes (se leen del cuadro de dotes: cada una empieza una línea con «Nombre [Tipo]:») ──
     if (typeof DND_DOTES !== 'undefined' && Array.isArray(DND_DOTES)) {
         const dotesTxt = fichaPanel.querySelector('.caract-dotes')?.value || '';
+        const lineas = dotesTxt.split('\n').map(l => l.trim());
+        const añadidas = new Set();
         DND_DOTES.forEach(dote => {
-            if (dotesTxt.includes(dote.n)) {
-                const tipo = _clasificarAccion(dote.d);
-                entradas.push({ nombre: dote.n, desc: dote.d, origen: 'Dote', tipo });
+            // Se reconoce también por los nombres antiguos (alias) para no perder dotes de fichas ya guardadas
+            const nombres = [dote.n].concat(Array.isArray(dote.alias) ? dote.alias : []);
+            if (lineas.some(l => nombres.some(nm => l.startsWith(nm + ' [') || l.startsWith(nm + ':')))) {
+                añadir(dote, 'Dote'); añadidas.add(dote.n);
             }
+        });
+        // Líneas escritas a mano con el nombre "pelado" («Sentinel: …» o «Sentinel [General]: …»):
+        // se asocian a la dote con ese nombre, prefiriendo la versión de 2024 (5.5e).
+        const _base = n => String(n).replace(/\s*\[.*$/, '').trim().toLowerCase();
+        lineas.forEach(l => {
+            const m = l.match(/^([^\[:]+?)\s*(?:\[[^\]]*\])?\s*:/) || l.match(/^([^\[:]+?)\s*\[/);
+            if (!m) return;
+            const base = m[1].trim().toLowerCase();
+            if (!base) return;
+            const cand = DND_DOTES.filter(d => _base(d.n) === base);
+            if (!cand.length || cand.some(d => añadidas.has(d.n))) return;   // sin coincidencia, o ya reconocida
+            const elegida = cand.find(d => /2024/.test(d.n)) || cand[0];
+            añadir(elegida, 'Dote'); añadidas.add(elegida.n);
         });
     }
 
@@ -4225,12 +4720,13 @@ function regenerarAccionesAuto(fichaPanel) {
         if (!bloque) return;
         contadores[e.tipo]++;
 
-        const key = `${e.tipo}::${e.nombre}`;
+        const key = `${e.tipo}::${e.origen}::${e.nombre}`;
         const div = document.createElement('div');
         div.className = 'auto-entrada';
         div.dataset.autoKey = key;
+        div.dataset.autoKeyAntigua = `${e.tipo}::${e.nombre}`;   // formato de fichas guardadas antes
 
-        const notaGuardada = notasGuardadas[key] || '';
+        const notaGuardada = notasGuardadas[key] || notasGuardadas[div.dataset.autoKeyAntigua] || '';
         div.innerHTML = `
             <div class="auto-entrada-cabecera">
                 <span class="auto-entrada-nombre">${_esc(e.nombre)}</span>
@@ -4281,10 +4777,10 @@ function cargarAutoNotas(fichaPanel, notasData) {
         const bloque = fichaPanel.querySelector(`.accion-panel[data-panel="${tipo}"] .auto-acciones-lista`);
         if (!bloque) return;
         bloque.querySelectorAll('.auto-entrada').forEach(el => {
-            const key = el.dataset.autoKey;
-            if (notasData[key]) {
+            const nota = notasData[el.dataset.autoKey] || notasData[el.dataset.autoKeyAntigua];
+            if (nota) {
                 const ta = el.querySelector('.auto-nota');
-                if (ta) ta.value = notasData[key];
+                if (ta) { ta.value = nota; ta.classList.add('tiene-contenido'); }
             }
         });
     });
@@ -4294,57 +4790,92 @@ function cargarAutoNotas(fichaPanel, notasData) {
    CA AUTOMÁTICA — SELECTOR DE ARMADURA
 ═══════════════════════════════════════════════════════ */
 
-/* Datos de armaduras: base CA, tipo de DEX (full / max2 / none), bono escudo */
-/* Armaduras que imponen desventaja en Sigilo según las reglas oficiales D&D 5e */
+/* Armaduras que imponen desventaja en Sigilo (PHB 2024 / 5.5e) */
 const ARMADURAS_SIGILO_DESVENTAJA = new Set([
     'acolchada',   // Armadura ligera
+    'escamas',     // Armadura media
     'semiplaca',   // Armadura media
     'anillos',     // Armadura pesada
-    'bandas',      // Armadura pesada
     'cota',        // Armadura pesada
     'segmentada',  // Armadura pesada
     'placas',      // Armadura pesada
 ]);
 
+/* El value de cada <option> de armadura es "clave|CA base|tipo DES|0".
+   Tipo DES: 'dex' = suma todo el mod., 'dex2' = máx. +2 (media), 'none' = no suma (pesada). */
+function _parseArmaduraValor(val) {
+    const p = String(val || '').split('|');
+    return { clave: p[0] || '', base: parseInt(p[1]) || 10, dexType: p[2] || 'dex' };
+}
+
+/* CA que da la armadura + DES (con su tope) + escudo, SIN el ajuste manual.
+   valorArmadura permite calcular con el valor con el que se guardó una ficha antigua. */
+function _caFormula(panel, valorArmadura) {
+    const armSel = panel.querySelector('.armadura-sel');
+    const escSel = panel.querySelector('.escudo-sel');
+    const a = _parseArmaduraValor(valorArmadura !== undefined ? valorArmadura : armSel?.value);
+    const dexMod = _modDes(panel);
+    let dexBonus = 0;
+    if (a.dexType === 'dex')  dexBonus = dexMod;
+    if (a.dexType === 'dex2') dexBonus = Math.min(dexMod, 2);
+    return a.base + dexBonus + (parseInt(escSel?.value) || 0);
+}
+
+/* Recalcula la CA si hay una armadura elegida: fórmula + ajuste manual (data-ca-bonus).
+   Se llama desde actualizarTodoPanel, así que cualquier cambio de DES la actualiza.
+   Sin armadura elegida la CA es manual y no se toca. */
+function _recalcularCA(panel) {
+    const armSel  = panel.querySelector('.armadura-sel');
+    const caInput = panel.querySelector('.csi-input');
+    if (!armSel || !armSel.value || !caInput) return;
+    caInput.value = _caFormula(panel) + (parseInt(caInput.dataset.caBonus) || 0);
+}
+
+function _aplicarArmadura(panel) {
+    const armSel = panel.querySelector('.armadura-sel');
+    if (!armSel || !armSel.value) return;
+    _recalcularCA(panel);
+    _aplicarDesventajaSigilo(panel, ARMADURAS_SIGILO_DESVENTAJA.has(_parseArmaduraValor(armSel.value).clave));
+}
+
+/* Al cargar: si el value guardado ya no existe tal cual (la tabla de armaduras se corrigió),
+   buscar la misma armadura por su clave. */
+function _seleccionarArmaduraGuardada(sel, guardado) {
+    sel.value = guardado;
+    if (sel.value === guardado) return;
+    const clave = String(guardado || '').split('|')[0];
+    const opt = clave ? Array.from(sel.options).find(o => o.value.split('|')[0] === clave) : null;
+    sel.value = opt ? opt.value : '';
+}
+
 function onArmaduraChange(el) {
     const panel = getPanel(el);
     if (!panel) return;
-
-    const armSel    = panel.querySelector('.armadura-sel');
-    const escudoSel = panel.querySelector('.escudo-sel');
-    if (!armSel || !escudoSel) return;
-
-    const armVal   = armSel.value;   // ej: "cueroestud|12|dex|0"
-    const escudoBonus = parseInt(escudoSel.value) || 0;
-
-    if (!armVal) {
-        guardarDebounced();
-        return;
-    }
-
-    const parts   = armVal.split('|');
-    const tipoArm = parts[0] || '';
-    const base    = parseInt(parts[1]) || 10;
-    const dexType = parts[2] || 'dex'; // 'dex' | 'dex2' | 'none'
-
-    // Leer modificador de DES
-    const dexScore = parseInt(panel.querySelector('.stat-score[data-stat="dex"]')?.value) || 10;
-    const dexMod   = Math.floor((dexScore - 10) / 2);
-
-    let dexBonus = 0;
-    if (dexType === 'dex')  dexBonus = dexMod;
-    if (dexType === 'dex2') dexBonus = Math.min(dexMod, 2);
-    // 'none' → dexBonus = 0
-
-    const caTotal = base + dexBonus + escudoBonus;
-
-    // Asignar CA
+    const armSel  = panel.querySelector('.armadura-sel');
     const caInput = panel.querySelector('.csi-input');
-    if (caInput) caInput.value = caTotal;
+    if (!armSel || !caInput) return;
 
-    // ── Desventaja en Sigilo automática ──────────────────────────
-    _aplicarDesventajaSigilo(panel, ARMADURAS_SIGILO_DESVENTAJA.has(tipoArm));
+    // Al cambiar de ARMADURA el ajuste manual (p. ej. +1 mágico) no se arrastra a la nueva;
+    // al cambiar solo el escudo sí se mantiene.
+    if (el === armSel) caInput.dataset.caBonus = 0;
 
+    if (!armSel.value) {
+        // Sin armadura elegida: CA manual y se quita la desventaja de Sigilo que pusiera la armadura
+        _aplicarDesventajaSigilo(panel, false);
+    } else {
+        _aplicarArmadura(panel);
+    }
+    guardarDebounced();
+}
+
+/* El jugador escribe la CA a mano: con armadura elegida se guarda la diferencia con
+   la CA calculada (ajuste manual), para que siga a la DES sin perder su ajuste. */
+function onCAManual(input) {
+    const panel = getPanel(input);
+    const armSel = panel?.querySelector('.armadura-sel');
+    if (armSel && armSel.value) {
+        input.dataset.caBonus = (parseInt(input.value) || 0) - _caFormula(panel);
+    }
     guardarDebounced();
 }
 
@@ -4398,13 +4929,14 @@ function _getHechizoConcActivo(panel) {
     return panel.querySelector('.spell-entry.concentrando') || null;
 }
 
-/* Comprueba si un hechizo requiere concentración según sus datos.
+/* Comprueba si un hechizo requiere concentración según su DURACIÓN.
+   Solo se mira el campo "duration": la descripción puede mencionar la palabra
+   (p. ej. "Sin concentración") sin que el hechizo la requiera.
    Normaliza tildes para cubrir variantes de escritura en hechizos.js */
 function _esConcentracion(sp) {
     if (!sp) return false;
-    const _norm = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    const hayConc = str => /concentraci.n|concentration|conc\b/i.test(_norm(str));
-    return hayConc(sp.duration) || hayConc(sp.desc) || hayConc(sp.extra) || hayConc(sp.components);
+    const _norm = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    return /concentraci.n|concentration|conc\b/.test(_norm(sp.duration));
 }
 
 /* Modal de alerta de concentración — devuelve Promise<bool> */
@@ -4499,11 +5031,12 @@ function _initTooltipsCondiciones(panel) {
 
 /* Inicializar tooltips al crear cada ficha — patch de nuevaFicha */
 const _nuevaFichaOrig = nuevaFicha;
-nuevaFicha = function(datosGuardados) {
-    _nuevaFichaOrig(datosGuardados);
+nuevaFicha = function(datosGuardados, opciones) {
+    const resultado = _nuevaFichaOrig(datosGuardados, opciones);
     // El panel recién creado es el último
     const panel = fichas[fichas.length - 1]?.panel;
     if (panel) _initTooltipsCondiciones(panel);
+    return resultado;
 };
 
 /* ═══════════════════════════════════════════════════════
@@ -4631,128 +5164,512 @@ function retratoBorrarImagen(btn) {
 
 /* ═══════════════════════════════════════════════════════
    EXPORTAR A PDF
+   Genera un PDF A4 (vertical) con TODA la ficha activa tal y como está:
+   · Cada "página" de la ficha (principal, acciones, características,
+     hechizos, roleplay) va en su propia hoja. Si una es más larga que un
+     A4 se parte por una franja en blanco, nunca por mitad de una línea.
+   · Incluye el contenido de todas las pestañas que tengan algo escrito
+     (Actions, Bonus, Reactions, Otros, cada clase y todas las notas),
+     no sólo la que esté abierta en pantalla.
+   · Los cambios temporales sobre la ficha (expandir cuadros, mostrar
+     pestañas...) se deshacen SIEMPRE, incluso si algo falla, y mientras
+     dura se tapa la pantalla con un aviso «Generando PDF…».
 ═══════════════════════════════════════════════════════ */
+const PDF_CFG = {
+    hojaW: 210, hojaH: 297,   // A4 vertical (mm)
+    margen: 5,                // mm de margen a izquierda, derecha y arriba
+    pie: 8,                   // mm reservados abajo para «Página x / y»
+    escalaMax: 2,             // píxeles de imagen por px CSS (calidad)
+    escalaMin: 1,
+    pixelesMax: 14e6,         // píxeles máximos por lienzo (Safari/iOS ≈ 16,7 M)
+    ladoMax: 12000,           // lado máximo de un lienzo
+    calidadJpeg: 0.92,
+};
+
+const PDF_LIBS = {
+    html2canvas: {
+        ok:   () => typeof window.html2canvas === 'function',
+        urls: ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+               'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'],
+    },
+    jspdf: {
+        ok:   () => !!(window.jspdf && window.jspdf.jsPDF),
+        urls: ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+               'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'],
+    },
+};
+
+let _pdfEnCurso = false;
+
+function _pdfCargarScript(url) {
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.onload = () => resolve();
+        s.onerror = () => { s.remove(); reject(new Error('No se pudo cargar ' + url)); };
+        document.head.appendChild(s);
+    });
+}
+
+/* Si las librerías no se cargaron con la página (sin conexión puntual, CDN
+   caído...), se intenta de nuevo y con un CDN alternativo. */
+async function _pdfAsegurarLibrerias() {
+    for (const lib of Object.values(PDF_LIBS)) {
+        for (let i = 0; i < lib.urls.length && !lib.ok(); i++) {
+            try { await _pdfCargarScript(lib.urls[i]); } catch (e) { /* probar el siguiente */ }
+        }
+        if (!lib.ok()) {
+            throw new Error('No se pudieron cargar las librerías para crear el PDF. ' +
+                            'Comprueba tu conexión a internet y vuelve a intentarlo.');
+        }
+    }
+}
+
+/* Color de las zonas fuera de la ficha (márgenes de la hoja y esquinas redondeadas):
+   blanco con tema claro; con un tema oscuro, el propio color de la ficha para que no haya
+   un marco blanco alrededor. */
+function _pdfColorFondo(panel) {
+    const m = getComputedStyle(panel).backgroundColor.match(/rgba?\(([^)]+)\)/);
+    if (m) {
+        const p = m[1].split(',').map(parseFloat);
+        if ((p.length < 4 || p[3] > 0.5) && (p[0] * 0.299 + p[1] * 0.587 + p[2] * 0.114) < 110) return [p[0] | 0, p[1] | 0, p[2] | 0];
+    }
+    return [255, 255, 255];
+}
+
+function _pdfNombreArchivo(nombre) {
+    const limpio = String(nombre || '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    return (limpio || 'personaje') + '.pdf';
+}
+
+function _pdfMostrarAviso(texto) {
+    let ov = document.getElementById('pdf-aviso');
+    if (!ov) {
+        ov = document.createElement('div');
+        ov.id = 'pdf-aviso';
+        ov.setAttribute('role', 'status');
+        ov.style.cssText = 'position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;' +
+            'justify-content:center;background:rgba(0,0,0,.6);color:#fff;font:600 18px/1.4 system-ui,sans-serif;' +
+            'text-align:center;padding:24px;cursor:progress;';
+        const caja = document.createElement('div');
+        caja.style.cssText = 'background:#222;border-radius:12px;padding:22px 30px;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:420px;';
+        ov.appendChild(caja);
+        document.body.appendChild(ov);
+    }
+    ov.firstChild.innerHTML = '';
+    const t = document.createElement('div'); t.textContent = '⏳ ' + texto;
+    const s = document.createElement('div'); s.style.cssText = 'font:400 13px/1.4 system-ui,sans-serif;opacity:.75;margin-top:8px;';
+    s.textContent = 'No cierres ni toques la ficha hasta que termine.';
+    ov.firstChild.append(t, s);
+}
+function _pdfQuitarAviso() { document.getElementById('pdf-aviso')?.remove(); }
+
+/* Sustituye (temporalmente) los campos de formulario visibles por un <div> con el mismo
+   aspecto y su valor como texto. */
+function _pdfSustituirCampos(panel, estilo, deshacer) {
+    const PROPS = ['position', 'top', 'right', 'bottom', 'left', 'z-index', 'box-sizing', 'width', 'height',
+        'min-width', 'max-width', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+        'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+        'border-top-width', 'border-top-style', 'border-top-color', 'border-right-width', 'border-right-style',
+        'border-right-color', 'border-bottom-width', 'border-bottom-style', 'border-bottom-color',
+        'border-left-width', 'border-left-style', 'border-left-color',
+        'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius',
+        'background-color', 'background-image', 'background-repeat', 'background-position', 'background-size',
+        'box-shadow', 'opacity', 'color', 'font-family', 'font-size', 'font-weight', 'font-style',
+        'letter-spacing', 'text-transform', 'text-shadow', 'vertical-align',
+        'flex-grow', 'flex-shrink', 'flex-basis', 'align-self', 'justify-self', 'grid-column-start', 'grid-column-end',
+        'grid-row-start', 'grid-row-end'];
+    const NO_TEXTO = /^(hidden|file|checkbox|radio|range|color|button|submit|reset|image)$/;
+    const campos = [];
+    panel.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.tagName === 'INPUT' && NO_TEXTO.test(el.type)) return;
+        if (!el.getClientRects().length) return;                 // oculto
+        const cs = getComputedStyle(el);
+        const esTA = el.tagName === 'TEXTAREA', esSel = el.tagName === 'SELECT';
+        let texto;
+        if (esSel) texto = el.value === '' ? '' : (el.options[el.selectedIndex]?.text || '');
+        else texto = el.value || '';
+        const props = {};
+        PROPS.forEach(p => { props[p] = cs.getPropertyValue(p); });
+        const ta = cs.textAlign;
+        campos.push({
+            el, texto, props, esTA,
+            bloque: cs.display === 'block' || cs.display === 'flex' || cs.display === 'grid',
+            alinea: (ta === 'center') ? 'center' : (ta === 'right' || ta === 'end') ? 'flex-end' : 'flex-start',
+            alto: el.offsetHeight, tam: parseFloat(cs.fontSize) || 14,
+            alturaInterior: el.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom),
+        });
+    });
+    campos.forEach(c => {
+        const d = document.createElement('div');
+        d.className = 'pdf-tmp-valor';
+        Object.keys(c.props).forEach(p => d.style.setProperty(p, c.props[p]));
+        d.style.setProperty('display', c.esTA ? (c.bloque ? 'block' : 'inline-block') : (c.bloque ? 'flex' : 'inline-flex'));
+        d.style.setProperty('background-image', 'none');   // sin la flechita del desplegable (html2canvas no entiende su posición)
+        d.style.setProperty('flex-shrink', '0');
+        d.style.setProperty('max-width', 'none');
+        d.style.setProperty('text-align', c.alinea === 'center' ? 'center' : c.alinea === 'flex-end' ? 'right' : 'left');
+        if (c.esTA) {
+            // El textarea crece con su contenido (antes sólo hacía scroll) y mantiene al menos su altura
+            d.style.setProperty('white-space', 'pre-wrap');
+            d.style.setProperty('overflow-wrap', 'anywhere');
+            d.style.setProperty('line-height', '1.4');
+            d.style.setProperty('height', 'auto');
+            d.style.setProperty('min-height', c.alto + 'px');
+            d.style.setProperty('vertical-align', 'top');
+            d.style.setProperty('overflow', 'visible');
+        } else {
+            d.style.setProperty('align-items', 'center');
+            d.style.setProperty('justify-content', c.alinea);
+            d.style.setProperty('white-space', 'pre');
+            d.style.setProperty('line-height', c.tam * 1.25 <= c.alturaInterior ? '1.25' : '1');
+            d.style.setProperty('overflow', c.tam * 1.25 <= c.alturaInterior ? 'hidden' : 'visible');
+        }
+        d.textContent = c.texto;
+        c.el.parentNode.insertBefore(d, c.el);
+        deshacer.push(() => d.remove());
+        estilo(c.el, 'display', 'none');
+    });
+}
+
+/* Prepara la ficha para fotografiarla entera. Devuelve una función que
+   deshace TODOS los cambios (se ejecuta siempre en un `finally`). */
+function _pdfPrepararPanel(panel) {
+    const deshacer = [];
+
+    // Cambia una propiedad de estilo en línea (con !important) y recuerda cómo estaba
+    const originales = new Map();   // atributo style tal cual estaba (se repone idéntico al final)
+    const estilo = (el, prop, valor) => {
+        if (!el) return;
+        if (!originales.has(el)) {
+            originales.set(el, el.getAttribute('style'));
+            deshacer.push(() => { const a = originales.get(el); if (a === null) el.removeAttribute('style'); else el.setAttribute('style', a); });
+        }
+        const antes = el.style.getPropertyValue(prop), prio = el.style.getPropertyPriority(prop);
+        el.style.setProperty(prop, valor, 'important');
+        deshacer.push(() => {
+            el.style.removeProperty(prop);
+            if (antes) el.style.setProperty(prop, antes, prio);
+            if (!el.getAttribute('style')) el.removeAttribute('style');
+        });
+    };
+    const atributo = (el, nombre, valor) => {
+        const antes = el.getAttribute(nombre);
+        el.setAttribute(nombre, valor);
+        deshacer.push(() => { if (antes === null) el.removeAttribute(nombre); else el.setAttribute(nombre, antes); });
+    };
+    const etiqueta = (contenedor, texto, antesDe) => {
+        const d = document.createElement('div');
+        d.className = 'pdf-tmp-etiqueta';
+        d.textContent = texto;
+        d.style.cssText = 'font:700 11px/1.2 inherit;letter-spacing:.08em;text-transform:uppercase;' +
+            'color:var(--color-texto-med,#555);margin:10px 0 6px;padding-bottom:3px;' +
+            'border-bottom:1px solid var(--color-borde,#bbb);';
+        contenedor.insertBefore(d, antesDe === undefined ? contenedor.firstChild : antesDe);
+        deshacer.push(() => d.remove());
+    };
+    const sinTexto = (contenedor) =>
+        !contenedor.querySelector('.auto-entrada') &&
+        ![...contenedor.querySelectorAll('input[type="text"], textarea')].some(i => i.value.trim());
+
+    // 1. Sin la escala responsiva: la ficha se fotografía a su tamaño real (1100 px)
+    estilo(panel, 'transform', 'none');
+    estilo(panel, 'margin-bottom', '0px');
+
+    // 2. Fuera tooltips y ventanas emergentes
+    panel.querySelectorAll('.modal-overlay, .spell-tooltip, .condicion-tooltip').forEach(el => estilo(el, 'visibility', 'hidden'));
+
+    // 3. Pestañas de ACCIONES: se muestran todas las que tengan contenido, con su título
+    panel.querySelectorAll('.caja-acciones').forEach(caja => {
+        const paneles = [...caja.querySelectorAll('.accion-panel')];
+        let visibles = paneles.filter(p => !sinTexto(p));
+        if (!visibles.length) visibles = paneles.filter(p => p.classList.contains('activo'));
+        paneles.forEach(p => {
+            if (!visibles.includes(p)) { estilo(p, 'display', 'none'); return; }
+            estilo(p, 'display', 'block');
+            const tab = caja.querySelector(`.accion-tab[data-tab="${p.dataset.panel}"]`);
+            if (tab) etiqueta(p, tab.textContent.trim());
+        });
+        estilo(caja.querySelector('.acciones-tabs'), 'display', 'none');
+        estilo(caja, 'min-height', '0px');
+    });
+
+    // 4. Pestañas de CLASES (multiclase en Características): todas las clases, con su nombre
+    panel.querySelectorAll('.caract-mc-wrap').forEach(wrap => {
+        const paginas = [...wrap.querySelectorAll('.mc-pagina')];
+        paginas.forEach((pag, i) => {
+            estilo(pag, 'display', 'flex');
+            if (paginas.length > 1) {
+                const nombre = pag.querySelector('.mc-sel-clase')?.value || `Clase ${i + 1}`;
+                etiqueta(pag.parentNode, nombre, pag);
+            }
+        });
+        estilo(wrap.querySelector('.caract-mc-header'), 'display', 'none');
+    });
+
+    // 5. NOTAS: pestañas fijas y personalizadas, cada una con sus páginas escritas
+    panel.querySelectorAll('.roleplay-notas').forEach(notas => {
+        const paneles = [...notas.querySelectorAll('.notas-panel')];
+        const nombrePestana = (p) => {
+            const tab = notas.querySelector(`.notas-tab[data-tab-id="${p.dataset.panelId}"]`);
+            return (tab?.querySelector('.notas-tab-nombre-edit')?.value || tab?.textContent || 'Notas').trim();
+        };
+        let algo = false;
+        paneles.forEach(p => {
+            const subs = [...p.querySelectorAll('.notas-subpag-panel')];
+            // Panel sin sub-páginas (estructura antigua): el propio panel cuenta como una
+            const unidades = subs.length ? subs : [p];
+            const conTexto = unidades.filter(u => [...u.querySelectorAll('textarea')].some(t => t.value.trim()));
+            if (!conTexto.length) { estilo(p, 'display', 'none'); return; }
+            algo = true;
+            estilo(p, 'display', 'flex');
+            estilo(p.querySelector('.notas-subpags-barra'), 'display', 'none');
+            subs.forEach(sp => {
+                if (!conTexto.includes(sp)) { estilo(sp, 'display', 'none'); return; }
+                estilo(sp, 'display', 'flex');
+                const sub = p.querySelector(`.notas-subpag-tab[data-sp-id="${sp.dataset.spId}"] .notas-subpag-nombre`)?.value;
+                etiqueta(sp, subs.length > 1 && sub ? `${nombrePestana(p)} · ${sub}` : nombrePestana(p));
+            });
+            if (!subs.length) etiqueta(p, nombrePestana(p));
+        });
+        if (algo) estilo(notas.querySelector('.notas-tabs-barra'), 'display', 'none');
+        else {   // no hay nada escrito: se deja tal como está en pantalla (sólo se quita la barra de pestañas)
+            paneles.forEach(p => { if (p.classList.contains('activo')) { estilo(p, 'display', 'flex'); } });
+        }
+    });
+
+    // 6. Botones que sólo sirven para editar (añadir / quitar / limpiar): fuera
+    const SEL_EDICION = '.multiclase-add-btn, .hp-auto-btn, .dg-add-grupo-btn, .btn-borrar-item, .btn-borrar-arma, ' +
+        '.btn-añadir-arma, .btn-añadir-accion, .arma-btn-extra-daño, .caract-mc-add, .caract-btn-limpiar, ' +
+        '.caract-btn-add, .recursos-add-btn, .btn-spell-add, .btn-slot-add, .retrato-cab-borrar, ' +
+        '.apariencia-btn-borrar, .notas-tab-add, .notas-subpag-add, .notas-subpag-del, .notas-tab-cerrar, ' +
+        '.mc-del-btn, .salv-arrow';
+    panel.querySelectorAll(SEL_EDICION).forEach(b => estilo(b, 'visibility', 'hidden'));
+    panel.querySelectorAll('button').forEach(b => {
+        if (/^[+＋×✕✖]$/.test((b.textContent || '').trim())) estilo(b, 'visibility', 'hidden');
+    });
+
+    // 7. Campos de formulario (input / select / textarea) → texto normal con el mismo aspecto.
+    //    html2canvas recorta el texto dentro de los campos y no parte las líneas de los
+    //    textarea; como texto normal sale idéntico a lo que se ve en pantalla.
+    _pdfSustituirCampos(panel, estilo, deshacer);
+
+    // 8. Cuadros con scroll interno o texto cortado: se agrandan para mostrar todo su contenido
+    const crecer = [];
+    panel.querySelectorAll('*').forEach(el => {
+        if (el.scrollHeight <= el.clientHeight + 1) return;
+        if (el.tagName === 'TEXTAREA') { crecer.push({ el, ta: true }); return; }
+        const cs = getComputedStyle(el);
+        const scroll = /(auto|scroll)/.test(cs.overflowY);
+        const cortado = cs.overflowY === 'hidden' && cs.maxHeight !== 'none';
+        if (scroll || cortado) crecer.push({ el, ta: false });
+    });
+    crecer.forEach(({ el, ta }) => {
+        estilo(el, 'max-height', 'none');
+        if (ta) {
+            estilo(el, 'height', (el.scrollHeight + (el.offsetHeight - el.clientHeight)) + 'px');
+            estilo(el, 'overflow', 'hidden');
+        } else {
+            estilo(el, 'height', 'auto');
+            estilo(el, 'overflow', 'visible');
+        }
+    });
+
+    return () => { for (let i = deshacer.length - 1; i >= 0; i--) { try { deshacer[i](); } catch (e) { /* seguir restaurando */ } } };
+}
+
+/* Divide la ficha en «páginas» lógicas (y en px CSS desde el borde superior de la ficha):
+   la primera hoja (cabecera + rejilla) y cada .segunda-pagina. Los cortes caen en
+   mitad del hueco que hay entre ellas. */
+function _pdfSegmentos(panel) {
+    const top0 = panel.getBoundingClientRect().top;
+    const alto = Math.ceil(panel.getBoundingClientRect().height);
+    const bloques = [...panel.children].filter(el => el.classList.contains('segunda-pagina') && el.offsetHeight > 0);
+    if (!bloques.length) return [{ y0: 0, y1: alto }];
+    const cortes = [0];
+    const previo = bloques[0].previousElementSibling;   // la rejilla principal: la primera hoja acaba ahí
+    if (previo) cortes.push(Math.round(((previo.getBoundingClientRect().bottom - top0) + (bloques[0].getBoundingClientRect().top - top0)) / 2));
+    for (let i = 0; i < bloques.length - 1; i++) {
+        const fin  = bloques[i].getBoundingClientRect().bottom - top0;
+        const ini  = bloques[i + 1].getBoundingClientRect().top - top0;
+        cortes.push(Math.round((fin + ini) / 2));
+    }
+    cortes.push(alto);
+    const segs = [];
+    for (let i = 0; i < cortes.length - 1; i++) if (cortes[i + 1] - cortes[i] > 4) segs.push({ y0: cortes[i], y1: cortes[i + 1] });
+    return segs;
+}
+
+/* Busca, entre las filas [desde, hasta) del lienzo, la más baja que no corte ninguna línea
+   de texto ni dibujo (una fila con casi nada distinto del color de fondo de esa fila). */
+function _pdfCorteLimpio(canvas, desde, hasta) {
+    desde = Math.max(0, Math.floor(desde)); hasta = Math.min(canvas.height, Math.floor(hasta));
+    if (hasta - desde < 2) return hasta;
+    const w = canvas.width, filas = hasta - desde;
+    let datos;
+    try { datos = canvas.getContext('2d', { willReadFrequently: true }).getImageData(0, desde, w, filas).data; }
+    catch (e) { return hasta; }
+    let mejor = hasta, mejorTinta = Infinity;
+    for (let r = filas - 1; r >= 0; r--) {
+        const cuenta = new Map();
+        let modo = 0, modoN = 0;
+        for (let x = 0; x < w; x += 2) {
+            const i = (r * w + x) * 4;
+            const k = ((datos[i] >> 4) << 8) | ((datos[i + 1] >> 4) << 4) | (datos[i + 2] >> 4);
+            const n = (cuenta.get(k) || 0) + 1;
+            cuenta.set(k, n);
+            if (n > modoN) { modoN = n; modo = k; }
+        }
+        const mr = (modo >> 8) & 15, mg = (modo >> 4) & 15, mb = modo & 15;
+        let tinta = 0;
+        for (let x = 0; x < w; x += 2) {
+            const i = (r * w + x) * 4;
+            if (Math.abs((datos[i] >> 4) - mr) + Math.abs((datos[i + 1] >> 4) - mg) + Math.abs((datos[i + 2] >> 4) - mb) > 2) tinta++;
+        }
+        if (tinta < mejorTinta) { mejorTinta = tinta; mejor = desde + r; }
+        if (tinta <= 6) return desde + r;   // fila en blanco (salvo los bordes laterales de las cajas)
+    }
+    return mejor;
+}
 
 async function exportarFichaPDF() {
+    if (_pdfEnCurso) return;
     const ficha = fichas.find(f => f.id === fichaActual);
     if (!ficha) return;
-
     const panel = ficha.panel;
-    const nombre = panel.querySelector('.input-nombre')?.value.trim() || 'personaje';
+    const nombre = panel.querySelector('.input-nombre')?.value.trim() || '';
 
-    if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-        alert('Las librerías de PDF aún se están cargando. Espera un momento e inténtalo de nuevo.');
-        return;
-    }
-    const { jsPDF } = window.jspdf;
-
+    _pdfEnCurso = true;
     const btnPdf = document.querySelector('.btn-pdf');
-    const textoOrig = btnPdf?.textContent || '🖨 PDF';
-    if (btnPdf) { btnPdf.textContent = '⏳ Generando...'; btnPdf.disabled = true; }
+    const textoOrig = btnPdf ? btnPdf.textContent : '';
+    const progreso = (txt) => { if (btnPdf) btnPdf.textContent = '⏳ ' + txt; _pdfMostrarAviso(txt); };
+    if (btnPdf) btnPdf.disabled = true;
+
+    const scrollX = window.scrollX, scrollY = window.scrollY;
+    let restaurar = null;
 
     try {
-        // 1. Quitar la escala responsiva para capturar a tamaño real (1100px)
-        const scaleAntes = panel.style.getPropertyValue('--ficha-scale');
-        panel.style.setProperty('--ficha-scale', '1');
-        panel.style.transform = 'scale(1)';
-        panel.style.transformOrigin = 'top left';
+        progreso('Preparando…');
+        await _pdfAsegurarLibrerias();
+        const { jsPDF } = window.jspdf;
+        const H2C = window.html2canvas;
+        if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
 
-        // 2. Ocultar elementos flotantes y tooltips que no deben aparecer
-        const _sel = (root, s) => Array.from(root.querySelectorAll(s));
-        const ocultar = [
-            ..._sel(document, '#panel-flotante-acciones'),
+        window.scrollTo(0, 0);
+        restaurar = _pdfPrepararPanel(panel);
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        await new Promise(r => setTimeout(r, 150));   // que el navegador termine de recolocar todo
 
-            ..._sel(document, '#log-tiradas'),
-            ..._sel(document, '.barra-pestanas'),
-            ..._sel(panel, '.modal-overlay'),
-            ..._sel(panel, '.spell-tooltip'),
-            ..._sel(panel, '.condicion-tooltip'),
-        ].filter(Boolean);
-        ocultar.forEach(el => { el.dataset._pdfViz = el.style.visibility || ''; el.style.visibility = 'hidden'; });
+        const W = Math.round(panel.getBoundingClientRect().width);
+        const segs = _pdfSegmentos(panel);
+        const fondo = _pdfColorFondo(panel);
+        const fondoCss = `rgb(${fondo.join(',')})`;
+        const oscuro = (fondo[0] * 0.299 + fondo[1] * 0.587 + fondo[2] * 0.114) < 110;
 
-        // 3. Expandir todos los scrolls internos para que html2canvas los capture enteros
-        const scrollEls = panel.querySelectorAll('.contenedor-items, .caract-textarea, .roleplay-textarea-historia, .auto-nota');
-        const scrollAntes = [];
-        scrollEls.forEach(el => {
-            scrollAntes.push({ el, maxH: el.style.maxHeight, h: el.style.height, ov: el.style.overflow });
-            el.style.maxHeight = 'none';
-            el.style.height    = 'auto';
-            el.style.overflow  = 'visible';
+        // Agrupar páginas lógicas en lotes que quepan en un lienzo de tamaño seguro
+        const S0 = PDF_CFG.escalaMax;
+        const maxAltoLote = Math.floor(Math.min(PDF_CFG.pixelesMax / (W * S0 * S0), PDF_CFG.ladoMax / S0));
+        const lotes = [];
+        segs.forEach(s => {
+            const h = s.y1 - s.y0, ult = lotes[lotes.length - 1];
+            if (ult && (s.y1 - ult.y0) <= maxAltoLote) { ult.segs.push(s); ult.y1 = s.y1; }
+            else lotes.push({ y0: s.y0, y1: s.y1, segs: [s] });
         });
 
-        // 4. Capturar el panel ENTERO de una vez — imagen continua
-        await new Promise(r => setTimeout(r, 120)); // dejar que el DOM se asiente
-        const canvas = await html2canvas(panel, {
-            scale:           2,          // 2x para buena resolución
-            useCORS:         true,
-            allowTaint:      true,
-            backgroundColor: '#f0f4f8',
-            logging:         false,
-            scrollX:         0,
-            scrollY:         -window.scrollY,
-            width:           panel.scrollWidth,
-            height:          panel.scrollHeight,
-            windowWidth:     1200,
-        });
+        // Medidas de la hoja
+        const anchoMm = PDF_CFG.hojaW - 2 * PDF_CFG.margen;
+        const altoMm  = PDF_CFG.hojaH - PDF_CFG.margen - PDF_CFG.pie;
+        const mmPorPx = anchoMm / W;
+        const altoPaginaPx = altoMm / mmPorPx;      // alto máximo de una hoja, en px CSS
 
-        // 5. Restaurar todo
-        if (scaleAntes) panel.style.setProperty('--ficha-scale', scaleAntes);
-        else            panel.style.removeProperty('--ficha-scale');
-        panel.style.transform       = '';
-        panel.style.transformOrigin = '';
-        ocultar.forEach(el => { el.style.visibility = el.dataset._pdfViz || ''; delete el.dataset._pdfViz; });
-        scrollEls.forEach(({ el, maxH, h, ov }) => { el.style.maxHeight = maxH; el.style.height = h; el.style.overflow = ov; });
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+        let hojas = 0;
 
-        // 6. Distribuir la imagen continua en páginas A4 landscape
-        //    sin cortar nunca el contenido — cada página es un trozo horizontal de la imagen
-        const PDF_W_MM  = 297;
-        const PDF_H_MM  = 210;
-        const PX_PER_MM = canvas.width / PDF_W_MM;   // píxeles del canvas por mm
-        const pageH_px  = PDF_H_MM * PX_PER_MM;      // altura de página en píxeles del canvas
+        for (let li = 0; li < lotes.length; li++) {
+            const lote = lotes[li];
+            const alto = lote.y1 - lote.y0;
+            progreso(`Capturando la ficha (${li + 1}/${lotes.length})…`);
 
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-        const totalH_px = canvas.height;
-        let offsetY = 0;
-        let primera = true;
+            let escala = Math.min(S0, Math.sqrt(PDF_CFG.pixelesMax / (W * alto)), PDF_CFG.ladoMax / alto);
+            escala = Math.max(0.6, escala);
+            let canvas = null, ultimoError = null;
+            for (let intento = 0; intento < 3 && !canvas; intento++) {
+                try {
+                    const c = await H2C(panel, {
+                        x: 0, y: lote.y0, width: W, height: alto,
+                        scale: escala, backgroundColor: fondoCss, logging: false,
+                        useCORS: true, allowTaint: false, imageTimeout: 8000,
+                        scrollX: 0, scrollY: 0, windowWidth: Math.max(1280, W + 100),
+                    });
+                    if (!c || !c.width || !c.height) throw new Error('El navegador no pudo crear la imagen de la ficha (memoria insuficiente).');
+                    canvas = c;
+                } catch (e) { ultimoError = e; escala = Math.max(0.6, escala * 0.7); }
+            }
+            if (!canvas) throw ultimoError || new Error('No se pudo capturar la ficha.');
 
-        while (offsetY < totalH_px) {
-            const sliceH = Math.min(pageH_px, totalH_px - offsetY);
+            const px = canvas.width / W;   // píxeles de imagen por px CSS
+            for (const s of lote.segs) {
+                let cursor = (s.y0 - lote.y0) * px;
+                const fin = (s.y1 - lote.y0) * px;
+                const hoja = altoPaginaPx * px;
+                const trozos = [];
+                // Una hoja lógica más larga que un A4 se parte por un hueco en blanco
+                while (fin - cursor > hoja * 1.03) {
+                    let corte = _pdfCorteLimpio(canvas, cursor + hoja * 0.55, cursor + hoja);
+                    if (corte <= cursor + hoja * 0.2) corte = cursor + hoja;
+                    trozos.push([cursor, corte]);
+                    cursor = corte;
+                }
+                trozos.push([cursor, fin]);
 
-            // Recortar trozo del canvas
-            const slice = document.createElement('canvas');
-            slice.width  = canvas.width;
-            slice.height = Math.ceil(sliceH);
-            slice.getContext('2d').drawImage(
-                canvas,
-                0, offsetY, canvas.width, sliceH,
-                0, 0,       canvas.width, sliceH
-            );
+                for (const [a, b] of trozos) {
+                    const sy = Math.round(a), sh = Math.max(1, Math.round(b) - sy);
+                    const tmp = document.createElement('canvas');
+                    tmp.width = canvas.width; tmp.height = sh;
+                    const ctx = tmp.getContext('2d');
+                    ctx.fillStyle = fondoCss; ctx.fillRect(0, 0, tmp.width, tmp.height);
+                    ctx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
+                    const dataUrl = tmp.toDataURL('image/jpeg', PDF_CFG.calidadJpeg);
+                    tmp.width = tmp.height = 0;
 
-            const imgData = slice.toDataURL('image/jpeg', 0.95);
-            const sliceH_mm = sliceH / PX_PER_MM;
-
-            if (!primera) pdf.addPage();
-            primera = false;
-
-            // Centrar verticalmente si el trozo es más pequeño que la página
-            const yOffset = sliceH_mm < PDF_H_MM ? (PDF_H_MM - sliceH_mm) / 2 : 0;
-            pdf.addImage(imgData, 'JPEG', 0, yOffset, PDF_W_MM, sliceH_mm);
-
-            offsetY += pageH_px;
+                    let wMm = anchoMm, hMm = (sh / px) * mmPorPx;
+                    if (hMm > altoMm) { const k = altoMm / hMm; wMm *= k; hMm = altoMm; }   // ajuste fino (≤3 %)
+                    if (hojas > 0) pdf.addPage();
+                    hojas++;
+                    pdf.setFillColor(fondo[0], fondo[1], fondo[2]);
+                    pdf.rect(0, 0, PDF_CFG.hojaW, PDF_CFG.hojaH, 'F');
+                    pdf.addImage(dataUrl, 'JPEG', (PDF_CFG.hojaW - wMm) / 2, PDF_CFG.margen, wMm, hMm, undefined, 'FAST');
+                }
+            }
+            canvas.width = canvas.height = 0;   // liberar memoria
         }
 
-        pdf.save(`${nombre}.pdf`);
+        // Pie de página: nombre y numeración
+        progreso('Montando el PDF…');
+        const nombreLatin = /^[\x20-\x7E -ÿ]+$/.test(nombre) ? nombre : '';
+        pdf.setFontSize(7);
+        pdf.setTextColor(oscuro ? 190 : 110);
+        for (let i = 1; i <= hojas; i++) {
+            pdf.setPage(i);
+            pdf.text(`${nombreLatin ? nombreLatin + '  ·  ' : ''}Página ${i} / ${hojas}`,
+                     PDF_CFG.hojaW / 2, PDF_CFG.hojaH - 3.5, { align: 'center' });
+        }
+        try {
+            pdf.setProperties({ title: (nombre || 'Personaje') + ' — Ficha de D&D', creator: 'Creador de fichas de D&D' });
+        } catch (e) {}
+
+        pdf.save(_pdfNombreArchivo(nombre));
 
     } catch (err) {
         console.error('Error generando PDF:', err);
-        alert('Error al generar el PDF: ' + err.message);
+        alert('No se pudo generar el PDF: ' + (err && err.message ? err.message : err));
     } finally {
-        if (btnPdf) { btnPdf.textContent = textoOrig; btnPdf.disabled = false; }
-        // Limpieza de seguridad por si el catch saltó antes de restaurar
-        panel.querySelectorAll('[data-_pdfViz]').forEach(el => {
-            el.style.visibility = el.dataset._pdfViz || '';
-            delete el.dataset._pdfViz;
-        });
+        if (restaurar) { try { restaurar(); } catch (e) { console.error(e); } }
+        _pdfQuitarAviso();
+        try { window.scrollTo(scrollX, scrollY); } catch (e) {}
+        try { aplicarEscalaFicha(); } catch (e) {}
+        if (btnPdf) { btnPdf.textContent = textoOrig || '🖨 PDF'; btnPdf.disabled = false; }
+        _pdfEnCurso = false;
     }
 }
 

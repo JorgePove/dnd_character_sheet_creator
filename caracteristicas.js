@@ -83,6 +83,115 @@ function _especieTxt(arr) {
 
 const _TIPO_ETIQUETA = { O: 'Origen', G: 'General', F: 'Combate', E: 'Boon Épico' };
 
+/* ══════════════════════════════════════════════════════════════
+   ALIAS — nombres antiguos de subclases, especies y trasfondos
+   Las fichas guardadas (o importadas) con una clave que fue renombrada
+   o fusionada en la revisión de datos de 2026 siguen cargando: la clave
+   antigua se traduce a la nueva. Las claves que se eliminaron por no
+   existir en ningún libro oficial no tienen alias (el desplegable queda
+   en blanco, pero el texto ya escrito en la ficha se conserva).
+══════════════════════════════════════════════════════════════ */
+const DND_ALIAS = {
+    subclase: {
+        'Brujo': {
+            'El Inmortal [XGtE]': 'El Inmortal [SCAG]',
+            'El Guerrero Hexblade [SCAG]': 'El Hexblade [XGtE]',
+            'La Entidad de la Profundidad [EGtW]': 'El Insondable [TCE]'
+        },
+        'Clérigo': {
+            'Dominio de la Muerte [PHB 2014]': 'Dominio de la Muerte [DMG]',
+            'Dominio del Conocimiento [PHB 2024]': 'Dominio del Conocimiento [HoF 2024]'
+        },
+        'Guerrero': {
+            'Caballero del Psi [PHB 2024]': 'Guerrero Psíquico [PHB 2024]',
+            'Guerrero Rúnico [PHB 2024]': 'Guerrero Rúnico [TCE]'
+        },
+        'Mago': {
+            'Maestro de Orden [TCE]': 'Orden de los Escribas [TCE]',
+            'Conjurador [PHB 2024]': 'Escuela de Conjuración [PHB 2014]',
+            'Encantador [PHB 2024]': 'Escuela de Encantamiento [PHB 2014]',
+            'Nigromante [PHB 2024]': 'Escuela de Nigromancia [PHB 2014]',
+            'Transmutador [PHB 2024]': 'Escuela de Transmutación [PHB 2014]'
+        },
+        'Paladín': {
+            'Juramento de Gloria [MOoT/TCE/PHB 2024]': 'Juramento de Gloria [PHB 2024]'
+        }
+    },
+    especie: {
+        'Humano [PHB24]': 'Humano [PHB 2024]',
+        'Elfo [PHB24]': 'Elfo [PHB 2024]',
+        'Enano [PHB24]': 'Enano [PHB 2024]',
+        'Mediano [PHB24]': 'Mediano [PHB 2024]',
+        'Gnomo [PHB24]': 'Gnomo [PHB 2024]',
+        'Tiefling [PHB24]': 'Tiefling [PHB 2024]',
+        'Draconido [PHB24]': 'Dracónido [PHB 2024]',
+        'Semielfo [PHB24]': 'Semielfo [PHB 2014]',
+        'Semiorco [PHB24]': 'Semiorco [PHB 2014]',
+        'Enano Gris (Duergar) [SCAG]': 'Duergar [MotM]',
+        'Tiefling Variante [SCAG]': 'Tiefling Variante [SCAG/MTF]',
+        'Elfo Eladrin [MTF/MotM]': 'Eladrin [MotM]',
+        'Githyanki [MTF/MotM]': 'Githyanki [MotM]',
+        'Githzerai [MTF/MotM]': 'Githzerai [MotM]',
+        'Yuan-ti [MTF/MotM]': 'Yuan-ti [MotM]',
+        'Kenku [MTF/MotM]': 'Kenku [MotM]',
+        'Lizardfolk [MTF/MotM]': 'Lizardfolk [MotM]',
+        'Aasimar [MTF/MotM]': 'Aasimar [MotM]',
+        'Bugbear [MTF/MotM]': 'Bugbear [MotM]',
+        'Firbolg [MTF/MotM]': 'Firbolg [MotM]',
+        'Goblin [MTF/MotM]': 'Goblin [MotM]',
+        'Hobgoblin [MTF/MotM]': 'Hobgoblin [MotM]',
+        'Kobold [MTF/MotM]': 'Kobold [MotM]',
+        'Orc [MTF/MotM]': 'Orco [MotM]',
+        'Shadar-kai [MTF/MotM]': 'Shadar-kai [MotM]',
+        'Triton [MotM]': 'Tritón [MotM]',
+        'Satiro [MotM]': 'Sátiro [MotM]',
+        'Minotauro [MOoT]': 'Minotauro [MotM]',
+        'Centauro [GGtR]': 'Centauro [MotM]',
+        'Draconido Gema [FTD]': 'Dracónido Gema [FTD]',
+        'Draconido Cromático [FTD]': 'Dracónido Cromático [FTD]',
+        'Draconido Metálico [FTD]': 'Dracónido Metálico [FTD]',
+        'Pallid Elf [EGW]': 'Elfo Pálido [EGtW]',
+        'Lotusden Halfling [EGW]': 'Mediano Lotusden [EGtW]',
+        'Kalashtar [ERLtLW]': 'Kalashtar [ERftLW 2014]',
+        'Changeling [ERLtLW]': 'Changeling [MotM]',
+        'Warforged [ERLtLW]': 'Warforged [ERftLW 2014]',
+        'Shifter [ERLtLW]': 'Shifter [MotM]'
+    },
+    trasfondo: {
+        'Acólito': 'Acólito (Acolyte) [PHB 2014]',
+        'Charlatán': 'Charlatán (Charlatan) [PHB 2014]',
+        'Criminal': 'Criminal [PHB 2014]',
+        'Entretenido': 'Artista (Entertainer) [PHB 2014]',
+        'Forastero': 'Forastero (Outlander) [PHB 2014]',
+        'Gremial': 'Artesano de Gremio (Guild Artisan) [PHB 2014]',
+        'Héroe del Pueblo': 'Héroe del Pueblo (Folk Hero) [PHB 2014]',
+        'Marino': 'Marinero (Sailor) [PHB 2014]',
+        'Marinero Pirata': 'Marinero (Sailor) [PHB 2014]',
+        'Noble': 'Noble [PHB 2014]',
+        'Sabio': 'Sabio (Sage) [PHB 2014]',
+        'Clarividente': 'Sabio (Sage) [PHB 2014]',
+        'Augurador': 'Sabio (Sage) [PHB 2014]',
+        'Soldado': 'Soldado (Soldier) [PHB 2014]',
+        'Urdidor': 'Pilluelo (Urchin) [PHB 2014]',
+        'Ermitaño': 'Ermitaño (Hermit) [PHB 2014]',
+        'Investigador': 'Guardia de la Ciudad (City Watch) [SCAG]',
+        'Contrabandista': 'Contrabandista (Smuggler) [GoS]'
+    }
+};
+
+/* Traduce una clave antigua a la actual. tipo: 'subclase' | 'especie' | 'trasfondo'.
+   Para 'subclase' hay que pasar también el nombre de la clase. Si no hay alias,
+   devuelve el valor tal cual. */
+function resolverAlias(tipo, valor, clase) {
+    if (!valor) return valor;
+    const tabla = DND_ALIAS[tipo];
+    if (!tabla) return valor;
+    const t = (tipo === 'subclase') ? (tabla[clase] || {}) : tabla;
+    return Object.prototype.hasOwnProperty.call(t, valor) ? t[valor] : valor;
+}
+
+
+
 const _HABILIDADES = [
     'Acrobacias','Arcana','Atletismo','Engaño','Historia','Intimidación',
     'Investigación','Juego de Manos','Medicina','Naturaleza','Percepción',
@@ -347,6 +456,7 @@ function onClaseChange(sel) {
     // Limpiar subclase
     if (taSub) taSub.value = '';
 
+    if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
     if (typeof guardarDebounced === 'function') guardarDebounced();
 }
 
@@ -363,6 +473,7 @@ function onSubclaseChange(sel) {
             : '';
     }
 
+    if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
     if (typeof guardarDebounced === 'function') guardarDebounced();
 }
 
@@ -381,6 +492,9 @@ function onEspecieChange(sel) {
     const selCab = panel.querySelector('.sel-especie-cab');
     if (selCab && selCab.value !== especieKey) selCab.value = especieKey;
 
+    // El desplegable de especie y el selector de cabecera llaman a esta función directamente
+    // (sin evento "change"), así que el panel de Acciones se refresca aquí.
+    if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
     if (typeof guardarDebounced === 'function') guardarDebounced();
 }
 
@@ -409,6 +523,8 @@ function onDoteAdd(btn) {
     }
     if (sel) sel.value = '';
 
+    // Las dotes se escriben por código (no hay evento "input"): refrescar el panel de Acciones
+    if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
     if (typeof guardarDebounced === 'function') guardarDebounced();
 }
 
@@ -426,6 +542,7 @@ function onDoteOrigenAdd(btn) {
     ta.value    = ta.value ? ta.value + '\n\n' + linea : linea;
     sel.value   = '';
 
+    if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
     if (typeof guardarDebounced === 'function') guardarDebounced();
 }
 
@@ -450,9 +567,11 @@ function onTrasfondoChange(sel) {
 
     const tf = DND_TRASFONDOS[key];
     const lineas = [];
+    if (tf.asi)     lineas.push(`Aumento de característica: ${tf.asi} (+2/+1 o +1/+1/+1)`);
+    if (tf.dote)    lineas.push(`Dote de origen: ${tf.dote}`);
     if (tf.comp)    lineas.push(`Competencias en habilidades: ${tf.comp}`);
-    if (tf.idiomas) lineas.push(`Idiomas: ${tf.idiomas}`);
     if (tf.herr)    lineas.push(`Herramientas: ${tf.herr}`);
+    if (tf.idiomas) lineas.push(`Idiomas: ${tf.idiomas}`);
     if (tf.equipo)  lineas.push(`Equipo: ${tf.equipo}`);
     if (tf.rasgo)   lineas.push(`\nRasgo especial: ${tf.rasgo}`);
     if (tf.rasgos && Array.isArray(tf.rasgos)) {
@@ -523,6 +642,8 @@ function limpiarCaract(btn, tipo) {
         if (selCabE) selCabE.value = '';
     }
 
+    // Vaciar clase/subclase/especie/dotes cambia lo que debe mostrar el panel de Acciones
+    if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
     if (typeof guardarDebounced === 'function') guardarDebounced();
 }
 
@@ -788,6 +909,12 @@ function _mcCrearPagina(panel, idx, datos) {
         const nivelMax = parseInt(nivelSel.value) || 1;
         taSubclase.value = (claseKey && subKey && DND_CLASES?.[claseKey]?.subclases?.[subKey])
             ? _rasgosTxt(DND_CLASES[claseKey].subclases[subKey], nivelMax) : '';
+        // Guerrero (Caballero Arcano) y Pícaro (Tramposo Arcano) solo lanzan conjuros con esa
+        // subclase: recalcular espacios de conjuro, trucos y preparados al cambiarla.
+        if (typeof CLASE_DATA !== 'undefined' && CLASE_DATA[claseKey]?.subclaseCasting
+            && typeof multiclaseActualizar === 'function') {
+            multiclaseActualizar(panel);
+        }
         if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
         if (typeof guardarDebounced === 'function') guardarDebounced();
     };
@@ -898,6 +1025,8 @@ function leerMcDatos(panel) {
 /* Restaurar datos multiclase al cargar */
 function cargarMcDatos(panel, datos) {
     if (!datos || !datos.length) { initMcWidget(panel); return; }
+    // Traducir subclases guardadas con claves antiguas (ver DND_ALIAS)
+    datos = datos.map(d => Object.assign({}, d, { subclase: resolverAlias('subclase', d.subclase, d.clase) }));
     const bodyEl = panel.querySelector('.caract-mc-body');
     if (!bodyEl) return;
     bodyEl.innerHTML = '';

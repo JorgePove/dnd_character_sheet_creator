@@ -788,6 +788,12 @@ function _mcCrearPagina(panel, idx, datos) {
         const nivelMax = parseInt(nivelSel.value) || 1;
         taSubclase.value = (claseKey && subKey && DND_CLASES?.[claseKey]?.subclases?.[subKey])
             ? _rasgosTxt(DND_CLASES[claseKey].subclases[subKey], nivelMax) : '';
+        // Guerrero (Caballero Arcano) y Pícaro (Tramposo Arcano) solo lanzan conjuros con esa
+        // subclase: recalcular espacios de conjuro, trucos y preparados al cambiarla.
+        if (typeof CLASE_DATA !== 'undefined' && CLASE_DATA[claseKey]?.subclaseCasting
+            && typeof multiclaseActualizar === 'function') {
+            multiclaseActualizar(panel);
+        }
         if (typeof regenerarAccionesAuto === 'function') regenerarAccionesAuto(panel);
         if (typeof guardarDebounced === 'function') guardarDebounced();
     };

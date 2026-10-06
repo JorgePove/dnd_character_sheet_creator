@@ -94,7 +94,7 @@
         <div class="combate-inline">
             <div class="caja-stat-inline">
                 <span class="csi-label">CA</span>
-                <input type="number" value="10" class="csi-input" oninput="guardarDebounced()">
+                <input type="number" value="10" class="csi-input" oninput="onCAManual(this)">
             </div>
             <div class="caja-stat-inline rollable" onclick="realizarTiradaInput(this,'Iniciativa')">
                 <span class="csi-label">Iniciativa</span>
@@ -311,22 +311,17 @@
                                 <option value="cueroestud|12|dex|0">Cuero Tachonado (12 + DES)</option>
                             </optgroup>
                             <optgroup label="Armadura Media">
-                                <option value="pieles|11|dex2|0">Pieles (11 + DES máx.2)</option>
-                                <option value="cadena|12|dex2|0">Camisa de Malla (12 + DES máx.2)</option>
-                                <option value="escamas|13|dex2|0">Escamas (13 + DES máx.2)</option>
-                                <option value="coraza|13|dex2|0">Coraza (13 + DES máx.2)</option>
-                                <option value="mediacota|14|dex2|0">Media Cota (14 + DES máx.2)</option>
+                                <option value="pieles|12|dex2|0">Pieles (12 + DES máx.2)</option>
+                                <option value="cadena|13|dex2|0">Camisa de Malla (13 + DES máx.2)</option>
+                                <option value="escamas|14|dex2|0">Escamas (14 + DES máx.2) ⚠ Sigilo</option>
+                                <option value="coraza|14|dex2|0">Coraza (14 + DES máx.2)</option>
                                 <option value="semiplaca|15|dex2|0">Semiplaca (15 + DES máx.2) ⚠ Sigilo</option>
                             </optgroup>
                             <optgroup label="Armadura Pesada">
                                 <option value="anillos|14|none|0">Cota de Anillos (14) ⚠ Sigilo</option>
-                                <option value="bandas|14|none|0">Armadura de Bandas (14) ⚠ Sigilo</option>
                                 <option value="cota|16|none|0">Cota de Malla (16) ⚠ Sigilo</option>
                                 <option value="segmentada|17|none|0">Armadura Segmentada (17) ⚠ Sigilo</option>
                                 <option value="placas|18|none|0">Armadura de Placas (18) ⚠ Sigilo</option>
-                            </optgroup>
-                            <optgroup label="Escudo">
-                                <option value="escudo|0|none|2">+ Escudo (+2 CA)</option>
                             </optgroup>
                         </select>
                         <select class="escudo-sel" onchange="onArmaduraChange(this)" title="¿Llevas escudo?">

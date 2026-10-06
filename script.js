@@ -1465,6 +1465,13 @@ function leerFicha(panel) {
     return d;
 }
 
+/* Traduce una clave guardada con un nombre antiguo (subclase, especie o trasfondo
+   renombrados al revisar el contenido contra el material oficial) a la clave actual.
+   Si no hay equivalencia, devuelve el valor tal cual. */
+function _traducirClaveVieja(tipo, valor, clase) {
+    return (typeof resolverAlias === 'function') ? resolverAlias(tipo, valor, clase) : valor;
+}
+
 /* Restaura una ficha desde sus datos guardados. Cada sección se carga por separado:
    si una está mal formada (p. ej. un campo con un tipo inesperado) se anota y las
    demás se cargan igualmente. Devuelve la lista de secciones que fallaron (vacía = todo bien). */
@@ -1484,11 +1491,11 @@ function cargarDatosEnPanel(panel, d) {
     // Selectores especie y trasfondo en cabecera
     if (d.especie) {
         const selE = panel.querySelector('.sel-especie-cab');
-        if (selE) { selE.value = d.especie; }
+        if (selE) { selE.value = _traducirClaveVieja('especie', d.especie); }
     }
     if (d.trasfondo) {
         const selT = panel.querySelector('.sel-trasfondo-cab');
-        if (selT) { selT.value = d.trasfondo; }
+        if (selT) { selT.value = _traducirClaveVieja('trasfondo', d.trasfondo); }
     }
     // Retrato de cabecera
     if (d.retratoCab) {
@@ -1791,20 +1798,21 @@ function cargarDatosEnPanel(panel, d) {
                         opt.value = sub; opt.textContent = sub;
                         selSub.appendChild(opt);
                     });
-                    if (c.subclaseSelect) selSub.value = c.subclaseSelect;
+                    if (c.subclaseSelect) selSub.value = _traducirClaveVieja('subclase', c.subclaseSelect, c.claseSelect);
                 }
             }
         }
         if (c.especieSelect) {
             const sel = panel.querySelector('.sel-especie');
             if (sel) {
-                sel.value = c.especieSelect;
-                _syncEspecieDropdownTrigger(panel, c.especieSelect);
+                const _esp = _traducirClaveVieja('especie', c.especieSelect);
+                sel.value = _esp;
+                _syncEspecieDropdownTrigger(panel, _esp);
             }
         }
         if (c.trasfondoSelect) {
             const sel = panel.querySelector('.sel-trasfondo');
-            if (sel) sel.value = c.trasfondoSelect;
+            if (sel) sel.value = _traducirClaveVieja('trasfondo', c.trasfondoSelect);
         }
 
         // Restaurar datos multiclase
@@ -3487,7 +3495,21 @@ function syncWidgetsSupToInf(fichaPanel) {
                 const sel = pag.querySelector('.mc-sel-clase');
                 const ta  = pag.querySelector('.mc-ta-clase');
                 if (sel && sel.value && ta && ta.value === '') {
+                    // El onchange de la clase borra la subclase (pensado para un cambio de clase).
+                    // Aquí la clase no ha cambiado, solo falta rellenar su texto: se conserva la
+                    // subclase elegida (y su texto) para no perderla al recargar o sincronizar.
+                    const selSub = pag.querySelector('.mc-sel-subclase');
+                    const taSub  = pag.querySelector('.mc-ta-subclase');
+                    const subPrev = selSub ? selSub.value : '';
+                    const subTxtPrev = taSub ? taSub.value : '';
                     sel.dispatchEvent(new Event('change'));
+                    if (selSub && subPrev && Array.from(selSub.options).some(o => o.value === subPrev)) {
+                        selSub.value = subPrev;
+                        if (subTxtPrev) { if (taSub) taSub.value = subTxtPrev; }
+                        else selSub.dispatchEvent(new Event('change'));
+                    } else if (taSub && subTxtPrev) {
+                        taSub.value = subTxtPrev;
+                    }
                 }
             });
 
@@ -4528,40 +4550,36 @@ async function tirarHechizo(sp, panel) {
    ACCIONES AUTO-GENERADAS DESDE CARACTERÍSTICAS Y HECHIZOS
 ═══════════════════════════════════════════════════════ */
 
-/* ── Clasificador de tipo de acción ─────────────────────
-   Devuelve 'actions' | 'bonus' | 'reactions' | 'otros'
-   según palabras clave en el texto de descripción.       */
-function _clasificarAccion(texto) {
-    if (!texto) return 'otros';
-    const t = texto.toLowerCase();
-
-    // ── Bonus Action (más específico, primero) ──
-    if (/acci[oó]n adicional|bonus action|acción bonus|\bcomo aa\b/.test(t)) return 'bonus';
-
-    // ── Reaction ──
-    if (/\breacci[oó]n\b|reaction/.test(t)) return 'reactions';
-
-    // ── Action ──
-    // Patrones explícitos de uso de acción
-    if (/\bcomo acci[oó]n\b/.test(t)) return 'actions';             // "Como Acción, ..."
-    if (/\bacci[oó]n:\s/.test(t)) return 'actions';                 // "Acción: ..." (formato corto)
-    if (/\bpuedes usar (tu|una) acci[oó]n\b/.test(t)) return 'actions'; // "puedes usar tu acción para"
-    if (/\busa(r|ndo) (tu|la|una) acci[oó]n\b/.test(t)) return 'actions';
-    if (/\bgastas? (una|tu) acci[oó]n\b/.test(t)) return 'actions';
-    if (/\btomar la acci[oó]n\b/.test(t)) return 'actions';
-    // "la acción de Atacar" → acción
-    if (/\bacci[oó]n de atacar\b/.test(t)) return 'actions';
-
-    return 'otros';
+/* ── Tipo de acción de cada rasgo ───────────────────────
+   Cada rasgo de los archivos de datos (clases, subclases, especies, dotes) lleva
+   su propio campo `a`, escrito a mano tras contrastarlo con las reglas oficiales:
+       a: "A"  → Acción (incluye la acción Mágica)
+       a: "B"  → Acción Adicional
+       a: "R"  → Reacción
+       a: "O"  → Otros: no gasta acción (uso gratuito, con usos limitados, o un
+                 momento concreto en que decides usarlo: repetir una salvación, etc.)
+       Se pueden combinar si el rasgo se usa de varias formas: a: "AB".
+   Sin campo `a` el rasgo es pasivo (competencias, bonos fijos, resistencias, elegir
+   subclase...) y no se lista en este panel; ya aparece completo en «Características».
+   Nada se deduce del texto de la descripción: así no hay falsos positivos. */
+const _PANEL_DE_TIPO = { A: 'actions', B: 'bonus', R: 'reactions', O: 'otros' };
+function _panelesDeRasgo(r) {
+    if (!r || typeof r.a !== 'string') return [];
+    const paneles = [];
+    for (const c of r.a.toUpperCase()) {
+        const p = _PANEL_DE_TIPO[c];
+        if (p && !paneles.includes(p)) paneles.push(p);
+    }
+    return paneles;
 }
 
-/* Clasifica un hechizo según su campo casting */
+/* Clasifica un hechizo según su tiempo de lanzamiento */
 function _clasificarCasting(castingStr) {
-    if (!castingStr) return 'actions';
-    const c = castingStr.toLowerCase();
-    if (/adicional|bonus/.test(c)) return 'bonus';
-    if (/reacci[oó]n|reaction/.test(c)) return 'reactions';
-    return 'actions';
+    const c = String(castingStr || '').toLowerCase();
+    if (/^1\s*acci[oó]n\s+adicional|^1\s*bonus/.test(c)) return 'bonus';
+    if (/^1\s*reacci[oó]n/.test(c)) return 'reactions';
+    if (/^1\s*acci[oó]n/.test(c)) return 'actions';
+    return c ? 'otros' : 'actions';   // 1 minuto, 10 minutos, 1 hora...: no es una acción de combate
 }
 
 /* ── Construye la lista de entradas auto desde la ficha ──
@@ -4569,11 +4587,14 @@ function _clasificarCasting(castingStr) {
    Lee TODAS las clases multiclase y filtra por nivel seleccionado. */
 function _recogerEntradasAuto(fichaPanel) {
     const entradas = [];
+    const añadir = (r, origen) => {
+        _panelesDeRasgo(r).forEach(tipo => entradas.push({ nombre: r.n, desc: r.d, origen, tipo }));
+    };
 
     // ── Todas las clases multiclase (con filtro de nivel) ────────
     if (typeof DND_CLASES !== 'undefined' && typeof leerMcDatos === 'function') {
         const mcDatos = leerMcDatos(fichaPanel);
-        const vistoNombres = new Set();
+        const vistos = new Set();
 
         mcDatos.forEach(mc => {
             const claseKey = mc.clase;
@@ -4584,10 +4605,9 @@ function _recogerEntradasAuto(fichaPanel) {
             (DND_CLASES[claseKey].rasgos || []).forEach(r => {
                 if ((r.nv || 1) > nivelMax) return;
                 const unico = `${claseKey}::${r.n}`;
-                if (vistoNombres.has(unico)) return;
-                vistoNombres.add(unico);
-                const tipo = _clasificarAccion(r.d);
-                entradas.push({ nombre: r.n, desc: r.d, origen: claseKey, tipo });
+                if (vistos.has(unico)) return;
+                vistos.add(unico);
+                añadir(r, claseKey);
             });
 
             // Rasgos de subclase — solo hasta nivelMax
@@ -4595,11 +4615,10 @@ function _recogerEntradasAuto(fichaPanel) {
             if (subKey && DND_CLASES[claseKey]?.subclases?.[subKey]) {
                 (DND_CLASES[claseKey].subclases[subKey] || []).forEach(r => {
                     if ((r.nv || 1) > nivelMax) return;
-                    const unico = `${subKey}::${r.n}`;
-                    if (vistoNombres.has(unico)) return;
-                    vistoNombres.add(unico);
-                    const tipo = _clasificarAccion(r.d);
-                    entradas.push({ nombre: r.n, desc: r.d, origen: subKey, tipo });
+                    const unico = `${claseKey}::${subKey}::${r.n}`;
+                    if (vistos.has(unico)) return;
+                    vistos.add(unico);
+                    añadir(r, subKey);
                 });
             }
         });
@@ -4608,20 +4627,33 @@ function _recogerEntradasAuto(fichaPanel) {
     // ── Especie ────────────────────────────────────────
     const especieKey = fichaPanel.querySelector('.sel-especie')?.value || '';
     if (especieKey && typeof DND_ESPECIES !== 'undefined' && DND_ESPECIES[especieKey]) {
-        (DND_ESPECIES[especieKey] || []).forEach(r => {
-            const tipo = _clasificarAccion(r.d);
-            entradas.push({ nombre: r.n, desc: r.d, origen: especieKey, tipo });
-        });
+        (DND_ESPECIES[especieKey] || []).forEach(r => añadir(r, especieKey));
     }
 
-    // ── Dotes (parseamos el textarea de dotes) ─────────
+    // ── Dotes (se leen del cuadro de dotes: cada una empieza una línea con «Nombre [Tipo]:») ──
     if (typeof DND_DOTES !== 'undefined' && Array.isArray(DND_DOTES)) {
         const dotesTxt = fichaPanel.querySelector('.caract-dotes')?.value || '';
+        const lineas = dotesTxt.split('\n').map(l => l.trim());
+        const añadidas = new Set();
         DND_DOTES.forEach(dote => {
-            if (dotesTxt.includes(dote.n)) {
-                const tipo = _clasificarAccion(dote.d);
-                entradas.push({ nombre: dote.n, desc: dote.d, origen: 'Dote', tipo });
+            // Se reconoce también por los nombres antiguos (alias) para no perder dotes de fichas ya guardadas
+            const nombres = [dote.n].concat(Array.isArray(dote.alias) ? dote.alias : []);
+            if (lineas.some(l => nombres.some(nm => l.startsWith(nm + ' [') || l.startsWith(nm + ':')))) {
+                añadir(dote, 'Dote'); añadidas.add(dote.n);
             }
+        });
+        // Líneas escritas a mano con el nombre "pelado" («Sentinel: …» o «Sentinel [General]: …»):
+        // se asocian a la dote con ese nombre, prefiriendo la versión de 2024 (5.5e).
+        const _base = n => String(n).replace(/\s*\[.*$/, '').trim().toLowerCase();
+        lineas.forEach(l => {
+            const m = l.match(/^([^\[:]+?)\s*(?:\[[^\]]*\])?\s*:/) || l.match(/^([^\[:]+?)\s*\[/);
+            if (!m) return;
+            const base = m[1].trim().toLowerCase();
+            if (!base) return;
+            const cand = DND_DOTES.filter(d => _base(d.n) === base);
+            if (!cand.length || cand.some(d => añadidas.has(d.n))) return;   // sin coincidencia, o ya reconocida
+            const elegida = cand.find(d => /2024/.test(d.n)) || cand[0];
+            añadir(elegida, 'Dote'); añadidas.add(elegida.n);
         });
     }
 
@@ -4688,12 +4720,13 @@ function regenerarAccionesAuto(fichaPanel) {
         if (!bloque) return;
         contadores[e.tipo]++;
 
-        const key = `${e.tipo}::${e.nombre}`;
+        const key = `${e.tipo}::${e.origen}::${e.nombre}`;
         const div = document.createElement('div');
         div.className = 'auto-entrada';
         div.dataset.autoKey = key;
+        div.dataset.autoKeyAntigua = `${e.tipo}::${e.nombre}`;   // formato de fichas guardadas antes
 
-        const notaGuardada = notasGuardadas[key] || '';
+        const notaGuardada = notasGuardadas[key] || notasGuardadas[div.dataset.autoKeyAntigua] || '';
         div.innerHTML = `
             <div class="auto-entrada-cabecera">
                 <span class="auto-entrada-nombre">${_esc(e.nombre)}</span>
@@ -4744,10 +4777,10 @@ function cargarAutoNotas(fichaPanel, notasData) {
         const bloque = fichaPanel.querySelector(`.accion-panel[data-panel="${tipo}"] .auto-acciones-lista`);
         if (!bloque) return;
         bloque.querySelectorAll('.auto-entrada').forEach(el => {
-            const key = el.dataset.autoKey;
-            if (notasData[key]) {
+            const nota = notasData[el.dataset.autoKey] || notasData[el.dataset.autoKeyAntigua];
+            if (nota) {
                 const ta = el.querySelector('.auto-nota');
-                if (ta) ta.value = notasData[key];
+                if (ta) { ta.value = nota; ta.classList.add('tiene-contenido'); }
             }
         });
     });
@@ -5131,128 +5164,512 @@ function retratoBorrarImagen(btn) {
 
 /* ═══════════════════════════════════════════════════════
    EXPORTAR A PDF
+   Genera un PDF A4 (vertical) con TODA la ficha activa tal y como está:
+   · Cada "página" de la ficha (principal, acciones, características,
+     hechizos, roleplay) va en su propia hoja. Si una es más larga que un
+     A4 se parte por una franja en blanco, nunca por mitad de una línea.
+   · Incluye el contenido de todas las pestañas que tengan algo escrito
+     (Actions, Bonus, Reactions, Otros, cada clase y todas las notas),
+     no sólo la que esté abierta en pantalla.
+   · Los cambios temporales sobre la ficha (expandir cuadros, mostrar
+     pestañas...) se deshacen SIEMPRE, incluso si algo falla, y mientras
+     dura se tapa la pantalla con un aviso «Generando PDF…».
 ═══════════════════════════════════════════════════════ */
+const PDF_CFG = {
+    hojaW: 210, hojaH: 297,   // A4 vertical (mm)
+    margen: 5,                // mm de margen a izquierda, derecha y arriba
+    pie: 8,                   // mm reservados abajo para «Página x / y»
+    escalaMax: 2,             // píxeles de imagen por px CSS (calidad)
+    escalaMin: 1,
+    pixelesMax: 14e6,         // píxeles máximos por lienzo (Safari/iOS ≈ 16,7 M)
+    ladoMax: 12000,           // lado máximo de un lienzo
+    calidadJpeg: 0.92,
+};
+
+const PDF_LIBS = {
+    html2canvas: {
+        ok:   () => typeof window.html2canvas === 'function',
+        urls: ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+               'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'],
+    },
+    jspdf: {
+        ok:   () => !!(window.jspdf && window.jspdf.jsPDF),
+        urls: ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+               'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'],
+    },
+};
+
+let _pdfEnCurso = false;
+
+function _pdfCargarScript(url) {
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.onload = () => resolve();
+        s.onerror = () => { s.remove(); reject(new Error('No se pudo cargar ' + url)); };
+        document.head.appendChild(s);
+    });
+}
+
+/* Si las librerías no se cargaron con la página (sin conexión puntual, CDN
+   caído...), se intenta de nuevo y con un CDN alternativo. */
+async function _pdfAsegurarLibrerias() {
+    for (const lib of Object.values(PDF_LIBS)) {
+        for (let i = 0; i < lib.urls.length && !lib.ok(); i++) {
+            try { await _pdfCargarScript(lib.urls[i]); } catch (e) { /* probar el siguiente */ }
+        }
+        if (!lib.ok()) {
+            throw new Error('No se pudieron cargar las librerías para crear el PDF. ' +
+                            'Comprueba tu conexión a internet y vuelve a intentarlo.');
+        }
+    }
+}
+
+/* Color de las zonas fuera de la ficha (márgenes de la hoja y esquinas redondeadas):
+   blanco con tema claro; con un tema oscuro, el propio color de la ficha para que no haya
+   un marco blanco alrededor. */
+function _pdfColorFondo(panel) {
+    const m = getComputedStyle(panel).backgroundColor.match(/rgba?\(([^)]+)\)/);
+    if (m) {
+        const p = m[1].split(',').map(parseFloat);
+        if ((p.length < 4 || p[3] > 0.5) && (p[0] * 0.299 + p[1] * 0.587 + p[2] * 0.114) < 110) return [p[0] | 0, p[1] | 0, p[2] | 0];
+    }
+    return [255, 255, 255];
+}
+
+function _pdfNombreArchivo(nombre) {
+    const limpio = String(nombre || '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    return (limpio || 'personaje') + '.pdf';
+}
+
+function _pdfMostrarAviso(texto) {
+    let ov = document.getElementById('pdf-aviso');
+    if (!ov) {
+        ov = document.createElement('div');
+        ov.id = 'pdf-aviso';
+        ov.setAttribute('role', 'status');
+        ov.style.cssText = 'position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;' +
+            'justify-content:center;background:rgba(0,0,0,.6);color:#fff;font:600 18px/1.4 system-ui,sans-serif;' +
+            'text-align:center;padding:24px;cursor:progress;';
+        const caja = document.createElement('div');
+        caja.style.cssText = 'background:#222;border-radius:12px;padding:22px 30px;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:420px;';
+        ov.appendChild(caja);
+        document.body.appendChild(ov);
+    }
+    ov.firstChild.innerHTML = '';
+    const t = document.createElement('div'); t.textContent = '⏳ ' + texto;
+    const s = document.createElement('div'); s.style.cssText = 'font:400 13px/1.4 system-ui,sans-serif;opacity:.75;margin-top:8px;';
+    s.textContent = 'No cierres ni toques la ficha hasta que termine.';
+    ov.firstChild.append(t, s);
+}
+function _pdfQuitarAviso() { document.getElementById('pdf-aviso')?.remove(); }
+
+/* Sustituye (temporalmente) los campos de formulario visibles por un <div> con el mismo
+   aspecto y su valor como texto. */
+function _pdfSustituirCampos(panel, estilo, deshacer) {
+    const PROPS = ['position', 'top', 'right', 'bottom', 'left', 'z-index', 'box-sizing', 'width', 'height',
+        'min-width', 'max-width', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+        'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+        'border-top-width', 'border-top-style', 'border-top-color', 'border-right-width', 'border-right-style',
+        'border-right-color', 'border-bottom-width', 'border-bottom-style', 'border-bottom-color',
+        'border-left-width', 'border-left-style', 'border-left-color',
+        'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius',
+        'background-color', 'background-image', 'background-repeat', 'background-position', 'background-size',
+        'box-shadow', 'opacity', 'color', 'font-family', 'font-size', 'font-weight', 'font-style',
+        'letter-spacing', 'text-transform', 'text-shadow', 'vertical-align',
+        'flex-grow', 'flex-shrink', 'flex-basis', 'align-self', 'justify-self', 'grid-column-start', 'grid-column-end',
+        'grid-row-start', 'grid-row-end'];
+    const NO_TEXTO = /^(hidden|file|checkbox|radio|range|color|button|submit|reset|image)$/;
+    const campos = [];
+    panel.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.tagName === 'INPUT' && NO_TEXTO.test(el.type)) return;
+        if (!el.getClientRects().length) return;                 // oculto
+        const cs = getComputedStyle(el);
+        const esTA = el.tagName === 'TEXTAREA', esSel = el.tagName === 'SELECT';
+        let texto;
+        if (esSel) texto = el.value === '' ? '' : (el.options[el.selectedIndex]?.text || '');
+        else texto = el.value || '';
+        const props = {};
+        PROPS.forEach(p => { props[p] = cs.getPropertyValue(p); });
+        const ta = cs.textAlign;
+        campos.push({
+            el, texto, props, esTA,
+            bloque: cs.display === 'block' || cs.display === 'flex' || cs.display === 'grid',
+            alinea: (ta === 'center') ? 'center' : (ta === 'right' || ta === 'end') ? 'flex-end' : 'flex-start',
+            alto: el.offsetHeight, tam: parseFloat(cs.fontSize) || 14,
+            alturaInterior: el.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom),
+        });
+    });
+    campos.forEach(c => {
+        const d = document.createElement('div');
+        d.className = 'pdf-tmp-valor';
+        Object.keys(c.props).forEach(p => d.style.setProperty(p, c.props[p]));
+        d.style.setProperty('display', c.esTA ? (c.bloque ? 'block' : 'inline-block') : (c.bloque ? 'flex' : 'inline-flex'));
+        d.style.setProperty('background-image', 'none');   // sin la flechita del desplegable (html2canvas no entiende su posición)
+        d.style.setProperty('flex-shrink', '0');
+        d.style.setProperty('max-width', 'none');
+        d.style.setProperty('text-align', c.alinea === 'center' ? 'center' : c.alinea === 'flex-end' ? 'right' : 'left');
+        if (c.esTA) {
+            // El textarea crece con su contenido (antes sólo hacía scroll) y mantiene al menos su altura
+            d.style.setProperty('white-space', 'pre-wrap');
+            d.style.setProperty('overflow-wrap', 'anywhere');
+            d.style.setProperty('line-height', '1.4');
+            d.style.setProperty('height', 'auto');
+            d.style.setProperty('min-height', c.alto + 'px');
+            d.style.setProperty('vertical-align', 'top');
+            d.style.setProperty('overflow', 'visible');
+        } else {
+            d.style.setProperty('align-items', 'center');
+            d.style.setProperty('justify-content', c.alinea);
+            d.style.setProperty('white-space', 'pre');
+            d.style.setProperty('line-height', c.tam * 1.25 <= c.alturaInterior ? '1.25' : '1');
+            d.style.setProperty('overflow', c.tam * 1.25 <= c.alturaInterior ? 'hidden' : 'visible');
+        }
+        d.textContent = c.texto;
+        c.el.parentNode.insertBefore(d, c.el);
+        deshacer.push(() => d.remove());
+        estilo(c.el, 'display', 'none');
+    });
+}
+
+/* Prepara la ficha para fotografiarla entera. Devuelve una función que
+   deshace TODOS los cambios (se ejecuta siempre en un `finally`). */
+function _pdfPrepararPanel(panel) {
+    const deshacer = [];
+
+    // Cambia una propiedad de estilo en línea (con !important) y recuerda cómo estaba
+    const originales = new Map();   // atributo style tal cual estaba (se repone idéntico al final)
+    const estilo = (el, prop, valor) => {
+        if (!el) return;
+        if (!originales.has(el)) {
+            originales.set(el, el.getAttribute('style'));
+            deshacer.push(() => { const a = originales.get(el); if (a === null) el.removeAttribute('style'); else el.setAttribute('style', a); });
+        }
+        const antes = el.style.getPropertyValue(prop), prio = el.style.getPropertyPriority(prop);
+        el.style.setProperty(prop, valor, 'important');
+        deshacer.push(() => {
+            el.style.removeProperty(prop);
+            if (antes) el.style.setProperty(prop, antes, prio);
+            if (!el.getAttribute('style')) el.removeAttribute('style');
+        });
+    };
+    const atributo = (el, nombre, valor) => {
+        const antes = el.getAttribute(nombre);
+        el.setAttribute(nombre, valor);
+        deshacer.push(() => { if (antes === null) el.removeAttribute(nombre); else el.setAttribute(nombre, antes); });
+    };
+    const etiqueta = (contenedor, texto, antesDe) => {
+        const d = document.createElement('div');
+        d.className = 'pdf-tmp-etiqueta';
+        d.textContent = texto;
+        d.style.cssText = 'font:700 11px/1.2 inherit;letter-spacing:.08em;text-transform:uppercase;' +
+            'color:var(--color-texto-med,#555);margin:10px 0 6px;padding-bottom:3px;' +
+            'border-bottom:1px solid var(--color-borde,#bbb);';
+        contenedor.insertBefore(d, antesDe === undefined ? contenedor.firstChild : antesDe);
+        deshacer.push(() => d.remove());
+    };
+    const sinTexto = (contenedor) =>
+        !contenedor.querySelector('.auto-entrada') &&
+        ![...contenedor.querySelectorAll('input[type="text"], textarea')].some(i => i.value.trim());
+
+    // 1. Sin la escala responsiva: la ficha se fotografía a su tamaño real (1100 px)
+    estilo(panel, 'transform', 'none');
+    estilo(panel, 'margin-bottom', '0px');
+
+    // 2. Fuera tooltips y ventanas emergentes
+    panel.querySelectorAll('.modal-overlay, .spell-tooltip, .condicion-tooltip').forEach(el => estilo(el, 'visibility', 'hidden'));
+
+    // 3. Pestañas de ACCIONES: se muestran todas las que tengan contenido, con su título
+    panel.querySelectorAll('.caja-acciones').forEach(caja => {
+        const paneles = [...caja.querySelectorAll('.accion-panel')];
+        let visibles = paneles.filter(p => !sinTexto(p));
+        if (!visibles.length) visibles = paneles.filter(p => p.classList.contains('activo'));
+        paneles.forEach(p => {
+            if (!visibles.includes(p)) { estilo(p, 'display', 'none'); return; }
+            estilo(p, 'display', 'block');
+            const tab = caja.querySelector(`.accion-tab[data-tab="${p.dataset.panel}"]`);
+            if (tab) etiqueta(p, tab.textContent.trim());
+        });
+        estilo(caja.querySelector('.acciones-tabs'), 'display', 'none');
+        estilo(caja, 'min-height', '0px');
+    });
+
+    // 4. Pestañas de CLASES (multiclase en Características): todas las clases, con su nombre
+    panel.querySelectorAll('.caract-mc-wrap').forEach(wrap => {
+        const paginas = [...wrap.querySelectorAll('.mc-pagina')];
+        paginas.forEach((pag, i) => {
+            estilo(pag, 'display', 'flex');
+            if (paginas.length > 1) {
+                const nombre = pag.querySelector('.mc-sel-clase')?.value || `Clase ${i + 1}`;
+                etiqueta(pag.parentNode, nombre, pag);
+            }
+        });
+        estilo(wrap.querySelector('.caract-mc-header'), 'display', 'none');
+    });
+
+    // 5. NOTAS: pestañas fijas y personalizadas, cada una con sus páginas escritas
+    panel.querySelectorAll('.roleplay-notas').forEach(notas => {
+        const paneles = [...notas.querySelectorAll('.notas-panel')];
+        const nombrePestana = (p) => {
+            const tab = notas.querySelector(`.notas-tab[data-tab-id="${p.dataset.panelId}"]`);
+            return (tab?.querySelector('.notas-tab-nombre-edit')?.value || tab?.textContent || 'Notas').trim();
+        };
+        let algo = false;
+        paneles.forEach(p => {
+            const subs = [...p.querySelectorAll('.notas-subpag-panel')];
+            // Panel sin sub-páginas (estructura antigua): el propio panel cuenta como una
+            const unidades = subs.length ? subs : [p];
+            const conTexto = unidades.filter(u => [...u.querySelectorAll('textarea')].some(t => t.value.trim()));
+            if (!conTexto.length) { estilo(p, 'display', 'none'); return; }
+            algo = true;
+            estilo(p, 'display', 'flex');
+            estilo(p.querySelector('.notas-subpags-barra'), 'display', 'none');
+            subs.forEach(sp => {
+                if (!conTexto.includes(sp)) { estilo(sp, 'display', 'none'); return; }
+                estilo(sp, 'display', 'flex');
+                const sub = p.querySelector(`.notas-subpag-tab[data-sp-id="${sp.dataset.spId}"] .notas-subpag-nombre`)?.value;
+                etiqueta(sp, subs.length > 1 && sub ? `${nombrePestana(p)} · ${sub}` : nombrePestana(p));
+            });
+            if (!subs.length) etiqueta(p, nombrePestana(p));
+        });
+        if (algo) estilo(notas.querySelector('.notas-tabs-barra'), 'display', 'none');
+        else {   // no hay nada escrito: se deja tal como está en pantalla (sólo se quita la barra de pestañas)
+            paneles.forEach(p => { if (p.classList.contains('activo')) { estilo(p, 'display', 'flex'); } });
+        }
+    });
+
+    // 6. Botones que sólo sirven para editar (añadir / quitar / limpiar): fuera
+    const SEL_EDICION = '.multiclase-add-btn, .hp-auto-btn, .dg-add-grupo-btn, .btn-borrar-item, .btn-borrar-arma, ' +
+        '.btn-añadir-arma, .btn-añadir-accion, .arma-btn-extra-daño, .caract-mc-add, .caract-btn-limpiar, ' +
+        '.caract-btn-add, .recursos-add-btn, .btn-spell-add, .btn-slot-add, .retrato-cab-borrar, ' +
+        '.apariencia-btn-borrar, .notas-tab-add, .notas-subpag-add, .notas-subpag-del, .notas-tab-cerrar, ' +
+        '.mc-del-btn, .salv-arrow';
+    panel.querySelectorAll(SEL_EDICION).forEach(b => estilo(b, 'visibility', 'hidden'));
+    panel.querySelectorAll('button').forEach(b => {
+        if (/^[+＋×✕✖]$/.test((b.textContent || '').trim())) estilo(b, 'visibility', 'hidden');
+    });
+
+    // 7. Campos de formulario (input / select / textarea) → texto normal con el mismo aspecto.
+    //    html2canvas recorta el texto dentro de los campos y no parte las líneas de los
+    //    textarea; como texto normal sale idéntico a lo que se ve en pantalla.
+    _pdfSustituirCampos(panel, estilo, deshacer);
+
+    // 8. Cuadros con scroll interno o texto cortado: se agrandan para mostrar todo su contenido
+    const crecer = [];
+    panel.querySelectorAll('*').forEach(el => {
+        if (el.scrollHeight <= el.clientHeight + 1) return;
+        if (el.tagName === 'TEXTAREA') { crecer.push({ el, ta: true }); return; }
+        const cs = getComputedStyle(el);
+        const scroll = /(auto|scroll)/.test(cs.overflowY);
+        const cortado = cs.overflowY === 'hidden' && cs.maxHeight !== 'none';
+        if (scroll || cortado) crecer.push({ el, ta: false });
+    });
+    crecer.forEach(({ el, ta }) => {
+        estilo(el, 'max-height', 'none');
+        if (ta) {
+            estilo(el, 'height', (el.scrollHeight + (el.offsetHeight - el.clientHeight)) + 'px');
+            estilo(el, 'overflow', 'hidden');
+        } else {
+            estilo(el, 'height', 'auto');
+            estilo(el, 'overflow', 'visible');
+        }
+    });
+
+    return () => { for (let i = deshacer.length - 1; i >= 0; i--) { try { deshacer[i](); } catch (e) { /* seguir restaurando */ } } };
+}
+
+/* Divide la ficha en «páginas» lógicas (y en px CSS desde el borde superior de la ficha):
+   la primera hoja (cabecera + rejilla) y cada .segunda-pagina. Los cortes caen en
+   mitad del hueco que hay entre ellas. */
+function _pdfSegmentos(panel) {
+    const top0 = panel.getBoundingClientRect().top;
+    const alto = Math.ceil(panel.getBoundingClientRect().height);
+    const bloques = [...panel.children].filter(el => el.classList.contains('segunda-pagina') && el.offsetHeight > 0);
+    if (!bloques.length) return [{ y0: 0, y1: alto }];
+    const cortes = [0];
+    const previo = bloques[0].previousElementSibling;   // la rejilla principal: la primera hoja acaba ahí
+    if (previo) cortes.push(Math.round(((previo.getBoundingClientRect().bottom - top0) + (bloques[0].getBoundingClientRect().top - top0)) / 2));
+    for (let i = 0; i < bloques.length - 1; i++) {
+        const fin  = bloques[i].getBoundingClientRect().bottom - top0;
+        const ini  = bloques[i + 1].getBoundingClientRect().top - top0;
+        cortes.push(Math.round((fin + ini) / 2));
+    }
+    cortes.push(alto);
+    const segs = [];
+    for (let i = 0; i < cortes.length - 1; i++) if (cortes[i + 1] - cortes[i] > 4) segs.push({ y0: cortes[i], y1: cortes[i + 1] });
+    return segs;
+}
+
+/* Busca, entre las filas [desde, hasta) del lienzo, la más baja que no corte ninguna línea
+   de texto ni dibujo (una fila con casi nada distinto del color de fondo de esa fila). */
+function _pdfCorteLimpio(canvas, desde, hasta) {
+    desde = Math.max(0, Math.floor(desde)); hasta = Math.min(canvas.height, Math.floor(hasta));
+    if (hasta - desde < 2) return hasta;
+    const w = canvas.width, filas = hasta - desde;
+    let datos;
+    try { datos = canvas.getContext('2d', { willReadFrequently: true }).getImageData(0, desde, w, filas).data; }
+    catch (e) { return hasta; }
+    let mejor = hasta, mejorTinta = Infinity;
+    for (let r = filas - 1; r >= 0; r--) {
+        const cuenta = new Map();
+        let modo = 0, modoN = 0;
+        for (let x = 0; x < w; x += 2) {
+            const i = (r * w + x) * 4;
+            const k = ((datos[i] >> 4) << 8) | ((datos[i + 1] >> 4) << 4) | (datos[i + 2] >> 4);
+            const n = (cuenta.get(k) || 0) + 1;
+            cuenta.set(k, n);
+            if (n > modoN) { modoN = n; modo = k; }
+        }
+        const mr = (modo >> 8) & 15, mg = (modo >> 4) & 15, mb = modo & 15;
+        let tinta = 0;
+        for (let x = 0; x < w; x += 2) {
+            const i = (r * w + x) * 4;
+            if (Math.abs((datos[i] >> 4) - mr) + Math.abs((datos[i + 1] >> 4) - mg) + Math.abs((datos[i + 2] >> 4) - mb) > 2) tinta++;
+        }
+        if (tinta < mejorTinta) { mejorTinta = tinta; mejor = desde + r; }
+        if (tinta <= 6) return desde + r;   // fila en blanco (salvo los bordes laterales de las cajas)
+    }
+    return mejor;
+}
 
 async function exportarFichaPDF() {
+    if (_pdfEnCurso) return;
     const ficha = fichas.find(f => f.id === fichaActual);
     if (!ficha) return;
-
     const panel = ficha.panel;
-    const nombre = panel.querySelector('.input-nombre')?.value.trim() || 'personaje';
+    const nombre = panel.querySelector('.input-nombre')?.value.trim() || '';
 
-    if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-        alert('Las librerías de PDF aún se están cargando. Espera un momento e inténtalo de nuevo.');
-        return;
-    }
-    const { jsPDF } = window.jspdf;
-
+    _pdfEnCurso = true;
     const btnPdf = document.querySelector('.btn-pdf');
-    const textoOrig = btnPdf?.textContent || '🖨 PDF';
-    if (btnPdf) { btnPdf.textContent = '⏳ Generando...'; btnPdf.disabled = true; }
+    const textoOrig = btnPdf ? btnPdf.textContent : '';
+    const progreso = (txt) => { if (btnPdf) btnPdf.textContent = '⏳ ' + txt; _pdfMostrarAviso(txt); };
+    if (btnPdf) btnPdf.disabled = true;
+
+    const scrollX = window.scrollX, scrollY = window.scrollY;
+    let restaurar = null;
 
     try {
-        // 1. Quitar la escala responsiva para capturar a tamaño real (1100px)
-        const scaleAntes = panel.style.getPropertyValue('--ficha-scale');
-        panel.style.setProperty('--ficha-scale', '1');
-        panel.style.transform = 'scale(1)';
-        panel.style.transformOrigin = 'top left';
+        progreso('Preparando…');
+        await _pdfAsegurarLibrerias();
+        const { jsPDF } = window.jspdf;
+        const H2C = window.html2canvas;
+        if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
 
-        // 2. Ocultar elementos flotantes y tooltips que no deben aparecer
-        const _sel = (root, s) => Array.from(root.querySelectorAll(s));
-        const ocultar = [
-            ..._sel(document, '#panel-flotante-acciones'),
+        window.scrollTo(0, 0);
+        restaurar = _pdfPrepararPanel(panel);
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        await new Promise(r => setTimeout(r, 150));   // que el navegador termine de recolocar todo
 
-            ..._sel(document, '#log-tiradas'),
-            ..._sel(document, '.barra-pestanas'),
-            ..._sel(panel, '.modal-overlay'),
-            ..._sel(panel, '.spell-tooltip'),
-            ..._sel(panel, '.condicion-tooltip'),
-        ].filter(Boolean);
-        ocultar.forEach(el => { el.dataset._pdfViz = el.style.visibility || ''; el.style.visibility = 'hidden'; });
+        const W = Math.round(panel.getBoundingClientRect().width);
+        const segs = _pdfSegmentos(panel);
+        const fondo = _pdfColorFondo(panel);
+        const fondoCss = `rgb(${fondo.join(',')})`;
+        const oscuro = (fondo[0] * 0.299 + fondo[1] * 0.587 + fondo[2] * 0.114) < 110;
 
-        // 3. Expandir todos los scrolls internos para que html2canvas los capture enteros
-        const scrollEls = panel.querySelectorAll('.contenedor-items, .caract-textarea, .roleplay-textarea-historia, .auto-nota');
-        const scrollAntes = [];
-        scrollEls.forEach(el => {
-            scrollAntes.push({ el, maxH: el.style.maxHeight, h: el.style.height, ov: el.style.overflow });
-            el.style.maxHeight = 'none';
-            el.style.height    = 'auto';
-            el.style.overflow  = 'visible';
+        // Agrupar páginas lógicas en lotes que quepan en un lienzo de tamaño seguro
+        const S0 = PDF_CFG.escalaMax;
+        const maxAltoLote = Math.floor(Math.min(PDF_CFG.pixelesMax / (W * S0 * S0), PDF_CFG.ladoMax / S0));
+        const lotes = [];
+        segs.forEach(s => {
+            const h = s.y1 - s.y0, ult = lotes[lotes.length - 1];
+            if (ult && (s.y1 - ult.y0) <= maxAltoLote) { ult.segs.push(s); ult.y1 = s.y1; }
+            else lotes.push({ y0: s.y0, y1: s.y1, segs: [s] });
         });
 
-        // 4. Capturar el panel ENTERO de una vez — imagen continua
-        await new Promise(r => setTimeout(r, 120)); // dejar que el DOM se asiente
-        const canvas = await html2canvas(panel, {
-            scale:           2,          // 2x para buena resolución
-            useCORS:         true,
-            allowTaint:      true,
-            backgroundColor: '#f0f4f8',
-            logging:         false,
-            scrollX:         0,
-            scrollY:         -window.scrollY,
-            width:           panel.scrollWidth,
-            height:          panel.scrollHeight,
-            windowWidth:     1200,
-        });
+        // Medidas de la hoja
+        const anchoMm = PDF_CFG.hojaW - 2 * PDF_CFG.margen;
+        const altoMm  = PDF_CFG.hojaH - PDF_CFG.margen - PDF_CFG.pie;
+        const mmPorPx = anchoMm / W;
+        const altoPaginaPx = altoMm / mmPorPx;      // alto máximo de una hoja, en px CSS
 
-        // 5. Restaurar todo
-        if (scaleAntes) panel.style.setProperty('--ficha-scale', scaleAntes);
-        else            panel.style.removeProperty('--ficha-scale');
-        panel.style.transform       = '';
-        panel.style.transformOrigin = '';
-        ocultar.forEach(el => { el.style.visibility = el.dataset._pdfViz || ''; delete el.dataset._pdfViz; });
-        scrollEls.forEach(({ el, maxH, h, ov }) => { el.style.maxHeight = maxH; el.style.height = h; el.style.overflow = ov; });
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+        let hojas = 0;
 
-        // 6. Distribuir la imagen continua en páginas A4 landscape
-        //    sin cortar nunca el contenido — cada página es un trozo horizontal de la imagen
-        const PDF_W_MM  = 297;
-        const PDF_H_MM  = 210;
-        const PX_PER_MM = canvas.width / PDF_W_MM;   // píxeles del canvas por mm
-        const pageH_px  = PDF_H_MM * PX_PER_MM;      // altura de página en píxeles del canvas
+        for (let li = 0; li < lotes.length; li++) {
+            const lote = lotes[li];
+            const alto = lote.y1 - lote.y0;
+            progreso(`Capturando la ficha (${li + 1}/${lotes.length})…`);
 
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-        const totalH_px = canvas.height;
-        let offsetY = 0;
-        let primera = true;
+            let escala = Math.min(S0, Math.sqrt(PDF_CFG.pixelesMax / (W * alto)), PDF_CFG.ladoMax / alto);
+            escala = Math.max(0.6, escala);
+            let canvas = null, ultimoError = null;
+            for (let intento = 0; intento < 3 && !canvas; intento++) {
+                try {
+                    const c = await H2C(panel, {
+                        x: 0, y: lote.y0, width: W, height: alto,
+                        scale: escala, backgroundColor: fondoCss, logging: false,
+                        useCORS: true, allowTaint: false, imageTimeout: 8000,
+                        scrollX: 0, scrollY: 0, windowWidth: Math.max(1280, W + 100),
+                    });
+                    if (!c || !c.width || !c.height) throw new Error('El navegador no pudo crear la imagen de la ficha (memoria insuficiente).');
+                    canvas = c;
+                } catch (e) { ultimoError = e; escala = Math.max(0.6, escala * 0.7); }
+            }
+            if (!canvas) throw ultimoError || new Error('No se pudo capturar la ficha.');
 
-        while (offsetY < totalH_px) {
-            const sliceH = Math.min(pageH_px, totalH_px - offsetY);
+            const px = canvas.width / W;   // píxeles de imagen por px CSS
+            for (const s of lote.segs) {
+                let cursor = (s.y0 - lote.y0) * px;
+                const fin = (s.y1 - lote.y0) * px;
+                const hoja = altoPaginaPx * px;
+                const trozos = [];
+                // Una hoja lógica más larga que un A4 se parte por un hueco en blanco
+                while (fin - cursor > hoja * 1.03) {
+                    let corte = _pdfCorteLimpio(canvas, cursor + hoja * 0.55, cursor + hoja);
+                    if (corte <= cursor + hoja * 0.2) corte = cursor + hoja;
+                    trozos.push([cursor, corte]);
+                    cursor = corte;
+                }
+                trozos.push([cursor, fin]);
 
-            // Recortar trozo del canvas
-            const slice = document.createElement('canvas');
-            slice.width  = canvas.width;
-            slice.height = Math.ceil(sliceH);
-            slice.getContext('2d').drawImage(
-                canvas,
-                0, offsetY, canvas.width, sliceH,
-                0, 0,       canvas.width, sliceH
-            );
+                for (const [a, b] of trozos) {
+                    const sy = Math.round(a), sh = Math.max(1, Math.round(b) - sy);
+                    const tmp = document.createElement('canvas');
+                    tmp.width = canvas.width; tmp.height = sh;
+                    const ctx = tmp.getContext('2d');
+                    ctx.fillStyle = fondoCss; ctx.fillRect(0, 0, tmp.width, tmp.height);
+                    ctx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
+                    const dataUrl = tmp.toDataURL('image/jpeg', PDF_CFG.calidadJpeg);
+                    tmp.width = tmp.height = 0;
 
-            const imgData = slice.toDataURL('image/jpeg', 0.95);
-            const sliceH_mm = sliceH / PX_PER_MM;
-
-            if (!primera) pdf.addPage();
-            primera = false;
-
-            // Centrar verticalmente si el trozo es más pequeño que la página
-            const yOffset = sliceH_mm < PDF_H_MM ? (PDF_H_MM - sliceH_mm) / 2 : 0;
-            pdf.addImage(imgData, 'JPEG', 0, yOffset, PDF_W_MM, sliceH_mm);
-
-            offsetY += pageH_px;
+                    let wMm = anchoMm, hMm = (sh / px) * mmPorPx;
+                    if (hMm > altoMm) { const k = altoMm / hMm; wMm *= k; hMm = altoMm; }   // ajuste fino (≤3 %)
+                    if (hojas > 0) pdf.addPage();
+                    hojas++;
+                    pdf.setFillColor(fondo[0], fondo[1], fondo[2]);
+                    pdf.rect(0, 0, PDF_CFG.hojaW, PDF_CFG.hojaH, 'F');
+                    pdf.addImage(dataUrl, 'JPEG', (PDF_CFG.hojaW - wMm) / 2, PDF_CFG.margen, wMm, hMm, undefined, 'FAST');
+                }
+            }
+            canvas.width = canvas.height = 0;   // liberar memoria
         }
 
-        pdf.save(`${nombre}.pdf`);
+        // Pie de página: nombre y numeración
+        progreso('Montando el PDF…');
+        const nombreLatin = /^[\x20-\x7E -ÿ]+$/.test(nombre) ? nombre : '';
+        pdf.setFontSize(7);
+        pdf.setTextColor(oscuro ? 190 : 110);
+        for (let i = 1; i <= hojas; i++) {
+            pdf.setPage(i);
+            pdf.text(`${nombreLatin ? nombreLatin + '  ·  ' : ''}Página ${i} / ${hojas}`,
+                     PDF_CFG.hojaW / 2, PDF_CFG.hojaH - 3.5, { align: 'center' });
+        }
+        try {
+            pdf.setProperties({ title: (nombre || 'Personaje') + ' — Ficha de D&D', creator: 'Creador de fichas de D&D' });
+        } catch (e) {}
+
+        pdf.save(_pdfNombreArchivo(nombre));
 
     } catch (err) {
         console.error('Error generando PDF:', err);
-        alert('Error al generar el PDF: ' + err.message);
+        alert('No se pudo generar el PDF: ' + (err && err.message ? err.message : err));
     } finally {
-        if (btnPdf) { btnPdf.textContent = textoOrig; btnPdf.disabled = false; }
-        // Limpieza de seguridad por si el catch saltó antes de restaurar
-        panel.querySelectorAll('[data-_pdfViz]').forEach(el => {
-            el.style.visibility = el.dataset._pdfViz || '';
-            delete el.dataset._pdfViz;
-        });
+        if (restaurar) { try { restaurar(); } catch (e) { console.error(e); } }
+        _pdfQuitarAviso();
+        try { window.scrollTo(scrollX, scrollY); } catch (e) {}
+        try { aplicarEscalaFicha(); } catch (e) {}
+        if (btnPdf) { btnPdf.textContent = textoOrig || '🖨 PDF'; btnPdf.disabled = false; }
+        _pdfEnCurso = false;
     }
 }
 

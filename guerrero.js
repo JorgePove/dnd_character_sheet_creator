@@ -1,23 +1,26 @@
 /* ══════════════════════════════════════════════════════════════════
-   guerrero.js — Guerrero: rasgos de clase y subclases completas
+   guerrero.js — Guerrero: rasgos de clase y subclases
    ──────────────────────────────────────────────────────────────────
-   Fuentes:
-     PHB 2014 · PHB 2024
-     Xanathar's Guide to Everything (XGtE)
-     Tasha's Cauldron of Everything (TCE)
-     Explorer's Guide to Wildemount (EGtW)
+   Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
+   importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
+   fuente y la edición a la que corresponde.
+   Fuentes de subclases: PHB 2014 · PHB 2024 · XGtE · SCAG · EGtW · TCE
    ──────────────────────────────────────────────────────────────────
    SUBCLASES (14 entradas):
-     Campeón                  [PHB 2014] / [PHB 2024]
-     Maestro de Batalla       [PHB 2014] / [PHB 2024]
-     Caballero Arcano         [PHB 2014] / [PHB 2024]
-     Caballero del Psi        [TCE]      / [PHB 2024]
-     Guerrero Rúnico          [TCE]      / [PHB 2024]
-     Caballero Samurai        [XGtE]
-     Tirador Arcano           [XGtE]
-     Caballero Banneret       [SCAG]
-     Caballero Echo           [EGtW]
-     Caballero Graviturgo     [EGtW]
+     Campeón                      [PHB 2014] / [PHB 2024]
+     Maestro de Batalla           [PHB 2014] / [PHB 2024]
+     Caballero Arcano             [PHB 2014] / [PHB 2024]
+     Guerrero Psíquico            [PHB 2024] / [TCE]
+     Tirador Arcano               [XGtE]
+     Jinete                       [XGtE]
+     Caballero Samurái            [XGtE]
+     Caballero Banneret           [SCAG]
+     Caballero Eco                [EGtW]
+     Guerrero Rúnico              [TCE]
+   ──────────────────────────────────────────────────────────────────
+   Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
+     "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
+     limitados o decisión puntual) · combinable ("AB"). Sin `a` = rasgo pasivo.
 ══════════════════════════════════════════════════════════════════ */
 
 const CLASE_GUERRERO = {
@@ -29,47 +32,82 @@ const CLASE_GUERRERO = {
     {
       n: "Competencias",
       nv: 1,
-      d: "Todas las armaduras y escudos. Todas las armas simples y marciales. Salvaciones: FUE y CON. Habilidades: elige 2 entre Acrobacias, Atletismo, Historia, Perspicacia, Intimidación, Percepción, Supervivencia y Trato con Animales."
+      d: "Dado de golpe d10. Salvaciones: FUE y CON. Armaduras: ligeras, medias, pesadas y escudos. Armas: simples y marciales. Habilidades: elige 2 entre Acrobacias, Atletismo, Historia, Intimidación, Percepción, Perspicacia, Persuasión, Supervivencia y Trato con Animales. [2014: sin Persuasión en la lista]"
     },
     {
       n: "Estilo de Combate",
       nv: 1,
-      d: "Elige un estilo de combate especializado: Arquería (+2 a tiradas de ataque a distancia), Defensa (+1 CA con armadura), Duelo (+2 daño con arma de una mano si no empuñas otra arma), Armas a Dos Manos (repite 1 o 2 en dados de daño de armas a dos manos), Combate con Dos Armas (añades mod de característica al daño del ataque adicional de mano secundaria), Protección (Reacción: impones desventaja en ataque contra aliado a 5 pies si llevas escudo), Disparo Cegador [PHB 2024] (ignoras cobertura de la mitad y tres cuartos en ataques a distancia), Interposición [PHB 2024] (al ser golpeado, como Reacción reduces el daño en 1d10 + CON)."
+      d: "Ganas una dote de Estilo de Combate de tu elección (Arquería, Combate a Ciegas, Defensa, Duelo, Combate con Armas a Dos Manos, Interceptación, Protección, Combate con Armas Arrojadizas, Combate con Dos Armas, Combate sin Armas). Al subir de nivel de Guerrero puedes cambiarla por otra. [2014: eliges un Estilo de la lista del PHB; TCE añade Combate a Ciegas, Interceptación, Técnica Superior, Armas Arrojadizas y Combate sin Armas]. Los efectos están en Dotes."
     },
     {
       n: "Segundo Aliento",
       nv: 1,
-      d: "Como Acción Adicional recuperas PG = 1d10 + nivel de Guerrero. 1/descanso corto o largo."
+      a: "B",
+      d: "Como Acción Adicional recuperas 1d10 + tu nivel de Guerrero PG. Tienes 2 usos (3 en Nv.4, 4 en Nv.10); recuperas 1 uso gastado con un descanso corto y todos con un descanso largo. [2014: 1 uso, se recupera con descanso corto o largo]"
     },
     {
-      n: "Oleada de Acción",
+      n: "Maestría con Armas (Weapon Mastery)",
+      nv: 1,
+      d: "Puedes usar la propiedad de maestría de 3 armas simples o marciales de tu elección (4 en Nv.4, 5 en Nv.10, 6 en Nv.16). Tras un descanso largo puedes cambiar una de las elegidas. [Sólo 2024]"
+    },
+    {
+      n: "Oleada de Acción (Action Surge)",
       nv: 2,
-      d: "Puedes tomar una acción adicional en tu turno (además de la acción normal y la AA). 1/descanso corto o largo (→2/descanso corto o largo en Nv.17)."
+      a: "O",
+      d: "En tu turno puedes realizar una acción adicional (excepto la acción Mágica). Un uso (2 en Nv.17, pero sólo uno por turno); recuperas los usos con un descanso corto o largo. [2014: 1 uso (2 en Nv.17); cualquier acción adicional]"
     },
     {
-      n: "Arquetipo Marcial",
+      n: "Mente Táctica (Tactical Mind)",
+      nv: 2,
+      a: "O",
+      d: "Cuando fallas una prueba de característica puedes gastar un uso de Segundo Aliento: tiras 1d10 y lo sumas a la prueba, que puede pasar a éxito. Si la prueba sigue fallando, no se gasta el uso. [Sólo 2024]"
+    },
+    {
+      n: "Subclase de Guerrero (Arquetipo Marcial)",
       nv: 3,
-      d: "Eliges tu subclase (Arquetipo Marcial). Otorga rasgos en Nv.3, 7, 10, 15 y 18."
+      d: "Eliges una subclase. Concede rasgos en Nv.3, 7, 10, 15 y 18. [2014: Arquetipo Marcial]"
     },
     {
       n: "Mejora de Característica",
       nv: 4,
-      d: "+2 a una característica o +1 a dos (máx. 20). También en Nv.6, 8, 12, 14, 16 y 19. Puedes tomar una dote en su lugar. (El Guerrero tiene más ASIs que cualquier otra clase.)"
+      d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 6, 8, 12, 14 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]. El Guerrero tiene más mejoras que cualquier otra clase."
     },
     {
       n: "Ataque Extra",
       nv: 5,
-      d: "Atacas dos veces con la acción de Atacar (→3 veces en Nv.11, →4 veces en Nv.20)."
+      a: "A",
+      d: "Cuando realizas la acción de Atacar en tu turno puedes atacar dos veces en lugar de una (3 veces en Nv.11 y 4 veces en Nv.20)."
+    },
+    {
+      n: "Cambio Táctico (Tactical Shift)",
+      nv: 5,
+      d: "Cuando usas Segundo Aliento puedes moverte hasta la mitad de tu Velocidad sin provocar ataques de oportunidad. [Sólo 2024]"
     },
     {
       n: "Indomable",
       nv: 9,
-      d: "Puedes repetir una tirada de salvación fallida. Debes usar el nuevo resultado. 1/descanso largo (→2 en Nv.13, →3 en Nv.17)."
+      a: "O",
+      d: "Si fallas una tirada de salvación puedes repetirla con un bonificador igual a tu nivel de Guerrero y debes usar el nuevo resultado. 1 uso (2 en Nv.13, 3 en Nv.17); recuperas todos los usos con un descanso largo. [2014: sin bonificador a la repetición]"
+    },
+    {
+      n: "Maestro Táctico (Tactical Master)",
+      nv: 9,
+      d: "Al atacar con un arma de la que tengas maestría puedes sustituir su propiedad de maestría por Empujar (Push), Debilitar (Sap) o Ralentizar (Slow) en ese ataque. [Sólo 2024]"
+    },
+    {
+      n: "Ataques Estudiados (Studied Attacks)",
+      nv: 13,
+      d: "Si fallas una tirada de ataque contra una criatura, tienes Ventaja en tu siguiente tirada de ataque contra ella antes del final de tu siguiente turno. [Sólo 2024]"
+    },
+    {
+      n: "Don Épico (Epic Boon)",
+      nv: 19,
+      d: "Ganas una dote de Don Épico (u otra dote para la que cumplas requisitos). [Sólo 2024; en 2014 es la mejora de característica de Nv.19]"
     },
   ],
 
   /* ══════════════════════════════════════════════════════════════
-     SUBCLASES (ARQUETIPOS MARCIALES)
+     SUBCLASES
   ══════════════════════════════════════════════════════════════ */
   subclases: {
 
@@ -78,12 +116,12 @@ const CLASE_GUERRERO = {
       {
         n: "Crítico Mejorado",
         nv: 3,
-        d: "Tus ataques con arma consiguen un crítico con 19-20 en lugar de solo 20."
+        d: "Tus ataques con arma consiguen un golpe crítico con 19-20 en el d20."
       },
       {
         n: "Atleta Extraordinario",
         nv: 7,
-        d: "Añades la mitad de tu bonificador de competencia (redondeado arriba) a pruebas de FUE, DES o CON que no tengan ya competencia. Además, tu distancia de salto con carrera aumenta en pies = mod FUE."
+        d: "Añades la mitad de tu bonificador de competencia (redondeado arriba) a las pruebas de FUE, DES o CON que no tengan ya competencia. Además, tu salto de longitud con carrera aumenta en pies = tu mod. de FUE."
       },
       {
         n: "Estilo de Combate Adicional",
@@ -93,45 +131,42 @@ const CLASE_GUERRERO = {
       {
         n: "Crítico Superior",
         nv: 15,
-        d: "Tus ataques con arma consiguen un crítico con 18-20."
+        d: "Tus ataques con arma consiguen un golpe crítico con 18-20 en el d20."
       },
       {
         n: "Superviviente",
         nv: 18,
-        d: "Al inicio de cada uno de tus turnos, si tienes 1 PG o más pero igual o menos de la mitad de tus PG máximos, recuperas PG = 5 + mod CON."
+        d: "Al inicio de cada uno de tus turnos recuperas PG = 5 + mod. de CON si tienes menos de la mitad de tus PG máximos y al menos 1 PG."
       },
     ],
 
     "Maestro de Batalla [PHB 2014]": [
       {
-        n: "Competencias del Estudiante de la Guerra",
-        nv: 3,
-        d: "Ganas competencia con una herramienta de artesano a tu elección. También aprendes a leer y escribir si no podías."
-      },
-      {
         n: "Superioridad de Combate",
         nv: 3,
-        d: "Aprendes maniobras de combate que gastas con Dados de Superioridad (d8 → d10 Nv.10 → d12 Nv.18). Maniobras conocidas: 3 (Nv.3) → 5 (Nv.7) → 7 (Nv.10) → 9 (Nv.15). Dados de Superioridad: 4 (Nv.3) → 5 (Nv.7) → 6 (Nv.15). Se recuperan con descanso corto o largo. Ejemplos de maniobras: Ataque Que Desvía (añade el dado al daño y el objetivo debe superar FUE o moverse), Maniobra Distrayente (ventaja al próximo aliado que ataque al objetivo), Empujar (ataque que empuja), Desarmar, Provocar (compele al objetivo a atacarte), Esquivar en Terreno Difícil (muévete sin provocar), Instrucción Táctica (da el dado a un aliado), Menazar, Precisión Exacta (+dado a ataque), Contraataque (Reacción al ser atacado), Golpe Barredor, Maniobra de Finta, Golpe de Trompa, Golpe Preciso, Golpe Desarmador."
+        a: "O",
+        d: "Aprendes 3 maniobras (5 en Nv.7, 7 en Nv.10, 9 en Nv.15); al subir de nivel de Guerrero puedes cambiar una. Tienes 4 Dados de Superioridad d8 (5 en Nv.7, 6 en Nv.15), que recuperas con un descanso corto o largo. CD de las maniobras = 8 + BC + mod. FUE o DES (a tu elección). Maniobras del PHB: Orden de Comandante (renuncias a un ataque y, con AA, un aliado ataca con su reacción: +dado al daño), Ataque Desarmador (+dado al daño; salvación FUE o suelta el objeto), Ataque Distractor (+dado al daño; el siguiente ataque de otro contra él tiene ventaja), Paso Evasivo (+dado a la CA mientras te mueves), Ataque de Finta (AA: ventaja en tu siguiente ataque contra una criatura a 5 pies, +dado al daño), Ataque Provocador (+dado al daño; salvación SAB o desventaja contra otros), Ataque de Embestida (+dado al daño si te moviste 5+ pies en línea recta), Ataque Maniobrado (+dado al daño; un aliado se mueve media velocidad sin provocar), Ataque Amenazante (+dado al daño; salvación SAB o asustado), Parada (Reacción: reduce el daño cuerpo a cuerpo en dado + mod. DES), Ataque Certero (+dado al ataque), Ataque de Empuje (+dado al daño; salvación FUE o 15 pies de empuje), Reagrupar (AA: aliado gana PGT = dado + mod. CAR), Contraataque (Reacción al fallarte un ataque cuerpo a cuerpo: atacas con +dado al daño), Ataque Barredor (daño = dado a otra criatura a 5 pies del objetivo) y Ataque de Derribo (+dado al daño; salvación FUE o derribado)."
       },
       {
-        n: "Conocer tu Enemigo",
+        n: "Estudiante de la Guerra",
+        nv: 3,
+        d: "Ganas competencia con un tipo de herramientas de artesano a tu elección."
+      },
+      {
+        n: "Conoce a tu Enemigo",
         nv: 7,
-        d: "Si observas a una criatura fuera del combate durante al menos 1 minuto, el DM te dice si es igual, superior o inferior a ti en: nivel/CR, FUE, DES, CON, CA, PG máximos y maniobras de clase si las tiene."
+        a: "O",
+        d: "Si observas o interactúas con una criatura durante al menos 1 minuto fuera de combate, el DM te dice si es igual, superior o inferior a ti en dos de estas características a tu elección: FUE, DES, CON, CA, PG actuales, niveles totales de clase o niveles de Guerrero."
       },
       {
         n: "Superioridad de Combate Mejorada",
         nv: 10,
-        d: "Tus Dados de Superioridad mejoran de d8 a d10."
+        d: "Tus Dados de Superioridad pasan a ser d10 (d12 en Nv.18)."
       },
       {
         n: "Implacable",
         nv: 15,
-        d: "Al usar Indomable para repetir una tirada fallida, también recuperas 1 Dado de Superioridad."
-      },
-      {
-        n: "Superioridad de Combate Suprema",
-        nv: 18,
-        d: "Tus Dados de Superioridad mejoran de d10 a d12."
+        d: "Cuando tiras iniciativa y no te quedan Dados de Superioridad, recuperas 1."
       },
     ],
 
@@ -139,61 +174,72 @@ const CLASE_GUERRERO = {
       {
         n: "Lanzamiento de Conjuros",
         nv: 3,
-        d: "INT es tu característica de conjuro. Aprendes conjuros de la lista del Mago (un tercio lanzador). Trucos: 2 (Nv.3) → 3 (Nv.10). Conjuros conocidos: 3 (Nv.3) → escala hasta 13 (Nv.20). Al menos dos tercios deben ser de las escuelas de Abjuración y Evocación; el resto pueden ser de cualquier escuela. Espacios de conjuro: progresión de un tercio de lanzador."
+        d: "INT es tu característica de lanzamiento (CD = 8 + BC + mod. INT; foco arcano). Lista del Mago; lanzador de un tercio. Trucos: 2 (3 en Nv.10). Conjuros conocidos: 3 en Nv.3, 4 en Nv.4, 5 en Nv.7, 6 en Nv.8, 7 en Nv.10, 8 en Nv.11, 9 en Nv.13, 10 en Nv.14, 11 en Nv.16, 12 en Nv.19 y 13 en Nv.20. Los conjuros de Nv.1+ deben ser de Abjuración o Evocación, salvo 1 de los 3 iniciales y los que aprendas en Nv.8, 14 y 20 (cualquier escuela). Al subir de nivel puedes cambiar uno conocido."
       },
       {
-        n: "Enlace con Arma",
+        n: "Vínculo con Arma",
         nv: 3,
-        d: "Realizas un ritual de 1 hora para vincularte a hasta 2 armas. Un arma vinculada no puede ser desarmada y puedes invocarla a tu mano como AA a cualquier distancia (incluso entre planos)."
+        a: "B",
+        d: "Ritual de 1 hora (puede hacerse en un descanso corto) para vincularte a un arma. Un arma vinculada no te puede ser desarmada salvo que estés incapacitado, y como Acción Adicional puedes hacer que vuelva a tu mano si está en el mismo plano. Hasta 2 armas vinculadas (sólo invocas una por turno)."
       },
       {
-        n: "Golpe de Guerra",
+        n: "Magia de Guerra",
         nv: 7,
-        d: "Cuando usas tu acción para atacar, puedes lanzar un truco que tenga tiempo de lanzamiento de 1 acción como Acción Adicional."
+        a: "B",
+        d: "Cuando usas tu acción para lanzar un truco, puedes hacer un ataque con arma como Acción Adicional."
       },
       {
-        n: "Conjuro Evocado",
+        n: "Golpe Sobrenatural",
         nv: 10,
-        d: "Cuando lanzas un conjuro de Abjuración de Nv.1+, ganas PG temporales = nivel del espacio + mod INT."
+        d: "Cuando impactas a una criatura con un ataque con arma, tiene desventaja en la siguiente salvación que haga contra un conjuro tuyo antes del final de tu siguiente turno."
       },
       {
-        n: "Golpe Arcano",
+        n: "Carga Arcana",
         nv: 15,
-        d: "Cuando golpeas a una criatura con un ataque con arma, puedes gastar un espacio de conjuro para lanzar un conjuro de Nv.1-4 sobre ella como parte del mismo ataque. El conjuro surte efecto inmediatamente."
+        a: "O",
+        d: "Cuando usas Oleada de Acción puedes teletransportarte hasta 30 pies a un espacio libre que veas, antes o después de la acción adicional."
       },
       {
-        n: "Carga de Conjuro",
+        n: "Magia de Guerra Mejorada",
         nv: 18,
-        d: "Cuando usas Oleada de Acción, también puedes lanzar un conjuro cuyo tiempo de lanzamiento sea 1 acción como parte de esa misma oleada."
+        a: "B",
+        d: "Cuando usas tu acción para lanzar un conjuro, puedes hacer un ataque con arma como Acción Adicional."
       },
     ],
+
 
     /* ── PHB 2024 ── */
     "Campeón [PHB 2024]": [
       {
         n: "Crítico Mejorado",
         nv: 3,
-        d: "Tus ataques con arma consiguen un crítico con 19-20."
+        d: "Tus ataques con arma y desarmados consiguen un golpe crítico con 19-20 en el d20."
       },
       {
         n: "Atleta Extraordinario",
-        nv: 7,
-        d: "Tienes ventaja en pruebas de Iniciativa. Además, cuando saltas con carrera puedes añadir tu puntuación de FUE (no solo el modificador) a la distancia."
+        nv: 3,
+        d: "Tienes ventaja en las tiradas de Iniciativa y en las pruebas de Fuerza (Atletismo). Inmediatamente después de conseguir un crítico, puedes moverte hasta la mitad de tu Velocidad sin provocar ataques de oportunidad."
       },
       {
         n: "Estilo de Combate Adicional",
+        nv: 7,
+        d: "Ganas una segunda dote de Estilo de Combate."
+      },
+      {
+        n: "Guerrero Heroico (Heroic Warrior)",
         nv: 10,
-        d: "Aprendes un segundo Estilo de Combate."
+        a: "O",
+        d: "Durante un combate, al inicio de cada uno de tus turnos puedes darte Inspiración Heroica si no la tienes."
       },
       {
         n: "Crítico Superior",
         nv: 15,
-        d: "Tus ataques con arma consiguen un crítico con 18-20."
+        d: "Tus ataques con arma y desarmados consiguen un golpe crítico con 18-20 en el d20."
       },
       {
         n: "Superviviente",
         nv: 18,
-        d: "Al inicio de tu turno con PG entre 1 y la mitad de tu máximo, recuperas PG = 5 + mod CON."
+        d: "Desafiar a la Muerte: tienes ventaja en las salvaciones de muerte y un 18-20 cuenta como un 20. Reanimación Heroica: al inicio de cada uno de tus turnos recuperas PG = 5 + mod. de CON si estás Ensangrentado (mitad de PG o menos) y tienes al menos 1 PG."
       },
     ],
 
@@ -201,32 +247,34 @@ const CLASE_GUERRERO = {
       {
         n: "Superioridad de Combate",
         nv: 3,
-        d: "Aprendes maniobras que gastas con Dados de Superioridad (d8 → d10 Nv.10 → d12 Nv.18). Maniobras conocidas: 3 (Nv.3) → 5 (Nv.7) → 7 (Nv.10) → 9 (Nv.15). Dados: 4 → 5 (Nv.7) → 6 (Nv.15). Recuperas todos con descanso corto o largo."
+        a: "O",
+        d: "Aprendes 3 maniobras (5 en Nv.7, 7 en Nv.10, 9 en Nv.15); al subir de nivel de Guerrero puedes cambiar una. Tienes 4 Dados de Superioridad d8 (5 en Nv.7, 6 en Nv.15), que recuperas con un descanso corto o largo. CD = 8 + BC + mod. FUE o DES. Maniobras (2024): Emboscada, Cambiazo, Orden de Comandante, Presencia Imponente, Ataque Desarmador, Ataque Distractor, Paso Evasivo, Ataque de Finta, Ataque Provocador, Ataque de Embestida, Ataque Maniobrado, Ataque Amenazante, Parada, Ataque Certero, Ataque de Empuje, Reagrupar, Contraataque, Ataque Barredor, Evaluación Táctica y Ataque de Derribo. La mayoría añaden el dado al daño del ataque con un efecto adicional (salvación o movimiento); Parada y Contraataque son Reacciones."
       },
       {
         n: "Estudiante de la Guerra",
         nv: 3,
-        d: "Aprendes una habilidad o herramienta adicional a tu elección (puede ser cualquier herramienta de artesano o competencia de habilidad de la lista del Guerrero)."
+        d: "Ganas competencia con un tipo de herramientas de artesano y con una habilidad de la lista de Guerrero."
       },
       {
-        n: "Conocer tu Enemigo",
+        n: "Conoce a tu Enemigo",
         nv: 7,
-        d: "Como AA, analizas a una criatura visible: el DM te dice si es igual, superior o inferior a ti en dos características (FUE, DES, CON, INT, SAB, CAR, CA, PG, velocidad) de tu elección."
+        a: "B",
+        d: "Como Acción Adicional averiguas si una criatura que veas a 30 pies o menos tiene inmunidades, resistencias o vulnerabilidades, y cuáles son. Una vez usado, recuperas el uso con un descanso largo o gastando un Dado de Superioridad."
       },
       {
         n: "Superioridad de Combate Mejorada",
         nv: 10,
-        d: "Dados de Superioridad mejoran a d10."
+        d: "Tus Dados de Superioridad pasan a ser d10."
       },
       {
         n: "Implacable",
         nv: 15,
-        d: "Cuando usas Indomable, recuperas también 1 Dado de Superioridad."
+        d: "Una vez por turno, al usar una maniobra, puedes tirar 1d8 y usar ese resultado en lugar de gastar un Dado de Superioridad."
       },
       {
         n: "Superioridad de Combate Suprema",
         nv: 18,
-        d: "Dados de Superioridad mejoran a d12."
+        d: "Tus Dados de Superioridad pasan a ser d12."
       },
     ],
 
@@ -234,273 +282,321 @@ const CLASE_GUERRERO = {
       {
         n: "Lanzamiento de Conjuros",
         nv: 3,
-        d: "INT es tu característica de conjuro. Un tercio lanzador (lista del Mago). Trucos: 2 (Nv.3) → 3 (Nv.10). Los conjuros de las escuelas de Abjuración y Evocación no cuentan contra el límite de conjuros conocidos."
+        d: "INT es tu característica de lanzamiento (CD = 8 + BC + mod. INT; foco arcano). Lista del Mago; lanzador de un tercio. Trucos: 2 (3 en Nv.10). Conjuros preparados: 3 en Nv.3, hasta 13 en Nv.20 (según la tabla de la subclase); al subir de nivel de Guerrero puedes cambiar uno. Espacios de conjuro como lanzador de un tercio (2 de Nv.1 en Nv.3; 4/3/3/1 en Nv.19)."
       },
       {
-        n: "Enlace con Arma",
+        n: "Vínculo de Guerra (War Bond)",
         nv: 3,
-        d: "Vinculo ritual a hasta 2 armas: no pueden ser desarmadas y puedes invocarlas a tu mano como AA."
+        a: "B",
+        d: "Ritual de 1 hora (puede hacerse en un descanso corto) para vincularte a un arma. Un arma vinculada no te puede ser desarmada salvo que estés incapacitado, y como Acción Adicional la haces aparecer en tu mano si está en el mismo plano. Hasta 2 armas vinculadas (sólo invocas una por turno)."
       },
       {
-        n: "Golpe de Guerra",
+        n: "Magia de Guerra",
         nv: 7,
-        d: "Cuando atacas con tu acción, puedes lanzar un truco de Mago como AA."
+        a: "A",
+        d: "Cuando realizas la acción de Atacar, puedes sustituir uno de los ataques por el lanzamiento de uno de tus trucos de Mago con tiempo de lanzamiento de una acción."
       },
       {
-        n: "Conjuro Evocado",
+        n: "Golpe Sobrenatural",
         nv: 10,
-        d: "Al lanzar un conjuro de Abjuración de Nv.1+, ganas PG temporales = nivel del espacio + mod INT."
+        d: "Cuando impactas a una criatura con un ataque con arma, tiene desventaja en la siguiente salvación que haga contra un conjuro tuyo antes del final de tu siguiente turno."
       },
       {
-        n: "Golpe Arcano",
+        n: "Carga Arcana",
         nv: 15,
-        d: "Al golpear con un arma, puedes gastar un espacio para lanzar un conjuro de Nv.1-4 que surta efecto inmediatamente."
+        a: "O",
+        d: "Cuando usas Oleada de Acción puedes teletransportarte hasta 30 pies a un espacio libre que veas, antes o después de la acción adicional."
       },
       {
-        n: "Carga de Conjuro",
+        n: "Magia de Guerra Mejorada",
         nv: 18,
-        d: "Al usar Oleada de Acción, también puedes lanzar un conjuro de 1 acción como parte de la misma."
+        a: "A",
+        d: "Cuando realizas la acción de Atacar, puedes sustituir dos de los ataques por el lanzamiento de un conjuro de Nv.1 o 2 de Mago con tiempo de lanzamiento de una acción."
       },
     ],
 
-    "Caballero del Psi [PHB 2024]": [
+    "Guerrero Psíquico [PHB 2024]": [
       {
-        n: "Poderes Psíónicos",
+        n: "Poder Psiónico",
         nv: 3,
-        d: "INT es tu característica de conjuro para estos poderes. Ganas un Dado de Energía Psíónica (d6 → d8 Nv.5 → d10 Nv.11 → d12 Nv.17). Dados totales = mod INT + nivel Guerrero ÷ 2 (redondeado abajo). Se recuperan con descanso largo (recuperas uno con descanso corto). Poderes básicos gratuitos: Martillo Psíónico (ataque a distancia de fuerza 60 pies, 1d6 fuerza, INT para atacar), Escudo Telequinético (Reacción: +2 CA contra un ataque)."
+        a: "R",
+        d: "Tienes Dados de Energía Psiónica: 4 d6 en Nv.3, 6 d8 en Nv.5, 8 d8 en Nv.9, 8 d10 en Nv.11, 10 d10 en Nv.13 y 12 d12 en Nv.17. Recuperas 1 dado con un descanso corto y todos con uno largo. Campo Protector (Reacción): cuando tú u otra criatura a 30 pies recibe daño, gastas 1 dado y reduces el daño en dado + mod. INT (mín. 1). Golpe Psiónico: una vez por turno, justo tras impactar con un arma a un objetivo a 30 pies, gastas 1 dado y causas daño de fuerza = dado + mod. INT. Movimiento Telequinético (acción Mágica): mueves hasta 30 pies un objeto Grande o menor, o una criatura voluntaria; 1 vez por descanso corto o largo (o gastando un dado)."
       },
       {
-        n: "Teletransporte Psíónico",
-        nv: 3,
-        d: "Cuando das un golpe con un arma, puedes gastar 1 Dado de Energía para teletransportarte hasta 30 pies a un espacio visible como parte del mismo ataque."
-      },
-      {
-        n: "Protección Telequinética",
+        n: "Adepto Telequinético",
         nv: 7,
-        d: "Puedes gastar 1 Dado de Energía como Reacción para añadir el resultado a la CA de un aliado a 30 pies contra un ataque. Además, al inicio de cada turno, si tienes Dados de Energía, ganas PG temporales = 1 Dado de Energía (sin gastarlo)."
+        a: "B",
+        d: "Salto Psiónico (Acción Adicional): ganas una Velocidad de vuelo igual al doble de tu Velocidad hasta el final del turno; 1 vez por descanso corto o largo (o gastando un dado). Empuje Telequinético: cuando causas daño con Golpe Psiónico, el objetivo hace salvación FUE (CD 8 + BC + mod. INT) o queda derribado o lo empujas hasta 10 pies en horizontal."
       },
       {
-        n: "Agarre Psíónico",
+        n: "Mente Protegida",
         nv: 10,
-        d: "Como AA puedes gastar 2 Dados de Energía para aferrar telequinéticamente a una criatura a 30 pies: queda Aferrada durante 1 minuto (salvación INT CD = 8 + comp + mod INT para liberarse al inicio de cada turno). Mientras esté Aferrada puedes moverla hasta 30 pies como AA."
+        a: "O",
+        d: "Resistencia al daño psíquico. Si empiezas tu turno hechizado o asustado, puedes gastar 1 dado de Energía Psiónica para terminar esas condiciones en ti."
       },
       {
-        n: "Explosión Psíónica",
+        n: "Baluarte de Fuerza",
         nv: 15,
-        d: "Cuando golpeas con un ataque de arma, puedes gastar hasta 3 Dados de Energía: el ataque inflige daño de fuerza adicional = suma de los dados. Si el objetivo falla una salvación INT (CD = 8 + comp + mod INT), queda Aturdido hasta el inicio de tu siguiente turno."
+        a: "B",
+        d: "Como Acción Adicional eliges hasta tu mod. de INT criaturas (mín. 1, puedes incluirte) que veas a 30 pies: tienen cobertura media durante 1 minuto o hasta que estés incapacitado. 1 vez por descanso largo (o gastando un dado)."
       },
       {
-        n: "Maestría Psíónica",
+        n: "Maestro Telequinético",
         nv: 18,
-        d: "Recuperas todos tus Dados de Energía Psíónica al terminar un descanso corto (en lugar de solo uno). Además, cuando lanzas Proyectil Psíónico, puedes hacer que impacte a todos los enemigos en una línea de 30 pies (DEX CD para reducir a la mitad)."
+        a: "A",
+        d: "Siempre tienes preparado el conjuro Telequinesis y puedes lanzarlo sin espacio ni componentes, con INT como característica. Mientras mantienes concentración en él, puedes hacer 1 ataque con arma como Acción Adicional cada turno. 1 vez por descanso largo (o gastando un dado)."
       },
     ],
 
-    "Guerrero Rúnico [PHB 2024]": [
+
+    /* ── XGtE ── */
+    "Tirador Arcano [XGtE]": [
       {
-        n: "Forja de Runas",
+        n: "Saber del Tirador Arcano",
         nv: 3,
-        d: "Aprendes el idioma Gigante y aprendes a tallar 2 runas mágicas en armas, armaduras o escudos al terminar un Descanso Largo. Runas conocidas: 2 (Nv.3) → 3 (Nv.7) → 4 (Nv.10) → 5 (Nv.15). Ejemplos de runas: Runa del Fuego Gigante (bonificador de daño de fuego), Runa del Hielo Glacial (inmunidad a frío), Runa del Colmillo de Piedra (bonus a Atletismo), Runa de la Tormenta de la Colina (bonus a Intimidación y a empujar), Runa de la Nube de Tormenta (bonus a Engaño y posibilidad de vuelo), Runa de la Piedra de la Montaña (bonus a Perspicacia y resistencia). Cada runa también tiene un poder activo 1/descanso corto o largo."
+        d: "Ganas competencia en Arcanos o Naturaleza y aprendes el truco Prestidigitación o Druidismo."
       },
       {
-        n: "Gigante de Combate",
+        n: "Disparo Arcano",
         nv: 3,
-        d: "Como AA puedes crecer a tamaño Grande (si el espacio lo permite) durante 1 minuto. Mientras eres Grande: ventaja en FUE, +1d6 al daño de ataques de FUE y puedes agarrar criaturas de tamaño Grande o menor. Usos = bonificador de competencia. Recarga con descanso largo."
+        a: "O",
+        d: "Aprendes 2 opciones de Disparo Arcano (3 en Nv.7, 4 en Nv.10, 5 en Nv.15 y 6 en Nv.18). Una vez por turno, al disparar una flecha con arco corto o largo como parte de la acción de Atacar, puedes aplicarle una opción. Decides usarla al impactar (salvo que no requiera tirada de ataque). 2 usos; los recuperas con un descanso corto o largo. CD = 8 + BC + mod. INT. Opciones: Flecha Desterradora, Seductora, Explosiva, Debilitante, Aprehensora, Perforadora, Buscadora y Sombría. En Nv.18 los dados de daño de las opciones se duplican (2d6 → 4d6; 1d6 → 2d6)."
       },
       {
-        n: "Escudo de Runas",
+        n: "Flecha Mágica",
         nv: 7,
-        d: "Reacción: cuando un aliado a 60 pies es golpeado por un ataque, puedes obligar al atacante a repetir la tirada (debe usar el nuevo resultado). Usos = bonificador de competencia. Recarga con descanso largo."
+        d: "Cuando disparas una flecha no mágica con arco corto o largo, puedes hacerla mágica a efectos de superar resistencia e inmunidad a ataques no mágicos."
       },
       {
-        n: "Vigor Rúnico",
+        n: "Disparo Curvo",
+        nv: 7,
+        a: "B",
+        d: "Cuando haces un ataque con una flecha mágica y fallas, puedes usar una Acción Adicional para repetir la tirada contra otro objetivo a 60 pies o menos del original."
+      },
+      {
+        n: "Disparo Siempre Listo",
+        nv: 15,
+        d: "Cuando tiras iniciativa y no te quedan usos de Disparo Arcano, recuperas 1 uso."
+      },
+    ],
+
+    "Jinete [XGtE]": [
+      {
+        n: "Competencia Adicional",
+        nv: 3,
+        d: "Ganas competencia en una habilidad entre Trato con Animales, Historia, Perspicacia, Interpretación y Persuasión, o aprendes un idioma."
+      },
+      {
+        n: "Nacido para la Silla",
+        nv: 3,
+        d: "Ventaja en las salvaciones para no caer de la montura. Si caes y la caída es de 10 pies o menos, aterrizas de pie (si no estás incapacitado). Montar o desmontar sólo cuesta 5 pies de movimiento."
+      },
+      {
+        n: "Marca Inquebrantable",
+        nv: 3,
+        a: "O",
+        d: "Cuando impactas a una criatura con un ataque cuerpo a cuerpo, la marcas hasta el final de tu siguiente turno: tiene desventaja en los ataques contra otros que no seas tú mientras esté a 5 pies de ti, y si daña a otro, puedes hacer como Acción Adicional un ataque cuerpo a cuerpo con ventaja contra ella con daño extra = mitad de tu nivel de Guerrero. Usos: tu mod. de FUE (mín. 1) por descanso largo."
+      },
+      {
+        n: "Maniobra Protectora",
+        nv: 7,
+        a: "R",
+        d: "Cuando tú u otra criatura a 5 pies recibe un impacto, y llevas un arma cuerpo a cuerpo o escudo, tiras 1d8 con tu Reacción y lo sumas a la CA del objetivo; si aun así impacta, el objetivo tiene resistencia a ese daño. Usos: tu mod. de CON (mín. 1) por descanso largo."
+      },
+      {
+        n: "Mantener la Línea",
         nv: 10,
-        d: "Las runas inscritas en tus objetos potencian tu cuerpo: ganas PG temporales = nivel Guerrero al activar Gigante de Combate. Además, mientras estés en forma de Gigante de Combate, ganas resistencia al tipo de daño de una runa inscrita (a tu elección)."
+        d: "Las criaturas provocan ataques de oportunidad tuyos al moverse 5 pies o más dentro de tu alcance. Si impactas con un ataque de oportunidad, la Velocidad del objetivo es 0 hasta el final del turno."
+      },
+      {
+        n: "Cargador Feroz",
+        nv: 15,
+        d: "Si te mueves al menos 10 pies en línea recta hacia una criatura y la impactas con un ataque cuerpo a cuerpo en el mismo turno, debe superar una salvación de FUE (CD 8 + BC + mod. FUE) o queda derribada. Una vez por turno."
+      },
+      {
+        n: "Defensor Vigilante",
+        nv: 18,
+        a: "R",
+        d: "En cada turno que no sea el tuyo dispones de una reacción adicional que sólo puedes usar para un ataque de oportunidad."
+      },
+    ],
+
+    "Caballero Samurái [XGtE]": [
+      {
+        n: "Competencia Adicional",
+        nv: 3,
+        d: "Ganas competencia en Historia, Perspicacia, Interpretación o Persuasión, o aprendes un idioma."
+      },
+      {
+        n: "Espíritu Combativo",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional ganas ventaja en todas tus tiradas de ataque con arma hasta el final del turno y 5 PG temporales (10 en Nv.10, 15 en Nv.15). 3 usos; los recuperas con un descanso largo."
+      },
+      {
+        n: "Cortesano Elegante",
+        nv: 7,
+        d: "Sumas tu mod. de SAB a las pruebas de Carisma (Persuasión). Ganas competencia en salvaciones de SAB (o de INT o CAR si ya la tenías)."
+      },
+      {
+        n: "Espíritu Incansable",
+        nv: 10,
+        d: "Cuando tiras iniciativa y no te quedan usos de Espíritu Combativo, recuperas 1 uso."
+      },
+      {
+        n: "Golpe Rápido",
+        nv: 15,
+        d: "Si realizas la acción de Atacar y tienes ventaja en una tirada de ataque contra un objetivo, puedes renunciar a la ventaja para hacer un ataque adicional con arma contra ese objetivo. Una vez por turno."
+      },
+      {
+        n: "Fuerza antes de la Muerte",
+        nv: 18,
+        a: "R",
+        d: "Si recibes daño que te reduciría a 0 PG, puedes usar tu Reacción para retrasar la caída inconsciente y realizar inmediatamente un turno extra (puedes curarte durante él). Una vez por descanso largo."
+      },
+    ],
+
+
+    /* ── SCAG ── */
+    "Caballero Banneret [SCAG]": [
+      {
+        n: "Grito de Guerra",
+        nv: 3,
+        d: "Cuando usas Segundo Aliento, hasta 3 aliados a 60 pies recuperan PG = tu nivel de Guerrero (además de lo que recuperas tú)."
+      },
+      {
+        n: "Enviado Real",
+        nv: 7,
+        d: "Ganas competencia en Persuasión; si ya la tenías, la sustituyes por competencia en Trato con Animales, Perspicacia, Intimidación o Interpretación. Tu bonificador de competencia se duplica en pruebas de Persuasión."
+      },
+      {
+        n: "Oleada Inspiradora",
+        nv: 10,
+        a: "O",
+        d: "Cuando usas Oleada de Acción, un aliado a 60 pies que te vea u oiga puede hacer un ataque cuerpo a cuerpo o a distancia con su reacción (2 aliados en Nv.18)."
+      },
+      {
+        n: "Baluarte",
+        nv: 15,
+        a: "O",
+        d: "Cuando usas Indomable para repetir una salvación de INT, SAB o CAR, un aliado a 60 pies que también la haya fallado contra el mismo efecto puede repetirla si te ve u oye, y debe usar el nuevo resultado."
+      },
+    ],
+
+
+    /* ── EGtW ── */
+    "Caballero Eco [EGtW]": [
+      {
+        n: "Manifestar Eco",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional creas un eco en un espacio libre a 15 pies (CA 14 + BC, 1 PG, inmune a todas las condiciones; usa tus salvaciones, y su ataque cuenta como tuyo). Dura hasta que se destruya, lo descartes (AA), crees otro o quedes incapacitado. Puedes mover el eco 30 pies en tu turno (mentalmente) e intercambiar posición con él (gasta 15 pies de movimiento). Puedes atacar y lanzar conjuros desde su espacio y hacer un ataque de oportunidad desde el eco."
+      },
+      {
+        n: "Desatar Encarnación",
+        nv: 3,
+        a: "O",
+        d: "Cuando realizas la acción de Atacar, puedes hacer un ataque cuerpo a cuerpo adicional desde el espacio del eco. Usos: tu mod. de CON (mín. 1) por descanso largo."
+      },
+      {
+        n: "Avatar del Eco",
+        nv: 7,
+        a: "A",
+        d: "Como acción, ves y oyes a través de tu eco hasta 10 minutos (quedas cegado y ensordecido) y el eco puede estar a hasta 1.000 pies; puedes terminar el efecto en cualquier momento."
+      },
+      {
+        n: "Mártir de la Sombra",
+        nv: 10,
+        a: "R",
+        d: "Cuando una criatura que veas hace una tirada de ataque contra otra criatura que no seas tú, usas tu Reacción para teletransportar el eco a 5 pies del objetivo, y el ataque se resuelve contra el eco. Una vez por descanso corto o largo."
+      },
+      {
+        n: "Reclamar Potencial",
+        nv: 15,
+        d: "Cuando un eco es destruido por daño, ganas 2d6 + mod. de CON PG temporales (si no tienes ya PGT). Usos: tu mod. de CON (mín. 1) por descanso largo."
+      },
+      {
+        n: "Legión de Uno",
+        nv: 18,
+        a: "B",
+        d: "Como Acción Adicional creas 2 ecos (el tercero destruye los anteriores); todos los rasgos de Eco funcionan desde cualquiera. Cuando tiras iniciativa y no te quedan usos de Desatar Encarnación, recuperas 1."
+      },
+    ],
+
+
+    /* ── TCE ── */
+    "Guerrero Psíquico [TCE]": [
+      {
+        n: "Poder Psiónico",
+        nv: 3,
+        a: "R",
+        d: "Tienes Dados de Energía Psiónica = 2 × BC (d6 en Nv.3, d8 en Nv.5, d10 en Nv.11, d12 en Nv.17). Los recuperas todos con un descanso largo, y puedes recuperar 1 como Acción Adicional (una vez por descanso corto o largo). Campo Protector (Reacción): cuando tú u otra criatura a 30 pies recibe daño, gastas 1 dado y reduces el daño en dado + mod. INT (mín. 1). Golpe Psiónico: una vez por turno, tras impactar con un arma a un objetivo a 30 pies, gastas 1 dado y causas daño de fuerza = dado + mod. INT. Movimiento Telequinético (acción): mueves hasta 30 pies un objeto Grande o menor o una criatura voluntaria; 1 vez por descanso corto o largo (o gastando un dado)."
+      },
+      {
+        n: "Adepto Telequinético",
+        nv: 7,
+        a: "B",
+        d: "Salto Psiónico (Acción Adicional): Velocidad de vuelo igual al doble de tu Velocidad hasta el final del turno; 1 vez por descanso corto o largo (o gastando un dado). Empuje Telequinético: al causar daño con Golpe Psiónico, el objetivo hace salvación FUE (CD 8 + BC + mod. INT) o queda derribado o lo empujas hasta 10 pies en horizontal."
+      },
+      {
+        n: "Mente Protegida",
+        nv: 10,
+        a: "O",
+        d: "Resistencia al daño psíquico. Si empiezas tu turno hechizado o asustado, puedes gastar 1 dado de Energía Psiónica para terminar esas condiciones en ti."
+      },
+      {
+        n: "Baluarte de Fuerza",
+        nv: 15,
+        a: "B",
+        d: "Como Acción Adicional eliges hasta tu mod. de INT criaturas (mín. 1, puedes incluirte) a 30 pies: cobertura media durante 1 minuto o hasta que estés incapacitado. 1 vez por descanso largo (o gastando un dado)."
+      },
+      {
+        n: "Maestro Telequinético",
+        nv: 18,
+        a: "A",
+        d: "Puedes lanzar Telequinesis sin componentes, con INT como característica. Mientras mantienes concentración en él, puedes hacer 1 ataque con arma como Acción Adicional cada turno. 1 vez por descanso largo (o gastando un dado)."
+      },
+    ],
+
+    "Guerrero Rúnico [TCE]": [
+      {
+        n: "Competencias Adicionales",
+        nv: 3,
+        d: "Ganas competencia con herramientas de herrero y aprendes a hablar, leer y escribir Gigante."
+      },
+      {
+        n: "Tallador de Runas",
+        nv: 3,
+        a: "O",
+        d: "Conoces 2 runas (3 en Nv.7, 4 en Nv.10, 5 en Nv.15) y puedes cambiar una al subir de nivel de Guerrero. Tras un descanso largo inscribes cada runa conocida en un objeto (arma, armadura, escudo, joya...; una runa por objeto, 24 horas). Cada runa da un beneficio pasivo y otro activo, usable 1 vez por descanso corto o largo (CD = 8 + BC + mod. CON): Nube (Reacción: rediriges un ataque contra un aliado a otra criatura a 30 pies del atacante), Fuego (daño extra 2d6 de fuego y salvación FUE o apresado 1 min), Escarcha (AA: +2 a pruebas y salvaciones de FUE y CON 10 min), Piedra (Reacción: al acabar su turno una criatura a 60 pies, salvación SAB o hechizada 1 min con Velocidad 0 e incapacitada), Colina (Nv.7, AA: resistencia a daño contundente, perforante y cortante 1 min), Tormenta (Nv.7, AA: 1 min en que como Reacción das ventaja o desventaja a una tirada cercana)."
+      },
+      {
+        n: "Fuerza de Gigante",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional te vuelves Grande (si hay espacio) durante 1 minuto: ventaja en pruebas y salvaciones de FUE y, una vez por turno, un ataque con arma o desarmado causa 1d6 de daño extra. Usos: BC por descanso largo."
+      },
+      {
+        n: "Escudo Rúnico",
+        nv: 7,
+        a: "R",
+        d: "Cuando otra criatura que veas a 60 pies es impactada por una tirada de ataque, usas tu Reacción para obligar al atacante a repetir el d20. Usos: BC por descanso largo."
+      },
+      {
+        n: "Gran Estatura",
+        nv: 10,
+        d: "Creces 3d4 pulgadas. El daño extra de Fuerza de Gigante pasa a 1d8."
       },
       {
         n: "Maestro de Runas",
         nv: 15,
-        d: "Puedes usar los poderes activos de tus runas dos veces por descanso corto o largo (en lugar de una)."
+        d: "Puedes invocar cada una de tus runas conocidas dos veces por descanso en lugar de una (se recuperan con descanso corto o largo)."
       },
       {
-        n: "Runas del Titán",
+        n: "Juggernaut Rúnico",
         nv: 18,
-        d: "Tu Gigante de Combate puede llevarte a tamaño Enorme. Siendo Enorme: alcance +5 pies adicional, +1d8 extra al daño de FUE y puedes agarrar criaturas de tamaño Enorme o menor."
+        d: "El daño extra de Fuerza de Gigante pasa a 1d10 y, mientras está activa, puedes ser Enorme (si hay espacio) y tu alcance aumenta 5 pies."
       },
     ],
-
-    /* ── Xanathar's Guide to Everything ── */
-    "Caballero Samurái [XGtE]": [
-      {
-        n: "Competencias Extra",
-        nv: 3,
-        d: "Ganas competencia en Historia, Perspicacia, Actuación o Persuasión (elige 1). También aprendes un idioma adicional a tu elección."
-      },
-      {
-        n: "Espíritu de Combate",
-        nv: 3,
-        d: "Como Acción Adicional puedes otorgarte ventaja en todas las tiradas de ataque con arma hasta el final del turno actual. Si golpeas a una criatura con ese espíritu activo, ganas PG temporales = 5 + mod SAB. Usos = bonificador de competencia. Recarga con descanso largo."
-      },
-      {
-        n: "Compostura Elegante",
-        nv: 7,
-        d: "Cuando haces una prueba de CAR, puedes usar SAB en su lugar."
-      },
-      {
-        n: "Indomable Determinación",
-        nv: 10,
-        d: "Cuando usas Indomable para repetir una salvación fallida, también ganas ventaja en esa salvación repetida."
-      },
-      {
-        n: "Rápido como el Rayo",
-        nv: 15,
-        d: "Cuando usas Oleada de Acción, también puedes hacer un ataque con arma adicional con esa Acción Adicional. Este ataque puede ser parte de la misma acción de Atacar o del Espíritu de Combate."
-      },
-      {
-        n: "Resistencia del Samurái",
-        nv: 18,
-        d: "Si comienzas tu turno con 0 PG y no estás muerto, puedes recuperar PG = 5 × bonificador de competencia. No puedes usar este rasgo si caíste a 0 PG en el turno anterior. 1/descanso largo."
-      },
-    ],
-
-    "Tirador Arcano [XGtE]": [
-      {
-        n: "Trucos del Tirador Arcano",
-        nv: 3,
-        d: "Aprendes 2 trucos de Tirador Arcano (los conocidos aumentan a 4 en Nv.7, 6 en Nv.15, 8 en Nv.18). Los trucos se usan como AA cuando haces un ataque a distancia con arma, modificando ese ataque. Ejemplos: Flecha Errante (ignora cobertura y puede doblar esquinas), Flecha Anestésica (objetivo supera CON o cae Incapacitado 1 minuto), Flecha de Grilletes (objetivo supera FUE o queda Aferrado), Flecha de Sombras (objetivo queda Cegado), Flecha Explosiva (explosión en radio 10 pies, DEX para resistir), Flecha de Búsqueda (rastrear al objetivo 24h), Flecha Temblorosa (el objetivo pierde el movimiento en su próximo turno), Flecha Cortante (otro objetivo a 5 pies del primero recibe daño)."
-      },
-      {
-        n: "Magia Curvilínea",
-        nv: 3,
-        d: "Cuando atacas a distancia y un aliado está adyacente al objetivo, no tienes desventaja por esa cercanía. Además ignoras la cobertura de la mitad y tres cuartos en ataques a distancia."
-      },
-      {
-        n: "Siempre Preparado",
-        nv: 7,
-        d: "Cuando lanzas la iniciativa y no tienes Dados de Tirador Arcano disponibles, recuperas 1d4 de ellos."
-      },
-      {
-        n: "Trucos del Tirador Arcano Mejorados",
-        nv: 7,
-        d: "Los dados de daño adicionales de tus trucos aumentan. Aquellos que daban 2d6 ahora dan 4d6; los que daban 1d8 ahora dan 2d8."
-      },
-      {
-        n: "Flecha Mágica",
-        nv: 10,
-        d: "Tus ataques a distancia con arma cuentan como mágicos a efectos de superar resistencias e inmunidades."
-      },
-      {
-        n: "Maestro del Tirador Arcano",
-        nv: 15,
-        d: "Puedes usar dos trucos de Tirador Arcano distintos con el mismo ataque (ambos efectos se aplican al mismo proyectil)."
-      },
-      {
-        n: "Flecha del Destino",
-        nv: 18,
-        d: "Ganas 2 Dados de Tirador Arcano adicionales. Además, tus trucos que requieren salvación tienen la CD incrementada en 2 permanentemente."
-      },
-    ],
-
-    /* ── Sword Coast Adventurer's Guide ── */
-    "Caballero Banneret [SCAG]": [
-      {
-        n: "Límite de Maniobras",
-        nv: 3,
-        d: "Cuando uses Segundo Aliento, también puedes otorgar a criaturas amistosas que te puedan ver a 60 pies PG temporales = tu tirada de Segundo Aliento ÷ 2. Además, aprendes una maniobra de Maestro de Batalla (Instrucción Táctica o Maniobra Distrayente), con 1 Dado de Superioridad d6 que se recupera con descanso corto."
-      },
-      {
-        n: "Grito de Batalla",
-        nv: 3,
-        d: "Como Acción Adicional puedes gritar inspirando a aliados amistosos a 60 pies que puedan oírte: hasta mod CAR (mínimo 1) de ellos pueden usar su Reacción para realizar un ataque con arma. Usos = mod CAR. Recarga con descanso largo."
-      },
-      {
-        n: "Escudo del Liderazgo",
-        nv: 7,
-        d: "Cuando usas Grito de Batalla, también puedes darte a ti mismo o a un aliado a 30 pies PG temporales = nivel Guerrero + mod CAR. Estos PG temporales duran 1 hora."
-      },
-      {
-        n: "Presencia Inspiradora",
-        nv: 10,
-        d: "Los aliados que realizaron el ataque gracias a tu Grito de Batalla añaden tu mod CAR al daño de ese ataque."
-      },
-      {
-        n: "Mando Vigorizante",
-        nv: 15,
-        d: "Cuando usas Oleada de Acción, puedes otorgar a un aliado visible a 60 pies la posibilidad de tomar también una acción adicional en su próximo turno (la próxima vez que actúe en este combate)."
-      },
-      {
-        n: "Mando Maestro",
-        nv: 18,
-        d: "Los usos de Grito de Batalla son ilimitados. Además, cuando un aliado ataca gracias a Grito de Batalla, si consigue un crítico o reduce al objetivo a 0 PG, tú recuperas 1 uso de Segundo Aliento."
-      },
-    ],
-
-    /* ── Explorer's Guide to Wildemount ── */
-    "Caballero Eco [EGtW]": [
-      {
-        n: "Avatar del Eco",
-        nv: 3,
-        d: "Como Acción Adicional puedes invocar un eco místico en un espacio vacío a 15 pies. El eco es inmaterial (CA = 13, PG = 1 — cualquier daño lo destruye), tiene tu apariencia y actúa en tu iniciativa. Puedes teletransportarte al espacio del eco como AA (o como parte de moverte hacia él). El eco dura hasta que lo destruyan, lo desconvoques como Acción Adicional, o estés Incapacitado. 1/descanso corto o largo (adicionales gastan un uso de Indomable)."
-      },
-      {
-        n: "Ataque del Eco",
-        nv: 3,
-        d: "Cuando realizas el ataque de oportunidad, puedes en su lugar atacar desde la posición del eco (usando el eco como origen). Además, cuando usas la acción de Atacar, puedes hacer que uno de los ataques se origine desde el espacio del eco."
-      },
-      {
-        n: "Legión de Uno",
-        nv: 7,
-        d: "Puedes invocar dos ecos simultáneamente. Si ambos están activos cuando muere uno, el otro sobrevive. Cuando uno de tus ecos recibe daño, puedes usar tu Reacción para destruirlo antes de que muera, absorbiendo la energía: ganas PG temporales = 2d6 + nivel Guerrero."
-      },
-      {
-        n: "Desvanecerse en lo No-Visto",
-        nv: 10,
-        d: "Cuando te teletransportas al espacio del eco, puedes volverte Invisible hasta el inicio de tu siguiente turno."
-      },
-      {
-        n: "Presencia Inquietante",
-        nv: 15,
-        d: "Cuando atacas a una criatura, puedes gastar un uso de Indomable para hacer que esa criatura tenga desventaja en la próxima tirada de ataque o salvación que haga antes del fin de su siguiente turno."
-      },
-      {
-        n: "Legado del Eco",
-        nv: 18,
-        d: "Puedes teletransportarte al espacio del eco sin límite de veces por turno como parte de tu movimiento. Cada vez que te teletransportas a un eco, puedes hacer que todos los ataques que realices hasta el inicio de tu siguiente turno ignoren la cobertura."
-      },
-    ],
-
-    "Caballero Graviturgo [EGtW]": [
-      {
-        n: "Conjuros del Graviturgo",
-        nv: 3,
-        d: "INT es tu característica de conjuro para estos poderes. Conjuros siempre preparados — Nv.3: Detect Magic, Slow. Nv.5: Levitate, Misty Step. Nv.9: Fly, Haste. Nv.13: Otiluke's Resilient Sphere, Gravity Sinkhole. Nv.17: Bigby's Hand, Temporal Shunt."
-      },
-      {
-        n: "Manipulación Gravitatoria",
-        nv: 3,
-        d: "Aprendes el truco Mage Hand. Además, como AA puedes aumentar o disminuir la gravedad en torno a una criatura a 30 pies: si aumentas (Gravity Surge) inflige 1d10 de fuerza al inicio de su turno durante 1 minuto; si disminuyes (Gravity Lapse) la criatura queda suspendida (vuelo 0, velocidad de caminar 0) durante 1 minuto. Ambos efectos permiten tirada de salvación CON (CD = 8 + comp + mod INT) al inicio de cada turno. 1/descanso corto o largo."
-      },
-      {
-        n: "Paso Gravitatorio",
-        nv: 7,
-        d: "Como AA puedes lanzar Misty Step sin gastar espacio de conjuro. 1/descanso largo. Además, cuando lanzas Misty Step de cualquier forma, criaturas a 5 pies de tu punto de origen o destino reciben 2d8 de daño de fuerza (DEX para reducir a la mitad)."
-      },
-      {
-        n: "Barrera de Masa",
-        nv: 10,
-        d: "Reacción: cuando tú o un aliado a 30 pies vais a recibir daño contundente, de fuerza o de trueno, podéis usar Reacción para reducirlo en 1d10 + INT. 1/descanso corto o largo."
-      },
-      {
-        n: "Maestro de la Gravedad",
-        nv: 15,
-        d: "Puedes lanzar Fly sobre ti mismo a voluntad sin gastar espacio (duración 10 minutos). Además, los ataques a distancia contra ti tienen desventaja mientras vueles con este rasgo."
-      },
-      {
-        n: "Singularidad de la Gravedad",
-        nv: 18,
-        d: "Como Acción creas una singularidad gravitatoria en un punto a 60 pies. Durante 1 minuto: criaturas en radio 20 pies al inicio de su turno superan salvación FUE (CD = 8 + comp + mod INT) o son arrastradas 10 pies hacia el centro y reciben 4d10 de fuerza. El terreno en el área es difícil. 1/descanso largo."
-      },
-    ],
-
-  }, // fin subclases
-}; // fin CLASE_GUERRERO
+  },
+};

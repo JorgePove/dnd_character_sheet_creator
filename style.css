@@ -11,6 +11,13 @@
     --color-texto-sub:  #FCEAE8;   /* Texto secundario (subtítulos de caja) */
     --color-texto-mute: #707070;   /* Texto atenuado (placeholders activos, hints) */
     --color-texto-pale: #9A9A9A;   /* Texto muy pálido (placeholders vacíos, icono de inspiración) */
+    /* Contraste de texto (repaso de colores): */
+    --color-texto-hint:  #767676;  /* Texto de ayuda / pistas / placeholders legibles sobre marcos claros */
+    --color-icono-suave: #7C7C7C;  /* Iconos y botones × discretos (se vuelven rojos al pasar el ratón) */
+    --color-tab-texto:   #555555;  /* Texto de pestañas NO seleccionadas (sobre --color-tab) */
+    --color-titulo-texto: #FFFFFF; /* Texto de los títulos de sección (sobre --color-titulo-caja) */
+    --color-salv-label:  #2C2C2C;  /* Etiqueta «Salvación» de cada característica */
+    --color-acento-texto: #C0392B; /* Texto/iconos de acento rojo sobre fondos de marco */
 
     /* ════════════════════════════════════════════════════
        FONDOS ESTRUCTURALES
@@ -264,7 +271,7 @@ body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(
 .pestana-nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
 .pestana-cerrar {
     width: 16px; height: 16px; border-radius: 50%; border: none;
-    background: transparent; color: #9A9A9A; font-size: 12px; cursor: pointer;
+    background: transparent; color: var(--color-tab-texto); font-size: 12px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: background 0.15s, color 0.15s; padding: 0; line-height: 1;
 }
@@ -445,7 +452,7 @@ label {
 }
 .bloque-nombre { flex: 1.5; display: flex; flex-direction: column; justify-content: flex-end; }
 .input-nombre { font-size: clamp(18px, 4.5vw, 50px); font-weight: 700; border: none; border-bottom: 2px solid #2C2C2C; outline: none; padding: 4px 2px; background: transparent; width: 100%; color: #1A1A1A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.input-nombre::placeholder { color: #9A9A9A; font-weight: 400; }
+.input-nombre::placeholder { color: var(--color-texto-hint); font-weight: 400; }
 .bloque-clase-info { flex: 2.2; display: flex; align-items: flex-end; }
 .fila-input { display: flex; gap: 8px; width: 100%; }
 .campo { flex: 1; display: flex; flex-direction: column; gap: 4px; }
@@ -637,7 +644,7 @@ label {
 }
 .titulo-caja {
     font-size: 10px; font-weight: 700; text-align: center;
-    text-transform: uppercase; letter-spacing: 0.7px; color: var(--color-texto-sub);
+    text-transform: uppercase; letter-spacing: 0.7px; color: var(--color-titulo-texto);
     background: var(--color-titulo-caja); width: fit-content; padding: 1px 10px;
     border-radius: 3px;
     margin: -22px auto 12px;
@@ -681,14 +688,14 @@ label {
     background: var(--acento-bg); outline: 2px solid var(--acento-claro);
     box-shadow: inset 0 0 8px rgba(99,179,237,0.2), 0 0 8px rgba(99,179,237,0.25);
 }
-.salv-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #E6F1FF /*var(--color-texto-mute)*/; letter-spacing: 0.3px; flex: 1; }
+.salv-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--color-salv-label); letter-spacing: 0.3px; flex: 1; }
 .salv-dot { flex-shrink: 0; }
 
 /* Contenedor flechas + número */
 .salv-ajuste { display: flex; align-items: center; gap: 3px; margin-left: auto; }
 .salv-flechas { display: flex; flex-direction: column; gap: 0; }
 .salv-arrow {
-    background: none; border: none; color: #9A9A9A; cursor: pointer;
+    background: none; border: none; color: var(--color-tab-texto); cursor: pointer;
     font-size: 7px; padding: 0 2px; line-height: 1.1; border-radius: 2px;
     transition: color 0.12s, background 0.12s;
 }
@@ -733,7 +740,7 @@ label {
 .mod-valor::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .mod-valor.mod-override { background: rgba(237,137,54,0.1); border: 1.5px solid #ed8936; color: #c05621; }
 .fila-skill label { color: #2C2C2C; font-size: 12px; flex: 1; text-transform: none; letter-spacing: 0; cursor: pointer; }
-.fila-skill label small { color: #9A9A9A; font-weight: 400; }
+.fila-skill label small { color: var(--color-texto-hint); font-weight: 400; }
 .adv-toggle {
     width: 22px; height: 22px; border-radius: 5px; border: 1.5px solid #BBBBBB;
     background: var(--color-input); display: flex; align-items: center; justify-content: center;
@@ -792,7 +799,7 @@ label {
     line-height: 1.3;
 }
 .sentido-stat {
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     font-weight: 400;
     text-transform: none;
     font-size: 9px;
@@ -816,7 +823,7 @@ label {
     margin-top: 2px;
 }
 .sentidos-extra:focus { border-color: var(--color-borde); background: var(--color-input-focus); }
-.sentidos-extra::placeholder { color: #9A9A9A; font-style: italic; }
+.sentidos-extra::placeholder { color: var(--color-texto-hint); font-style: italic; }
 
 /* ===================================================
    TEXTAREAS
@@ -840,7 +847,7 @@ label {
 .hp-inputs { display: flex; align-items: center; gap: 2px; }
 .hp-inputs input { width: 62px; font-size: 20px; font-weight: 700; border: none; border-bottom: 2px solid #BBBBBB; text-align: center; background: transparent; color: #1A1A1A; outline: none; padding: 0 4px; }
 .hp-inputs input:focus { border-bottom-color: #4E4E4E; }
-.separador-hp { font-size: 16px; font-weight: 400; color: #BBBBBB; padding: 0 4px; }
+.separador-hp { font-size: 16px; font-weight: 400; color: var(--color-icono-suave); padding: 0 4px; }
 .barra-vida-contenedor { height: 12px; background: var(--color-hp-barra-fondo); border: 1px solid var(--color-input-borde); border-radius: 6px; overflow: hidden; position: relative; margin-bottom: 10px; }
 .barra-relleno { height: 100%; transition: width 0.3s ease, background-color 0.5s ease; position: absolute; top: 0; left: 0; }
 .barra-relleno.verde { background: var(--color-hp-lleno); z-index: 1; }
@@ -860,7 +867,7 @@ label {
 .btn-hp { border: none; color: white; font-weight: 700; font-size: 12px; padding: 5px 10px; border-radius: 5px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
 .btn-hp:hover { opacity: 0.85; }
 .btn-hp.daño { background: var(--color-peligro); }
-.btn-hp.cura { background: var(--color-exito); }
+.btn-hp.cura { background: #2F855A; }
 
 /* ===================================================
    RESISTENCIAS E INMUNIDADES
@@ -891,7 +898,7 @@ label {
 .dados-golpe, .salvaciones-muerte {
     flex: 1; margin-bottom: 0; min-width: 0; overflow: visible;
 }
-.dg-hint { font-size: 9px; color: #9A9A9A; text-align: center; margin-top: 4px; }
+.dg-hint { font-size: 9px; color: var(--color-texto-hint); text-align: center; margin-top: 4px; }
 /* Contenedor de grupos de dados de golpe */
 .dg-grupos-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2px; }
 /* Un grupo */
@@ -987,7 +994,7 @@ label {
 .dg-del-btn {
     background: none;
     border: none;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     font-size: 18px;
     cursor: pointer;
     padding: 0 2px;
@@ -1003,7 +1010,7 @@ label {
     background: rgba(49,130,206,0.1);
     border: 1.5px solid #63b3ed;
     border-radius: 6px;
-    color: #922B21;
+    color: #FFFFFF;
     font-size: 13px;
     font-weight: 700;
     width: 23px; height: 23px;
@@ -1237,7 +1244,7 @@ label {
 .moneda input { width: 100%; border: 1px solid; border-radius: 5px; padding: 4px; font-size: 13px; font-weight: 700; text-align: center; outline: none; }
 .moneda input:focus { filter: brightness(0.97); }
 
-.inventario-hint { font-size: 10px; color: #9A9A9A; margin-bottom: 4px; text-align: right; }
+.inventario-hint { font-size: 10px; color: var(--color-texto-hint); margin-bottom: 4px; text-align: right; }
 kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-borde); border-radius: 3px; padding: 1px 4px; font-family: monospace; font-size: 10px; }
 
 /* Grid: nombre | cant | descripción | equipado | sintonizado | borrar */
@@ -1275,13 +1282,13 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 .item-fila:hover { background: var(--color-sub-caja-hover); }
 .input-item      { border: none; outline: none; font-size: 12px; padding: 2px 3px; color: #2C2C2C; background: transparent; width: 100%; }
 .input-item-cant { border: none; outline: none; font-size: 12px; padding: 2px 3px; color: #2C2C2C; background: transparent; width: 100%; text-align: center; }
-.input-item-desc { border: none; outline: none; font-size: 11px; padding: 2px 3px; color: #9A9A9A; background: transparent; width: 100%; }
+.input-item-desc { border: none; outline: none; font-size: 11px; padding: 2px 3px; color: var(--color-texto-hint); background: transparent; width: 100%; }
 .input-item-desc.tiene-texto { color: #2C2C2C; }
 .input-item:focus, .input-item-cant:focus, .input-item-desc:focus { background: var(--color-input-focus); border-radius: 3px; }
 .item-fila input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; accent-color: #2C2C2C; justify-self: center; }
 .btn-borrar-item {
     width: 18px; height: 18px; border: none; background: transparent;
-    color: #BBBBBB; font-size: 15px; cursor: pointer; border-radius: 3px;
+    color: var(--color-icono-suave); font-size: 15px; cursor: pointer; border-radius: 3px;
     display: flex; align-items: center; justify-content: center;
     transition: color 0.15s, background 0.15s; padding: 0; line-height: 1; justify-self: center;
 }
@@ -1350,7 +1357,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border-bottom: none;
     border-radius: 6px 6px 0 0;
     background: var(--color-tab);
-    color: var(--color-texto-mute);
+    color: var(--color-tab-texto);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.3px;
@@ -1409,7 +1416,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 .arma-nombre-wrap { display: flex; align-items: center; gap: 5px; min-width: 0; }
 .arma-nombre-txt {
     font-size: 14px; cursor: pointer; flex-shrink: 0;
-    color: #9A9A9A; transition: color 0.15s, transform 0.1s;
+    color: var(--color-texto-hint); transition: color 0.15s, transform 0.1s;
     line-height: 1; user-select: none;
 }
 .arma-nombre-txt:hover { color: #C0392B; transform: scale(1.2); }
@@ -1489,7 +1496,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 
 /* ── Borrar fila ── */
 .btn-borrar-arma {
-    width: 18px; height: 18px; border: none; background: transparent; color: #BBBBBB; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: color 0.15s, background 0.15s; padding: 0; line-height: 1; flex-shrink: 0;
+    width: 18px; height: 18px; border: none; background: transparent; color: var(--color-icono-suave); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: color 0.15s, background 0.15s; padding: 0; line-height: 1; flex-shrink: 0;
 }
 .btn-borrar-arma:hover { color: var(--color-peligro); background: var(--color-peligro-bg); }
 
@@ -1633,7 +1640,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 }
 
 /* Damage bonus input in weapon row */
-.arma-daño-sep { font-size: 14px; font-weight: 700; color: #a0aec0; flex-shrink: 0; }
+.arma-daño-sep { font-size: 14px; font-weight: 700; color: var(--color-icono-suave); flex-shrink: 0; }
 .arma-bono-daño {
     width: 36px; border: 1px solid #cbd5e0; border-radius: 4px;
     padding: 2px 3px; font-size: 11px; text-align: center;
@@ -1713,7 +1720,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     background: var(--color-input-focus);
 }
 .caract-textarea::placeholder {
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     font-style: italic;
 }
 
@@ -1755,7 +1762,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border: 1px solid #D8D8D8;
     border-radius: 50%;
     background: transparent;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     font-size: 11px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
@@ -1912,7 +1919,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     background: transparent;
     font-size: 9px;
     font-weight: 800;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
     display: flex; align-items: center; justify-content: center;
@@ -1973,7 +1980,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 }
 .recurso-nombre:empty::before {
     content: attr(data-placeholder);
-    color: #BBBBBB;
+    color: var(--color-icono-suave);
     font-weight: 400;
 }
 .recurso-nombre:focus { background: var(--color-sub-caja); }
@@ -2052,7 +2059,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 }
 .spell-extra-label {
     font-size: 9px;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -2224,7 +2231,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border-radius: 6px;
     border: 1.5px solid var(--color-spell-borde);
     background: var(--color-spell-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23805ad5'/%3E%3C/svg%3E") no-repeat right 8px center;
-    color: var(--color-texto-pale);
+    color: var(--color-texto-hint);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -2645,7 +2652,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     pointer-events: none;
 }
 .apariencia-icono { font-size: 40px; line-height: 1; }
-.apariencia-texto { font-size: 11px; color: #9A9A9A; text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.apariencia-texto { font-size: 11px; color: var(--color-texto-hint); text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
 .apariencia-label-upload {
     position: absolute;
     inset: 0;
@@ -2697,7 +2704,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border-bottom: none;
     border-radius: 6px 6px 0 0;
     background: var(--color-tab);
-    color: var(--color-texto-mute);
+    color: var(--color-tab-texto);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -2713,7 +2720,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 .notas-tab.activo { background: var(--color-tab-activo); color: var(--color-texto); border-color: var(--color-borde); font-weight: 700; z-index: 2; }
 .notas-tab .notas-tab-cerrar {
     width: 14px; height: 14px; border-radius: 50%; border: none;
-    background: transparent; color: #9A9A9A; font-size: 11px;
+    background: transparent; color: var(--color-tab-texto); font-size: 11px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     padding: 0; line-height: 1; transition: background 0.15s, color 0.15s;
     flex-shrink: 0;
@@ -2729,7 +2736,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border: 1.5px dashed #BBBBBB;
     border-radius: 6px;
     background: transparent;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
@@ -2826,7 +2833,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border-radius: 5px 5px 0 0;
     cursor: pointer;
     font-size: 11px;
-    color: var(--color-texto-sub);
+    color: var(--color-tab-texto);
     position: relative;
     bottom: -1.5px;
     transition: background 0.12s, border-color 0.12s;
@@ -2864,7 +2871,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border-radius: 50%;
     border: none;
     background: transparent;
-    color: #9A9A9A;
+    color: var(--color-tab-texto);
     font-size: 11px;
     cursor: pointer;
     display: flex;
@@ -2883,9 +2890,9 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 .notas-subpag-add {
     padding: 2px 8px;
     background: transparent;
-    border: 1.5px dashed #9A9A9A;
+    border: 1.5px dashed var(--color-tab-texto);
     border-radius: 5px;
-    color: #707070;
+    color: var(--color-tab-texto);
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
@@ -3069,7 +3076,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 .multiclase-del {
     width: 18px; height: 18px;
     border: none; background: transparent;
-    color: #BBBBBB; font-size: 14px;
+    color: var(--color-icono-suave); font-size: 14px;
     cursor: pointer; border-radius: 3px;
     display: flex; align-items: center; justify-content: center;
     transition: color 0.15s; padding: 0; line-height: 1; flex-shrink: 0;
@@ -3335,7 +3342,7 @@ hr.sep-seccion {
 }
 .sc-school {
     font-size: 11px;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     font-style: italic;
 }
 .sc-grid {
@@ -3421,7 +3428,7 @@ hr.sep-seccion {
     padding: 5px 14px;
     font-size: 12px;
     font-weight: 600;
-    color: #707070;
+    color: var(--color-tab-texto);
     cursor: pointer;
     transition: background 0.12s, color 0.12s;
     max-width: 160px;
@@ -3432,7 +3439,7 @@ hr.sep-seccion {
 .mc-tab:hover { background: var(--color-tab-hover); color: var(--color-texto-med); }
 .mc-tab-activa {
     background: var(--color-tab-activo);
-    color: var(--color-spell-dark);
+    color: #7B241C;
     border-color: var(--color-spell-borde);
     border-bottom-color: var(--color-tab-activo);
     position: relative;
@@ -3816,7 +3823,7 @@ hr.sep-seccion {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     text-align: center;
 }
 .retrato-cab-label {
@@ -3892,6 +3899,12 @@ html.tema-oscuro {
     --color-texto-sub:  #7a9ab8;    /* Texto secundario */
     --color-texto-mute: #5a7a9a;    /* Texto atenuado */
     --color-texto-pale: #3a5a7a;    /* Texto muy pálido */
+    --color-texto-hint:   #9A9A9A;  /* Texto de ayuda / pistas */
+    --color-icono-suave:  #BBBBBB;  /* Iconos y botones × discretos */
+    --color-tab-texto:    #7a9ab8;  /* Texto de pestañas no seleccionadas */
+    --color-titulo-texto: #7a9ab8;  /* Texto de los títulos de sección */
+    --color-salv-label:   #E6F1FF;  /* Etiqueta «Salvación» */
+    --color-acento-texto: #F0705F;  /* Acento rojo legible sobre fondo oscuro */
 
     /* Fondos estructurales */
     --color-fondo:        #0d1117;  /* Fondo de página (escritorio) */
@@ -4850,7 +4863,7 @@ html.tema-oscuro .especie-dropdown-item.selected { color: #E74C3C; }
 }
 .dc-tipo {
     font-size: 10px;
-    color: #9A9A9A;
+    color: var(--color-texto-hint);
     font-style: italic;
     font-weight: 600;
     text-transform: uppercase;
@@ -4969,3 +4982,21 @@ html.tema-oscuro .dote-dropdown-item.selected { color: #E74C3C; }
     /* El log en touch se cierra con el botón × — no hover */
     .log-contenedor { max-height: 50vh; }
 }
+
+/* ── Repaso de contraste (tema oscuro): textos que quedaban casi invisibles sobre fondo azul oscuro ── */
+html.tema-oscuro .recurso-nombre,
+html.tema-oscuro .agotamiento-titulo,
+html.tema-oscuro .btn-añadir-arma:not(:hover),
+html.tema-oscuro .multiclase-add-btn:not(:hover) { color: var(--txt-muted); }
+html.tema-oscuro .hp-auto-label,
+html.tema-oscuro .muerte-icono.fallo,
+html.tema-oscuro .caract-mc-add:not(:hover),
+html.tema-oscuro .spell-nivel-titulo small,
+html.tema-oscuro .btn-slot-add:not(:hover),
+html.tema-oscuro .arma-btn-extra-daño:not(:hover),
+html.tema-oscuro .mc-del-btn:not(:hover) { color: var(--color-acento-texto); }
+html.tema-oscuro .dg-add-grupo-btn { color: var(--txt-strong); }
+/* Las tarjetas de dados de golpe conservan su fondo claro de color también en el tema oscuro:
+   sus etiquetas usan el color propio del tipo de dado para no perderse sobre ese fondo. */
+html.tema-oscuro .dg-grupo .dg-lbl { color: var(--dg-txt); }
+html.tema-oscuro .dg-grupo .dg-del-btn { color: var(--dg-txt); }

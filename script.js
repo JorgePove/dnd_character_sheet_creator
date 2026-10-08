@@ -1612,7 +1612,9 @@ function cargarDatosEnPanel(panel, d) {
             : [{ tipo: d.dgTipo || 'd8', total: d.dgTotal || '1', checks: d.dgChecks || [] }];
         grupos.forEach(gd => {
             const g = dgCrearGrupo(gd.tipo || 'd8', gd.total || '1');
-            if (gd.auto) g.dataset.auto = '1';
+            // Sin dato (fichas de versiones antiguas, donde TODOS los grupos los reconstruía la clase)
+            // se consideran gestionados por la clase; solo se respeta un «false» explícito.
+            if (gd.auto === undefined || gd.auto) g.dataset.auto = '1';
             wrap.appendChild(g);
             actualizarDadosGolpePanel(g.querySelector('.dg-total'));
             const chks = g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]');
@@ -3674,7 +3676,16 @@ function calcularHPMaxAuto(fichaPanel) {
     const conMod = _getConMod(fichaPanel);
     const nuevo  = calcularHPMax(mcs, conMod);
 
+    // Si el personaje tenía la vida llena (o la ficha estaba en blanco), se mantiene llena con el
+    // nuevo máximo; si estaba herido se respeta, sin pasar nunca del máximo.
+    const maxAnterior = parseInt(hpMaxInput.value) || 0;
     hpMaxInput.value = nuevo;
+    const hpActEl = fichaPanel.querySelector('.hp-actual');
+    if (hpActEl) {
+        const act = parseInt(hpActEl.value);
+        const estabaLleno = isNaN(act) || maxAnterior <= 0 || act >= maxAnterior;
+        if (estabaLleno || act > nuevo) hpActEl.value = nuevo;
+    }
     _hpAutoLabelVisible(fichaPanel, true);
     actualizarVidaPanel(hpMaxInput);
 }
@@ -3725,6 +3736,15 @@ function _sincronizarDadosGolpe(fichaPanel, mcs) {
     const grupos = Array.from(wrap.querySelectorAll('.dg-grupo'));
     const tipoDe = g => g.querySelector('.dg-tipo')?.value;
     const usados = new Set();   // grupos que ya cubren un tipo deseado
+
+    // Bloque d8 por defecto de una ficha vacía que no llegó marcado como «gestionado por la clase»
+    // (fichas guardadas con versiones antiguas): si es el único grupo, es un solo dado y nadie lo ha
+    // tocado a mano, es el marcador de la ficha en blanco → pasa a ser gestionado por la clase,
+    // de modo que se sustituye por el de la clase elegida en vez de quedarse al lado.
+    if (grupos.length === 1 && !grupos[0].dataset.auto && grupos[0].dataset.manual !== '1'
+        && tipoDe(grupos[0]) === 'd8' && (parseInt(grupos[0].querySelector('.dg-total')?.value) || 0) === 1) {
+        grupos[0].dataset.auto = '1';
+    }
 
     Object.entries(deseado).forEach(([tipo, total]) => {
         // 1º un grupo ya gestionado por las clases con ese tipo; 2º uno sin marcar con ese tipo

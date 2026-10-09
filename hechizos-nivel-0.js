@@ -107,8 +107,8 @@ const HECHIZOS_NIVEL_0 = [
     id: "green_flame_blade", n: "Green-Flame Blade [SCAG/TCE]",
     nivel: "Truco", escuela: "Evocación",
     casting: "1 acción", range: "Personal (5 pies)", components: "S, M (arma de 1 po+)", duration: "Instantáneo",
-    desc: "Ataque con arma cuerpo a cuerpo. Si impacta, salta fuego verde a otra criatura a 5 pies: daño = mod. de lanzamiento. Escala Nv.5: +1d8 al objetivo principal y +1d8+mod al secundario.",
-    damage: "Mod. de lanzamiento Fuego (escala)", extra: null
+    desc: "Ataque con arma cuerpo a cuerpo. Si impacta, salta fuego verde a otra criatura a 5 pies del objetivo, que sufre daño de fuego igual a tu mod. de lanzamiento. Escala: Nv.5 +1d8 al objetivo principal y 1d8+mod a la segunda; Nv.11 2d8 y 2d8+mod; Nv.17 3d8 y 3d8+mod.",
+    damage: "Extra Fuego: 1d8 (Nv.5), 2d8 (Nv.11), 3d8 (Nv.17) · 2.ª criatura: mod. de lanzamiento + los mismos dados", extra: null
   },
   {
     id: "guidance", n: "Guidance [PHB]",
@@ -163,8 +163,8 @@ const HECHIZOS_NIVEL_0 = [
     id: "magic_stone", n: "Magic Stone [XGE]",
     nivel: "Truco", escuela: "Transmutación",
     casting: "1 acción adicional", range: "Toque", components: "V, S", duration: "1 min",
-    desc: "Hasta 3 piedras pequeñas se vuelven mágicas. Puedes lanzarlas (30 pies, ataque a distancia con SAB) o con honda: 1d6+SAB contundente cada una. Pueden usarlas otras criaturas. Pierden la magia al golpear o al terminar la duración.",
-    damage: "1d6+SAB Contundente", extra: null
+    desc: "Hasta 3 piedras pequeñas se vuelven mágicas. Puedes lanzarlas (30 pies, ataque de conjuro a distancia) o con honda: 1d6 + tu mod. de lanzamiento contundente cada una. Pueden usarlas otras criaturas (con tu mod. de lanzamiento). Pierden la magia al golpear o al terminar la duración.",
+    damage: "1d6+mod Contundente", extra: null
   },
   {
     id: "mending", n: "Mending [PHB]",
@@ -331,8 +331,8 @@ const HECHIZOS_NIVEL_0 = [
     id: "true_strike", n: "True Strike [PHB]",
     nivel: "Truco", escuela: "Adivinación",
     casting: "1 acción", range: "Personal", components: "S", duration: "Conc. 1 turno",
-    desc: "PHB14: ventaja en el próximo ataque contra un objetivo visible a 30 pies. PHB24: ataque de conjuro cuerpo a cuerpo o distancia con SAB/INT/CAR: 1d6. Escala: 2d6 Nv.5, 3d6 Nv.11, 4d6 Nv.17.",
-    damage: "1d6 (PHB24, escala)", extra: null
+    desc: "PHB24: haces un ataque con un arma usando tu característica de lanzamiento para ataque y daño; el daño puede ser Radiante o el del arma. Escala: +1d6 Radiante en Nv.5, 2d6 en Nv.11, 3d6 en Nv.17. [PHB14: ventaja en tu próximo ataque contra un objetivo visible a 30 pies.]",
+    damage: "Extra Radiante: 1d6 (Nv.5), 2d6 (Nv.11), 3d6 (Nv.17)", extra: null
   },
   {
     id: "vicious_mockery", n: "Vicious Mockery [PHB]",

@@ -32,7 +32,7 @@ const HECHIZOS_NIVEL_1 = [
     nivel: "Nivel 1", escuela: "Abjuración",
     casting: "1 acción", range: "Personal", components: "V, S, M (copa de agua)", duration: "1 hora",
     desc: "Ganas 5 PG temporales. Mientras los tengas, quienes te golpeen en cuerpo a cuerpo reciben 5 de frío. Escala: +5 PG temp y +5 frío/nivel.",
-    damage: "5 Frío por golpe (escala)", extra: null
+    damage: "5 PG temporales + 5 Frío al atacante (+5 de cada por nivel)", extra: null
   },
   {
     id: "arms_of_hadar", n: "Arms of Hadar [PHB]",
@@ -94,8 +94,8 @@ const HECHIZOS_NIVEL_1 = [
     id: "chaos_bolt", n: "Chaos Bolt [XGE]",
     nivel: "Nivel 1", escuela: "Evocación",
     casting: "1 acción", range: "120 pies", components: "V, S", duration: "Instantáneo",
-    desc: "Ataque de conjuro a distancia: 2d8+1d6 de tipo aleatorio (d8 determina: ácido, rayo, fuego, frío, veneno, psíquico, trueno, fuerza). Si los dos d8 coinciden, salta a otro objetivo. Escala: +1d6/nivel.",
-    damage: "2d8+1d6 tipo aleatorio (escala)", extra: null
+    desc: "Ataque de conjuro a distancia: 2d8+1d6 de tipo aleatorio. Elige uno de los d8: su resultado decide el tipo (1 ácido, 2 frío, 3 fuego, 4 fuerza, 5 rayo, 6 veneno, 7 psíquico, 8 trueno). Si los dos d8 coinciden, salta a otra criatura a 30 pies. Escala: +1d6 por nivel.",
+    damage: "2d8+1d6 (el d8 elegido decide el tipo; +1d6/nivel)", extra: null
   },
   {
     id: "charm_person", n: "Charm Person [PHB]",
@@ -150,8 +150,8 @@ const HECHIZOS_NIVEL_1 = [
     id: "cure_wounds", n: "Cure Wounds [PHB]",
     nivel: "Nivel 1", escuela: "Evocación",
     casting: "1 acción", range: "Toque", components: "V, S", duration: "Instantáneo",
-    desc: "Criatura que tocas recupera 1d8 + mod. de lanzamiento PG. No tiene efecto en no-muertos ni constructos. Escala: +1d8/nivel.",
-    damage: "Cura 1d8+mod (escala)", extra: null
+    desc: "Criatura que tocas recupera 2d8 + mod. de lanzamiento PG [2014: 1d8]. No tiene efecto en no-muertos ni constructos. Escala: +2d8/nivel [2014: +1d8].",
+    damage: "Cura 2d8+mod (+2d8/nivel)", extra: null
   },
   {
     id: "detect_evil_and_good", n: "Detect Evil and Good [PHB]",
@@ -234,8 +234,8 @@ const HECHIZOS_NIVEL_1 = [
     id: "false_life", n: "False Life [PHB]",
     nivel: "Nivel 1", escuela: "Nigromancia",
     casting: "1 acción", range: "Personal", components: "V, S, M (alcohol)", duration: "1 hora",
-    desc: "Ganas 1d4+4 PG temporales. Escala: +5 PG temporales/nivel.",
-    damage: "1d4+4 PG temporales (escala)", extra: null
+    desc: "Ganas 2d4+4 PG temporales [2014: 1d4+4]. Escala: +5 PG temporales/nivel.",
+    damage: "2d4+4 PG temporales (+5/nivel)", extra: null
   },
   {
     id: "feather_fall", n: "Feather Fall [PHB]",
@@ -304,8 +304,8 @@ const HECHIZOS_NIVEL_1 = [
     id: "healing_word", n: "Healing Word [PHB]",
     nivel: "Nivel 1", escuela: "Evocación",
     casting: "1 acción adicional", range: "60 pies", components: "V", duration: "Instantáneo",
-    desc: "Criatura visible recupera 1d4 + mod. de lanzamiento PG. Escala: +1d4/nivel.",
-    damage: "Cura 1d4+mod (escala)", extra: null
+    desc: "Criatura visible recupera 2d4 + mod. de lanzamiento PG [2014: 1d4]. Escala: +2d4/nivel [2014: +1d4].",
+    damage: "Cura 2d4+mod (+2d4/nivel)", extra: null
   },
   {
     id: "hellish_rebuke", n: "Hellish Rebuke [PHB]",
@@ -332,8 +332,8 @@ const HECHIZOS_NIVEL_1 = [
     id: "hunter_mark", n: "Hunter's Mark [PHB]",
     nivel: "Nivel 1", escuela: "Adivinación",
     casting: "1 acción adicional", range: "90 pies", components: "V", duration: "Conc. 1 hora",
-    desc: "Marcas a una criatura. Tus ataques contra ella infligen +1d6 adicional. Ventaja en Percepción y Supervivencia para rastrearla. Si muere, puedes mover la marca. Escala: duración hasta 8h (Nv.3), 24h (Nv.5).",
-    damage: "+1d6 (escala duración)", extra: null
+    desc: "Marcas a una criatura. Tus ataques contra ella infligen +1d6 de fuerza adicional [2014: del tipo del arma]. Ventaja en Percepción y Supervivencia para rastrearla. Si muere, puedes mover la marca. Escala: duración hasta 8h (Nv.3), 24h (Nv.5).",
+    damage: "+1d6 Fuerza", extra: null
   },
   {
     id: "ice_knife", n: "Ice Knife [XGE]",
@@ -464,9 +464,9 @@ const HECHIZOS_NIVEL_1 = [
   {
     id: "sleep", n: "Sleep [PHB]",
     nivel: "Nivel 1", escuela: "Encantamiento",
-    casting: "1 acción", range: "90 pies", components: "V, S, M (arena fina/pétalos/grillo)", duration: "1 min",
-    desc: "Duerme a criaturas con menos PG totales. Pool de 5d8 PG; la criatura con menos PG duerme primero. No afecta a no-muertos o seres inmunes al encantamiento. Escala: +2d8/nivel.",
-    damage: "Pool de 5d8 PG (escala)", extra: null
+    casting: "1 acción", range: "90 pies", components: "V, S, M (arena fina/pétalos/grillo)", duration: "Conc. 1 min",
+    desc: "Criaturas en una esfera de 5 pies de radio (60 pies): salvación SAB. Si fallan quedan Incapacitadas hasta el final de su siguiente turno; si entonces fallan una segunda salvación quedan Inconscientes mientras dure. El daño o que otra criatura a 5 pies las zarandee con una acción las despierta. Quien no duerme (p. ej. elfos) o es inmune al agotamiento supera la salvación automáticamente. [2014: reserva de 5d8 PG, +2d8/nivel, sin salvación, 1 min sin concentración.]",
+    damage: "Sin daño (2024: salvación SAB)", extra: null
   },
   {
     id: "snare", n: "Snare [XGE]",
@@ -514,8 +514,8 @@ const HECHIZOS_NIVEL_1 = [
     id: "thunderous_smite", n: "Thunderous Smite [PHB]",
     nivel: "Nivel 1", escuela: "Evocación",
     casting: "1 acción adicional", range: "Personal", components: "V", duration: "Conc. 1 min",
-    desc: "Próximo impacto con arma: +2d6 trueno y salvación FUE o empujado 10 pies y tumbado. El golpe es audible a 300 pies.",
-    damage: "+2d6 Trueno", extra: null
+    desc: "Tu próximo impacto con arma (o ataque sin armas) cuerpo a cuerpo: +2d6 trueno; si el objetivo es una criatura, salvación FUE o es empujado 10 pies y queda Tumbado. El golpe se oye a 300 pies. Escala: +1d6/nivel [2014: sin escala].",
+    damage: "+2d6 Trueno (+1d6/nivel)", extra: null
   },
   {
     id: "thunderwave", n: "Thunderwave [PHB]",
@@ -542,8 +542,8 @@ const HECHIZOS_NIVEL_1 = [
     id: "wrathful_smite", n: "Wrathful Smite [PHB]",
     nivel: "Nivel 1", escuela: "Evocación",
     casting: "1 acción adicional", range: "Personal", components: "V", duration: "Conc. 1 min",
-    desc: "Próximo impacto con arma: +1d6 psíquico. Salvación SAB o queda Asustada de ti. Puede repetir la salvación al final de sus turnos.",
-    damage: "+1d6 Psíquico", extra: null
+    desc: "Próximo impacto con arma cuerpo a cuerpo: +1d6 necrótico [2014: psíquico]. Salvación SAB o queda Asustada de ti. Puede repetir la salvación al final de sus turnos. Escala: +1d6/nivel [2014: sin escala].",
+    damage: "+1d6 Necrótico (+1d6/nivel)", extra: null
   },
   {
     id: "zephyr_strike", n: "Zephyr Strike [XGE]",

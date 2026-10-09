@@ -52,8 +52,8 @@ const HECHIZOS_NIVEL_2 = [
     id: "arcane_vigor", n: "Arcane Vigor [PHB24]",
     nivel: "Nivel 2", escuela: "Abjuración",
     casting: "1 acción adicional", range: "Personal", components: "V, S", duration: "Instantáneo",
-    desc: "Canalizas magia para sanar tu cuerpo. Ganas PG temporales iguales a 2d6 + tu modificador de la característica de lanzamiento. Escala: +2d6 por nivel de conjuro adicional.",
-    damage: "2d6+mod PG temporales (escala)", extra: null
+    desc: "Canalizas magia para sanar tu cuerpo. Tiras 1 o 2 de tus Dados de Golpe sin gastar y recuperas PG iguales al total + tu mod. de lanzamiento; los dados quedan gastados. Es curación, no PG temporales. Escala: +1 dado por cada nivel de espacio por encima de 2.",
+    damage: "Cura: gasta 1-2 Dados de Golpe + mod. (+1 dado/nivel)", extra: null
   },
   {
     id: "augury", n: "Augury [PHB]",
@@ -207,7 +207,7 @@ const HECHIZOS_NIVEL_2 = [
     nivel: "Nivel 2", escuela: "Transmutación",
     casting: "1 acción", range: "30 pies", components: "V, S, M (pizca de hierro/polvo)", duration: "Conc. 1 min",
     desc: "Agrandar: dobla tamaño, +1d4 daño con armas. Reducir: mitad de tamaño, -1d4 daño, ventaja en Sigilo. Salvación CON si es involuntario.",
-    damage: "±1d4 (escala)", extra: null
+    damage: "Agrandar +1d4 / Reducir −1d4 al daño con armas", extra: null
   },
   {
     id: "enthrall", n: "Enthrall [PHB]",
@@ -270,7 +270,7 @@ const HECHIZOS_NIVEL_2 = [
     nivel: "Nivel 2", escuela: "Conjuración",
     casting: "1 acción adicional", range: "60 pies", components: "V, S", duration: "Conc. 1 min",
     desc: "Espíritu curativo en un espacio de 5 pies visible a 60 pies. Es invisible y ocupa su espacio. Criatura (no constructos/no-muertos) que empiece su turno o se mueva al espacio del espíritu: cura 1d6 PG. Puedes moverlo 30 pies como Acción Adicional. Usos: 1+mod de lanzamiento. Escala: +1d6/nivel.",
-    damage: "Cura 1d6 (escala)", extra: null
+    damage: "Cura 1d6 (+1d6/nivel)", extra: null
   },
   {
     id: "heat_metal", n: "Heat Metal [PHB]",
@@ -360,8 +360,8 @@ const HECHIZOS_NIVEL_2 = [
     id: "magic_weapon", n: "Magic Weapon [PHB]",
     nivel: "Nivel 2", escuela: "Transmutación",
     casting: "1 acción adicional", range: "Toque", components: "V, S", duration: "Conc. 1 hora",
-    desc: "Un arma no mágica se vuelve +1 mágica. Escala: +2 en Nv.4, +3 en Nv.6.",
-    damage: "+1/+2/+3 al arma (escala)", extra: null
+    desc: "Un arma no mágica se vuelve +1 mágica. Escala: +2 con un espacio de nivel 3-5 y +3 con nivel 6 o superior [2014: +2 en Nv.4, +3 en Nv.6].",
+    damage: "+1 al ataque y daño del arma (+2 con espacio 3-5, +3 con 6+)", extra: null
   },
   {
     id: "maximilians_earthen_grasp", n: "Maximilian's Earthen Grasp [XGE]",
@@ -374,8 +374,8 @@ const HECHIZOS_NIVEL_2 = [
     id: "melfs_acid_arrow", n: "Melf's Acid Arrow [PHB]",
     nivel: "Nivel 2", escuela: "Evocación",
     casting: "1 acción", range: "90 pies", components: "V, S, M (polvo de ruibarbo/hígado de víbora)", duration: "Instantáneo",
-    desc: "Ataque de conjuro a distancia: 4d4 ácido inmediato y 2d4 ácido al final de su siguiente turno. Si falla, la mitad de daño inmediato. Escala: +1d4 de cada parte/nivel.",
-    damage: "4d4+2d4 Ácido (escala)", extra: null
+    desc: "Ataque de conjuro a distancia: 4d4 ácido inmediato y 2d4 ácido al final de su siguiente turno. Si falla, la mitad del daño inmediato y nada después. Escala: +1d4 de cada parte/nivel.",
+    damage: "4d4 Ácido + 2d4 al final de su siguiente turno (+1d4 cada parte/nivel)", extra: null
   },
   {
     id: "mind_spike", n: "Mind Spike [PHB24]",
@@ -437,8 +437,8 @@ const HECHIZOS_NIVEL_2 = [
     id: "prayer_of_healing", n: "Prayer of Healing [PHB]",
     nivel: "Nivel 2", escuela: "Abjuración",
     casting: "10 minutos", range: "30 pies", components: "V", duration: "Instantáneo",
-    desc: "Hasta 6 criaturas visibles recuperan 2d8 + mod. de lanzamiento PG. No en combate. Escala: +1d8/nivel.",
-    damage: "Cura 2d8+mod (escala)", extra: null
+    desc: "Hasta 5 criaturas que permanezcan en alcance durante el lanzamiento (10 min) obtienen los beneficios de un descanso corto y recuperan 2d8 PG; no pueden volver a ser afectadas hasta un descanso largo. No sirve en combate. Escala: +1d8/nivel. [2014: hasta 6 criaturas, 2d8 + mod. de lanzamiento.]",
+    damage: "Cura 2d8 (+1d8/nivel)", extra: null
   },
   {
     id: "protection_from_poison", n: "Protection from Poison [PHB]",
@@ -480,7 +480,7 @@ const HECHIZOS_NIVEL_2 = [
     nivel: "Nivel 2", escuela: "Evocación",
     casting: "1 acción", range: "120 pies", components: "V, S", duration: "Instantáneo",
     desc: "Lanzas 3 rayos de fuego. Ataque de conjuro a distancia por cada rayo: 2d6 fuego. Puedes dirigirlos al mismo o distintos objetivos. Escala: +1 rayo/nivel.",
-    damage: "3 × 2d6 Fuego (escala)", extra: null
+    damage: "3 rayos × 2d6 Fuego (+1 rayo/nivel)", extra: null
   },
   {
     id: "see_invisibility", n: "See Invisibility [PHB]",
@@ -549,8 +549,8 @@ const HECHIZOS_NIVEL_2 = [
     id: "spiritual_weapon", n: "Spiritual Weapon [PHB]",
     nivel: "Nivel 2", escuela: "Evocación",
     casting: "1 acción adicional", range: "60 pies", components: "V, S", duration: "1 min",
-    desc: "Arma flotante de energía radiante. Acción Adicional para moverla 20 pies y atacar: ataque de conjuro cuerpo a cuerpo, 1d8 + mod. de lanzamiento radiante. Escala: +1d8 cada 2 niveles.",
-    damage: "1d8+mod Radiante (escala)", extra: null
+    desc: "Arma flotante de fuerza. Acción Adicional para moverla 20 pies y atacar: ataque de conjuro cuerpo a cuerpo, 1d8 + mod. de lanzamiento de fuerza. Escala: +1d8 por cada nivel sobre 2 [2014: +1d8 cada 2 niveles].",
+    damage: "1d8+mod Fuerza (+1d8/nivel)", extra: null
   },
   {
     id: "spray_of_cards", n: "Spray of Cards [BMT]",
@@ -570,8 +570,8 @@ const HECHIZOS_NIVEL_2 = [
     id: "summon_beast", n: "Summon Beast [TCE/PHB24]",
     nivel: "Nivel 2", escuela: "Conjuración",
     casting: "1 acción", range: "90 pies", components: "V, S, M (pluma/pelo/espina 200 po)", duration: "Conc. 1 hora",
-    desc: "Convocas un espíritu bestial que toma la forma de un animal de tu elección. Elige: Aéreo (vuelo 60p, ataque con pico), Acuático (nado 30p, ataque con aleta/mordisco), o Terrestre (escalar 30p, ataque con garra). Sus PG y ataques escalan con el nivel del conjuro. Escala: +1d8 daño cada 2 niveles.",
-    damage: "1d8+mod por ataque (escala)", extra: null
+    desc: "Convocas un espíritu bestial que toma la forma de un animal de tu elección. Elige: Aéreo (vuelo 60p, ataque con pico), Acuático (nado 30p, ataque con aleta/mordisco), o Terrestre (escalar 30p, ataque con garra). Multiataque: tantos ataques Rend como la mitad del nivel del espacio (redondeando abajo), con tu bono de ataque de conjuro; cada uno inflige 1d8 + 4 + nivel del espacio perforante. PG: 20 (aéreo) o 30 (acuático/terrestre) +5 por nivel sobre 2.",
+    damage: "Rend: 1d8+4+nivel Perforante · nº de ataques = mitad del nivel", extra: null
   },
   {
     id: "tashas_mind_whip", n: "Tasha's Mind Whip [TCE]",

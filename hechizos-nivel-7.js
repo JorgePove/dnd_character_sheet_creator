@@ -25,14 +25,14 @@ const HECHIZOS_NIVEL_7 = [
     nivel: "Nivel 7", escuela: "Evocación",
     casting: "1 acción", range: "150 pies", components: "V, S, M (bola de guano)", duration: "Conc. 1 min",
     desc: "Bola de luz brillante que puede retrasarse hasta 1 minuto. Al detonar (Acción o fin concentración): esfera 20 pies, salvación DES o 12d6 fuego, mitad si tiene éxito. Cada turno de espera: +1d6. Escala: +1d6/nivel.",
-    damage: "12d6+ Fuego (escala +1d6/turno espera)", extra: null
+    damage: "12d6 Fuego (+1d6/nivel, +1d6 por turno de espera)", extra: null
   },
   {
     id: "divine_word", n: "Divine Word [PHB]",
     nivel: "Nivel 7", escuela: "Evocación",
     casting: "1 acción adicional", range: "30 pies", components: "V", duration: "Instantáneo",
-    desc: "Criaturas que escuchen (salvación CAR): efectos por PG actuales: ≤10 → muertas; ≤20 → ceguera/sordera 1h; ≤30 → ensordecida 1 min; ≤50 → aturdida 1 min. Criaturas de otro plano: desterradas automáticamente.",
-    damage: "Efectos por PG / destierro automático", extra: null
+    desc: "Criaturas que elijas y oigan tu palabra (salvación CAR; si fallan), según sus PG actuales: 0-20 → mueren; 21-30 → cegadas, ensordecidas y aturdidas 1 hora; 31-40 → cegadas y ensordecidas 10 min; 41-50 → ensordecidas 1 min. Celestiales, elementales, feéricos y demonios que fallen son devueltos a su plano de origen y no pueden volver en 24 horas.",
+    damage: "Sin daño (efectos según los PG actuales)", extra: null
   },
   {
     id: "draconic_transformation", n: "Draconic Transformation [FTD]",
@@ -151,7 +151,7 @@ const HECHIZOS_NIVEL_7 = [
     nivel: "Nivel 7", escuela: "Transmutación",
     casting: "1 acción", range: "100 pies", components: "V, S, M (lodestone+polvo de hierro)", duration: "Conc. 1 min",
     desc: "Cilindro de 50 pies de radio, 100 pies de alto: todo no asegurado al suelo cae hacia arriba (hasta el techo del cilindro). Al expirar o finalizar concentración: daño de caída normal al descender.",
-    damage: "Daño de caída al terminar", extra: null
+    damage: "Sin daño propio (caída: daño por caída normal)", extra: null
   },
   {
     id: "sequester", n: "Sequester [PHB]",
@@ -178,8 +178,8 @@ const HECHIZOS_NIVEL_7 = [
     id: "symbol", n: "Symbol [PHB]",
     nivel: "Nivel 7", escuela: "Abjuración",
     casting: "1 minuto", range: "Toque", components: "V, S, M (mercurio/fósforo/diamante 1000 po)", duration: "Hasta disipar o activar",
-    desc: "Trampa mágica en superficie u objeto. Al activarse por condición elegida afecta a criaturas en 60 pies. Efectos disponibles: Muerte (10d10 necrótico, CON mitad), Discord (CAR o se atacan entre sí 1 min), Miedo (SAB o huyen 1 min), Agotamiento (CON o nivel 1 agot.), Locura (INT o acción aleatoria), Dolor (CON o incapacitado 1 min), Sueño (hasta 5d10×10 PG dormidos), Aturdimiento (SAB o aturdido 1 min).",
-    damage: "Varía por símbolo elegido", extra: null
+    desc: "Trampa mágica en una superficie u objeto. Al activarse por la condición elegida afecta a criaturas en 60 pies. Eliges un efecto: Muerte (CON: 10d10 necrótico, mitad en éxito), Discordia (SAB: 1 min discutiendo, desventaja en ataques y pruebas), Miedo (SAB: asustada 1 min), Dolor (CON: incapacitada 1 min), Sueño (SAB: inconsciente 10 min), Aturdimiento (SAB: aturdida 1 min). [2014: además Desesperanza y Locura.]",
+    damage: "Muerte: 10d10 Necrótico (salv. CON mitad); el resto sin daño", extra: null
   },
   {
     id: "teleport", n: "Teleport [PHB]",

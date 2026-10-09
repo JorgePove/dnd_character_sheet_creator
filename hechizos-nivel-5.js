@@ -17,8 +17,8 @@ const HECHIZOS_NIVEL_5 = [
     id: "animate_objects", n: "Animate Objects [PHB]",
     nivel: "Nivel 5", escuela: "Transmutación",
     casting: "1 acción", range: "120 pies", components: "V, S", duration: "Conc. 1 min",
-    desc: "Animas hasta 10 objetos no mágicos no llevados. Diminutos: 10 (1d4+4/ataque, +2 hit). Pequeños: 5 (1d8+2, +2). Medianos: 2 (2d6+2, +2). Grande: 1 (2d10+2, +2). Enorme: 1 (2d12+2, +2). Escala: +2 Diminutos/nivel.",
-    damage: "Varía por tamaño (escala)", extra: null
+    desc: "Animas objetos no mágicos no llevados (Constructos): como máximo tantos como tu mod. de lanzamiento; un objeto Mediano o menor cuenta 1, Grande 2 y Enorme 3. Acción Adicional para ordenarles. Golpe con tu bono de ataque de conjuro (alcance 5 pies), daño de fuerza: Mediano o menor 1d4+3, Grande 2d6+3+mod. de lanzamiento, Enorme 2d12+3+mod. PG: 10 / 20 / 40. Escala: el Golpe aumenta +1d4 / +1d6 / +1d12 por cada nivel sobre 5. [2014: hasta 10 objetos con estadísticas por tamaño de Diminuto a Enorme.]",
+    damage: "Golpe (ataque de conjuro): Mediano 1d4+3 · Grande 2d6+3+mod · Enorme 2d12+3+mod Fuerza", extra: null
   },
   {
     id: "antilife_shell", n: "Antilife Shell [PHB]",
@@ -136,8 +136,8 @@ const HECHIZOS_NIVEL_5 = [
     id: "danse_macabre", n: "Danse Macabre [XGE]",
     nivel: "Nivel 5", escuela: "Nigromancia",
     casting: "1 acción", range: "60 pies", components: "V, S", duration: "Conc. 1 hora",
-    desc: "Hasta 5 cadáveres Medianos o Pequeños se levantan como zombis o esqueletos bajo tu control. Como Acción Adicional puedes ordenarles atacar: ataque de conjuro cuerpo a cuerpo (+3 a golpear), 1d6+3 contundente/perforante. Cada turno puedes moverlos y ordenarles atacar. Escala: +2 no-muertos/nivel.",
-    damage: "1d6+3 por no-muerto (escala)", extra: null
+    desc: "Hasta 5 cadáveres Medianos o Pequeños se levantan como zombis o esqueletos bajo tu control. Como Acción Adicional puedes ordenarles atacar: cada criatura ataca según su ficha (esqueleto: espada corta/arco +4, 1d6+2 perforante; zombi: golpe +3, 1d6+1 contundente) y suma tu mod. de lanzamiento al ataque y al daño. Cada turno puedes moverlos y ordenarles atacar. Escala: +2 no-muertos/nivel.",
+    damage: "Esqueleto 1d6+2+mod · Zombi 1d6+1+mod", extra: null
   },
   {
     id: "dawn", n: "Dawn [XGE]",
@@ -283,8 +283,8 @@ const HECHIZOS_NIVEL_5 = [
     id: "mass_cure_wounds", n: "Mass Cure Wounds [PHB]",
     nivel: "Nivel 5", escuela: "Abjuración",
     casting: "1 acción", range: "60 pies", components: "V, S", duration: "Instantáneo",
-    desc: "Hasta 6 criaturas visibles en radio de 30 pies recuperan 3d8 + mod. de lanzamiento PG. Escala: +1d8/nivel.",
-    damage: "Cura 3d8+mod (escala)", extra: null
+    desc: "Hasta 6 criaturas visibles en radio de 30 pies recuperan 5d8 + mod. de lanzamiento PG [2014: 3d8]. Escala: +1d8/nivel.",
+    damage: "Cura 5d8+mod (+1d8/nivel)", extra: null
   },
   {
     id: "mislead", n: "Mislead [PHB]",
@@ -367,8 +367,8 @@ const HECHIZOS_NIVEL_5 = [
     id: "songals_elemental_suffusion", n: "Songal's Elemental Suffusion [FRHoF]",
     nivel: "Nivel 5", escuela: "Transmutación",
     casting: "1 acción", range: "Personal", components: "V, S, M (fragmento del plano elemental correspondiente)", duration: "Conc. 1 min",
-    desc: "Te impregnas de energía de un tipo elemental elegido (aire, tierra, fuego o agua). Ganas resistencia al tipo de daño asociado (rayo, contundente, fuego o frío). Tus ataques de arma infligen +2d6 del tipo de daño elegido. Además, obtienes un beneficio adicional: vuelo 30 pies (aire), velocidad de excavación 30 pies (tierra), resistencia al fuego e inmunidad al daño de fuego (fuego), o velocidad de natación 60 pies y respiración acuática (agua). Escala: +1d6/nivel.",
-    damage: "+2d6 elemental en ataques (escala)", extra: null
+    desc: "Eliges ácido, frío, fuego, rayo o trueno y ganas resistencia a ese tipo. Pulso elemental: al lanzarlo y al inicio de cada uno de tus turnos, emanación de 15 pies; las criaturas que elijas hacen salvación DES: si fallan sufren 2d6 del tipo elegido y quedan Tumbadas; si superan, la mitad y no caen. Ganas velocidad de vuelo de 30 pies (puedes flotar). Componente: perla de 100 po.",
+    damage: "Pulso 2d6 (tipo elegido, salv. DES mitad)", extra: null
   },
   {
     id: "steel_wind_strike", n: "Steel Wind Strike [XGE]",
@@ -388,8 +388,8 @@ const HECHIZOS_NIVEL_5 = [
     id: "summon_dragon", n: "Summon Dragon [FTD]",
     nivel: "Nivel 5", escuela: "Conjuración",
     casting: "1 acción", range: "60 pies", components: "V, S, M (escamas de dragón 500 po)", duration: "Conc. 1 hora",
-    desc: "Convocas un espíritu dracónico que adopta una forma física. Puedes elegir el tipo de dragón (cromatico, metálico o gema). Sus estadísticas y daño de aliento escalan con el nivel del espacio de conjuro usado. Te obedece y actúa en su propia iniciativa.",
-    damage: "Aliento escala con nivel", extra: null
+    desc: "Convocas un espíritu dracónico que adopta una forma física. Puedes elegir el tipo de dragón (cromatico, metálico o gema). Multiataque: tantos ataques Rend como la mitad del nivel del espacio (redondeando abajo) y además usa Aliento. Rend: tu bono de ataque de conjuro, alcance 10 pies, 1d6 + 4 + nivel del espacio perforante. Aliento (cono de 30 pies): salvación DES, 2d6 de un tipo a elegir al lanzar, mitad en éxito. PG: 50 +10 por nivel sobre 5. Te obedece y actúa en su propia iniciativa.",
+    damage: "Rend 1d6+4+nivel Perforante · Aliento 2d6 (salv. DES mitad)", extra: null
   },
   {
     id: "swift_quiver", n: "Swift Quiver [PHB]",

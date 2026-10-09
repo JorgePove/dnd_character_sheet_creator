@@ -214,7 +214,7 @@
     background: var(--color-input, #EBEBEB);
     border: 1px solid var(--color-input-borde, #BBBBBB);
     border-radius: var(--r-sm, 5px);
-    color: var(--color-exito, #38a169);
+    color: #18703F;
     font-size: 12px;
     font-weight: 700;
     text-align: center;

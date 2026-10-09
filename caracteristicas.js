@@ -76,6 +76,28 @@ function _rasgosTxt(arr, nivelMax) {
     return filtrado.map(r => `[Nv.${r.nv}] ${r.n}: ${r.d}`).join('\n\n');
 }
 
+/* Ajusta el texto de rasgos al cambiar de nivel SIN borrar lo que el jugador haya escrito:
+   · al subir, añade al final solo los rasgos de los niveles nuevos (si no están ya);
+   · al bajar, quita únicamente los bloques sin editar de los niveles que se pierden. */
+function _rasgosAjustarNivel(texto, arr, nvViejo, nvNuevo) {
+    let t = texto || '';
+    if (!arr || !arr.length || !nvViejo || !nvNuevo || nvViejo === nvNuevo) return t;
+    const bloque = r => `[Nv.${r.nv}] ${r.n}: ${r.d}`;
+    const nv = r => r.nv || 1;
+    if (nvNuevo > nvViejo) {
+        const nuevos = arr.filter(r => nv(r) > nvViejo && nv(r) <= nvNuevo && !t.includes(`[Nv.${r.nv}] ${r.n}:`));
+        if (nuevos.length) t = (t.trim() ? t.replace(/\s+$/, '') + '\n\n' : '') + nuevos.map(bloque).join('\n\n');
+    } else {
+        let cambio = false;
+        arr.filter(r => nv(r) > nvNuevo && nv(r) <= nvViejo).forEach(r => {
+            const b = bloque(r);
+            if (t.includes(b)) { t = t.replace(b, () => ''); cambio = true; }
+        });
+        if (cambio) t = t.replace(/\n{3,}/g, '\n\n').trim();
+    }
+    return t;
+}
+
 function _especieTxt(arr) {
     if (!arr || !arr.length) return '';
     return arr.map(r => `${r.n}: ${r.d}`).join('\n\n');
@@ -205,6 +227,215 @@ const _STAT_KEY = {
 };
 
 /* ══════════════════════════════════════════════════════════════
+   ORDEN ALFABÉTICO Y BÚSQUEDA EN DESPLEGABLES
+   · _ordenES: orden alfabético en español (Ñ, tildes…).
+   · hacerSelectBuscable(select): sustituye a la vista un <select> por un desplegable con
+     cuadro de búsqueda. El <select> original sigue siendo la fuente de verdad (su .value,
+     sus eventos "change" y los atributos onchange funcionan igual que siempre).
+   · _ddAnadirBuscador: añade el cuadro de búsqueda a los desplegables propios (especie, dotes).
+══════════════════════════════════════════════════════════════ */
+const _ordenES = (a, b) => String(a).localeCompare(String(b), 'es', { sensitivity: 'base' });
+const _normBusq = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const _coincideBusq = (texto, consulta) => {
+    const palabras = _normBusq(consulta).split(/\s+/).filter(Boolean);
+    const t = _normBusq(texto);
+    return palabras.every(w => t.includes(w));
+};
+
+function hacerSelectBuscable(sel) {
+    if (!sel || sel._sb || !sel.parentNode) return;
+    sel._sb = true;
+    const aspecto = ['cab-select', 'caract-select', 'multiclase-sel'].filter(c => sel.classList.contains(c));
+    const wrap = document.createElement('div');
+    wrap.className = 'sb-wrap';
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'sb-trigger ' + aspecto.join(' ');
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+    wrap.appendChild(trigger);
+    sel.parentNode.insertBefore(wrap, sel);
+    sel.classList.add('sb-oculto');
+
+    const refrescar = () => {
+        const o = sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
+        const txt = o ? o.textContent : '';
+        trigger.textContent = txt;
+        trigger.title = txt;
+        trigger.classList.toggle('sb-sin-valor', !sel.value);
+    };
+    // El resto del programa asigna select.value / selectedIndex por código (sin evento): se refleja aquí
+    const dV = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    const dI = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'selectedIndex');
+    Object.defineProperty(sel, 'value', { configurable: true, get() { return dV.get.call(this); }, set(v) { dV.set.call(this, v); refrescar(); } });
+    Object.defineProperty(sel, 'selectedIndex', { configurable: true, get() { return dI.get.call(this); }, set(v) { dI.set.call(this, v); refrescar(); } });
+    sel.addEventListener('change', refrescar);
+    new MutationObserver(refrescar).observe(sel, { childList: true, subtree: true, attributes: true, attributeFilter: ['selected'] });
+    refrescar();
+    sel._sbRefrescar = refrescar;
+
+    let panel = null, inp = null, lista = null, activo = -1;
+    const visibles = () => lista ? [...lista.querySelectorAll('.sb-item')] : [];
+
+    function marcarActivo(i, desplazar) {
+        const v = visibles();
+        v.forEach(el => el.classList.remove('activo'));
+        activo = v.length ? Math.max(0, Math.min(i, v.length - 1)) : -1;
+        if (activo >= 0) {
+            const el = v[activo];
+            el.classList.add('activo');
+            if (desplazar) {   // desplazamiento manual de la lista (scrollIntoView movería también la página)
+                const arriba = el.offsetTop, abajo = arriba + el.offsetHeight;
+                if (arriba < lista.scrollTop) lista.scrollTop = arriba;
+                else if (abajo > lista.scrollTop + lista.clientHeight) lista.scrollTop = abajo - lista.clientHeight;
+            }
+        }
+    }
+    function construir(q) {
+        lista.innerHTML = '';
+        const hayConsulta = !!_normBusq(q).trim();
+        const addItem = (o, destino) => {
+            if (hayConsulta && (!o.value || !_coincideBusq(o.textContent, q))) return false;
+            const it = document.createElement('div');
+            it.className = 'sb-item' + (o.value === sel.value ? ' sel' : '') + (!o.value ? ' sb-item-vacio' : '');
+            it.setAttribute('role', 'option');
+            it.setAttribute('aria-selected', o.value === sel.value ? 'true' : 'false');
+            it.dataset.valor = o.value;
+            it.textContent = o.textContent;
+            it.addEventListener('mousedown', e => e.preventDefault());
+            it.addEventListener('click', () => elegir(o.value));
+            it.addEventListener('mousemove', () => { const i = visibles().indexOf(it); if (i !== activo) marcarActivo(i, false); });
+            destino.appendChild(it);
+            return true;
+        };
+        let total = 0;
+        [...sel.children].forEach(ch => {
+            if (ch.tagName === 'OPTGROUP') {
+                const cab = document.createElement('div');
+                cab.className = 'sb-grupo'; cab.textContent = ch.label;
+                const tmp = document.createDocumentFragment();
+                let n = 0;
+                [...ch.children].forEach(o => { if (addItem(o, tmp)) n++; });
+                if (n) { lista.appendChild(cab); lista.appendChild(tmp); total += n; }
+            } else if (ch.tagName === 'OPTION') {
+                if (addItem(ch, lista)) total++;
+            }
+        });
+        if (!total) {
+            const v = document.createElement('div');
+            v.className = 'sb-sin-resultados'; v.textContent = 'Sin resultados';
+            lista.appendChild(v);
+        }
+        const selIdx = visibles().findIndex(el => el.classList.contains('sel'));
+        marcarActivo(hayConsulta ? 0 : Math.max(selIdx, 0), !hayConsulta);
+    }
+    function posicionar() {
+        const r = trigger.getBoundingClientRect();
+        panel.style.minWidth = Math.max(r.width, 200) + 'px';
+        const ancho = panel.offsetWidth || 220;
+        panel.style.left = Math.max(8, Math.min(r.left, window.innerWidth - ancho - 8)) + 'px';
+        const abajo = window.innerHeight - r.bottom - 12, arriba = r.top - 12;
+        if (abajo < 240 && arriba > abajo) {
+            panel.style.top = 'auto'; panel.style.bottom = (window.innerHeight - r.top + 2) + 'px';
+            lista.style.maxHeight = Math.max(120, Math.min(300, arriba - 50)) + 'px';
+        } else {
+            panel.style.bottom = 'auto'; panel.style.top = (r.bottom + 2) + 'px';
+            lista.style.maxHeight = Math.max(120, Math.min(300, abajo - 50)) + 'px';
+        }
+    }
+    function elegir(valor) {
+        cerrar();
+        if (sel.value !== valor) {
+            sel.value = valor;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        trigger.focus();
+    }
+    const fuera = e => { if (panel && !panel.contains(e.target) && !trigger.contains(e.target)) cerrar(); };
+    const alDesplazar = e => { if (panel && !panel.contains(e.target)) cerrar(); };
+    function cerrar() {
+        if (!panel) return;
+        panel.remove(); panel = inp = lista = null; activo = -1;
+        trigger.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('mousedown', fuera, true);
+        window.removeEventListener('scroll', alDesplazar, true);
+        window.removeEventListener('resize', cerrar);
+    }
+    function abrir() {
+        if (panel) { cerrar(); return; }
+        refrescar();
+        panel = document.createElement('div');
+        panel.className = 'sb-panel';
+        inp = document.createElement('input');
+        inp.type = 'text'; inp.className = 'sb-buscar'; inp.placeholder = 'Buscar…';
+        inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', 'Buscar');
+        lista = document.createElement('div');
+        lista.className = 'sb-lista'; lista.setAttribute('role', 'listbox');
+        panel.appendChild(inp); panel.appendChild(lista);
+        panel.style.visibility = 'hidden';
+        document.body.appendChild(panel);
+        trigger.setAttribute('aria-expanded', 'true');
+        construir('');
+        posicionar();
+        panel.style.visibility = '';
+        inp.addEventListener('input', () => construir(inp.value));
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown') { e.preventDefault(); marcarActivo(activo + 1, true); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); marcarActivo(activo - 1, true); }
+            else if (e.key === 'Enter') { e.preventDefault(); const v = visibles()[activo]; if (v) elegir(v.dataset.valor); }
+            else if (e.key === 'Escape') { e.preventDefault(); cerrar(); trigger.focus(); }
+            else if (e.key === 'Tab') { cerrar(); }
+        });
+        document.addEventListener('mousedown', fuera, true);
+        window.addEventListener('resize', cerrar);
+        inp.focus({ preventScroll: true });
+        // El desplazamiento de la página cierra el desplegable (se ignora el que provoca la propia apertura)
+        setTimeout(() => { if (panel) window.addEventListener('scroll', alDesplazar, true); }, 150);
+    }
+    trigger.addEventListener('click', abrir);
+    trigger.addEventListener('keydown', e => {
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !panel) { e.preventDefault(); abrir(); }
+    });
+    sel._sbCerrar = cerrar;
+}
+
+/* Cuadro de búsqueda dentro de un desplegable propio (listbox con .xxx-dropdown-item y, opcional, etiquetas de grupo) */
+function _ddAnadirBuscador(wrapper, listbox, claseGrupo) {
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.className = 'dd-buscar'; inp.placeholder = 'Buscar…';
+    inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('aria-label', 'Buscar');
+    listbox.insertBefore(inp, listbox.firstChild);
+    const vacio = document.createElement('div');
+    vacio.className = 'sb-sin-resultados'; vacio.textContent = 'Sin resultados'; vacio.style.display = 'none';
+    listbox.appendChild(vacio);
+    const items = () => [...listbox.children].filter(c => c !== inp && c !== vacio && !(claseGrupo && c.classList.contains(claseGrupo)));
+    const filtrar = () => {
+        let grupo = null, total = 0;
+        const grupos = [];
+        [...listbox.children].forEach(el => {
+            if (el === inp || el === vacio) return;
+            if (claseGrupo && el.classList.contains(claseGrupo)) { grupo = { el, n: 0 }; grupos.push(grupo); return; }
+            const ok = _coincideBusq(el.textContent, inp.value);
+            el.style.display = ok ? '' : 'none';
+            if (ok) { total++; if (grupo) grupo.n++; }
+        });
+        grupos.forEach(g => { g.el.style.display = g.n ? '' : 'none'; });
+        vacio.style.display = total ? 'none' : '';
+    };
+    inp.addEventListener('input', filtrar);
+    inp.addEventListener('click', e => e.stopPropagation());
+    inp.addEventListener('keydown', e => {
+        e.stopPropagation();
+        if (e.key === 'Enter') { e.preventDefault(); const p = items().find(el => el.style.display !== 'none'); if (p) p.click(); }
+        else if (e.key === 'Escape') { wrapper.classList.remove('open'); wrapper.querySelector('button')?.focus(); }
+    });
+    // Al abrir el desplegable: limpiar el filtro y dejar el cursor en el buscador
+    new MutationObserver(() => {
+        if (wrapper.classList.contains('open')) { inp.value = ''; filtrar(); listbox.scrollTop = 0; inp.focus({ preventScroll: true }); }
+    }).observe(wrapper, { attributes: true, attributeFilter: ['class'] });
+}
+
+/* ══════════════════════════════════════════════════════════════
    5. initCaractSelectores — poblar todos los <select> de la ficha
 ══════════════════════════════════════════════════════════════ */
 function initCaractSelectores(panel) {
@@ -213,7 +444,7 @@ function initCaractSelectores(panel) {
     const selClase = panel.querySelector('.sel-clase');
     if (selClase) {
         selClase.innerHTML = '<option value="">— Selecciona una clase —</option>';
-        Object.keys(DND_CLASES).forEach(c => {
+        Object.keys(DND_CLASES).sort(_ordenES).forEach(c => {
             const opt = document.createElement('option');
             opt.value = c; opt.textContent = c;
             selClase.appendChild(opt);
@@ -232,7 +463,7 @@ function initCaractSelectores(panel) {
     if (selEspecieNativo && typeof DND_ESPECIES !== 'undefined') {
         // Poblar el select nativo con todas las opciones (necesario para que .value se pueda asignar)
         selEspecieNativo.innerHTML = '<option value="">— Selecciona una especie —</option>';
-        Object.keys(DND_ESPECIES).forEach(e => {
+        Object.keys(DND_ESPECIES).sort(_ordenES).forEach(e => {
             const opt = document.createElement('option');
             opt.value = e; opt.textContent = e;
             selEspecieNativo.appendChild(opt);
@@ -253,7 +484,7 @@ function initCaractSelectores(panel) {
             const listbox = document.createElement('div');
             listbox.className = 'especie-dropdown-listbox';
 
-            Object.keys(DND_ESPECIES).forEach(nombreEspecie => {
+            Object.keys(DND_ESPECIES).sort(_ordenES).forEach(nombreEspecie => {
                 const item = document.createElement('div');
                 item.className = 'especie-dropdown-item';
                 item.dataset.especieName = nombreEspecie;
@@ -303,6 +534,7 @@ function initCaractSelectores(panel) {
                 if (!estaAbierto) wrapper.classList.add('open');
             });
 
+            _ddAnadirBuscador(wrapper, listbox, null);
             wrapper.appendChild(trigger);
             wrapper.appendChild(listbox);
             selEspecieNativo.parentElement.insertBefore(wrapper, selEspecieNativo);
@@ -349,7 +581,7 @@ function initCaractSelectores(panel) {
                 groupLabel.textContent = etq;
                 listbox.appendChild(groupLabel);
 
-                dotes.forEach(d => {
+                dotes.slice().sort((a, b) => _ordenES(a.n, b.n)).forEach(d => {
                     const item = document.createElement('div');
                     item.className = 'dote-dropdown-item';
                     item.dataset.doteName = d.n;
@@ -390,6 +622,7 @@ function initCaractSelectores(panel) {
                 if (!estaAbierto) wrapper.classList.add('open');
             });
 
+            _ddAnadirBuscador(wrapper, listbox, 'dote-dropdown-group-label');
             wrapper.appendChild(trigger);
             wrapper.appendChild(listbox);
 
@@ -408,7 +641,7 @@ function initCaractSelectores(panel) {
         optCustom.textContent = '✦ Personalizado';
         selTf.appendChild(optCustom);
         if (typeof DND_TRASFONDOS !== 'undefined') {
-            Object.keys(DND_TRASFONDOS).forEach(t => {
+            Object.keys(DND_TRASFONDOS).sort(_ordenES).forEach(t => {
                 if (t === 'Personalizado') return; // evitar duplicado con ✦ Personalizado
                 const opt = document.createElement('option');
                 opt.value = t; opt.textContent = t;
@@ -420,6 +653,11 @@ function initCaractSelectores(panel) {
     // ── Trasfondo personalizado: selectores internos ───────────
     _initTrasfondoPersonalizado(panel);
     if (typeof _poblarSelectoresCabecera === 'function') _poblarSelectoresCabecera(panel);
+    // Desplegables con buscador (los datos ya están ordenados alfabéticamente)
+    hacerSelectBuscable(panel.querySelector('.sel-trasfondo'));
+    hacerSelectBuscable(panel.querySelector('.sel-especie-cab'));
+    hacerSelectBuscable(panel.querySelector('.sel-trasfondo-cab'));
+    hacerSelectBuscable(panel.querySelector('.tf-dote-sel'));
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -438,7 +676,7 @@ function onClaseChange(sel) {
     if (selSub) {
         selSub.innerHTML = '<option value="">— Selecciona una subclase —</option>';
         if (claseKey && DND_CLASES[claseKey]) {
-            Object.keys(DND_CLASES[claseKey].subclases || {}).forEach(sub => {
+            Object.keys(DND_CLASES[claseKey].subclases || {}).sort(_ordenES).forEach(sub => {
                 const opt = document.createElement('option');
                 opt.value = sub; opt.textContent = sub;
                 selSub.appendChild(opt);
@@ -680,7 +918,7 @@ function _initTrasfondoPersonalizado(panel) {
             Object.entries(grupos).forEach(([etq, dotes]) => {
                 const grp = document.createElement('optgroup');
                 grp.label = etq;
-                dotes.forEach(d => {
+                dotes.slice().sort((a, b) => _ordenES(a.n, b.n)).forEach(d => {
                     const opt = document.createElement('option');
                     opt.value = d.n; opt.textContent = d.n;
                     grp.appendChild(opt);
@@ -790,17 +1028,19 @@ function _mcCrearPagina(panel, idx, datos) {
         nivelSel.appendChild(opt);
     }
     if (datos?.nivel) nivelSel.value = datos.nivel;
+    nivelSel.dataset.prev = nivelSel.value;
     nivelSel.addEventListener('change', () => {
         const claseKey = selClase.value;
         const subKey   = selSubclase.value;
         const nivelMax = parseInt(nivelSel.value) || 1;
-        // Refrescar textarea de clase con filtro de nivel
+        const nivelAntes = parseInt(nivelSel.dataset.prev) || nivelMax;
+        nivelSel.dataset.prev = String(nivelMax);
+        // Subir/bajar de nivel añade o quita solo los rasgos de esos niveles; las notas escritas se respetan
         if (claseKey && DND_CLASES?.[claseKey]) {
-            taClase.value = _rasgosTxt(DND_CLASES[claseKey].rasgos, nivelMax);
+            taClase.value = _rasgosAjustarNivel(taClase.value, DND_CLASES[claseKey].rasgos, nivelAntes, nivelMax);
         }
-        // Refrescar textarea de subclase con filtro de nivel
         if (claseKey && subKey && DND_CLASES?.[claseKey]?.subclases?.[subKey]) {
-            taSubclase.value = _rasgosTxt(DND_CLASES[claseKey].subclases[subKey], nivelMax);
+            taSubclase.value = _rasgosAjustarNivel(taSubclase.value, DND_CLASES[claseKey].subclases[subKey], nivelAntes, nivelMax);
         }
         if (typeof syncWidgetsInfToSup === 'function') syncWidgetsInfToSup(panel);
         if (typeof multiclaseActualizar === 'function') multiclaseActualizar(panel);
@@ -828,7 +1068,7 @@ function _mcCrearPagina(panel, idx, datos) {
     selClase.className = 'caract-select sel-clase mc-sel-clase';
     selClase.innerHTML = '<option value="">— Selecciona una clase —</option>';
     if (typeof DND_CLASES !== 'undefined') {
-        Object.keys(DND_CLASES).forEach(c => {
+        Object.keys(DND_CLASES).sort(_ordenES).forEach(c => {
             const opt = document.createElement('option');
             opt.value = c; opt.textContent = c;
             selClase.appendChild(opt);
@@ -851,7 +1091,7 @@ function _mcCrearPagina(panel, idx, datos) {
         // Reconstruir subclase select
         selSubclase.innerHTML = '<option value="">— Selecciona una subclase —</option>';
         if (claseKey && DND_CLASES?.[claseKey]?.subclases) {
-            Object.keys(DND_CLASES[claseKey].subclases).forEach(sub => {
+            Object.keys(DND_CLASES[claseKey].subclases).sort(_ordenES).forEach(sub => {
                 const opt = document.createElement('option');
                 opt.value = sub; opt.textContent = sub;
                 selSubclase.appendChild(opt);
@@ -889,7 +1129,7 @@ function _mcCrearPagina(panel, idx, datos) {
     // Si restaurando con clase ya seleccionada, poblar subclases
     if (datos?.clase && DND_CLASES?.[datos.clase]?.subclases) {
         selSubclase.innerHTML = '<option value="">— Selecciona una subclase —</option>';
-        Object.keys(DND_CLASES[datos.clase].subclases).forEach(sub => {
+        Object.keys(DND_CLASES[datos.clase].subclases).sort(_ordenES).forEach(sub => {
             const opt = document.createElement('option');
             opt.value = sub; opt.textContent = sub;
             selSubclase.appendChild(opt);
@@ -920,6 +1160,7 @@ function _mcCrearPagina(panel, idx, datos) {
     };
 
     selSubWrap.appendChild(selSubclase);
+    hacerSelectBuscable(selSubclase);
     ladoSub.appendChild(hSub);
     ladoSub.appendChild(selSubWrap);
     ladoSub.appendChild(taSubclase);

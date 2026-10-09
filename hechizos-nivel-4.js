@@ -214,7 +214,7 @@ const HECHIZOS_NIVEL_4 = [
     nivel: "Nivel 4", escuela: "Conjuración",
     casting: "1 acción", range: "30 pies", components: "V", duration: "8 horas",
     desc: "Guardián espectral luminoso de 10 pies que flota en un espacio vacío. Criaturas hostiles a 10 pies: salvación DES o 20 radiante, mitad si tienen éxito. Desaparece tras infligir 60 de daño total.",
-    damage: "20 Radiante (salvación)", extra: null
+    damage: "20 Radiante (salv. DES, mitad)", extra: null
   },
   {
     id: "guardian_of_nature", n: "Guardian of Nature [XGE]",
@@ -318,15 +318,15 @@ const HECHIZOS_NIVEL_4 = [
     id: "spirit_of_death", n: "Spirit of Death [BMT]",
     nivel: "Nivel 4", escuela: "Nigromancia",
     casting: "1 acción", range: "60 pies", components: "V, S, M (un fragmento de hueso)", duration: "Conc. 1 hora",
-    desc: "Convocas un espíritu de la muerte en forma de Reaper Espectral en un espacio visible a 60 pies. Sus estadísticas escalan con el nivel del espacio usado. Te obedece y actúa en su turno de iniciativa, pudiendo atacar, maldecir y drenar la vida de sus objetivos. Escala: +1d12 a sus ataques/nivel.",
-    damage: "Daño de su ataque escalable", extra: null
+    desc: "Convocas un espíritu de la muerte en forma de Reaper Espectral en un espacio visible a 60 pies. Sus estadísticas escalan con el nivel del espacio usado. Te obedece y actúa en su turno de iniciativa, pudiendo atacar, maldecir y drenar la vida de sus objetivos. Multiataque: tantos ataques de guadaña como la mitad del nivel del espacio (redondeando abajo), con tu bono de ataque de conjuro y ventaja; cada uno inflige 1d8 + 3 + nivel del espacio necrótico. PG: 40 +10 por nivel sobre 4.",
+    damage: "Guadaña: 1d8+3+nivel Necrótico (con ventaja) · ataques = mitad del nivel", extra: null
   },
   {
     id: "staggering_smite", n: "Staggering Smite [PHB]",
     nivel: "Nivel 4", escuela: "Encantamiento",
     casting: "1 acción adicional", range: "Personal", components: "V", duration: "Conc. 1 min",
-    desc: "Próximo impacto con arma: +4d6 psíquico. Salvación SAB o Aturdida hasta el final de su siguiente turno.",
-    damage: "+4d6 Psíquico", extra: null
+    desc: "Próximo impacto con arma: +4d6 psíquico. Salvación SAB o queda Aturdida hasta el final de tu siguiente turno. Escala: +1d6/nivel [2014: sin escala].",
+    damage: "+4d6 Psíquico (+1d6/nivel)", extra: null
   },
   {
     id: "stone_shape", n: "Stone Shape [PHB]",

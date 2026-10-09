@@ -94,7 +94,7 @@ function _crearModalBorrado() {
         <div class="modal-caja">
             <div class="modal-icono">⚠️</div>
             <h3 class="modal-titulo">¿Borrar esta ficha?</h3>
-            <p class="modal-texto">Se eliminará permanentemente la ficha <strong id="modal-borrado-nombre"></strong>. Esta acción es irreversible.</p>
+            <p class="modal-texto">Se quitará la ficha <strong id="modal-borrado-nombre"></strong>. Irá a la papelera (🕘 Historial), donde podrás recuperarla durante 30 días.</p>
             <div class="modal-botones">
                 <button class="modal-btn cancelar" onclick="cerrarModal()">No, Mantener</button>
                 <button class="modal-btn confirmar" onclick="confirmarBorrado()">Sí, Borrar</button>
@@ -138,11 +138,22 @@ function confirmarBorrado() {
     if (!id) return;
     const idx = fichas.findIndex(f => f.id === id);
     if (idx === -1) return;
+    // La ficha no se pierde: va a la papelera (historial.js) con un aviso «Deshacer»
+    let entrada = null, hxOk = typeof hxMoverAPapelera === 'function';
+    if (hxOk) { try { entrada = hxMoverAPapelera(fichas[idx]); } catch (e) { console.warn('No se pudo mover a la papelera:', e); } }
+    _quitarFicha(id);
+    guardarTodo();
+    if (hxOk && typeof hxAvisoBorrado === 'function') hxAvisoBorrado(entrada);
+}
+
+/* Quita una ficha de la pantalla y de la lista (sin confirmar ni guardar nada) */
+function _quitarFicha(id) {
+    const idx = fichas.findIndex(f => f.id === id);
+    if (idx === -1) return;
     fichas[idx].panel.remove();
     document.querySelector(`.pestana[data-ficha-id="${id}"]`)?.remove();
     fichas.splice(idx, 1);
-    if (fichaActual === id) activarFicha(fichas[Math.max(0, idx - 1)].id);
-    guardarTodo();
+    if (fichaActual === id && fichas.length) activarFicha(fichas[Math.max(0, idx - 1)].id);
 }
 
 function onNombreCambia(input) {
@@ -553,9 +564,14 @@ function dgColorCSS(tipo) {
     return `--dg-borde:${c.borde};--dg-fondo:${c.fondo};--dg-chk:${c.chk};--dg-txt:${c.txt}`;
 }
 
+const DG_TIPOS = ['d4', 'd6', 'd8', 'd10', 'd12'];
+
 function dgCrearGrupo(tipo, total) {
-    tipo  = tipo  || 'd8';
-    total = total || 1;
+    // Los datos pueden venir de un archivo importado o de un enlace compartido:
+    // se normalizan ANTES de usarlos en el HTML (evita inyección de código).
+    tipo = DG_TIPOS.includes(tipo) ? tipo : 'd8';
+    const n = parseInt(total, 10);
+    total = isNaN(n) ? 1 : Math.max(0, Math.min(20, n));
     const grupo = document.createElement('div');
     grupo.className = 'dg-grupo';
     grupo.setAttribute('style', dgColorCSS(tipo));
@@ -751,13 +767,18 @@ function _descansoLargoPanel(panel) {
     panel.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]').forEach(chk => { chk.checked = true; });
     if (typeof recargaRecursosPorDescanso === 'function') recargaRecursosPorDescanso(panel, 'largo');
     panel.querySelectorAll('.slot-chk').forEach(chk => { chk.checked = true; });
+    // Al recuperar todos los PG se limpian las salvaciones de muerte
+    panel.querySelectorAll('.circulo-muerte.activo').forEach(c => c.classList.remove('activo'));
+    // Un descanso largo reduce el agotamiento en 1 nivel
+    const agot = [...panel.querySelectorAll('.agotamiento-bolita')].filter(b => b.classList.contains('activo'));
+    if (agot.length) agot[agot.length - 1].classList.remove('activo');
     guardarDebounced();
 }
 
 function descansoCortoGlobal() {
     const panel = panelActual();
     if (!panel) return;
-    _descansoCortoPanel(panel);
+    abrirAsistenteDescansoCorto(panel);   // descanso-corto.js: elegir dados de golpe y recargar
 }
 function descansoLargoGlobal() {
     const panel = panelActual();
@@ -766,9 +787,11 @@ function descansoLargoGlobal() {
 }
 
 function descansoCorto(btn) {
-    _descansoCortoPanel(getPanel(btn));
+    abrirAsistenteDescansoCorto(getPanel(btn));
 }
 
+/* Recargas de un descanso corto (recursos con ☀ y espacios de Pacto). Los dados de golpe
+   y el log los gestiona el asistente (descanso-corto.js). */
 function _descansoCortoPanel(panel) {
     if (!panel) return;
     if (typeof recargaRecursosPorDescanso === 'function') recargaRecursosPorDescanso(panel, 'corto');
@@ -1120,7 +1143,7 @@ function _poblarSelectoresCabecera(panel) {
     const selTCab = panel.querySelector('.sel-trasfondo-cab');
     if (selECab && selECab.options.length <= 1) {
         if (typeof DND_ESPECIES !== 'undefined') {
-            Object.keys(DND_ESPECIES).forEach(e => {
+            Object.keys(DND_ESPECIES).sort(_ordenES).forEach(e => {
                 const opt = document.createElement('option');
                 opt.value = e; opt.textContent = e;
                 selECab.appendChild(opt);
@@ -1129,7 +1152,7 @@ function _poblarSelectoresCabecera(panel) {
     }
     if (selTCab && selTCab.options.length <= 1) {
         if (typeof DND_TRASFONDOS !== 'undefined') {
-            Object.keys(DND_TRASFONDOS).forEach(t => {
+            Object.keys(DND_TRASFONDOS).sort(_ordenES).forEach(t => {
                 const opt = document.createElement('option');
                 opt.value = t; opt.textContent = t;
                 selTCab.appendChild(opt);
@@ -1231,6 +1254,26 @@ function _mensajeFalloGuardado(e) {
         : '⚠ No se pudo guardar en el navegador (' + (e && e.name ? e.name : 'error desconocido') + '). Tus últimos cambios NO están guardados. Descarga una copia de seguridad.';
 }
 
+/* Escribe el guardado principal. Si el navegador se queda sin espacio, libera el historial de
+   versiones y la papelera (prescindibles) y reintenta: las fichas tienen prioridad. */
+function _escribirGuardado(json) {
+    const intentar = () => {
+        if (json !== _ultimoGuardado) localStorage.setItem('dnd_fichas', json);
+        localStorage.setItem('dnd_contador', String(contadorFichas));
+        localStorage.setItem('dnd_activa', fichaActual);
+    };
+    try { intentar(); }
+    catch (e) {
+        const cuota = e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22 || e.code === 1014);
+        if (cuota && typeof hxLiberarEspacio === 'function') {
+            let ultimo = e;
+            while (hxLiberarEspacio()) { try { intentar(); return; } catch (e2) { ultimo = e2; } }
+            throw ultimo;
+        }
+        throw e;
+    }
+}
+
 function guardarTodo() {
     clearTimeout(_guardandoTimeout);
     _guardandoTimeout = null;
@@ -1266,11 +1309,10 @@ function guardarTodo() {
 
     // 2. Escribir
     try {
-        if (json !== _ultimoGuardado) localStorage.setItem('dnd_fichas', json);
-        localStorage.setItem('dnd_contador', String(contadorFichas));
-        localStorage.setItem('dnd_activa', fichaActual);
+        _escribirGuardado(json);
         _ultimoGuardado = json;
         _quitarAviso('aviso-guardado');
+        if (typeof hxTrasGuardar === 'function') { try { hxTrasGuardar(); } catch (e) { console.warn('Historial:', e); } }
         return true;
     } catch (e) {
         console.warn('No se pudo guardar:', e);
@@ -1282,8 +1324,53 @@ function guardarTodo() {
     }
 }
 
+/* ── Versión del formato de datos ─────────────────────────────────────────
+   Cada ficha guardada/exportada/compartida lleva `_v`. Si algún día cambia el
+   formato, se sube ESQUEMA_VERSION y se añade en _MIGRACIONES la función que
+   convierte de la versión anterior (clave N = migrar de N-1 a N). Las fichas sin
+   `_v` son anteriores al sistema de versiones (v0). El formato de almacenamiento
+   sigue siendo un array JSON de fichas, por lo que es compatible hacia atrás. */
+const ESQUEMA_VERSION = 1;
+const _MIGRACIONES = {
+    // v0 → v1: los grupos de dados de golpe guardados sin la marca `auto` eran, en el
+    // formato antiguo, grupos gestionados por la clase.
+    1: d => {
+        if (Array.isArray(d.dgGrupos)) {
+            d.dgGrupos.forEach(g => { if (g && typeof g === 'object' && g.auto === undefined) g.auto = true; });
+        }
+        return d;
+    },
+};
+let _avisoVersionFuturaMostrado = false;
+
+/* Devuelve una COPIA de la ficha puesta al día (el original no se modifica, de modo
+   que la copia de rescate conserva los datos tal y como estaban). */
+function _migrarFicha(datos) {
+    if (!datos || typeof datos !== 'object' || Array.isArray(datos)) return datos;
+    let d;
+    try { d = JSON.parse(JSON.stringify(datos)); } catch (_) { return datos; }
+    let v = parseInt(d._v, 10);
+    if (isNaN(v) || v < 0) v = 0;
+    if (v > ESQUEMA_VERSION) {
+        // Ficha creada con una versión más nueva de la web: se carga lo que se entienda
+        if (!_avisoVersionFuturaMostrado) {
+            _avisoVersionFuturaMostrado = true;
+            _mostrarToast('⚠ Esta ficha se creó con una versión más nueva de la web; es posible que algunos datos no se carguen.', 'error');
+        }
+        return d;
+    }
+    while (v < ESQUEMA_VERSION) {
+        v++;
+        try { if (_MIGRACIONES[v]) d = _MIGRACIONES[v](d) || d; }
+        catch (e) { console.warn('Fallo al migrar la ficha a la versión ' + v + ':', e); }
+    }
+    d._v = ESQUEMA_VERSION;
+    return d;
+}
+
 function leerFicha(panel) {
     const d = {};
+    d._v = ESQUEMA_VERSION;
     d.id = panel.dataset.fichaId;
 
     // Cabecera
@@ -1295,6 +1382,10 @@ function leerFicha(panel) {
     d.inspiracion = panel.querySelector('.bloque-inspiracion')?.classList.contains('activo') || false;
     // Multiclase (solo clase y nivel; la subclase se guarda en caract.mcClases)
     d.multiclases = leerMulticlases(panel).map(mc => ({ clase: mc.clase, nivel: mc.nivel }));
+    // Control de los valores por defecto de clase (para no pisar ajustes manuales al recargar)
+    d.claseAuto = panel.dataset.claseAuto || '';
+    d.salvAuto  = panel.dataset.salvAuto  || '';
+    d.statClaseAuto = panel.dataset.statClaseAuto || '';
 
     // Stats y salvaciones
     d.stats = {}; d.salvs = {}; d.salvOffsets = {};
@@ -1476,6 +1567,7 @@ function _traducirClaveVieja(tipo, valor, clase) {
    si una está mal formada (p. ej. un campo con un tipo inesperado) se anota y las
    demás se cargan igualmente. Devuelve la lista de secciones que fallaron (vacía = todo bien). */
 function cargarDatosEnPanel(panel, d) {
+    d = _migrarFicha(d);   // pone al día el formato (copia; el original no se toca)
     const errores = [];
     const _secc = (nombre, fn) => {
         try { fn(); }
@@ -1852,6 +1944,14 @@ function cargarDatosEnPanel(panel, d) {
     // Spellcasting: primero ejecutar multiclaseActualizar para que
     // _sincronizarSpellCounts genere los .spell-prep-bloque, luego
     // cargarSpellcasting restaura los valores guardados en ellos.
+    // La clase ya estaba elegida al guardar: no se vuelven a aplicar sus valores por defecto al cargar
+    {
+        const mcsCarga = leerMulticlases(panel).filter(mc => mc.clase);
+        const lanzCarga = mcsCarga.find(mc => _castingDe(mc) !== 'none' && _getClaseData(mc.clase).spellStat);
+        panel.dataset.claseAuto     = d.claseAuto !== undefined ? d.claseAuto : (mcsCarga[0]?.clase || '');
+        panel.dataset.salvAuto      = d.salvAuto || '';
+        panel.dataset.statClaseAuto = d.statClaseAuto !== undefined ? d.statClaseAuto : (lanzCarga?.clase || '');
+    }
     multiclaseActualizar(panel);
     cargarSpellcasting(panel, d);
     });
@@ -2143,25 +2243,16 @@ function initSpellcasting(panel) {
         trigger.dataset.placeholder = placeholder;
         const listbox = document.createElement('div');
         listbox.className = 'spell-dropdown-listbox';
-        const spells = DND_SPELLS[nivel] || [];
-        spells.forEach(sp => {
-            const item = document.createElement('div');
-            item.className = 'spell-dropdown-item';
-            item.dataset.spellId = sp.id;
-            item.textContent = sp.n;
-            item.addEventListener('mouseenter', () => spellCardShow(sp));
-            item.addEventListener('mouseleave', () => spellCardHide());
-            item.addEventListener('mousedown', (e) => {
+        // Cabecera con buscador y filtros + lista de conjuros (hechizos-buscador.js)
+        spbPrepararDropdown(wrapper, listbox, trigger);
+        trigger.tabIndex = 0;
+        trigger.setAttribute('role', 'button');
+        trigger.setAttribute('aria-haspopup', 'listbox');
+        trigger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
                 e.preventDefault();
-                listbox.querySelectorAll('.spell-dropdown-item').forEach(i => i.classList.remove('selected'));
-                item.classList.add('selected');
-                wrapper.dataset.selectedId = sp.id;
-                trigger.textContent = sp.n;
-                trigger.classList.add('has-value');
-                _cerrarDropdown(wrapper);
-                spellCardHide();
-            });
-            listbox.appendChild(item);
+                if (!wrapper.classList.contains('open')) trigger.click();
+            }
         });
         wrapper.appendChild(trigger);
         wrapper.appendChild(listbox);
@@ -2181,13 +2272,8 @@ function _abrirDropdown(wrapper) {
     wrapper.classList.add('open');
     const listbox = wrapper.querySelector('.spell-dropdown-listbox');
     if (!listbox) return;
-    const rect = wrapper.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    if (spaceBelow < 220 && rect.top > 220) {
-        listbox.style.top = 'auto'; listbox.style.bottom = '100%';
-    } else {
-        listbox.style.top = '100%'; listbox.style.bottom = 'auto';
-    }
+    // La posición (arriba/abajo) y la altura de la lista las decide spbColocar (hechizos-buscador.js)
+    if (typeof spbAlAbrir === 'function') spbAlAbrir(wrapper);
 }
 function _cerrarDropdown(wrapper) { wrapper.classList.remove('open'); }
 
@@ -2358,28 +2444,22 @@ function _renderSpellEntry(lista, sp) {
     chkPrep.className = 'spell-prep-chk';
     chkPrep.title = 'Preparado';
     chkPrep.addEventListener('change', function() {
-        if (this.checked) {
-            const fichaPanel = this.closest('.ficha-panel');
-            if (fichaPanel) {
-                // Sumar todos los valores de Preparados de todas las clases
-                let maxPrep = 0;
-                fichaPanel.querySelectorAll('.spell-prep-bloque input').forEach(inp => {
-                    maxPrep += parseInt(inp.value) || 0;
-                });
-                // Contar cuántos están ya marcados (incluyendo este)
-                const marcados = fichaPanel.querySelectorAll('.spell-prep-chk:checked').length;
-                if (marcados > maxPrep) {
-                    this.checked = false;
-                    // Feedback visual breve en el bloque de Preparados
-                    const container = fichaPanel.querySelector('.spell-preparados-container');
-                    if (container) {
-                        container.classList.add('prep-limite-alcanzado');
-                        setTimeout(() => container.classList.remove('prep-limite-alcanzado'), 900);
-                    }
-                    return;
+        const fichaPanel = this.closest('.ficha-panel');
+        if (this.checked && fichaPanel) {
+            // Límite = suma de los «Preparados» de todas las clases; los trucos no cuentan
+            if (spbContarPreparados(fichaPanel) > spbMaxPreparados(fichaPanel)) {
+                this.checked = false;
+                // Feedback visual breve en el bloque de Preparados
+                const container = fichaPanel.querySelector('.spell-preparados-container');
+                if (container) {
+                    container.classList.add('prep-limite-alcanzado');
+                    setTimeout(() => container.classList.remove('prep-limite-alcanzado'), 900);
                 }
+                spbActualizarContador(fichaPanel);
+                return;
             }
         }
+        spbActualizarContador(fichaPanel);
         guardarDebounced();
     });
 
@@ -2449,6 +2529,7 @@ function _renderSpellEntry(lista, sp) {
     delBtn.addEventListener('click', () => {
         const fichaPanel = entry.closest('.ficha-panel');
         entry.remove();
+        spbActualizarContador(fichaPanel);
         guardarDebounced();
         if (fichaPanel) setTimeout(() => regenerarAccionesAuto(fichaPanel), 0);
     });
@@ -2714,6 +2795,8 @@ function leerSpellcasting(panel) {
         d.spellPreparadosPorClase[clase] = bloque.querySelector('input')?.value || '0';
     });
 
+    d.spellFavoritos = typeof spbLeerFavoritos === 'function' ? spbLeerFavoritos(panel) : [];
+
     d.spellNiveles = [];
     panel.querySelectorAll('.spell-nivel-bloque').forEach(bloque => {
         const nivel = parseInt(bloque.dataset.nivel);
@@ -2734,6 +2817,7 @@ function leerSpellcasting(panel) {
 
 function cargarSpellcasting(panel, d) {
     if (!d || !d.spellNiveles) return;
+    if (typeof spbCargarFavoritos === 'function') spbCargarFavoritos(panel, d.spellFavoritos);
 
     const statEl = panel.querySelector('.spell-stat-sel');
     if (statEl && d.spellStat) statEl.value = d.spellStat;
@@ -2809,6 +2893,7 @@ function cargarSpellcasting(panel, d) {
     });
 
     recalcSpellcasting(panel);
+    spbActualizarContador(panel);
 
     // Aplicar filtro de nivel máximo de hechizos DESPUÉS de reconstruir los slots/hechizos
     // Sin esto, al recargar la página todos los niveles aparecen habilitados hasta que
@@ -2819,20 +2904,24 @@ function cargarSpellcasting(panel, d) {
 /* ═══════════════════════════════════════════════════════
    EXPORTAR / IMPORTAR JSON
 ═══════════════════════════════════════════════════════ */
+/* Exporta SOLO la ficha activa (decisión de diseño: no se exportan todas a la vez). */
 function exportarFichasJSON() {
     guardarTodo();
     const fichaActiva = fichas.find(f => f.id === fichaActual);
     if (!fichaActiva) return;
-    const datos = leerFicha(fichaActiva.panel);
-    const json = JSON.stringify(datos, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const nombre = datos?.nombre?.trim() || 'personaje';
-    a.download = `dnd_ficha_${nombre.replace(/\s+/g,'_')}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+        const datos = leerFicha(fichaActiva.panel);
+        // Nombre de archivo seguro: sin caracteres prohibidos en Windows/macOS/Linux
+        // (sin tildes ni símbolos: así el archivo se guarda con ese nombre en cualquier navegador y sistema)
+        let nombre = (datos?.nombre || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^[_.]+|[_.]+$/g, '').slice(0, 60);
+        if (!/[A-Za-z0-9]/.test(nombre)) nombre = 'personaje';
+        // _descargarTexto añade el enlace al DOM y retrasa la liberación de la URL
+        // (necesario en Firefox y Safari)
+        _descargarTexto(JSON.stringify(datos, null, 2), `dnd_ficha_${nombre}.json`);
+    } catch (e) {
+        _mostrarToast('No se pudo exportar la ficha: ' + e.message, 'error');
+    }
 }
 
 /* ¿Tiene pinta de ser una ficha de este programa? */
@@ -3310,6 +3399,63 @@ function calcNivelEfectivoSpell(multiclases) {
     return Math.min(efectivo, 20);
 }
 
+/* Salvaciones en las que es competente la clase INICIAL (la multiclase no da salvaciones) */
+const CLASE_SALVACIONES = {
+    'Artificer':    ['con', 'int'],
+    'Bárbaro':      ['str', 'con'],
+    'Bardo':        ['dex', 'cha'],
+    'Blood Hunter': ['dex', 'int'],
+    'Brujo':        ['wis', 'cha'],
+    'Clérigo':      ['wis', 'cha'],
+    'Druida':       ['int', 'wis'],
+    'Explorador':   ['str', 'dex'],
+    'Guerrero':     ['str', 'con'],
+    'Hechicero':    ['con', 'cha'],
+    'Mago':         ['int', 'wis'],
+    'Monje':        ['str', 'dex'],
+    'Paladín':      ['wis', 'cha'],
+    'Pícaro':       ['dex', 'int'],
+};
+const _STAT_LANZ_CLAVE = { INT: 'int', SAB: 'wis', CAR: 'cha', FUE: 'str', DES: 'dex', CON: 'con' };
+
+/* Al ELEGIR clase se marcan solas las salvaciones competentes (de la primera clase) y se elige la
+   característica de lanzamiento (de la primera clase lanzadora). Solo actúa cuando esa clase CAMBIA:
+   al cargar una ficha guardada o al subir de nivel no pisa lo que el jugador haya ajustado a mano. */
+function _aplicarDefectosClase(panel, mcs) {
+    if (!panel || !mcs || !mcs.length) return;
+    let cambio = false;
+
+    // ── Salvaciones de la clase inicial ──
+    const primera = mcs[0].clase || '';
+    if (panel.dataset.claseAuto !== primera) {
+        panel.dataset.claseAuto = primera;
+        let previas = [];
+        try { previas = JSON.parse(panel.dataset.salvAuto || '[]'); } catch (e) {}
+        previas.forEach(st => {
+            const dot = panel.querySelector(`.salv-dot[data-stat="${st}"]`);
+            if (dot) dot.checked = false;
+        });
+        const marcadas = [];
+        (CLASE_SALVACIONES[primera] || []).forEach(st => {
+            const dot = panel.querySelector(`.salv-dot[data-stat="${st}"]`);
+            if (dot && !dot.checked) { dot.checked = true; marcadas.push(st); }
+        });
+        panel.dataset.salvAuto = JSON.stringify(marcadas);
+        cambio = true;
+    }
+
+    // ── Característica de lanzamiento de la primera clase lanzadora ──
+    const lanz = mcs.find(mc => _castingDe(mc) !== 'none' && _getClaseData(mc.clase).spellStat);
+    const claveLanz = lanz ? lanz.clase : '';
+    if (panel.dataset.statClaseAuto !== claveLanz) {
+        panel.dataset.statClaseAuto = claveLanz;
+        const stat = lanz ? _STAT_LANZ_CLAVE[_getClaseData(lanz.clase).spellStat] : '';
+        const sel = panel.querySelector('.spell-stat-sel');
+        if (stat && sel) { sel.value = stat; recalcSpellcasting(panel); cambio = true; }
+    }
+    if (cambio) actualizarTodoPanel(panel);
+}
+
 /* Obtiene datos de clase — busca en CLASE_DATA o devuelve defaults */
 function _getClaseData(nombreClase) {
     if (!nombreClase) return { diceHit:'d8', casting:'none' };
@@ -3332,9 +3478,9 @@ function _multiclaseFila(claseNombre, nivel) {
     sel.className = 'multiclase-sel';
     sel.innerHTML = '<option value="">— Clase —</option>';
     // Poblar con DND_CLASES si disponible, sino con CLASE_DATA
-    const opciones = typeof DND_CLASES !== 'undefined'
+    const opciones = (typeof DND_CLASES !== 'undefined'
         ? Object.keys(DND_CLASES)
-        : Object.keys(CLASE_DATA);
+        : Object.keys(CLASE_DATA)).sort(_ordenES);
     opciones.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c;
@@ -3478,14 +3624,25 @@ function syncWidgetsSupToInf(fichaPanel) {
                 const subclaseActual   = pagExistente?.querySelector('.mc-sel-subclase')?.value || '';
                 const subclaseTexto    = pagExistente?.querySelector('.mc-ta-subclase')?.value  || '';
                 const claseAnterior    = pagExistente?.querySelector('.mc-sel-clase')?.value || '';
+                const mismaClase       = claseAnterior === mc.clase;
+                // Si solo cambió el nivel: añadir (o quitar) los rasgos de esos niveles, sin tocar las notas del jugador
+                const nivelAntes = parseInt(pagExistente?.querySelector('.mc-nivel-sel')?.value) || mc.nivel;
+                let claseTxtFinal = claseTextoActual, subTxtFinal = subclaseTexto;
+                if (mismaClase && nivelAntes !== (parseInt(mc.nivel) || 1) && typeof _rasgosAjustarNivel === 'function'
+                    && typeof DND_CLASES !== 'undefined' && DND_CLASES[mc.clase]) {
+                    const nv2 = parseInt(mc.nivel) || 1;
+                    claseTxtFinal = _rasgosAjustarNivel(claseTextoActual, DND_CLASES[mc.clase].rasgos, nivelAntes, nv2);
+                    const subData = subclaseActual && DND_CLASES[mc.clase].subclases?.[subclaseActual];
+                    if (subData) subTxtFinal = _rasgosAjustarNivel(subclaseTexto, subData, nivelAntes, nv2);
+                }
                 return {
                     clase:         mc.clase,
                     nivel:         mc.nivel,
                     // Preservar texto solo si la clase NO cambió; si cambió, dejar vacío
                     // para que el onchange lo rellene automáticamente
-                    claseTexto:    (claseAnterior === mc.clase) ? claseTextoActual : '',
-                    subclase:      (claseAnterior === mc.clase) ? subclaseActual   : '',
-                    subclaseTexto: (claseAnterior === mc.clase) ? subclaseTexto    : '',
+                    claseTexto:    mismaClase ? claseTxtFinal : '',
+                    subclase:      mismaClase ? subclaseActual : '',
+                    subclaseTexto: mismaClase ? subTxtFinal    : '',
                 };
             });
             cargarMcDatos(fichaPanel, datosConTexto);
@@ -3607,6 +3764,9 @@ function multiclaseActualizar(fichaPanel) {
     // 5b. Filtrar desplegable de hechizos según nivel máximo disponible
     _refrescarFiltroNivelHechizos(fichaPanel);
 
+    // 5c. Salvaciones y característica de lanzamiento por defecto de la clase
+    _aplicarDefectosClase(fichaPanel, mcs);
+
     // 6. HP máximo automático
     calcularHPMaxAuto(fichaPanel);
 
@@ -3664,6 +3824,24 @@ function _getConMod(fichaPanel) {
     return Math.floor((conScore - 10) / 2);
 }
 
+/* PG máx. extra POR NIVEL que dan la dote Tough (+2) y Dureza Enana (+1).
+   Se detectan en el cuadro de dotes, en la dote de origen del trasfondo y en los rasgos de la especie. */
+function _hpBonusPorNivel(fichaPanel) {
+    let porNivel = 0;
+    const partes = [];
+    const dotes = fichaPanel.querySelector('.caract-dotes')?.value || '';
+    const trasf = fichaPanel.querySelector('.caract-trasfondo-txt')?.value || '';
+    if (/^\s*(Tough|Robusto)\b/im.test(dotes) || /Dote de origen:\s*Tough\b/i.test(trasf)) {
+        porNivel += 2; partes.push('Tough +2/nivel');
+    }
+    const espKey = fichaPanel.querySelector('.sel-especie')?.value || '';
+    const rasgos = (typeof DND_ESPECIES !== 'undefined' && DND_ESPECIES[espKey]) || [];
+    if (rasgos.some(r => /Dwarven Toughness|Dureza Enana/i.test(r.n || ''))) {
+        porNivel += 1; partes.push('Dureza Enana +1/nivel');
+    }
+    return { porNivel, partes };
+}
+
 /* Aplica el HP calculado al input si el auto está activado */
 function calcularHPMaxAuto(fichaPanel) {
     const hpMaxInput = fichaPanel.querySelector('.hp-max');
@@ -3674,7 +3852,10 @@ function calcularHPMaxAuto(fichaPanel) {
     if (!mcs.length) return;
 
     const conMod = _getConMod(fichaPanel);
-    const nuevo  = calcularHPMax(mcs, conMod);
+    const nivelTotal = mcs.reduce((t, mc) => t + (parseInt(mc.nivel) || 0), 0);
+    const extra  = _hpBonusPorNivel(fichaPanel);
+    const nuevo  = calcularHPMax(mcs, conMod) + extra.porNivel * nivelTotal;
+    hpMaxInput.title = extra.partes.length ? `Incluye ${extra.partes.join(' y ')} (nivel ${nivelTotal})` : '';
 
     // Si el personaje tenía la vida llena (o la ficha estaba en blanco), se mantiene llena con el
     // nuevo máximo; si estaba herido se respeta, sin pasar nunca del máximo.
@@ -3889,6 +4070,7 @@ function _sincronizarSpellCounts(fichaPanel, mcs) {
         // Marcar como manual en cuanto el usuario lo edite
         inp.addEventListener('input', () => {
             bloque.dataset.esManual = 'true';
+            spbActualizarContador(fichaPanel);
             guardarDebounced();
         });
 
@@ -3909,10 +4091,11 @@ function _sincronizarSpellCounts(fichaPanel, mcs) {
         lbl.textContent = 'Preparados';
         const inp = document.createElement('input');
         inp.type = 'number'; inp.className = 'spell-count-input'; inp.min = '0'; inp.value = '0';
-        inp.addEventListener('input', () => { bloque.dataset.esManual = 'true'; guardarDebounced(); });
+        inp.addEventListener('input', () => { bloque.dataset.esManual = 'true'; spbActualizarContador(fichaPanel); guardarDebounced(); });
         bloque.appendChild(lbl); bloque.appendChild(inp);
         container.appendChild(bloque);
     }
+    spbActualizarContador(fichaPanel);
 }
 
 /* ── Init: crear fila inicial vacía si el widget está vacío ── */
@@ -4361,7 +4544,7 @@ function _modalNivel(titulo, opciones) {
         cancelar.textContent = 'Cancelar';
         cancelar.style.cssText = `
             width:100%;padding:7px;background:transparent;border:1px solid #4a5568;
-            border-radius:6px;color:#718096;font-size:12px;cursor:pointer;font-family:inherit;`;
+            border-radius:6px;color:#a0aec0;font-size:12px;cursor:pointer;font-family:inherit;`;
         cancelar.addEventListener('click', () => { document.body.removeChild(overlay); resolve(null); });
         caja.appendChild(cancelar);
 
@@ -4396,23 +4579,234 @@ function _tirarDados(qty, faces, esCrit) {
     return { rolls, suma: rolls.reduce((a, b) => a + b, 0) };
 }
 
+/* ── Tiradas definidas en hechizos-tiradas.js ───────────────────────
+   Curaciones, PG temporales, varios dardos/rayos, daño extra a un ataque con arma,
+   conjuros con varias tiradas alternativas… (formato en ese archivo). ── */
+function _specDeHechizo(sp) {
+    return (typeof HECHIZOS_TIRADAS !== 'undefined' && sp && HECHIZOS_TIRADAS[sp.id]) || null;
+}
+
+/* ¿Algún dado de la tirada depende del nivel del personaje (trucos)? */
+function _specNecesitaNivelPj(spec) {
+    return !!spec && Array.isArray(spec.lineas) && spec.lineas.some(l => Array.isArray(l.qTruco));
+}
+
+/* Mod. de la característica de lanzamiento elegida en la ficha */
+function _modLanzamiento(panel) {
+    const stat = panel.querySelector('.spell-stat-sel')?.value || '';
+    if (!stat) return { mod: 0, sinStat: true };
+    const score = parseInt(panel.querySelector(`.stat-score[data-stat="${stat}"]`)?.value) || 10;
+    return { mod: Math.floor((score - 10) / 2), sinStat: false };
+}
+
+/* Dados de Golpe sin gastar de la ficha (los más grandes primero) */
+function _dadosGolpeDisponibles(panel) {
+    const lista = [];
+    panel.querySelectorAll('.dg-grupo').forEach(g => {
+        const caras = parseInt((g.querySelector('.dg-tipo')?.value || 'd8').replace('d', '')) || 8;
+        g.querySelectorAll('.dg-checks-contenedor input[type="checkbox"]').forEach(chk => {
+            if (chk.checked) lista.push({ chk, caras });
+        });
+    });
+    return lista.sort((a, b) => b.caras - a.caras);
+}
+
+/* Dados y bono plano de una línea para este lanzamiento.
+   c = { L: nivel del espacio, nExtra: niveles sobre el base, tier: tramo de nivel del personaje, modv } */
+function _calcLineaSpec(l, c) {
+    let pasos = Math.floor(c.nExtra / ((l.nv && l.nv.cada) || 1));
+    if (l.nv && l.nv.max !== undefined) pasos = Math.min(pasos, l.nv.max);
+    let q = Array.isArray(l.qTruco) ? (l.qTruco[c.tier] || 0) : (l.q || 0);
+    let plano = l.plano || 0;
+    if (l.nv) { q += (l.nv.q || 0) * pasos; plano += (l.nv.plano || 0) * pasos; }
+    if (l.planoNivel) plano += l.planoNivel * c.L;
+    if (l.mod) plano += c.modv;
+    return { q, c: l.c || 0, plano };
+}
+
+function _rodarLineaSpec(l, calc, esCrit, extraQ) {
+    const q = calc.q + (extraQ || 0);
+    const r = (q > 0 && calc.c > 0) ? _tirarDados(q, calc.c, esCrit) : { rolls: [], suma: 0 };
+    const signo = l.signo === -1 ? -1 : 1;
+    return { total: signo * (r.suma + calc.plano), rolls: r.rolls, plano: calc.plano, q, c: calc.c, signo };
+}
+
+function _detalleLineaSpec(r) {
+    const partes = [];
+    if (r.q > 0) partes.push(`${r.q}d${r.c}: ${r.rolls.join('+')}`);
+    if (r.plano) partes.push(r.q > 0 ? (r.plano > 0 ? '+' + r.plano : String(r.plano)) : String(r.plano));
+    return partes.join(' ') || 'sin dados a este nivel';
+}
+
+/* Aplica PG temporales a la ficha activa (no se acumulan: se queda el mayor) */
+function _aplicarPGTemporales(panel, cantidad) {
+    const el = panel.querySelector('.hp-temp-val');
+    if (!el) return '';
+    const actual = Math.max(parseInt(el.value) || 0, 0);
+    if (cantidad > actual) {
+        el.value = cantidad;
+        actualizarVidaPanel(el);
+        return 'aplicados a tus PG temporales';
+    }
+    return `ya tienes ${actual} PG temporales (no se acumulan): no se aplican`;
+}
+
+function _tirarConSpec(sp, panel, spec, ctx) {
+    const { esCantrip, nivelLanzado, nivelPersonaje, labelNivel, modoEt, extras, gV, gD } = ctx;
+    const log = document.getElementById('log-lista');
+    const div = document.createElement('div');
+    const nivelBase = esCantrip ? 0 : (parseInt((sp.nivel || '').replace(/\D/g, '')) || 1);
+    const L = nivelLanzado || nivelBase;
+    const nExtra = esCantrip ? 0 : Math.max(0, L - nivelBase);
+    const tier = nivelPersonaje >= 17 ? 3 : nivelPersonaje >= 11 ? 2 : nivelPersonaje >= 5 ? 1 : 0;
+    const { mod: modv, sinStat } = _modLanzamiento(panel);
+    const spellAtk = parseInt(panel.querySelector('.spell-atk-display')?.textContent) || 0;
+    const spellDc  = parseInt(panel.querySelector('.spell-dc-display')?.textContent)  || 8;
+    const cx = { L, nExtra, tier, modv };
+    const COL = { dano: '#f6ad55', extra: '#f6ad55', cura: '#68d391', temp: '#63b3ed' };
+    const ETQ = { cura: 'PG recuperados', temp: 'PG temporales' };
+
+    let html = `<strong>✨ ${_esc(sp.n)} — ${_esc(labelNivel)}${modoEt ? ' · ' + _esc(modoEt) : ''}</strong>`;
+    let clase = 'spell-daño';
+    let usaMod = !!spec.atqMod || (spec.lineas || []).some(l => l.mod);
+
+    /* ── Vigor arcano: gasta Dados de Golpe y los suma a tus PG ── */
+    if (spec.especial === 'dg') {
+        const disp = _dadosGolpeDisponibles(panel);
+        const n = Math.min(extras.dados || 1, disp.length);
+        const gastados = disp.slice(0, n);
+        const rolls = gastados.map(d => Math.floor(Math.random() * d.caras) + 1);
+        const suma = rolls.reduce((a, b) => a + b, 0);
+        const cura = Math.max(0, suma + modv);
+        gastados.forEach(d => { d.chk.checked = false; });     // dados gastados (sin la cura de CON de un dado de golpe normal)
+        const hpA = panel.querySelector('.hp-actual');
+        const max = parseInt(panel.querySelector('.hp-max')?.value) || 0;
+        const antes = parseInt(hpA?.value) || 0;
+        const despues = Math.min(max, antes + cura);
+        if (hpA) { hpA.value = despues; actualizarVidaPanel(hpA); }
+        html += `<div class="log-daño-linea"><span style="color:${COL.cura}">+${cura}</span>
+            <small>PG recuperados (${gastados.map((d, i) => `d${d.caras}: ${rolls[i]}`).join(' + ')} ${fmtMod(modv)} mod. lanzamiento) · PG ${antes}→${despues}/${max}</small></div>
+            <small style="color:#a0aec0">${n} Dado${n === 1 ? '' : 's'} de Golpe gastado${n === 1 ? '' : 's'}</small>`;
+        if (sinStat) html += '<small style="color:#f6e05e;display:block">⚠ Sin característica de lanzamiento elegida: mod. 0</small>';
+        div.className = 'log-entrada spell-cura';
+        div.innerHTML = html;
+        log.prepend(div);
+        _resetAdv();
+        guardarDebounced();
+        return;
+    }
+
+    /* ── Repeticiones (dardos, rayos, ataques de una criatura) ── */
+    let rep = spec.rep === 'mitad' ? Math.floor(L / 2) : (spec.rep || 1);
+    if (spec.repNv) rep += spec.repNv * nExtra;
+    rep = Math.max(1, rep);
+    const multi = rep > 1;
+    const bonoAtq = spec.atqFijo !== undefined ? spec.atqFijo + (spec.atqMod ? modv : 0) : spellAtk;
+    const bonStr = bonoAtq >= 0 ? `+${bonoAtq}` : `${bonoAtq}`;
+    let hayCrit = false, sumaTotal = 0, notaTemp = '', primeraLinea = null;
+    const lineasResultado = [];
+
+    for (let i = 0; i < rep; i++) {
+        let esCrit = false;
+        if (spec.atq) {
+            const d1 = Math.floor(Math.random() * 20) + 1;
+            const d2 = Math.floor(Math.random() * 20) + 1;
+            const v = gV || !!spec.ventaja;
+            let dI, det, claseAdv = '';
+            if (v && gD)  { dI = d1; det = `${d1}`; }
+            else if (v)   { dI = Math.max(d1, d2); det = `[${d1},${d2}]→${dI}`; claseAdv = 'ventaja'; }
+            else if (gD)  { dI = Math.min(d1, d2); det = `[${d1},${d2}]→${dI}`; claseAdv = 'desventaja'; }
+            else          { dI = d1; det = `${d1}`; }
+            esCrit = dI === 20;
+            const esFallo = dI === 1;
+            if (esCrit) hayCrit = true;
+            const impColor = esCrit ? 'crit-verde' : esFallo ? 'crit-rojo' : '';
+            const impLabel = esCrit ? '¡CRÍTICO!' : esFallo ? 'Pifia' : 'impacto';
+            const nom = spec.etRep ? `${_esc(spec.etRep)} ${i + 1}: ` : '';
+            html += `${i > 0 ? '<hr class="log-sep">' : ''}<div class="res"><span class="${impColor}">${dI + bonoAtq}</span><small>🎯 ${nom}${impLabel} (${det} ${bonStr})</small></div>`;
+        } else if (multi) {
+            html += `${i > 0 ? '<hr class="log-sep">' : ''}<small style="color:#a0aec0">${_esc(spec.etRep || 'Tirada')} ${i + 1}</small>`;
+        }
+
+        (spec.lineas || []).forEach((l, idx) => {
+            const kind = l.tipo || spec.tipo || 'dano';
+            const calc = _calcLineaSpec(l, cx);
+            const extraQ = (spec.espera && idx === 0) ? (extras.turnos || 0) : 0;
+            const r = _rodarLineaSpec(l, calc, esCrit && (kind === 'dano' || kind === 'extra'), extraQ);
+            lineasResultado.push(r);
+            if (!primeraLinea) primeraLinea = r;
+            if (kind === 'dano' || kind === 'extra') sumaTotal += r.total;
+            const color = COL[kind] || COL.dano;
+            const tipoTxt = ETQ[kind] || l.dano || '';
+            const et = (l.et && l.et !== tipoTxt) ? `${_esc(l.et)}: ` : '';
+            const crit = (esCrit && (kind === 'dano' || kind === 'extra')) ? ' ✦CRIT (dados ×2)' : '';
+            const turnos = extraQ ? ` · +${extraQ}d${spec.espera.c} por espera` : '';
+            html += `<div class="log-daño-linea"><span style="color:${color}">${r.total < 0 ? '−' + Math.abs(r.total) : r.total}</span>
+                <small>${et}${_esc(tipoTxt)} (${_detalleLineaSpec(r)}${crit}${turnos})</small></div>`;
+            if (kind === 'temp' && spec.auto === 'temp' && i === 0) notaTemp += (notaTemp ? ' · ' : '') + _aplicarPGTemporales(panel, r.total);
+        });
+    }
+
+    /* ── Rayo del caos: el d8 elegido decide el tipo de daño ── */
+    if (spec.especial === 'caos' && lineasResultado[0] && lineasResultado[0].rolls.length >= 2) {
+        const TIPOS = ['Ácido', 'Frío', 'Fuego', 'Fuerza', 'Rayo', 'Veneno', 'Psíquico', 'Trueno'];
+        const a = lineasResultado[0].rolls[0], b = lineasResultado[0].rolls[1];
+        html += `<small style="color:#f6e05e;display:block">Tipo de daño: elige un d8 → ${TIPOS[a - 1]} (${a}) o ${TIPOS[b - 1]} (${b})${a === b ? ' · ¡dobles! salta a otra criatura a 30 pies' : ''}</small>`;
+    }
+
+    if (multi && sumaTotal) html += `<small style="color:#a0aec0;display:block">Total si todos impactan: ${sumaTotal}</small>`;
+    if (spec.mitadFallo && primeraLinea) html += `<small style="color:#a0aec0;display:block">Si falla el ataque: ${Math.floor(primeraLinea.total / 2)} (mitad del daño inicial) y nada al final del turno</small>`;
+    if (spec.sal) {
+        html += `<hr class="log-sep"><div class="res"><span style="font-size:13px;font-weight:700;color:#f6e05e">CD ${spellDc}</span>
+            <small>🛡 Salvación de ${_esc(spec.sal)}${spec.mitad ? ' · mitad en éxito' : ' · sin daño en éxito'}</small></div>`;
+    }
+    if (spec.tipo === 'extra') html += '<small style="color:#a0aec0;display:block">Se suma al daño de tu ataque (en crítico se duplican los dados)</small>';
+    if (notaTemp) html += `<small style="color:#63b3ed;display:block">${_esc(notaTemp)}</small>`;
+    if (usaMod && sinStat) html += '<small style="color:#f6e05e;display:block">⚠ Sin característica de lanzamiento elegida: mod. 0</small>';
+
+    clase = (spec.tipo === 'cura' || spec.tipo === 'temp') ? 'spell-cura'
+          : spec.tipo === 'extra' ? 'spell-extra'
+          : spec.atq ? 'spell-ataque' + (hayCrit ? ' critico' : '')
+          : spec.sal ? 'spell-salv' : 'spell-daño';
+    div.className = 'log-entrada ' + clase;
+    div.innerHTML = html;
+    log.prepend(div);
+    _resetAdv();
+}
+
 /* ── Función principal: clic en nombre de hechizo ───────────────── */
 async function tirarHechizo(sp, panel) {
     if (!sp || !panel) return;
     const esCantrip = sp.nivel === 'Truco';
-    const base = _parseDamageBase(sp.damage);
+    let spec = _specDeHechizo(sp);
+
+    // ── Varias tiradas alternativas: elegir cuál ─────────
+    let modoEt = '';
+    if (spec && Array.isArray(spec.modos)) {
+        const idx = await _modalNivel(`${sp.n}: ¿qué tirada?`, spec.modos.map((m, i) => ({ label: m.et, value: i })));
+        if (idx === null) return false;
+        modoEt = spec.modos[idx].et;
+        const resto = Object.assign({}, spec); delete resto.modos;
+        spec = Object.assign(resto, spec.modos[idx]);
+    }
+    const base = spec ? null : _parseDamageBase(sp.damage);
 
     // ── Elegir nivel ─────────────────────────────────────
     let nivelLanzado = null;
     let nivelPersonaje = null;
+    const extras = {};   // respuestas a preguntas adicionales (turnos de espera, Dados de Golpe…)
 
     if (esCantrip) {
-        const res = await _modalNivel('¿Nivel del personaje?', [
-            {label:'1-4', value:1}, {label:'5-10', value:5},
-            {label:'11-16', value:11}, {label:'17-20', value:17}
-        ]);
-        if (res === null) return false;
-        nivelPersonaje = res;
+        // El nivel del personaje solo hace falta si el truco tiene dados que escalan con él
+        const preguntaNivel = spec ? _specNecesitaNivelPj(spec) : !!base;
+        if (preguntaNivel) {
+            const res = await _modalNivel('¿Nivel del personaje?', [
+                {label:'1-4', value:1}, {label:'5-10', value:5},
+                {label:'11-16', value:11}, {label:'17-20', value:17}
+            ]);
+            if (res === null) return false;
+            nivelPersonaje = res;
+        }
     } else {
         // Nivel base del hechizo (extraer número)
         const nivelBase = parseInt((sp.nivel || '').replace(/\D/g,'')) || 1;
@@ -4425,6 +4819,26 @@ async function tirarHechizo(sp, panel) {
         if (res === null) return false;
         nivelLanzado = res;
         const nivelBase2 = nivelBase; // alias para escalado
+
+        // ── Preguntas adicionales (ANTES de gastar el espacio: si se cancela, no se pierde) ──
+        if (spec && spec.espera) {
+            const turnos = await _modalNivel('¿Cuántos turnos esperó antes de estallar? (+1d6 por turno)',
+                Array.from({ length: 11 }, (_, i) => ({ label: String(i), value: i })));
+            if (turnos === null) return false;
+            extras.turnos = turnos;
+        }
+        if (spec && spec.especial === 'dg') {
+            const disp = _dadosGolpeDisponibles(panel);
+            const maxDados = Math.min(disp.length, 2 + (nivelLanzado - nivelBase));
+            if (maxDados < 1) {
+                _mostrarToast('No te quedan Dados de Golpe sin gastar.', 'error');
+                return false;
+            }
+            const n = await _modalNivel('¿Cuántos Dados de Golpe gastar?',
+                Array.from({ length: maxDados }, (_, i) => ({ label: String(i + 1), value: i + 1 })));
+            if (n === null) return false;
+            extras.dados = n;
+        }
 
         // ── Gastar slot ───────────────────────────────────
         const slotGastado = _gastarSlot(panel, nivelLanzado);
@@ -4446,8 +4860,16 @@ async function tirarHechizo(sp, panel) {
 
     // Etiqueta de nivel para el log
     const labelNivel = esCantrip
-        ? `Truco (Nv. personaje ${nivelPersonaje === 17 ? '17-20' : nivelPersonaje === 11 ? '11-16' : nivelPersonaje === 5 ? '5-10' : '1-4'})`
+        ? (nivelPersonaje === null
+            ? 'Truco'
+            : `Truco (Nv. personaje ${nivelPersonaje === 17 ? '17-20' : nivelPersonaje === 11 ? '11-16' : nivelPersonaje === 5 ? '5-10' : '1-4'})`)
         : `Nivel ${nivelLanzado}`;
+
+    // ── Conjuro con tirada definida en hechizos-tiradas.js ──
+    if (spec) {
+        _tirarConSpec(sp, panel, spec, { esCantrip, nivelLanzado, nivelPersonaje, labelNivel, modoEt, extras, gV, gD });
+        return;
+    }
 
     // ── Sin daño real ─────────────────────────────────────
     if (!base) {
@@ -4714,6 +5136,7 @@ function _initAutoAccionesBloque(fichaPanel) {
 /* ── Regenerar el bloque auto completo ────────────────────
    Lee las notas adicionales guardadas, destruye y reconstruye. */
 function regenerarAccionesAuto(fichaPanel) {
+    calcularHPMaxAuto(fichaPanel);   // dotes/especie/trasfondo pueden cambiar los PG máx. (Tough, Dureza Enana)
     _initAutoAccionesBloque(fichaPanel);
 
     // Guardar notas adicionales existentes por (tipo, nombre)

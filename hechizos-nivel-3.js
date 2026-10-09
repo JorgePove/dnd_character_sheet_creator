@@ -32,7 +32,7 @@ const HECHIZOS_NIVEL_3 = [
     nivel: "Nivel 3", escuela: "Abjuración",
     casting: "1 acción", range: "Personal (30 pies)", components: "V", duration: "Conc. 1 min",
     desc: "Aura de energía curativa de 30 pies. Como Acción Adicional cada turno, curas a 1 criatura visible en el aura 2d6 PG.",
-    damage: "Cura 2d6 PG/turno", extra: null
+    damage: "Cura 2d6 PG (al lanzar y cada turno)", extra: null
   },
   {
     id: "beacon_of_hope", n: "Beacon of Hope [PHB]",
@@ -45,15 +45,15 @@ const HECHIZOS_NIVEL_3 = [
     id: "bestow_curse", n: "Bestow Curse [PHB]",
     nivel: "Nivel 3", escuela: "Nigromancia",
     casting: "1 acción", range: "Toque", components: "V, S", duration: "Conc. 1 min",
-    desc: "Ataque de conjuro cuerpo a cuerpo. Si impacta: elige efecto: desventaja en ataques, salvaciones o tiradas de habilidad con una estadística; o 1d8 necrótico adicional cuando le golpees. Escala: duración hasta 8h (Nv.4), 24h (Nv.5), permanente (Nv.7+).",
-    damage: "+1d8 Necrótico (opcional)", extra: null
+    desc: "Salvación SAB [2014: ataque de conjuro cuerpo a cuerpo]. Si falla: elige efecto: desventaja en ataques, salvaciones o tiradas de habilidad con una estadística; o 1d8 necrótico adicional cuando le golpees. Escala: Nv.4 concentración hasta 10 min; Nv.5-6 8 h sin concentración; Nv.7-8 24 h; Nv.9 hasta ser disipada.",
+    damage: "+1d8 Necrótico (opción de maldición)", extra: null
   },
   {
     id: "blinding_smite", n: "Blinding Smite [PHB]",
     nivel: "Nivel 3", escuela: "Evocación",
     casting: "1 acción adicional", range: "Personal", components: "V", duration: "Conc. 1 min",
-    desc: "Próximo impacto con arma: +3d8 radiante y salvación CON o queda Cegado. Repite la salvación al final de cada turno.",
-    damage: "+3d8 Radiante", extra: null
+    desc: "Próximo impacto con arma: +3d8 radiante y salvación CON o queda Cegado. Repite la salvación al final de cada turno. Escala: +1d8/nivel [2014: sin escala].",
+    damage: "+3d8 Radiante (+1d8/nivel)", extra: null
   },
   {
     id: "blink", n: "Blink [PHB]",
@@ -151,7 +151,7 @@ const HECHIZOS_NIVEL_3 = [
     nivel: "Nivel 3", escuela: "Transmutación",
     casting: "1 acción", range: "Toque", components: "V, S", duration: "Conc. 1 hora",
     desc: "Arma no mágica: +1 ataque, +1d4 de tipo elegido (ácido, frío, fuego, rayo o trueno). Escala: +2 ataque y +2d4 en Nv.5-6; +3 y +3d4 en Nv.7+.",
-    damage: "+1d4 elemental (escala)", extra: null
+    damage: "+1d4 del tipo elegido (2d4 con espacio 5-6, 3d4 con 7+)", extra: null
   },
   {
     id: "enemies_abound", n: "Enemies Abound [XGE]",
@@ -318,8 +318,8 @@ const HECHIZOS_NIVEL_3 = [
     id: "mass_healing_word", n: "Mass Healing Word [PHB]",
     nivel: "Nivel 3", escuela: "Abjuración",
     casting: "1 acción adicional", range: "60 pies", components: "V", duration: "Instantáneo",
-    desc: "Hasta 6 criaturas visibles recuperan 1d4 + mod. de lanzamiento PG. Escala: +1d4/nivel.",
-    damage: "Cura 1d4+mod (escala)", extra: null
+    desc: "Hasta 6 criaturas visibles recuperan 2d4 + mod. de lanzamiento PG [2014: 1d4]. Escala: +1d4/nivel.",
+    damage: "Cura 2d4+mod (+1d4/nivel)", extra: null
   },
   {
     id: "meld_into_stone", n: "Meld into Stone [PHB]",
@@ -438,7 +438,7 @@ const HECHIZOS_NIVEL_3 = [
     nivel: "Nivel 3", escuela: "Nigromancia",
     casting: "1 acción adicional", range: "Personal", components: "V, S", duration: "Conc. 1 min",
     desc: "Espíritus de los muertos te rodean. Tus ataques infligen +1d8 del tipo elegido (radiante, necrótico o frío) a criaturas a 10 pies. Criaturas afectadas no pueden recuperar PG. Escala: +1d8 cada 2 niveles.",
-    damage: "+1d8 (escala)", extra: null
+    damage: "+1d8 Radiante, Necrótico o Frío (+1d8 cada 2 niveles sobre 3)", extra: null
   },
   {
     id: "stinking_cloud", n: "Stinking Cloud [PHB]",

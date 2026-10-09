@@ -9,10 +9,12 @@
     --color-texto:      #1A1A1A;   /* Texto principal (títulos, valores numéricos) */
     --color-texto-med:  #2C2C2C;   /* Texto medio (labels destacados, nombres) */
     --color-texto-sub:  #FCEAE8;   /* Texto secundario (subtítulos de caja) */
-    --color-texto-mute: #707070;   /* Texto atenuado (placeholders activos, hints) */
+    --color-texto-mute: #666666;   /* Texto atenuado (placeholders activos, hints) */
     --color-texto-pale: #9A9A9A;   /* Texto muy pálido (placeholders vacíos, icono de inspiración) */
+    --panel-bg: #FFFFFF;           /* Fondo de desplegables y paneles flotantes */
+    --input-bg: #FFFFFF;           /* Fondo de cajas de texto dentro de esos paneles */
     /* Contraste de texto (repaso de colores): */
-    --color-texto-hint:  #767676;  /* Texto de ayuda / pistas / placeholders legibles sobre marcos claros */
+    --color-texto-hint:  #606060;  /* Texto de ayuda / pistas / placeholders legibles sobre marcos claros */
     --color-icono-suave: #7C7C7C;  /* Iconos y botones × discretos (se vuelven rojos al pasar el ratón) */
     --color-tab-texto:   #555555;  /* Texto de pestañas NO seleccionadas (sobre --color-tab) */
     --color-titulo-texto: #FFFFFF; /* Texto de los títulos de sección (sobre --color-titulo-caja) */
@@ -49,7 +51,7 @@
     --color-stat-salv:   #C8C8C8;
 
     /* Fondo del badge de título de cada sección (.titulo-caja). */
-    --color-titulo-caja: /*#D4D4D4*/ #E74C3C ;
+    --color-titulo-caja: /*#D4D4D4*/ #D63F2F ;   /* un punto más oscuro que #E74C3C: el texto blanco llega a 4.5:1 (WCAG AA) */
 
     /* Fondo de inputs sueltos: cajitas de CA, Iniciativa, Inspiración,
        Bono de Competencia, cajas de Recurso, y todos los <input>,
@@ -239,7 +241,7 @@ body:has(#fondo-bg.tiene-fondo)::before {
 }
 
 /* Todo el contenido por encima del fondo */
-body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(#spell-card-global):not(#dote-card-global):not(#especie-card-global):not(#modal-borrado-global):not(#fondo-bg){ position: relative; z-index: 1; }
+body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(#spell-card-global):not(#dote-card-global):not(#especie-card-global):not(#modal-borrado-global):not(#fondo-bg):not(.sb-panel){ position: relative; z-index: 1; }
 
 /* ===================================================
    BARRA DE PESTAÑAS
@@ -482,9 +484,10 @@ label {
 }
 .inspiracion-estrella {
     font-size: 26px; line-height: 1;
-    color: var(--color-texto-pale);
+    color: #7C7C7C;   /* icono de control: ≥3:1 sobre el marco (antes #9A9A9A, 2.4:1) */
     transition: color 0.2s;
 }
+html.tema-oscuro .inspiracion-estrella { color: #7A93B5; }
 .bloque-inspiracion.activo .inspiracion-estrella { color: #d4af37; }
 .bloque-inspiracion label { font-size: 9px; cursor: pointer; color: var(--color-texto-mute); }
 .bloque-inspiracion.activo label { color: #b7860b; }
@@ -570,7 +573,7 @@ label {
 }
 .vel-inline-titulo {
     font-size: 9px; font-weight: 700; text-transform: uppercase;
-    color: #707070; letter-spacing: 0.3px;
+    color: #666666; letter-spacing: 0.3px;
 }
 .vel-inline-fila {
     display: flex;
@@ -581,7 +584,7 @@ label {
     display: flex; flex-direction: column; align-items: center; gap: 2px;
     flex: 1; min-width: 0;
 }
-.vel-inline-item label { font-size: 9px; color: #707070; text-align: center; }
+.vel-inline-item label { font-size: 9px; color: #666666; text-align: center; }
 .vel-inline-input {
     width: 100%; border: 1px solid var(--color-input-borde); border-radius: 5px;
     text-align: center; font-size: 12px; font-weight: 700;
@@ -717,13 +720,13 @@ label {
 .cabecera-habilidades {
     display: flex; align-items: center; gap: 6px;
     font-size: 9px; font-weight: 700; text-transform: uppercase;
-    color: #707070; border-bottom: 1px solid #D8D8D8;
+    color: #666666; border-bottom: 1px solid #D8D8D8;
     padding-bottom: 4px; margin-bottom: 4px; letter-spacing: 0.3px;
 }
 .etiqueta-pe  { width: 14px; text-align: center; flex-shrink: 0; }
 .etiqueta-mod { width: 28px; text-align: center; flex-shrink: 0; }
 .etiqueta-nombre { flex: 1; }
-.etiqueta-adv { width: 26px; text-align: center; flex-shrink: 0; font-size: 8px; color: #707070; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; }
+.etiqueta-adv { width: 26px; text-align: center; flex-shrink: 0; font-size: 8px; color: #666666; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; }
 .fila-skill { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: var(--r-sm); transition: background 0.15s, box-shadow 0.15s; cursor: pointer; }
 .fila-skill.rollable:hover { background: var(--acento-bg); box-shadow: 0 0 0 2px var(--acento-claro), 0 0 8px rgba(99,179,237,0.35); }
 .dot { appearance: none; -webkit-appearance: none; width: 12px; height: 12px; flex-shrink: 0; border: 1.5px solid #4E4E4E; border-radius: 50%; cursor: pointer; transition: background 0.15s; }
@@ -1032,7 +1035,8 @@ label {
 .grupo-muerte { display: flex; flex-direction: column; gap: 8px; padding-top: 2px; }
 .muerte-fila { display: flex; align-items: center; gap: 6px; width: 100%; }
 .muerte-icono { font-size: 13px; font-weight: 700; flex-shrink: 0; }
-.muerte-icono.exito { color: #38a169; }
+.muerte-icono.exito { color: #276749; }
+html.tema-oscuro .muerte-icono.exito { color: #68D391; }
 .muerte-icono.fallo { color: #C0392B; }
 .muerte-etiqueta { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; }
 .exito-texto { color: #276749; }
@@ -1138,7 +1142,7 @@ label {
 }
 .agotamiento-titulo {
     font-size: 9px; font-weight: 700; text-transform: uppercase;
-    color: #707070; letter-spacing: 0.4px;
+    color: #666666; letter-spacing: 0.4px;
     white-space: nowrap;
     text-align: center;
 }
@@ -1174,7 +1178,7 @@ label {
     box-shadow: 0 0 6px rgba(229,62,62,0.55);
 }
 .agotamiento-num {
-    font-size: 7px; font-weight: 700; color: #707070;
+    font-size: 7px; font-weight: 700; color: #666666;
     line-height: 1;
 }
 /* Tooltip de agotamiento — oculto por defecto, visible al hover */
@@ -1245,13 +1249,13 @@ label {
 .moneda input:focus { filter: brightness(0.97); }
 
 .inventario-hint { font-size: 10px; color: var(--color-texto-hint); margin-bottom: 4px; text-align: right; }
-kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-borde); border-radius: 3px; padding: 1px 4px; font-family: monospace; font-size: 10px; }
+kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-borde); border-radius: 3px; padding: 1px 4px; font-family: monospace; font-size: 10px; color: var(--color-texto-med); }
 
 /* Grid: nombre | cant | descripción | equipado | sintonizado | borrar */
 .inventario-cabecera {
     display: grid; grid-template-columns: minmax(0,2fr) 40px minmax(0,3fr) 30px 30px 20px; gap: 4px; padding: 4px 6px; background: var(--color-sub-caja); border-radius: 4px 4px 0 0; font-size: 10px; font-weight: 700; color: var(--color-texto-mute); text-transform: uppercase; letter-spacing: 0.05em;
 }
-.inventario-cabecera span { font-size: 9px; font-weight: 700; text-transform: uppercase; color: #707070; letter-spacing: 0.3px; overflow: hidden; }
+.inventario-cabecera span { font-size: 9px; font-weight: 700; text-transform: uppercase; color: #5E5E5E; letter-spacing: 0.3px; overflow: hidden; }
 .inv-col-center { text-align: center; }
 
 /* Scrollable, grows to fill inventario height */
@@ -1394,7 +1398,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 }
 .armas-cabecera span {
     font-size: 9px; font-weight: 700; text-transform: uppercase;
-    color: #707070; letter-spacing: 0.3px;
+    color: #666666; letter-spacing: 0.3px;
 }
 .armas-lista { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 
@@ -1502,7 +1506,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 
 .btn-añadir-arma {
     padding: 6px 16px; border: 1.5px dashed #9A9A9A;
-    border-radius: 7px; background: transparent; color: #707070;
+    border-radius: 7px; background: transparent; color: #666666;
     font-size: 12px; font-weight: 600; cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
@@ -1543,7 +1547,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 
 .btn-añadir-accion {
     padding: 6px 16px; border: 1.5px dashed #9A9A9A;
-    border-radius: 7px; background: transparent; color: #707070;
+    border-radius: 7px; background: transparent; color: #666666;
     font-size: 12px; font-weight: 600; cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
@@ -1908,7 +1912,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #707070;
+    color: #666666;
 }
 
 /* Botones C / L */
@@ -2019,7 +2023,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #707070;
+    color: #666666;
 }
 
 .spell-val-bloque select {
@@ -2369,7 +2373,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 .spell-slots-label {
     font-size: 10px;
     font-weight: 700;
-    color: #707070;
+    color: #666666;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     white-space: nowrap;
@@ -2520,7 +2524,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 .spell-conc-tag {
     font-size: 9px;
     font-weight: 800;
-    color: #b7791f;
+    color: #8A5A00;
     background: #fffff0;
     border: 1px solid #f6e05e;
     border-radius: 3px;
@@ -2529,6 +2533,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     white-space: nowrap;
     pointer-events: none;
 }
+html.tema-oscuro .spell-conc-tag { color: #f6e05e; background: #3a3114; border-color: #8a6d1a; }
 
 /* Glow dorado palpitante cuando el jugador está concentrado en ese hechizo */
 .spell-entry.concentrando {
@@ -2793,6 +2798,10 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
 
 /* Log: hechizo solo daño */
 .log-entrada.spell-daño { border-left-color: #C0392B; }
+
+/* Log: curación / PG temporales (verde) y daño extra a un ataque con arma (naranja) */
+.log-entrada.spell-cura  { border-left-color: #48bb78; }
+.log-entrada.spell-extra { border-left-color: #ed8936; }
 
 /* Log: hechizo lanzado sin daño */
 .log-entrada.spell-lanzado { border-left-color: #4E4E4E; }
@@ -3091,7 +3100,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     align-self: flex-start;
     font-size: 11px;
     font-weight: 700;
-    color: #707070;
+    color: #666666;
     background: transparent;
     border: 1.5px dashed #BBBBBB;
     border-radius: 5px;
@@ -3130,7 +3139,7 @@ kbd { background: var(--color-sub-caja); border: 1px solid var(--color-input-bor
     border-radius: 50%;
     border: 1.5px solid var(--color-input-borde);
     background: var(--color-input);
-    color: #707070;
+    color: #666666;
     font-size: 11px;
     cursor: pointer;
     display: flex;
@@ -3488,7 +3497,7 @@ hr.sep-seccion {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #707070;
+    color: #666666;
 }
 .mc-del-btn {
     background: none;
@@ -3594,7 +3603,7 @@ hr.sep-seccion {
 .mc-nivel-label {
     font-size: 10px;
     font-weight: 700;
-    color: #707070;
+    color: #666666;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -3672,13 +3681,13 @@ hr.sep-seccion {
 .btn-ventaja-f {
     background: #BFF7E1;
     border-color: #12915E;
-    color: #12915E;
+    color: #0B6B45;
 }
 .btn-ventaja-f:hover { background: #6EEDBA; }
 .btn-ventaja-f.activo {
     background: #1CE393;
     border-color: #BFF7E1;
-    color: #BFF7E1;
+    color: #064D31;
     box-shadow: 0 0 12px rgba(49,130,206,0.6);
 }
 
@@ -3706,7 +3715,7 @@ hr.sep-seccion {
 .btn-descanso-corto-f {
     background: #E6B000;
     border-color: #FFF9E6;
-    color: #FFF9E6;
+    color: #3D2C00;
 }
 .btn-descanso-corto-f:hover { background: #FFCE2E; }
 
@@ -3739,7 +3748,7 @@ hr.sep-seccion {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #707070;
+    color: #666666;
 }
 .cab-select {
     border: none;
@@ -3891,6 +3900,8 @@ html.tema-oscuro {
     --txt-strong:   #e8f0ff;
     --acc-primary:  #4a90d9;
     --acc-hover:    #6aaff0;
+    --panel-bg:     #131c2e;   /* Desplegables y paneles flotantes */
+    --input-bg:     #1e2d45;
 
     /* ── Overrides de las nuevas variables semánticas ── */
     /* Texto */
@@ -4193,9 +4204,11 @@ html.tema-clasico .modos-check { color: #8b1a1a; }
    Paleta: pergamino / carmesí / dorado / negro
    Fuentes: Cinzel (títulos) · Crimson Text (cuerpo)
 ═══════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+/* (Las fuentes Cinzel y Crimson Text se cargan con <link> en index.html) */
 
 html.tema-clasico {
+    --panel-bg: #f5ead0;
+    --input-bg: #fdf6e3;
     --mc-pergamino:    #f5ead0;
     --mc-pergamino-off:#ede0bc;
     --mc-pergamino-alt:#e6d4a4;
@@ -4670,6 +4683,14 @@ html.tema-clasico * { scrollbar-color: var(--mc-carmes-med) var(--mc-pergamino-a
         font-size: 9px;
         padding: 3px 6px;
     }
+    /* Con el botón Historial ya no caben en una sola fila: que bajen a una segunda */
+    .barra-acciones-globales {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        row-gap: 3px;
+        min-width: 0;
+        max-width: 100%;
+    }
 
     /* Log: oculto por defecto en móvil pequeño, solo visible si ya existe */
     .log-contenedor {
@@ -5000,3 +5021,151 @@ html.tema-oscuro .dg-add-grupo-btn { color: var(--txt-strong); }
    sus etiquetas usan el color propio del tipo de dado para no perderse sobre ese fondo. */
 html.tema-oscuro .dg-grupo .dg-lbl { color: var(--dg-txt); }
 html.tema-oscuro .dg-grupo .dg-del-btn { color: var(--dg-txt); }
+
+/* ═══════════════════════════════════════════════════════
+   DESPLEGABLES CON BUSCADOR  (hacerSelectBuscable · _ddAnadirBuscador)
+   Reutilizan el aspecto del <select> que sustituyen (cab-select, caract-select, multiclase-sel).
+═══════════════════════════════════════════════════════ */
+.sb-oculto { display: none !important; }
+.sb-wrap { position: relative; flex: 1; min-width: 0; width: 100%; }
+.sb-wrap .sb-trigger {
+    display: block; width: 100%; box-sizing: border-box; text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-family: inherit; cursor: pointer;
+    padding-right: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23718096'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 4px center; background-size: 8px;
+}
+.sb-wrap .sb-trigger.sb-sin-valor { opacity: 0.85; }
+.sb-wrap .sb-trigger:focus-visible { outline: 2px solid #C0392B; outline-offset: 1px; }
+.sb-panel {
+    position: fixed; z-index: 9500;
+    display: flex; flex-direction: column;
+    max-width: min(380px, 92vw);
+    background: var(--panel-bg, #fff);
+    border: 1.5px solid #C0392B; border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    overflow: hidden;
+}
+.sb-buscar, .dd-buscar {
+    box-sizing: border-box;
+    margin: 6px; width: calc(100% - 12px);
+    padding: 5px 8px;
+    font-size: 12px; font-family: inherit;
+    color: var(--txt-base, #2C2C2C);
+    background: var(--input-bg, #fff);
+    border: 1px solid var(--border, #BBBBBB); border-radius: 5px;
+    outline: none;
+}
+.sb-buscar:focus, .dd-buscar:focus { border-color: #C0392B; }
+.dd-buscar { position: sticky; top: 0; z-index: 2; margin-top: 0; }
+.sb-lista { position: relative; overflow-y: auto; padding: 2px 0 4px; scrollbar-width: thin; scrollbar-color: #C0392B transparent; }
+.sb-item {
+    padding: 6px 14px; font-size: 12px; cursor: pointer;
+    color: var(--txt-base, #2C2C2C);
+}
+.sb-item.activo, .sb-item:hover { background: rgba(192,57,43,0.12); color: #922B21; }
+.sb-item.sel { font-weight: 700; }
+.sb-item-vacio { font-style: italic; color: var(--color-texto-hint, #606060); }
+.sb-grupo {
+    padding: 6px 14px 2px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--color-texto-hint, #606060);
+}
+.sb-sin-resultados { padding: 8px 14px; font-size: 12px; font-style: italic; color: var(--color-texto-hint, #606060); }
+html.tema-oscuro .sb-item.activo, html.tema-oscuro .sb-item:hover { color: #FFB4AC; }
+html.tema-oscuro .sb-wrap .sb-trigger { background-color: transparent; color: var(--txt-base); }
+
+/* ══════════════════════════════════════════════════════════
+   BUSCADOR DE CONJUROS — hechizos-buscador.js
+══════════════════════════════════════════════════════════ */
+.spell-dropdown-listbox.sp-rico {
+    min-width: 360px; max-width: min(420px, 92vw);
+    max-height: none; overflow: visible; padding: 0;
+}
+.spell-custom-dropdown.open .spell-dropdown-listbox.sp-rico { display: flex; flex-direction: column; }
+.spell-custom-dropdown.sp-con-filtros .spell-dropdown-trigger { box-shadow: inset 4px 0 0 var(--color-spell); }
+
+.sp-cab { padding: 6px 6px 4px; border-bottom: 1px solid var(--color-spell-borde); flex-shrink: 0; }
+.sp-buscar {
+    box-sizing: border-box; width: 100%; margin: 0 0 5px;
+    padding: 5px 8px; font-size: 12px; font-family: inherit;
+    color: var(--color-texto); background: var(--input-bg, #fff);
+    border: 1px solid #8A8A8A; border-radius: 5px; outline: none;
+}
+.sp-buscar:focus { border-color: #C0392B; box-shadow: 0 0 0 2px rgba(192,57,43,0.2); }
+.sp-fila { display: flex; gap: 4px; margin-bottom: 4px; align-items: center; }
+.sp-sel {
+    flex: 1 1 0; min-width: 0; padding: 3px 2px; font-size: 11px; font-family: inherit;
+    color: var(--color-texto); background: var(--input-bg, #fff);
+    border: 1px solid #8A8A8A; border-radius: 5px; cursor: pointer;
+}
+.sp-sel.sp-sel-on { border-color: #922B21; border-width: 2px; font-weight: 700; }
+.sp-chips { flex-wrap: wrap; margin-bottom: 2px; }
+.sp-chip {
+    padding: 2px 8px; font-size: 11px; font-weight: 700; font-family: inherit; line-height: 1.5;
+    color: var(--color-texto-med); background: var(--input-bg, #fff);
+    border: 1px solid #8A8A8A; border-radius: 12px; cursor: pointer;
+}
+.sp-chip:hover { border-color: #922B21; }
+.sp-chip[data-e="1"]  { background: #922B21; border-color: #922B21; color: #fff; }
+.sp-chip[data-e="-1"] { background: #2D3748; border-color: #2D3748; color: #fff; }
+.sp-chip[data-e="-1"]::before { content: 'sin '; font-weight: 600; }
+.sp-chip:focus-visible, .sp-sel:focus-visible, .sp-limpiar:focus-visible { outline: 2px solid #C0392B; outline-offset: 1px; }
+.sp-limpiar {
+    margin-left: auto; padding: 2px 6px; font-size: 11px; font-family: inherit; font-weight: 600;
+    color: #922B21; background: transparent; border: none; text-decoration: underline; cursor: pointer;
+}
+.sp-limpiar:disabled { color: var(--color-texto-hint); text-decoration: none; cursor: default; }
+.sp-info { font-size: 10px; color: var(--color-texto-hint); padding: 0 2px; }
+
+.sp-lista { max-height: 230px; overflow-y: auto; padding: 4px 0; scrollbar-width: thin; scrollbar-color: var(--color-spell) transparent; position: relative; }
+.sp-lista .spell-dropdown-item { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.sp-nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.sp-fav { flex-shrink: 0; width: 18px; text-align: center; font-size: 14px; line-height: 1; color: var(--color-texto-hint); cursor: pointer; }
+.sp-fav:hover { color: #8A5A00; transform: scale(1.2); }
+.sp-es-fav .sp-fav { color: #8A5A00; }
+.sp-fin-favs { border-bottom: 1px dashed var(--color-spell-borde); padding-bottom: 7px; margin-bottom: 5px; }
+.sp-tags { display: inline-flex; gap: 3px; flex-shrink: 0; }
+.sp-tag { font-size: 9px; font-weight: 800; line-height: 1; padding: 2px 4px; border-radius: 3px; border: 1px solid currentColor; }
+.sp-t-c { color: #553C9A; }
+.sp-t-r { color: #2C5282; }
+.sp-t-ya { color: #276749; }
+.sp-t-desc { color: var(--color-texto-hint); font-weight: 600; }
+.sp-lista .spell-dropdown-item.sp-activo { outline: 2px solid var(--color-spell); outline-offset: -2px; }
+.sp-lista .spell-dropdown-item.selected .sp-fav,
+.sp-lista .spell-dropdown-item.selected .sp-tag { color: #fff; }
+
+/* Contador «Marcados X/Y» (preparados) */
+.spell-prep-resumen { padding: 0 10px; }
+.spell-prep-contador {
+    display: inline-block; min-width: 64px; box-sizing: border-box; text-align: center;
+    padding: 8px 6px; border-radius: 8px; border: 2px solid #C6F6D5;
+    background: #F0FFF4; color: #22543D; font-size: 22px; font-weight: 800; white-space: nowrap;
+}
+.spell-prep-resumen.prep-lleno .spell-prep-contador { background: #C6F6D5; border-color: #2F855A; }
+.spell-prep-resumen.prep-excedido .spell-prep-contador { background: #C0392B; border-color: #7A1515; color: #fff; }
+/* Los trucos no se «preparan» */
+.spell-nivel-bloque[data-nivel="0"] .spell-prep-chk { display: none; }
+
+/* Tema oscuro */
+html.tema-oscuro .sp-buscar, html.tema-oscuro .sp-sel, html.tema-oscuro .sp-chip { border-color: var(--border); }
+html.tema-oscuro .sp-chip { color: var(--txt-base); }
+html.tema-oscuro .sp-chip[data-e="1"]  { background: #C0392B; border-color: #C0392B; color: #fff; }
+html.tema-oscuro .sp-chip[data-e="-1"] { background: #4A5568; border-color: #4A5568; color: #fff; }
+html.tema-oscuro .sp-sel.sp-sel-on { border-color: #FFB4AC; }
+html.tema-oscuro .sp-limpiar { color: #FFB4AC; }
+html.tema-oscuro .sp-limpiar:disabled { color: var(--txt-muted); }
+html.tema-oscuro .sp-info { color: var(--txt-muted); }
+html.tema-oscuro .sp-cab { border-bottom-color: var(--border); }
+html.tema-oscuro .sp-fav { color: var(--txt-muted); }
+html.tema-oscuro .sp-fav:hover, html.tema-oscuro .sp-es-fav .sp-fav { color: #F6C453; }
+html.tema-oscuro .sp-fin-favs { border-bottom-color: var(--border); }
+html.tema-oscuro .sp-t-c { color: #D6BCFA; }
+html.tema-oscuro .sp-t-r { color: #90CDF4; }
+html.tema-oscuro .sp-t-ya { color: #68D391; }
+html.tema-oscuro .sp-t-desc { color: var(--txt-muted); }
+html.tema-oscuro .sp-lista .spell-dropdown-item.sp-activo { outline-color: var(--acc-hover); }
+html.tema-oscuro .spell-prep-contador { background: #1C4532; border-color: #276749; color: #C6F6D5; }
+html.tema-oscuro .spell-prep-resumen.prep-lleno .spell-prep-contador { background: #276749; border-color: #68D391; color: #fff; }
+html.tema-oscuro .spell-prep-resumen.prep-excedido .spell-prep-contador { background: #C0392B; border-color: #FFB4AC; color: #fff; }
+html.tema-oscuro .spell-custom-dropdown.sp-con-filtros .spell-dropdown-trigger { box-shadow: inset 4px 0 0 var(--acc-hover); }

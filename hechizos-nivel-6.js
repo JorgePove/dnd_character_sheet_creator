@@ -80,8 +80,8 @@ const HECHIZOS_NIVEL_6 = [
     id: "disintegrate", n: "Disintegrate [PHB]",
     nivel: "Nivel 6", escuela: "Transmutación",
     casting: "1 acción", range: "60 pies", components: "V, S, M (polvo de hierro+polvo de rubí)", duration: "Instantáneo",
-    desc: "Rayo verde delgado. Salvación DES o 10d6+40 de fuerza. Si esto reduce la criatura a 0 PG, queda desintegrada en polvo. Escala: +3d6+10/nivel.",
-    damage: "10d6+40 Fuerza (escala)", extra: null
+    desc: "Rayo verde delgado. Salvación DES o 10d6+40 de fuerza. Si esto reduce la criatura a 0 PG, queda desintegrada en polvo. Escala: +3d6/nivel.",
+    damage: "10d6+40 Fuerza (+3d6/nivel)", extra: null
   },
   {
     id: "drawmij_instant_summons", n: "Drawmij's Instant Summons [PHB]",
@@ -186,7 +186,7 @@ const HECHIZOS_NIVEL_6 = [
     nivel: "Nivel 6", escuela: "Transmutación",
     casting: "1 acción", range: "Personal", components: "V, S", duration: "Conc. 10 min",
     desc: "Llamas te envuelven. Resistencia al frío; inmunidad al fuego. Las llamas iluminan 30 pies brillante + 30 tenue. Criaturas a 5 pies al inicio de su turno: 1d10 fuego. Como Acción: línea de fuego 15×5 pies (4d8 fuego, salvación DES mitad).",
-    damage: "1d10/turno o 4d8 línea Fuego", extra: null
+    damage: "1d10 Fuego (contacto) o 4d8 Fuego (línea, salv. DES mitad)", extra: null
   },
   {
     id: "investiture_of_ice", n: "Investiture of Ice [XGE]",

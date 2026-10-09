@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ficha D&D 5e 2024</title>
+    <!-- Fuentes del Tema clásico (Cinzel / Crimson Text). Van aquí y no con @import en
+         style.css: un @import solo funciona al principio de la hoja y se ignoraba. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dados-widget.css">
 </head>
@@ -13,13 +18,14 @@
 <div class="barra-pestanas" id="barra-pestanas">
     <button class="btn-nueva-pestana" id="btn-nueva-pestana" onclick="nuevaFicha()" title="Nueva ficha">＋</button>
     <div class="barra-acciones-globales">
-        <button class="btn-global" onclick="exportarFichasJSON()" title="Exportar todas las fichas a JSON">⬇ Exportar</button>
+        <button class="btn-global" onclick="exportarFichasJSON()" title="Exportar la ficha activa a JSON">⬇ Exportar</button>
         <label class="btn-global btn-importar" title="Importar fichas desde JSON">
             ⬆ Importar
             <input type="file" accept=".json" onchange="importarFichasJSON(event)" style="display:none">
         </label>
         <button class="btn-global btn-pdf" onclick="exportarFichaPDF()" title="Exportar ficha activa a PDF">🖨 PDF</button>
         <button class="btn-global btn-compartir" onclick="compartirFicha()" title="Generar URL compartible de la ficha activa">🔗 Compartir</button>
+        <button class="btn-global btn-historial" onclick="abrirHistorial()" title="Papelera y versiones anteriores de la ficha">🕘 Historial</button>
         <button class="btn-tema-global" onclick="toggleTema()" title="Cambiar tema">☀️</button>
     </div>
 </div>
@@ -882,6 +888,11 @@
                 </div>
                 <!-- Preparados: se generan dinámicamente en _sincronizarSpellCounts, uno por clase -->
                 <div class="spell-preparados-container"></div>
+                <!-- Contador de preparados marcados / máximo (hechizos-buscador.js) -->
+                <div class="spell-val-bloque spell-prep-resumen" title="Conjuros preparados / máximo (suma de todas tus clases). Los trucos no cuentan.">
+                    <span class="spell-val-label">Marcados</span>
+                    <span class="spell-prep-contador" aria-live="polite"><b class="prep-x">0</b>/<b class="prep-y">0</b></span>
+                </div>
 
             </div>
         </div>
@@ -1213,10 +1224,15 @@
 <script src="hechizos-nivel-7.js"></script>
 <script src="hechizos-nivel-8.js"></script>
 <script src="hechizos-nivel-9.js"></script>
+<script src="hechizos-tiradas.js"></script>
+<script src="hechizos-clases.js"></script>
 <!-- Ensamblador + UI -->
 <script src="caracteristicas.js"></script>
+<script src="hechizos-buscador.js"></script>
 <!-- Motor principal -->
 <script src="script.js"></script>
+<script src="descanso-corto.js"></script>
+<script src="historial.js"></script>
 <!-- PANEL FLOTANTE DE ACCIONES — fuera de la ficha, siempre visible -->
 <div id="panel-flotante-acciones">
     <button class="btn-flotante btn-ventaja-f" onclick="toggleDadosGlobal('ventaja')" title="Ventaja">▲ Ventaja</button>

@@ -80,8 +80,8 @@ const HECHIZOS_NIVEL_8 = [
     id: "earthquake", n: "Earthquake [PHB]",
     nivel: "Nivel 8", escuela: "Transmutación",
     casting: "1 acción", range: "500 pies", components: "V, S, M (pizca de tierra/roca/barro)", duration: "Conc. 1 min",
-    desc: "Terremoto en esfera de 100 pies. Terreno difícil. Concentración: CD 15+. Criaturas en suelo: DES o tumbadas. Estructuras sufren 50 daño/turno. Grietas: 1d6 caen al inicio del turno.",
-    damage: "50 daño a estructuras/turno", extra: null
+    desc: "Terremoto en esfera de 100 pies. Terreno difícil. Concentración: CD 15+. Criaturas en suelo: DES o tumbadas. Estructuras sufren 50 daño/turno. Grietas: 1d6 caen al inicio del turno. Derrumbe de una estructura: salvación DES, 12d6 contundente (mitad en éxito) [2014: 5d6].",
+    damage: "Derrumbe 12d6 Contundente (salv. DES mitad) · Estructuras 50/turno", extra: null
   },
   {
     id: "glibness", n: "Glibness [PHB]",

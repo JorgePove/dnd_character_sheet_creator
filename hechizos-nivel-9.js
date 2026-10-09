@@ -73,15 +73,15 @@ const HECHIZOS_NIVEL_9 = [
     id: "power_word_heal", n: "Power Word Heal [PHB]",
     nivel: "Nivel 9", escuela: "Encantamiento",
     casting: "1 acción", range: "60 pies", components: "V", duration: "Instantáneo",
-    desc: "Una criatura que puedas ver a 60 pies recupera todos sus PG. Si está Asustada, Hechizada, Paralizada o Aturdida, esas condiciones terminan también. Si está tumbada, puede usar su reacción para levantarse.",
+    desc: "Una criatura que puedas ver a 60 pies recupera todos sus PG. Si está Hechizada, Asustada, Paralizada, Envenenada o Aturdida, esa condición termina también [2014: sin Envenenada]. Si está tumbada, puede usar su reacción para levantarse.",
     damage: "Restaura todos los PG", extra: null
   },
   {
     id: "power_word_kill", n: "Power Word Kill [PHB]",
     nivel: "Nivel 9", escuela: "Encantamiento",
     casting: "1 acción", range: "60 pies", components: "V", duration: "Instantáneo",
-    desc: "Una criatura con 100 PG o menos muere instantáneamente. Si tiene más de 100 PG, el conjuro no tiene efecto.",
-    damage: "Muerte instantánea (≤100 PG)", extra: null
+    desc: "Una criatura que veas a 60 pies con 100 PG o menos muere instantáneamente. Si tiene más de 100 PG, sufre 12d12 de daño psíquico [2014: el conjuro no tiene efecto].",
+    damage: "Muere si tiene ≤100 PG; si tiene más, 12d12 Psíquico", extra: null
   },
   {
     id: "prismatic_wall", n: "Prismatic Wall [PHB]",

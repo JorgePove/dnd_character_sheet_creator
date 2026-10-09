@@ -309,7 +309,8 @@ async function hxRestaurarVersion(idFicha, t) {
 
     const idx = fichas.findIndex(f => f.id === idFicha);
     const antes = hxMoverAPapelera(actual, { motivo: `Antes de restaurar la versión de ${hxFecha(v.t)}`, conservarHist: true });
-    const r = nuevaFicha(datos, { nuevoId: true });
+    // Es la MISMA ficha en otra versión: conserva su sid (así la nube la actualiza en vez de duplicarla)
+    const r = nuevaFicha(datos, { nuevoId: true, sid: actual.panel.dataset.sid });
     // misma posición que la ficha sustituida
     const tabNueva = document.querySelector(`.pestana[data-ficha-id="${r.id}"]`);
     const tabVieja = document.querySelector(`.pestana[data-ficha-id="${idFicha}"]`);

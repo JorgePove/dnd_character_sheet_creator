@@ -26,6 +26,7 @@
         <button class="btn-global btn-pdf" onclick="exportarFichaPDF()" title="Exportar ficha activa a PDF">🖨 PDF</button>
         <button class="btn-global btn-compartir" onclick="compartirFicha()" title="Generar URL compartible de la ficha activa">🔗 Compartir</button>
         <button class="btn-global btn-historial" onclick="abrirHistorial()" title="Papelera y versiones anteriores de la ficha">🕘 Historial</button>
+        <button class="btn-global btn-nube" id="btn-nube" onclick="nbAbrirCuenta()" title="Cuenta y guardado en la nube">☁ Cuenta</button>
         <button class="btn-tema-global" onclick="toggleTema()" title="Cambiar tema">☀️</button>
     </div>
 </div>
@@ -1233,6 +1234,8 @@
 <script src="script.js"></script>
 <script src="descanso-corto.js"></script>
 <script src="historial.js"></script>
+<script src="firebase-config.js"></script>
+<script src="nube.js"></script>
 <!-- PANEL FLOTANTE DE ACCIONES — fuera de la ficha, siempre visible -->
 <div id="panel-flotante-acciones">
     <button class="btn-flotante btn-ventaja-f" onclick="toggleDadosGlobal('ventaja')" title="Ventaja">▲ Ventaja</button>

@@ -5169,3 +5169,14 @@ html.tema-oscuro .spell-prep-contador { background: #1C4532; border-color: #2767
 html.tema-oscuro .spell-prep-resumen.prep-lleno .spell-prep-contador { background: #276749; border-color: #68D391; color: #fff; }
 html.tema-oscuro .spell-prep-resumen.prep-excedido .spell-prep-contador { background: #C0392B; border-color: #FFB4AC; color: #fff; }
 html.tema-oscuro .spell-custom-dropdown.sp-con-filtros .spell-dropdown-trigger { box-shadow: inset 4px 0 0 var(--acc-hover); }
+
+/* ═══════════════════════════════════════════════════════
+   BOTÓN DE CUENTA / NUBE (nube.js)
+   El texto ya dice el estado; el borde solo lo refuerza.
+═══════════════════════════════════════════════════════ */
+.btn-global.btn-nube[data-estado="ok"] { border-color: #38a169; }
+.btn-global.btn-nube[data-estado="error"] { border-color: #e53e3e; }
+.btn-global.btn-nube[data-estado="pendiente"],
+.btn-global.btn-nube[data-estado="sincronizando"],
+.btn-global.btn-nube[data-estado="conectando"],
+.btn-global.btn-nube[data-estado="sin-conexion"] { border-color: #d69e2e; }

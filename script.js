@@ -26,8 +26,29 @@ function _idFichaLibre(id) {
         && !document.querySelector(`.ficha-panel[data-ficha-id="${id}"]`);
 }
 
+/* ── Identificador GLOBAL de ficha (sid) ──
+   El id de arriba ("ficha-3") solo vale dentro de un navegador. El sid es único en el mundo
+   y es el que usa la sincronización en la nube (nube.js) para reconocer la misma ficha en
+   distintos navegadores. Va dentro de los datos de la ficha (`sid`). */
+function _nuevoSid() {
+    try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (_) {}
+    return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12) + Math.random().toString(36).slice(2, 8);
+}
+function _sidValido(s) { return typeof s === 'string' && /^[A-Za-z0-9_-]{8,64}$/.test(s); }
+function _sidLibre(s) { return !document.querySelector(`.ficha-panel[data-sid="${s}"]`); }
+/* opciones.sid → se usa tal cual (sustituir una ficha por otra versión de sí misma).
+   opciones.nuevoId → siempre uno nuevo (importar, enlace compartido, papelera: son fichas nuevas).
+   Si no, se conserva el de los datos mientras sea válido y no esté ya en uso. */
+function _sidParaFicha(datos, opciones) {
+    if (opciones && _sidValido(opciones.sid)) return opciones.sid;
+    const s = datos && datos.sid;
+    if (!(opciones && opciones.nuevoId) && _sidValido(s) && _sidLibre(s)) return s;
+    return _nuevoSid();
+}
+
 /* nuevaFicha(datosGuardados?, opciones?)
-   opciones.nuevoId → ignora el id que traigan los datos y genera uno nuevo.
+   opciones.nuevoId → ignora el id que traigan los datos y genera uno nuevo (y un sid nuevo).
+   opciones.sid → fuerza el sid (solo para sustituir la ficha que ya tiene ese sid).
    Devuelve { id, panel, errores } donde errores lista las secciones de los
    datos que no se pudieron restaurar (nunca lanza por datos mal formados). */
 function nuevaFicha(datosGuardados, opciones) {
@@ -42,6 +63,7 @@ function nuevaFicha(datosGuardados, opciones) {
     const clone = tpl.content.cloneNode(true);
     const panel = clone.querySelector('.ficha-panel');
     panel.dataset.fichaId = id;
+    panel.dataset.sid = _sidParaFicha(datosGuardados, opciones);
     document.getElementById('fichas-contenedor').appendChild(panel);
     fichas.push({ id, panel });
 
@@ -141,6 +163,8 @@ function confirmarBorrado() {
     // La ficha no se pierde: va a la papelera (historial.js) con un aviso «Deshacer»
     let entrada = null, hxOk = typeof hxMoverAPapelera === 'function';
     if (hxOk) { try { entrada = hxMoverAPapelera(fichas[idx]); } catch (e) { console.warn('No se pudo mover a la papelera:', e); } }
+    // Nube: anotar el borrado ANTES de quitarla para que se propague a los demás navegadores
+    if (typeof nbBorrada === 'function') { try { nbBorrada(fichas[idx].panel.dataset.sid); } catch (e) { console.warn('Nube:', e); } }
     _quitarFicha(id);
     guardarTodo();
     if (hxOk && typeof hxAvisoBorrado === 'function') hxAvisoBorrado(entrada);
@@ -1282,10 +1306,10 @@ function guardarTodo() {
     if (_guardadoBloqueado || fichas.length === 0) return false;
 
     // 1. Serializar (si UNA ficha falla al leerse, se conserva su última versión guardada)
-    let json;
+    let json, datos, cadenas;
     try {
         let previas = null;
-        const datos = fichas.map(f => {
+        datos = fichas.map(f => {
             try {
                 return leerFicha(f.panel);
             } catch (err) {
@@ -1299,7 +1323,10 @@ function guardarTodo() {
                 throw err;
             }
         });
-        json = JSON.stringify(datos);
+        // Cada ficha se serializa por separado (la nube compara y sube ficha a ficha); el resultado
+        // es idéntico a JSON.stringify(datos).
+        cadenas = datos.map(d => JSON.stringify(d));
+        json = '[' + cadenas.join(',') + ']';
     } catch (e) {
         console.warn('No se pudo preparar el guardado:', e);
         _mostrarAviso('aviso-guardado', '⚠ No se pudo guardar: error al leer una ficha (' + e.message + ').',
@@ -1313,6 +1340,7 @@ function guardarTodo() {
         _ultimoGuardado = json;
         _quitarAviso('aviso-guardado');
         if (typeof hxTrasGuardar === 'function') { try { hxTrasGuardar(); } catch (e) { console.warn('Historial:', e); } }
+        if (typeof nbTrasGuardar === 'function') { try { nbTrasGuardar(datos, cadenas); } catch (e) { console.warn('Nube:', e); } }
         return true;
     } catch (e) {
         console.warn('No se pudo guardar:', e);
@@ -1372,6 +1400,7 @@ function leerFicha(panel) {
     const d = {};
     d._v = ESQUEMA_VERSION;
     d.id = panel.dataset.fichaId;
+    d.sid = panel.dataset.sid || '';   // identificador global (sincronización en la nube)
 
     // Cabecera
     d.nombre      = panel.querySelector('.input-nombre')?.value || '';
@@ -2218,6 +2247,9 @@ window.onload = function () {
     } else if (cargadas === 0) {
         nuevaFicha();
     }
+    // Cuenta y sincronización en la nube (nube.js). Si no hay Firebase configurado o falla, la web
+    // sigue funcionando como siempre, solo con el almacenamiento del navegador.
+    if (typeof nbIniciar === 'function') { try { nbIniciar(); } catch (e) { console.warn('Nube:', e); } }
 };
 // DND_SPELLS cargado desde hechizos.js
 

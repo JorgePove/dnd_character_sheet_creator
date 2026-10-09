@@ -1,0 +1,29 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore para el creador de fichas.
+// Pégalas en Firebase Console → Firestore Database → Reglas → Publicar.
+//
+// Cada persona solo puede leer y escribir lo que cuelga de SU propio uid:
+//   users/{uid}/fichas/{sid}
+// Cualquier otra ruta está cerrada.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid}/fichas/{sid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && sid.matches('[A-Za-z0-9_-]{8,64}')
+        && request.resource.data.keys().hasOnly(
+             ['v', 'rev', 'data', 'nombre', 'dev', 'mod', 'cre', 'deleted', 'imgOmitidas', 'updatedAt'])
+        && request.resource.data.rev is int
+        && request.resource.data.data is string;
+
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

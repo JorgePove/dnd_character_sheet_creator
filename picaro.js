@@ -378,7 +378,7 @@ const CLASE_PICARO = {
         n: "Fichas de los Difuntos (Tokens of the Departed)",
         nv: 9,
         a: "AR",
-        d: "Cuando una criatura que veas a 30 pies de ti muere, usas tu Reacción para crear una ficha de alma (máx. = bonificador de competencia; no puedes crear otra estando en el máximo). Con al menos una: Ventaja en salvaciones de muerte y de CON. Puedes destruir una para usar Lamentos desde la Tumba sin gastar uso. Con una acción, puedes destruir una ficha de alma, esté donde esté, para hacer una pregunta al espíritu asociado: aparece ante ti y responde lo más brevemente posible en un idioma que conociera en vida; no está obligado a ser veraz y solo sabe lo que sabía en vida."
+        d: "Cuando una criatura que veas a 30 pies de ti muere, usas tu Reacción para crear una ficha de alma (máx. = bonificador de competencia; no puedes crear otra estando en el máximo). Con al menos una: Ventaja en salvaciones de muerte y de CON. Al infligir Ataque Furtivo en tu turno, puedes destruir una ficha que lleves contigo para usar Lamentos desde la Tumba sin gastar uso. Con una acción, puedes destruir una ficha de alma, esté donde esté, para hacer una pregunta al espíritu asociado: aparece ante ti y responde lo más brevemente posible en un idioma que conociera en vida; no está obligado a ser veraz y solo sabe lo que sabía en vida."
       },
       {
         n: "Caminar Fantasmal (Ghost Walk)",
@@ -398,7 +398,7 @@ const CLASE_PICARO = {
         n: "Poder Psiónico (Psionic Power)",
         nv: 3,
         a: "O",
-        d: "Tienes dados de energía psiónica = 2 × tu bonificador de competencia (d6; d8 en Nv.5, d10 en Nv.11, d12 en Nv.17); recuperas todos con un descanso largo, y uno como Acción Adicional (una vez por descanso corto o largo). Conocimiento Psi-Reforzado: al fallar una prueba con una competencia, tiras un dado y lo sumas (se gasta sólo si logras el éxito). Susurros Psíquicos: con una acción eliges criaturas que veas (hasta tu bonificador de competencia) y tiras un dado de energía psiónica; durante tantas horas como el resultado, podéis hablar telepáticamente (sin acción) estando a 1 milla o menos; no funciona con criaturas sin idioma y cualquiera puede terminar la conexión cuando quiera. La primera vez que lo usas tras cada descanso largo no gastas el dado; las demás veces sí."
+        d: "Tienes dados de energía psiónica = 2 × tu bonificador de competencia (d6; d8 en Nv.5, d10 en Nv.11, d12 en Nv.17); recuperas todos con un descanso largo, y uno como Acción Adicional (una vez por descanso corto o largo). Conocimiento Psi-Reforzado: al fallar una prueba con una competencia, tiras un dado y lo sumas (se gasta sólo si logras el éxito). Susurros Psíquicos: con una acción eliges criaturas que veas (hasta tu bonificador de competencia) y tiras un dado de energía psiónica; durante tantas horas como el resultado, podéis hablar telepáticamente (sin acción) estando a 1 milla o menos; no funciona con criaturas sin idioma y cualquiera puede terminar la conexión cuando quiera. La primera vez que lo usas tras cada Descanso Largo no gastas el dado; las demás veces sí."
       },
       {
         n: "Cuchillas Psíquicas (Psychic Blades)",

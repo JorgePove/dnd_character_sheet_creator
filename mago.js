@@ -49,7 +49,7 @@ const CLASE_MAGO = {
     {
       n: "Adepto de Rituales (Ritual Adept)",
       nv: 1,
-      d: "Puedes lanzar como ritual cualquier conjuro con la etiqueta Ritual que esté en tu libro de conjuros. No necesitas tenerlo preparado, pero debes leerlo del libro para lanzarlo así. [2014: Lanzamiento de Rituales; el conjuro debe estar en tu libro, sin necesidad de leer de él]"
+      d: "Puedes lanzar como ritual cualquier conjuro con la etiqueta Ritual que esté en tu libro de conjuros. No necesitas tenerlo preparado, pero debes leerlo del libro para lanzarlo así. [2014: Lanzamiento de Rituales; basta con que el conjuro esté en tu libro de conjuros]"
     },
     {
       n: "Recuperación Arcana (Arcane Recovery)",
@@ -210,7 +210,7 @@ const CLASE_MAGO = {
         n: "Encanto Instintivo (Instinctive Charm)",
         nv: 6,
         a: "R",
-        d: "Cuando una criatura que veas a 30 pies te hace una tirada de ataque, usas tu Reacción para desviar el ataque, siempre que haya otra criatura en el alcance del ataque. El atacante hace una salvación de SAB (CD de tus conjuros de Mago); si falla, debe atacar a la criatura más cercana a él distinta de ti y de sí mismo (si hay varias igual de cercanas, elige el atacante). Si la supera, no puedes volver a usarlo sobre él hasta terminar un Descanso Largo. Debes decidir usarlo antes de saber si el ataque impacta o falla. Las criaturas inmunes a ser hechizadas son inmunes a este efecto."
+        d: "Cuando una criatura que veas a 30 pies hace una tirada de ataque contra ti, usas tu Reacción para desviar el ataque, siempre que haya otra criatura en el alcance del ataque. El atacante hace una salvación de SAB (CD de tus conjuros de Mago); si falla, debe atacar a la criatura más cercana a él distinta de ti y de sí mismo (si hay varias igual de cercanas, elige el atacante). Si la supera, no puedes volver a usarlo sobre él hasta terminar un Descanso Largo. Debes decidir usarlo antes de saber si el ataque impacta o falla. Las criaturas inmunes a ser hechizadas son inmunes a este efecto."
       },
       {
         n: "Encantamiento Dividido (Split Enchantment)",
@@ -516,7 +516,7 @@ const CLASE_MAGO = {
         n: "Mente Manifiesta (Manifest Mind)",
         nv: 6,
         a: "B",
-        d: "Mientras llevas contigo tu libro, como Acción Adicional creas una mente espectral Diminuta e intangible en un espacio libre a 60 pies (luz tenue 10 pies, Visión en la oscuridad 60 pies; te comparte por telepatía lo que ve y oye). Cuando lances un conjuro de Mago en tu turno, puedes lanzarlo como si estuvieras en el espacio de la mente, usando sus sentidos, un número de veces por día igual a tu bonificador de competencia (se recuperan con un Descanso Largo). Como Acción Adicional la mueves hasta 30 pies a un espacio libre que tú o ella veáis; puede atravesar criaturas, no objetos. Se disipa si está a más de 300 pies de ti, si alguien le lanza Dispel Magic, si el libro es destruido, si mueres o si la descartas con una Acción Adicional. Una vez creada, no puedes volver a crearla hasta terminar un Descanso Largo, salvo que gastes un espacio de conjuro de cualquier nivel."
+        d: "Mientras llevas contigo tu libro, como Acción Adicional creas una mente espectral Diminuta e intangible en un espacio libre a 60 pies (luz tenue 10 pies, Visión en la oscuridad 60 pies; te comparte por telepatía lo que ve y oye). Cuando lances un conjuro de Mago en tu turno, puedes lanzarlo como si estuvieras en el espacio de la mente, usando sus sentidos, un número de veces por día igual a tu bonificador de competencia (se recuperan con un Descanso Largo). Como Acción Adicional la mueves hasta 30 pies a un espacio libre visible para ti o para ella; puede atravesar criaturas, no objetos. Se disipa si está a más de 300 pies de ti, si alguien le lanza Dispel Magic, si el libro es destruido, si mueres o si la descartas con una Acción Adicional. Una vez creada, no puedes volver a crearla hasta terminar un Descanso Largo, salvo que gastes un espacio de conjuro de cualquier nivel."
       },
       {
         n: "Maestro Escribano (Master Scrivener)",

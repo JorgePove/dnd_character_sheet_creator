@@ -115,6 +115,9 @@ const _TIPO_ETIQUETA = { O: 'Origen', G: 'General', F: 'Combate', E: 'Boon Épic
 ══════════════════════════════════════════════════════════════ */
 const DND_ALIAS = {
     subclase: {
+        'Bárbaro': {
+            'Camino del Berserker Osado [SCAG]': 'Camino del Rabioso (Battlerager) [SCAG]'
+        },
         'Brujo': {
             'El Inmortal [XGtE]': 'El Inmortal [SCAG]',
             'El Guerrero Hexblade [SCAG]': 'El Hexblade [XGtE]',
@@ -177,7 +180,8 @@ const DND_ALIAS = {
         'Kalashtar [ERLtLW]': 'Kalashtar [ERftLW 2014]',
         'Changeling [ERLtLW]': 'Changeling [MotM]',
         'Warforged [ERLtLW]': 'Warforged [ERftLW 2014]',
-        'Shifter [ERLtLW]': 'Shifter [MotM]'
+        'Shifter [ERLtLW]': 'Shifter [MotM]',
+        'Owlin [SAiS]': 'Owlin [SCC]'
     },
     trasfondo: {
         'Acólito': 'Acólito (Acolyte) [PHB 2014]',

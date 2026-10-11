@@ -14,7 +14,7 @@
      Camino del Fanático          [PHB 2024] / [XGtE]
      Camino del Guardián Ancestral [XGtE]
      Heraldo de la Tormenta       [XGtE]
-     Camino del Berserker Osado   [SCAG]
+     Camino del Rabioso (Battlerager) [SCAG]
      Camino de la Bestia          [TCE]
      Camino de la Magia Salvaje   [TCE]
      Camino del Gigante           [BGotG]
@@ -359,7 +359,7 @@ const CLASE_BARBARO = {
       {
         n: "Alma de la Tormenta (Storm Soul)",
         nv: 6,
-        d: "Beneficio permanente según tu entorno. Desierto: resistencia al fuego, inmunidad al calor extremo y puedes tocar un objeto inflamable que nadie más lleve puesto o en la mano y prenderlo como acción. Mar: resistencia al rayo, respiras bajo el agua y Velocidad de nadar 30 pies. Tundra: resistencia al frío, inmunidad al frío extremo y puedes tocar agua y convertir como acción un cubo de 5 pies de ella en hielo (se derrite en 1 minuto; la acción falla si hay una criatura en el cubo)."
+        d: "Beneficio permanente según tu entorno. Desierto: resistencia al fuego, inmunidad al calor extremo y puedes tocar un objeto inflamable que nadie más lleve puesto ni transporte y prenderlo como acción. Mar: resistencia al rayo, respiras bajo el agua y Velocidad de nadar 30 pies. Tundra: resistencia al frío, inmunidad al frío extremo y puedes tocar agua y convertir como acción un cubo de 5 pies de ella en hielo (se derrite en 1 minuto; la acción falla si hay una criatura en el cubo)."
       },
       {
         n: "Tormenta Protectora (Shielding Storm)",
@@ -406,7 +406,7 @@ const CLASE_BARBARO = {
 
 
     /* ── SCAG ── */
-    "Camino del Berserker Osado [SCAG]": [
+    "Camino del Rabioso (Battlerager) [SCAG]": [
       {
         n: "Armadura de Rabioso (Battlerager Armor)",
         nv: 3,

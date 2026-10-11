@@ -191,7 +191,7 @@ const DND_TRASFONDOS = {
     herr: "1 tipo de Herramientas de artesano (Mercader: Herramientas de navegante o un idioma extra)",
     idiomas: "1 a elegir",
     equipo: "Un juego de herramientas de artesano, carta de presentación de tu gremio, ropa de viajero, bolsa con 15 po.",
-    rasgo: "Membresía del Gremio: los miembros del gremio te dan alojamiento y comida si lo necesitas y pagan tu funeral. Si te acusan de un delito, el gremio te apoya si hay un buen caso para tu inocencia o el delito es justificable, y puede darte acceso a figuras políticas poderosas (puede exigir donar dinero u objetos mágicos). Debes pagar una cuota de 5 po al mes; si te retrasas, debes pagar los atrasos para seguir en buenos términos con el gremio.",
+    rasgo: "Membresía del Gremio: los miembros del gremio te dan alojamiento y comida si lo necesitas y pagan tu funeral. Si te acusan de un delito, el gremio te apoya si hay un buen caso para tu inocencia o el delito es justificable, y, si eres miembro en buenos términos, puede darte acceso a figuras políticas poderosas (puede exigir donar dinero u objetos mágicos al gremio). Debes pagar una cuota de 5 po al mes; si te retrasas, debes pagar los atrasos para seguir en buenos términos con el gremio.",
   },
   "Ermitaño (Hermit) [PHB 2014]": {
     desc: "Viviste en aislamiento y descubriste algo importante.",
@@ -376,7 +376,7 @@ const DND_TRASFONDOS = {
     comp: "Perspicacia, Religión",
     idiomas: "2 a elegir",
     equipo: "Diario encuadernado en cuero, frasco de tinta, pluma, ropa de viajero, baratija, bolsa con 10 po.",
-    rasgo: "Lingüista Hábil: puedes comunicarte con humanoides que no hablen ningún idioma que conozcas. Debes observarlos interactuar entre sí al menos 1 día; después aprendes un puñado de palabras, expresiones y gestos importantes, suficiente para comunicarte de forma rudimentaria. (Cultura adoptada, a elegir o tirar: Aarakocra, Enano, Elfo, Goblin, Mediano, Humano, Hombre Lagarto u Orco.)",
+    rasgo: "Lingüista Hábil: puedes comunicarte con humanoides que no hablen ningún idioma que conozcas. Debes observarlos interactuar entre sí al menos 1 día; después aprendes un puñado de palabras, expresiones y gestos importantes, suficiente para comunicarte de forma rudimentaria. (Cultura adoptada, a elegir o tirar: Aarakocra, Enano, Elfo, Goblin, Mediano, Humano, Lizardfolk u Orco.)",
   },
   "Arqueólogo (Archaeologist) [ToA]": {
     desc: "Estudias ruinas y civilizaciones desaparecidas.",

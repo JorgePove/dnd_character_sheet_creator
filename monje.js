@@ -45,7 +45,7 @@ const CLASE_MONJE = {
       n: "Artes Marciales (Martial Arts)",
       nv: 1,
       a: "B",
-      d: "Mientras vas sin armas o solo con armas de monje y no llevas armadura ni escudo: usas DES (en lugar de FUE) para ataques y daño con golpes sin armas y armas de monje (armas simples cuerpo a cuerpo y armas marciales cuerpo a cuerpo con la propiedad Ligera); además, al usar las opciones Agarrar o Empujar de tu golpe sin arma, puedes usar tu mod. DES en lugar de FUE para determinar la CD de la salvación; tu dado de Artes Marciales es d6 (d8 en Nv.5, d10 en Nv.11, d12 en Nv.17) y sustituye el daño base del golpe sin arma; y puedes hacer un golpe sin arma como Acción Adicional (sin necesidad de haber realizado antes la acción Atacar). [2014: armas de monje = espadas cortas y armas simples cuerpo a cuerpo sin las propiedades Dos manos ni Pesada; dados d4, d6 (Nv.5), d8 (Nv.11), d10 (Nv.17); el golpe adicional lo haces tras la acción Atacar con un golpe sin arma o arma de monje]"
+      d: "Mientras vas sin armas o solo con armas de monje y no llevas armadura ni escudo: usas DES (en lugar de FUE) para ataques y daño con golpes sin armas y armas de monje (armas simples cuerpo a cuerpo y armas marciales cuerpo a cuerpo con la propiedad Ligera); además, al usar las opciones Agarrar o Empujar de tu golpe sin arma, puedes usar tu mod. DES en lugar de FUE para determinar la CD de la salvación; tu dado de Artes Marciales es d6 (d8 en Nv.5, d10 en Nv.11, d12 en Nv.17) y sustituye el daño base del golpe sin arma o de las armas de monje; y puedes hacer un golpe sin arma como Acción Adicional (sin necesidad de haber realizado antes la acción Atacar). [2014: armas de monje = espadas cortas y armas simples cuerpo a cuerpo sin las propiedades Dos manos ni Pesada; dados d4, d6 (Nv.5), d8 (Nv.11), d10 (Nv.17); el golpe adicional lo haces tras la acción Atacar con un golpe sin arma o arma de monje]"
     },
     {
       n: "Foco del Monje (Monk's Focus)",
@@ -326,7 +326,7 @@ const CLASE_MONJE = {
         n: "Estallido Solar Abrasador (Searing Sunburst)",
         nv: 11,
         a: "A",
-        d: "Con una acción lanzas una esfera hasta un punto a 150 pies que estalla en 20 pies de radio: salvación de CON o 2d6 de daño radiante (una criatura tras una Cobertura opaca no hace la salvación). Puedes gastar hasta 3 ki: +2d6 de daño por ki."
+        d: "Con una acción lanzas una esfera hasta un punto a 150 pies que estalla en 20 pies de radio: salvación de CON o 2d6 de daño radiante (una criatura tras Cobertura Total opaca no hace la salvación). Puedes gastar hasta 3 ki: +2d6 de daño por ki."
       },
       {
         n: "Escudo Solar (Sun Shield)",
@@ -552,8 +552,8 @@ const CLASE_MONJE = {
       {
         n: "Palma Vibrante (Quivering Palm)",
         nv: 17,
-        a: "O",
-        d: "Al impactar con un golpe sin arma, gastas 4 PE para implantar vibraciones imperceptibles durante días = tu nivel de Monje. Después, las terminas con una acción (o, al realizar la acción Atacar en tu turno, renunciando a uno de los ataques; tú y el objetivo debéis estar en el mismo plano de existencia): el objetivo hace una salvación de CON; si falla sufre 10d12 de daño de fuerza, si la supera la mitad. Puedes terminarlas sin daño y sin acción. Sólo una criatura a la vez."
+        a: "AO",
+        d: "Al impactar con un golpe sin arma, gastas 4 PE para implantar vibraciones imperceptibles durante días = tu nivel de Monje. Después, las terminas con una acción (o, al realizar la acción Atacar en tu turno, renunciando a uno de los ataques), siempre que tú y el objetivo estéis en el mismo plano de existencia: el objetivo hace una salvación de CON; si falla sufre 10d12 de daño de fuerza, si la supera la mitad. Puedes terminarlas sin daño y sin acción. Sólo una criatura a la vez."
       },
     ],
 

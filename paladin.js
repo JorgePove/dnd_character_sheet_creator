@@ -44,7 +44,7 @@ const CLASE_PALADIN = {
       n: "Sentido Divino (Divine Sense)",
       nv: 1,
       a: "B",
-      d: "Como Acción Adicional abres tu percepción: durante 10 minutos o hasta que quedes Incapacitado conoces la ubicación y el tipo de celestiales, infernales y no-muertos a 60 pies, y detectas lugares u objetos consagrados o profanados (como con Hallow). [2024: es una opción de Canalizar Divinidad (Nv.3) y gasta un uso; 2014: es una acción, dura hasta el final de tu siguiente turno, no detecta criaturas tras Cobertura y tienes 1 + mod. CAR usos por descanso largo, desde Nv.1]"
+      d: "Como Acción Adicional abres tu percepción: durante 10 minutos o hasta que quedes Incapacitado conoces la ubicación y el tipo de celestiales, infernales y no-muertos a 60 pies, y detectas lugares u objetos consagrados o profanados (como con Hallow). [2024: es una opción de Canalizar Divinidad (Nv.3) y gasta un uso; 2014: es una acción, dura hasta el final de tu siguiente turno, no detecta criaturas tras Cobertura Total y tienes 1 + mod. CAR usos por descanso largo, desde Nv.1]"
     },
     {
       n: "Lanzamiento de Conjuros",
@@ -314,7 +314,7 @@ const CLASE_PALADIN = {
       {
         n: "Aura de Conquista (Aura of Conquest)",
         nv: 7,
-        d: "Mientras no estés Incapacitado emanas un aura de 10 pies (30 pies en Nv.18) que no atraviesa Cobertura: las criaturas Asustadas de ti en el aura tienen Velocidad 0 y, si empiezan su turno en ella, sufren daño psíquico = la mitad de tu nivel de Paladín."
+        d: "Mientras no estés Incapacitado emanas un aura de 10 pies (30 pies en Nv.18) que no atraviesa Cobertura Total: las criaturas Asustadas de ti en el aura tienen Velocidad 0 y, si empiezan su turno en ella, sufren daño psíquico = la mitad de tu nivel de Paladín."
       },
       {
         n: "Reprimenda Desdeñosa (Scornful Rebuke)",
@@ -646,7 +646,7 @@ const CLASE_PALADIN = {
         n: "Noble Descendiente (Noble Scion)",
         nv: 20,
         a: "B",
-        d: "Como Acción Adicional ganas 10 minutos: Velocidad de vuelo 60 pies (flotas); y cuando tú o un aliado en tu aura de protección falláis una Tirada de d20, usas tu Reacción para hacer que la supere. Una vez por descanso largo o gastando un espacio de Nv.5."
+        d: "Como Acción Adicional ganas 10 minutos: Velocidad de vuelo 60 pies (flotas); y cuando tú o un aliado en tu aura de protección falla una Tirada de d20, usas tu Reacción para hacer que la supere. Una vez por descanso largo o gastando un espacio de Nv.5."
       },
     ],
   },

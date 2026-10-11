@@ -35,7 +35,7 @@ const CLASE_DRUIDA = {
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "Lanzador completo. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); usas un foco druídico. Trucos: 2 (3 en Nv.4, 4 en Nv.10); al subir de nivel de Druida puedes cambiar un truco por otro de la lista de Druida. Preparas conjuros de la lista de Druida: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); cambias la lista tras un descanso largo. [2014: preparas SAB + nivel de Druida conjuros (mín. 1)]"
+      d: "Lanzador completo. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); usas un foco druídico. Trucos: 2 (3 en Nv.4, 4 en Nv.10); al subir de nivel de Druida puedes cambiar un truco por otro de la lista de Druida [2014: sólo con el rasgo opcional de TCE Versatilidad de Trucos]. Preparas conjuros de la lista de Druida: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); cambias la lista tras un descanso largo. [2014: preparas SAB + nivel de Druida conjuros (mín. 1)]"
     },
     {
       n: "Druídico (Druidic)",
@@ -67,7 +67,7 @@ const CLASE_DRUIDA = {
     {
       n: "Mejora de Característica",
       nv: 4,
-      d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19; opcional de TCE, Versatilidad con Trucos (Cantrip Versatility): en cada nivel que concede Mejora de Característica puedes cambiar un truco de Druida por otro de la lista]"
+      d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19; opcional de TCE, Versatilidad de Trucos (Cantrip Versatility): en cada nivel que concede Mejora de Característica puedes cambiar un truco de Druida por otro de la lista]"
     },
     {
       n: "Resurgimiento Salvaje (Wild Resurgence)",
@@ -124,7 +124,7 @@ const CLASE_DRUIDA = {
       {
         n: "Conjuros del Círculo (Circle Spells)",
         nv: 2,
-        d: "Eliges un tipo de terreno; ganas siempre preparados — Ártico: Nv.3Hold Person, Spike Growth; Nv.5 Sleet Storm, Slow; Nv.7 Freedom of Movement, Ice Storm; Nv.9 Commune with Nature, Cone of Cold. Costa: Mirror Image, Misty Step; Water Breathing, Water Walk; Control Water, Freedom of Movement; Conjure Elemental, Scrying. Desierto: Blur, Silence; Create Food and Water, Protection from Energy; Blight, Hallucinatory Terrain; Insect Plague, Wall of Stone. Bosque: Barkskin, Spider Climb; Call Lightning, Plant Growth; Divination, Freedom of Movement; Commune with Nature, Tree Stride. Pradera: Invisibility, Pass without Trace; Daylight, Haste; Divination, Freedom of Movement; Dream, Insect Plague. Montaña: Spider Climb, Spike Growth; Lightning Bolt, Meld into Stone; Stone Shape, Stoneskin; Passwall, Wall of Stone. Pantano: Darkness, Melf's Acid Arrow; Water Walk, Stinking Cloud; Freedom of Movement, Locate Creature; Insect Plague, Scrying. Underdark: Spider Climb, Web; Gaseous Form, Stinking Cloud; Greater Invisibility, Stone Shape; Cloudkill, Insect Plague."
+        d: "Eliges un tipo de terreno; ganas siempre preparados — Ártico: Nv.3 Hold Person, Spike Growth; Nv.5 Sleet Storm, Slow; Nv.7 Freedom of Movement, Ice Storm; Nv.9 Commune with Nature, Cone of Cold. Costa: Mirror Image, Misty Step; Water Breathing, Water Walk; Control Water, Freedom of Movement; Conjure Elemental, Scrying. Desierto: Blur, Silence; Create Food and Water, Protection from Energy; Blight, Hallucinatory Terrain; Insect Plague, Wall of Stone. Bosque: Barkskin, Spider Climb; Call Lightning, Plant Growth; Divination, Freedom of Movement; Commune with Nature, Tree Stride. Pradera: Invisibility, Pass without Trace; Daylight, Haste; Divination, Freedom of Movement; Dream, Insect Plague. Montaña: Spider Climb, Spike Growth; Lightning Bolt, Meld into Stone; Stone Shape, Stoneskin; Passwall, Wall of Stone. Pantano: Darkness, Melf's Acid Arrow; Water Walk, Stinking Cloud; Freedom of Movement, Locate Creature; Insect Plague, Scrying. Underdark: Spider Climb, Web; Gaseous Form, Stinking Cloud; Greater Invisibility, Stone Shape; Cloudkill, Insect Plague."
       },
       {
         n: "Paso por la Tierra (Land's Stride)",
@@ -186,7 +186,7 @@ const CLASE_DRUIDA = {
         n: "Hogar de Luz de Luna y Sombra (Hearth of Moonlight and Shadow)",
         nv: 6,
         a: "O",
-        d: "Durante un descanso corto o largo, al inicio tocas un punto y aparece una esfera invisible de 30 pies de radio centrada en él (la cobertura la bloquea). Dentro de ella, tú y tus aliados tenéis +5 a las pruebas de DES (Sigilo) y SAB (Percepción), y la luz de llamas abiertas (hoguera, antorchas...) no se ve desde fuera. La esfera desaparece al terminar el descanso o cuando sales de ella."
+        d: "Durante un descanso corto o largo, al inicio tocas un punto y aparece una esfera invisible de 30 pies de radio centrada en él (la Cobertura Total la bloquea). Dentro de ella, tú y tus aliados tenéis +5 a las pruebas de DES (Sigilo) y SAB (Percepción), y la luz de llamas abiertas (hoguera, antorchas...) no se ve desde fuera. La esfera desaparece al terminar el descanso o cuando sales de ella."
       },
       {
         n: "Caminos Ocultos (Hidden Paths)",
@@ -212,7 +212,7 @@ const CLASE_DRUIDA = {
         n: "Tótem Espiritual (Spirit Totem)",
         nv: 2,
         a: "BR",
-        d: "Como Acción Adicional invocas un espíritu incorpóreo en un punto a 60 pies que crea un aura de 30 pies; dura 1 minuto o hasta que quedes Incapacitado y no cuenta como criatura ni como objeto (como Acción Adicional puedes moverlo hasta 60 pies a un punto que veas). Espíritu del Oso: las criaturas de tu elección en el aura ganan PG temporales = 5 + nivel de Druida y tienen ventaja en pruebas y salvaciones de FUE. Espíritu del Halcón: cuando una criatura hace una tirada de ataque contra un objetivo dentro del aura, puedes usar tu Reacción para concederle ventaja a esa tirada de ataque; además, tú y tus aliados tenéis ventaja en pruebas de SAB (Percepción) mientras estéis en el aura. Espíritu del Unicornio: tú y tus aliados tenéis ventaja en todas las pruebas para detectar criaturas dentro del aura; además, si lanzas un conjuro con espacio que cure PG a cualquier criatura (dentro o fuera del aura), cada criatura de tu elección en el aura recupera PG = tu nivel de Druida. Una vez por descanso corto o largo."
+        d: "Como Acción Adicional invocas un espíritu incorpóreo en un punto a 60 pies que crea un aura de 30 pies de radio; no cuenta como criatura ni como objeto y dura 1 minuto o hasta que quedes Incapacitado (como Acción Adicional puedes moverlo hasta 60 pies a un punto que veas). Espíritu del Oso: las criaturas de tu elección en el aura ganan PG temporales = 5 + nivel de Druida y tienen ventaja en pruebas y salvaciones de FUE. Espíritu del Halcón: cuando una criatura hace una tirada de ataque contra un objetivo dentro del aura, puedes usar tu Reacción para concederle ventaja a esa tirada de ataque; además, tú y tus aliados tenéis ventaja en pruebas de SAB (Percepción) mientras estéis en el aura. Espíritu del Unicornio: tú y tus aliados tenéis ventaja en todas las pruebas para detectar criaturas dentro del aura; además, si lanzas un conjuro con espacio que cure PG a cualquier criatura (dentro o fuera del aura), cada criatura de tu elección en el aura recupera PG = tu nivel de Druida. Una vez por descanso corto o largo."
       },
       {
         n: "Invocador Poderoso (Mighty Summoner)",

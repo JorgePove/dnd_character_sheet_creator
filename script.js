@@ -5078,7 +5078,7 @@ function _recogerEntradasAuto(fichaPanel) {
             // Rasgos de clase — solo hasta nivelMax
             (DND_CLASES[claseKey].rasgos || []).forEach(r => {
                 if ((r.nv || 1) > nivelMax) return;
-                const unico = `${claseKey}::${r.n}`;
+                const unico = `${claseKey}::${r.nv || 1}::${r.n}`;
                 if (vistos.has(unico)) return;
                 vistos.add(unico);
                 añadir(r, claseKey);
@@ -5089,7 +5089,7 @@ function _recogerEntradasAuto(fichaPanel) {
             if (subKey && DND_CLASES[claseKey]?.subclases?.[subKey]) {
                 (DND_CLASES[claseKey].subclases[subKey] || []).forEach(r => {
                     if ((r.nv || 1) > nivelMax) return;
-                    const unico = `${claseKey}::${subKey}::${r.n}`;
+                    const unico = `${claseKey}::${subKey}::${r.nv || 1}::${r.n}`;
                     if (vistos.has(unico)) return;
                     vistos.add(unico);
                     añadir(r, subKey);

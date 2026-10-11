@@ -42,7 +42,7 @@ const CLASE_EXPLORADOR = {
       n: "Enemigo Predilecto (Favored Enemy)",
       nv: 1,
       a: "O",
-      d: "Siempre tienes preparado Hunter's Mark y puedes lanzarlo sin gastar espacio 2 veces (3 en Nv.5, 4 en Nv.9, 5 en Nv.13, 6 en Nv.17); recuperas todos los usos con un descanso largo. [2014: eliges un tipo de criatura enemiga: ventaja en pruebas de Supervivencia para rastrearla y de INT para recordar información sobre ella; un idioma; más tipos en Nv.6 y 14] [Opcional TCE, sustituye al Enemigo Predilecto de 2014 (Favored Foe): al impactar con una tirada de ataque a una criatura, puedes marcarla como enemigo predilecto 1 minuto o hasta que pierdas la concentración (como si concentraras un conjuro). La primera vez en cada uno de tus turnos que impactes al enemigo marcado y le infligas daño (también al marcarlo), puedes sumar 1d4 de daño (1d6 en Nv.6; 1d8 en Nv.14). Usos = comp. por Descanso Largo. Funciona con Cazador de Enemigos]"
+      d: "Siempre tienes preparado Hunter's Mark y puedes lanzarlo sin gastar espacio 2 veces (3 en Nv.5, 4 en Nv.9, 5 en Nv.13, 6 en Nv.17); recuperas todos los usos con un descanso largo. [2014: eliges un tipo de criatura enemiga: ventaja en pruebas de Supervivencia para rastrearla y de INT para recordar información sobre ella; un idioma; más tipos en Nv.6 y 14] [Opcional TCE, Enemigo Predilecto alternativo (Favored Foe), sustituye al Enemigo Predilecto de 2014: al impactar con una tirada de ataque a una criatura, puedes marcarla como enemigo predilecto 1 minuto o hasta que pierdas la concentración (como si concentraras un conjuro). La primera vez en cada uno de tus turnos que impactes al enemigo marcado y le inflijas daño (también al marcarlo), puedes sumar 1d4 de daño (1d6 en Nv.6; 1d8 en Nv.14). Usos = comp. por Descanso Largo. Funciona con Cazador de Enemigos]"
     },
     {
       n: "Maestría con Armas (Weapon Mastery)",
@@ -52,12 +52,12 @@ const CLASE_EXPLORADOR = {
     {
       n: "Explorador Natural (Natural Explorer)",
       nv: 1,
-      d: "[Sólo 2014] Eliges un tipo de terreno predilecto (ártico, costa, desierto, bosque, pradera, montaña, pantano, Underdark). En pruebas de INT o SAB relacionadas con él, duplicas tu bonificador de competencia si usas una habilidad en la que seas competente. Tras viajar 1 hora o más por él: el terreno difícil no ralentiza a tu grupo; tu grupo no se pierde salvo por medios mágicos; sigues alerta ante peligros aunque hagas otra actividad (forrajear, orientarte, rastrear); si viajas solo, te mueves con sigilo a ritmo normal; al forrajear encuentras el doble de comida; al rastrear criaturas conoces su número exacto, sus tamaños y cuánto hace que pasaron. Más terrenos en Nv.6 y 10. [2024: sustituido por Explorador Diestro]"
+      d: "[Sólo 2014] Eliges un tipo de terreno predilecto (ártico, costa, desierto, bosque, pradera, montaña, pantano, Underdark). En pruebas de INT o SAB relacionadas con él, duplicas tu bonificador de competencia si usas una habilidad en la que seas competente. Mientras viajas 1 hora o más por él: el terreno difícil no ralentiza a tu grupo; tu grupo no se pierde salvo por medios mágicos; sigues alerta ante peligros aunque hagas otra actividad (forrajear, orientarte, rastrear); si viajas solo, te mueves con sigilo a ritmo normal; al forrajear encuentras el doble de comida; al rastrear criaturas conoces su número exacto, sus tamaños y cuánto hace que pasaron. Más terrenos en Nv.6 y 10. [2024: sustituido por Explorador Diestro]"
     },
     {
       n: "Explorador Diestro (Deft Explorer)",
       nv: 2,
-      d: "Ganas Pericia en una habilidad en la que seas competente y conoces 2 idiomas a tu elección. [2014: opcional TCE (sustituye a Explorador Natural, Nv.1): Habilidad Astuta (Canny): eliges una de tus competencias en habilidades y duplicas tu bonificador de competencia en las pruebas con ella; además hablas, lees y escribes 2 idiomas más. Mejoras en Nv.6 (Vagabundo) y Nv.10 (Incansable)]"
+      d: "Ganas Pericia en una habilidad en la que seas competente y en la que aún no tengas Pericia, y conoces 2 idiomas a tu elección. [2014: opcional TCE (sustituye a Explorador Natural, Nv.1): Habilidad Astuta (Canny): eliges una de tus competencias en habilidades y duplicas tu bonificador de competencia en las pruebas con ella; además hablas, lees y escribes 2 idiomas más. Mejoras en Nv.6 (Vagabundo) y Nv.10 (Incansable)]"
     },
     {
       n: "Estilo de Combate",
@@ -115,7 +115,7 @@ const CLASE_EXPLORADOR = {
       n: "Velo de la Naturaleza (Nature's Veil)",
       nv: 14,
       a: "B",
-      d: "Como Acción Adicional quedas Invisible hasta el final de tu siguiente turno. Usos = mod. SAB (mínimo 1) por descanso largo. [2014: Desvanecerse: puedes Esconderte como Acción Adicional y no puedes ser rastreado por medios no mágicos] [Opcional TCE, Nv.10, sustituye a Esconderse a Plena Vista: como Acción Adicional quedas Invisible (tú y tu equipo) hasta el inicio de tu siguiente turno; usos = bonificador de competencia por Descanso Largo]"
+      d: "Como Acción Adicional quedas Invisible hasta el final de tu siguiente turno. Usos = mod. SAB (mínimo 1) por descanso largo. [2014: Desvanecerse: puedes Esconderte como Acción Adicional y no puedes ser rastreado por medios no mágicos, salvo que decidas dejar rastro] [Opcional TCE, Nv.10, sustituye a Esconderse a Plena Vista: como Acción Adicional quedas Invisible (tú y tu equipo) hasta el inicio de tu siguiente turno; usos = bonificador de competencia por Descanso Largo]"
     },
     {
       n: "Cazador Preciso (Precise Hunter)",
@@ -176,7 +176,7 @@ const CLASE_EXPLORADOR = {
         n: "Compañero del Explorador (Ranger's Companion)",
         nv: 3,
         a: "A",
-        d: "Ganas un compañero bestia de CR 1/4 o menos y tamaño Mediano o menor. Sumas tu comp. a su CA, tiradas de ataque y daño, y a las salvaciones y habilidades en las que sea competente; sus PG = el máximo normal o 4 × tu nivel de Explorador (el mayor). Puede gastar Dados de Golpe en un Descanso Corto. Actúa en tu iniciativa. En tu turno puedes ordenarle verbalmente adónde moverse (sin acción); con tu acción puedes ordenarle Atacar, Correr, Retirarse o Ayudar. Si no das órdenes, usa Esquivar. Con Ataque Extra, puedes hacer un ataque tú cuando le ordenas Atacar. Si estás Incapacitado o ausente, la bestia actúa por su cuenta, centrada en protegeros a ti y a ella; nunca necesita tu orden para usar su reacción (p. ej. un ataque de oportunidad). Viajando por tu terreno predilecto solo con la bestia, te mueves con sigilo a ritmo normal. Si muere, domas otra bestia con 8 horas de vínculo mágico (no hostil y que cumpla los requisitos). [Opcional TCE: Compañero Primigenio (Primal Companion): bestia de la Tierra, el Mar o el Cielo]"
+        d: "Ganas un compañero bestia de CR 1/4 o menos y tamaño Mediano o menor. Sumas tu comp. a su CA, tiradas de ataque y daño, y a las salvaciones y habilidades en las que sea competente; sus PG = el máximo normal o 4 × tu nivel de Explorador (el mayor). Puede gastar Dados de Golpe en un Descanso Corto. Actúa en tu iniciativa. En tu turno puedes ordenarle verbalmente adónde moverse (sin acción); con tu acción puedes ordenarle Atacar, Correr, Retirarse o Ayudar. Si no das órdenes, usa Esquivar. Con Ataque Extra, puedes hacer un ataque tú cuando le ordenas Atacar. Si estás Incapacitado o ausente, la bestia actúa por su cuenta, centrada en protegerte a ti y a sí misma; nunca necesita tu orden para usar su reacción (p. ej. un ataque de oportunidad). Viajando por tu terreno predilecto solo con la bestia, te mueves con sigilo a ritmo normal. Si muere, domas otra bestia con 8 horas de vínculo mágico (no hostil y que cumpla los requisitos). [Opcional TCE: Compañero Primigenio (Primal Companion): bestia de la Tierra, el Mar o el Cielo]"
       },
       {
         n: "Entrenamiento Excepcional (Exceptional Training)",
@@ -327,7 +327,7 @@ const CLASE_EXPLORADOR = {
       {
         n: "Dones del Feywild (Feywild Gifts)",
         nv: 3,
-        d: "Eliges (o tiras 1d6) un don cosmético: mariposas ilusorias, flores que brotan, aroma de hierbas, sombra danzante, cuernos/astas o piel/pelo que cambia de color."
+        d: "Eliges (o tiras 1d6) un don cosmético: mariposas ilusorias que revolotean a tu alrededor mientras haces un descanso corto o largo; flores frescas de temporada que brotan de tu pelo cada amanecer; aroma a canela, lavanda, nuez moscada u otra hierba o especia reconfortante; sombra que baila cuando nadie la mira directamente; cuernos o astas en la cabeza; piel y pelo que cambian de color según la estación cada amanecer."
       },
       {
         n: "Giro Seductor (Beguiling Twist)",
@@ -530,7 +530,7 @@ const CLASE_EXPLORADOR = {
         n: "Giro Seductor (Beguiling Twist)",
         nv: 7,
         a: "R",
-        d: "Ventaja en salvaciones para evitar o terminar Hechizado o Asustado. Cuando tú o una criatura a 120 pies supera una salvación contra esas condiciones, puedes usar tu reacción para obligar a otra criatura a 120 pies a una salvación de SAB (tu CD): si falla queda Hechizada o Asustada (a tu elección) 1 minuto (repite la salvación al final de cada turno)."
+        d: "Ventaja en salvaciones para evitar o terminar Hechizado o Asustado. Cuando tú o una criatura que veas a 120 pies supera una salvación contra esas condiciones, puedes usar tu reacción para obligar a otra criatura que veas a 120 pies a una salvación de SAB (tu CD): si falla queda Hechizada o Asustada (a tu elección) 1 minuto (repite la salvación al final de cada turno)."
       },
       {
         n: "Refuerzos Feéricos (Fey Reinforcements)",

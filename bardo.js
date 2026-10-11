@@ -37,12 +37,12 @@ const CLASE_BARDO = {
       n: "Inspiración Bárdica (Bardic Inspiration)",
       nv: 1,
       a: "B",
-      d: "Como Acción Adicional inspiras a otra criatura a 60 pies que pueda verte u oírte: gana un Dado de Inspiración Bárdica (d6; d8 en Nv.5, d10 en Nv.10, d12 en Nv.15). Una criatura sólo puede tener un dado a la vez. Durante la siguiente hora, cuando falle una prueba de d20 (prueba de característica, ataque o salvación) puede tirar el dado y sumarlo al d20, quizá convirtiendo el fallo en éxito; el dado se gasta al tirarlo. Usos = mod. CAR (mínimo 1); los recuperas con un descanso largo (corto desde Nv.5). [2014: el dado se usa en 10 minutos, y se añade antes de saber si la prueba tiene éxito o falla]"
+      d: "Como Acción Adicional inspiras a otra criatura a 60 pies que pueda verte u oírte: gana un Dado de Inspiración Bárdica (d6; d8 en Nv.5, d10 en Nv.10, d12 en Nv.15). Una criatura sólo puede tener un dado a la vez. Durante la siguiente hora, cuando falle una prueba de d20 (prueba de característica, ataque o salvación) puede tirar el dado y sumarlo al d20, quizá convirtiendo el fallo en éxito; el dado se gasta al tirarlo. Usos = mod. CAR (mínimo 1); los recuperas con un descanso largo (corto desde Nv.5). [2014: la criatura debe poder oírte (no basta verte); el dado dura 10 minutos y puede sumarse a cualquier prueba de característica, ataque o salvación (no sólo cuando falla), decidiéndolo tras ver el d20 pero antes de que el DM diga si tiene éxito]"
     },
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "Lanzador completo. CAR es tu característica de conjuros (CD = 8 + comp. + mod. CAR; ataque = comp. + mod. CAR). Puedes usar un instrumento musical como foco. Trucos: 2 (3 en Nv.4, 4 en Nv.10). Prepara 4 conjuros de Bardo en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); al subir de nivel de Bardo puedes cambiar un conjuro preparado. Los conjuros de nivel 1+ se lanzan con espacios; también como ritual si tienen la etiqueta Ritual. [2014: conoces conjuros en lugar de prepararlos (4 en Nv.1, hasta 22 en Nv.20) y cambias uno al subir de nivel]"
+      d: "Lanzador completo. CAR es tu característica de conjuros (CD = 8 + comp. + mod. CAR; ataque = comp. + mod. CAR). Puedes usar un instrumento musical como foco. Trucos: 2 (3 en Nv.4, 4 en Nv.10). Prepara 4 conjuros de Bardo en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); al subir de nivel de Bardo puedes cambiar un truco por otro de la lista de Bardo y un conjuro preparado por otro conjuro de Bardo para el que tengas espacios. Los conjuros que otro rasgo de Bardo te da siempre preparados no cuentan para tu límite de conjuros preparados, pero cuentan como conjuros de Bardo para ti. Los conjuros de nivel 1+ se lanzan con espacios; también como ritual si tienen la etiqueta Ritual. [2014: conoces conjuros en lugar de prepararlos (4 en Nv.1, hasta 22 en Nv.20) y cambias uno al subir de nivel; los trucos no se cambian salvo con Versatilidad Bárdica, opcional de TCE]"
     },
     {
       n: "Pericia (Expertise)",
@@ -52,12 +52,17 @@ const CLASE_BARDO = {
     {
       n: "Aprendiz de Todo (Jack of All Trades)",
       nv: 2,
-      d: "Sumas la mitad de tu bonificador de competencia (redondeado hacia abajo) a cualquier prueba de característica en la que no tengas competencia y que no use ya tu bonificador de competencia."
+      d: "Sumas la mitad de tu bonificador de competencia (redondeado hacia abajo) a cualquier prueba de característica que use una competencia de habilidad que no tengas y que no use ya tu bonificador de competencia. Ej.: una prueba de FUE (Atletismo) sin competencia en Atletismo. [2014: cualquier prueba de característica que no incluya ya tu bonificador de competencia]"
     },
     {
       n: "Canción de Descanso (Song of Rest)",
       nv: 2,
       d: "[Sólo 2014] Si tú o tus aliados que oigan tu actuación gastáis Dados de Golpe durante un descanso corto, cada uno recupera 1d6 PG adicionales (1d8 en Nv.9, 1d10 en Nv.13, 1d12 en Nv.17). [Eliminado en 2024]"
+    },
+    {
+      n: "Inspiración Mágica (Magical Inspiration)",
+      nv: 2,
+      d: "[Sólo 2014, opcional de TCE] Si una criatura con un dado de Inspiración Bárdica tuyo lanza un conjuro que restaura PG o inflige daño, puede tirar ese dado y elegir un objetivo afectado por el conjuro; suma el resultado a los PG recuperados o al daño. Luego se pierde el dado."
     },
     {
       n: "Subclase de Bardo (Colegio Bárdico)",
@@ -68,6 +73,11 @@ const CLASE_BARDO = {
       n: "Mejora de Característica",
       nv: 4,
       d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]"
+    },
+    {
+      n: "Versatilidad Bárdica (Bardic Versatility)",
+      nv: 4,
+      d: "[Sólo 2014, opcional de TCE] Al alcanzar un nivel de Bardo que concede Mejora de Característica, puedes hacer una de estas dos cosas: sustituir una de las habilidades elegidas para Pericia por otra habilidad en la que seas competente y que no tenga Pericia, o sustituir un truco aprendido con Lanzamiento de Conjuros por otro truco de la lista de Bardo."
     },
     {
       n: "Fuente de Inspiración (Font of Inspiration)",
@@ -84,7 +94,7 @@ const CLASE_BARDO = {
     {
       n: "Secretos Mágicos (Magical Secrets)",
       nv: 10,
-      d: "Cada vez que subes de nivel de Bardo y aumenta el número de conjuros preparados, puedes elegir los nuevos de las listas de Bardo, Clérigo, Druida y Mago; cuentan como conjuros de Bardo para ti. [2014: aprendes 2 conjuros de cualquier clase en Nv.10, 14 y 18]"
+      d: "Cada vez que subes de nivel de Bardo (incluido el 10) y aumenta el número de conjuros preparados, puedes elegir los nuevos de las listas de Bardo, Clérigo, Druida y Mago; cuentan como conjuros de Bardo para ti. Además, cuando sustituyes un conjuro preparado de esta clase, puedes sustituirlo por uno de esas listas. [2014: aprendes 2 conjuros de cualquier clase en Nv.10, 14 y 18]"
     },
     {
       n: "Inspiración Superior (Superior Inspiration)",
@@ -167,7 +177,7 @@ const CLASE_BARDO = {
         n: "Manto de Inspiración (Mantle of Inspiration)",
         nv: 3,
         a: "B",
-        d: "Como Acción Adicional gastas un uso de Inspiración Bárdica: hasta mod. CAR (mínimo 1) criaturas que veas a 60 pies ganan PG temporales (5 en Nv.3, 8 en Nv.5, 11 en Nv.10, 14 en Nv.15) y pueden usar su reacción para moverse su Velocidad sin provocar ataques de oportunidad."
+        d: "Como Acción Adicional gastas un uso de Inspiración Bárdica: eliges hasta mod. CAR (mínimo 1) criaturas que veas y que puedan verte a 60 pies; cada una gana PG temporales (5 en Nv.3, 8 en Nv.5, 11 en Nv.10, 14 en Nv.15) y puede usar su reacción para moverse su Velocidad sin provocar ataques de oportunidad."
       },
       {
         n: "Actuación Cautivadora (Enthralling Performance)",
@@ -193,7 +203,7 @@ const CLASE_BARDO = {
       {
         n: "Competencias Adicionales",
         nv: 3,
-        d: "Ganas competencia con armadura media y con la cimitarra. Puedes usar un arma cuerpo a cuerpo simple o marcial como foco para tus conjuros de Bardo."
+        d: "Ganas competencia con armadura media y con la cimitarra. Si eres competente con un arma cuerpo a cuerpo simple o marcial, puedes usarla como foco para tus conjuros de Bardo."
       },
       {
         n: "Estilo de Combate",
@@ -237,13 +247,13 @@ const CLASE_BARDO = {
         n: "Manto de Susurros (Mantle of Whispers)",
         nv: 6,
         a: "R",
-        d: "Cuando un humanoide muere a 30 pies, puedes usar tu reacción para capturar su sombra. Como acción adoptas su apariencia 1 hora (o hasta que lo termines), accedes a información que compartiría con naturalidad; para descubrir el disfraz hace falta una prueba de Perspicacia enfrentada a tu Engaño (+5). Una vez por descanso corto o largo."
+        d: "Cuando un humanoide muere a 30 pies de ti, puedes usar tu reacción para capturar mágicamente su sombra; la conservas hasta que la uses o termines un descanso largo. Como acción, la sombra se desvanece y se transforma en un disfraz: pareces la persona muerta, sana y viva, durante 1 hora o hasta que lo termines como Acción Adicional. Mientras lo llevas accedes a toda la información que el humanoide compartiría con naturalidad con un conocido casual (datos generales de su vida, no secretos), suficiente para hacerte pasar por él. Otra criatura puede ver a través del disfraz con una prueba de SAB (Perspicacia) enfrentada a tu prueba de CAR (Engaño), a la que sumas +5. Una vez que capturas una sombra, no puedes capturar otra hasta terminar un descanso corto o largo."
       },
       {
         n: "Sabiduría de las Sombras (Shadow Lore)",
         nv: 14,
         a: "A",
-        d: "Como acción susurras a una criatura a 30 pies: debe superar una salvación de SAB (tu CD) o quedar Hechizada 8 horas (obedece tus órdenes por miedo a que reveles su secreto, sin arriesgar su vida ni luchar salvo que ya lo estuviera). Una vez por descanso largo."
+        d: "Como acción susurras una frase que sólo una criatura de tu elección a 30 pies puede oír. Debe hacer una salvación de SAB contra tu CD de conjuros; la supera automáticamente si no comparte un idioma contigo o no puede oírte, y entonces tu susurro suena a murmullo ininteligible sin efecto. Si falla, queda Hechizada por ti 8 horas o hasta que tú o tus aliados la ataquéis, le hagáis daño o la obliguéis a hacer una tirada de salvación. Cree que conoces su secreto más vergonzoso (tú no lo conoces) y obedece tus órdenes por miedo a que lo reveles; no arriesgará su vida ni luchará por ti salvo que ya estuviera dispuesta, y te concede favores y regalos como a un amigo cercano. Al terminar el efecto no entiende por qué te temía. Una vez por descanso largo."
       },
     ],
 
@@ -298,7 +308,7 @@ const CLASE_BARDO = {
         n: "Actuación Animadora (Animating Performance)",
         nv: 6,
         a: "A",
-        d: "Como acción animas un objeto Grande o menor a 30 pies (no llevado ni sostenido) con la ficha de Objeto Danzante (CA 16, PG 10 + 5 × nivel de Bardo, Velocidad 30 pies/volar 30; ataque Golpe Reforzado con Fuerza: tu bonificador de ataque de conjuros, 1d10 + comp. de fuerza). Te obedece, comparte tu iniciativa (actúa tras ti, sólo Esquivar salvo que le ordenes con una Acción Adicional) y dura 1 hora. Una vez por descanso largo, o gastando un espacio de nivel 3+."
+        d: "Como acción animas un objeto no mágico Grande o menor a 30 pies de ti que nadie lleve ni sostenga, con la ficha de Objeto Danzante (CA 16, PG 10 + 5 × nivel de Bardo, Velocidad 30 pies/volar 30; ataque Golpe Reforzado con Fuerza: tu bonificador de ataque de conjuros, 1d10 + comp. de fuerza). Es amistoso, te obedece y dura 1 hora, hasta que llegue a 0 PG o hasta que mueras. Comparte tu iniciativa y actúa justo después de ti; se mueve y usa su reacción por su cuenta, pero su única acción es Esquivar salvo que uses una Acción Adicional para ordenarle otra (puedes ordenárselo como parte de la misma Acción Adicional de Inspiración Bárdica). Si estás Incapacitado, puede realizar cualquier acción a su elección. Una vez por descanso largo, o gastando un espacio de conjuro de nivel 3+. Sólo puedes tener un objeto animado a la vez: si animas otro, el anterior queda inerte."
       },
       {
         n: "Crescendo Creativo (Creative Crescendo)",
@@ -324,13 +334,13 @@ const CLASE_BARDO = {
         n: "Relatos del Más Allá (Tales from Beyond)",
         nv: 3,
         a: "BA",
-        d: "Como Acción Adicional gastas un uso de Inspiración Bárdica y tiras el dado en la tabla Relatos de Espíritus; guardas el relato hasta aplicarlo o hasta un descanso corto o largo (uno a la vez). Como acción eliges una criatura que veas a 30 pies (puedes ser tú) para recibir el efecto (CD = tu CD de conjuros). 1 Astuto Animal: 10 min, +1 dado extra a sus pruebas de INT/SAB/CAR. 2 Duelista Célebre: ataque de conjuro cuerpo a cuerpo; 2 dados + mod. CAR de daño de fuerza. 3 Amigos Queridos: el objetivo y otra criatura a 5 pies ganan PG temporales = dado + mod. CAR. 4 Fugitivo: reacción para teletransportarse 30 pies. 5 Vengador: 1 min, quien le impacte cuerpo a cuerpo sufre daño de fuerza = dado. 6 Viajero: PG temporales = dado + nivel de Bardo; +10 pies de Velocidad y +1 CA mientras los tenga. 7 Embaucador: salvación de SAB o 2 dados de daño psíquico e Incapacitado hasta el final de su siguiente turno. 8 Fantasma: invisible hasta el final de su siguiente turno o hasta que impacte. 9 Bruto: las criaturas de su elección a 30 pies hacen salvación de FUE o sufren 3 dados de trueno y caen Tumbadas. 10 Dragón: cono de fuego de 30 pies, salvación de DES, 4 dados de fuego (mitad si supera). 11 Ángel: recupera 2 dados + mod. CAR PG y terminas una condición (Cegado, Ensordecido, Paralizado, Petrificado, Envenenado). 12 Manipulador Mental: salvación de INT o 3 dados de psíquico y Aturdido hasta el final de su siguiente turno."
+        d: "Mientras sostienes tu Foco Espiritual, como Acción Adicional gastas un uso de Inspiración Bárdica y tiras el dado de Inspiración Bárdica en la tabla Relatos de Espíritus; guardas el relato hasta aplicarlo o hasta un descanso corto o largo. Sólo puedes guardar un relato a la vez: tirar de nuevo en la tabla termina de inmediato el efecto del relato anterior. Como acción eliges una criatura que veas a 30 pies (puedes ser tú) para recibir el efecto (CD = tu CD de conjuros); una vez aplicado, no puedes volver a aplicarlo hasta que lo saques otra vez. 1 Astuto Animal: durante 10 min, cuando el objetivo hace una prueba de INT, SAB o CAR puede tirar un dado extra justo después del d20 y sumarlo a la prueba; es del mismo tipo que tu dado de Inspiración Bárdica. 2 Duelista Célebre: ataque de conjuro cuerpo a cuerpo; 2 dados + mod. CAR de daño de fuerza. 3 Amigos Queridos: el objetivo y otra criatura a 5 pies ganan PG temporales = dado + mod. CAR. 4 Fugitivo: el objetivo puede usar de inmediato su reacción para teletransportarse hasta 30 pies a un espacio libre que vea; al hacerlo puede elegir hasta mod. CAR (mínimo 0) criaturas que vea a 30 pies de él para que usen de inmediato esa misma reacción. 5 Vengador: 1 min, quien le impacte cuerpo a cuerpo sufre daño de fuerza = dado. 6 Viajero: PG temporales = dado + nivel de Bardo; +10 pies de Velocidad y +1 CA mientras los tenga. 7 Embaucador: salvación de SAB o 2 dados de daño psíquico e Incapacitado hasta el final de su siguiente turno. 8 Fantasma: invisible hasta el final de su siguiente turno o hasta que impacte a una criatura con un ataque; si impacta durante la invisibilidad, esa criatura sufre 1 dado de daño necrótico y queda Asustada del objetivo hasta el final de su siguiente turno. 9 Bruto: cada criatura de su elección que vea a 30 pies de él hace una salvación de FUE; si falla, sufre 3 dados de daño de trueno y cae Tumbada; si la supera, sufre la mitad del daño y no cae Tumbada. 10 Dragón: cono de fuego de 30 pies, salvación de DES, 4 dados de fuego (mitad si supera). 11 Ángel: recupera 2 dados + mod. CAR PG y terminas una condición (Cegado, Ensordecido, Paralizado, Petrificado, Envenenado). 12 Manipulador Mental: salvación de INT o 3 dados de psíquico y Aturdido hasta el final de su siguiente turno."
       },
       {
         n: "Sesión Espiritista (Spirit Session)",
         nv: 6,
         a: "O",
-        d: "Puedes hacer un ritual de 1 hora (en un descanso) con hasta comp. criaturas voluntarias (incluido tú), usando tu foco espiritual: al terminar aprendes temporalmente un conjuro de cualquier clase, de nivel ≤ número de participantes y ≤ al máximo que puedas lanzar, de adivinación o nigromancia. Cuenta como conjuro de Bardo. Una vez por descanso largo."
+        d: "Puedes hacer un ritual de 1 hora (en un descanso corto o largo) con hasta comp. criaturas voluntarias (incluido tú), usando tu foco espiritual: al terminar aprendes temporalmente un conjuro de cualquier clase, de nivel ≤ número de participantes, de un nivel que puedas lanzar y de la escuela de adivinación o nigromancia. Cuenta como conjuro de Bardo pero no cuenta para tu límite de conjuros de Bardo conocidos; lo conoces hasta que empieces un descanso largo. No puedes repetir el ritual hasta que empieces un descanso largo."
       },
       {
         n: "Conexión Mística (Mystical Connection)",
@@ -371,7 +381,7 @@ const CLASE_BARDO = {
         n: "Inspiración de Combate (Combat Inspiration)",
         nv: 3,
         a: "R",
-        d: "Una criatura que tenga un dado de Inspiración Bárdica tuyo puede usarlo para: Defensa: al ser atacada, usar su reacción para tirar el dado y sumarlo a su CA contra ese ataque; Ofensa: tras impactar con una tirada de ataque, tirar el dado y sumarlo al daño."
+        d: "Una criatura que tenga un dado de Inspiración Bárdica tuyo puede usarlo para: Defensa: cuando una tirada de ataque la impacta, puede usar su reacción para tirar el dado y sumarlo a su CA contra ese ataque, quizá haciendo que falle; Ofensa: tras impactar con una tirada de ataque, tirar el dado y sumarlo al daño."
       },
       {
         n: "Entrenamiento Marcial (Martial Training)",
@@ -403,7 +413,7 @@ const CLASE_BARDO = {
         n: "Manto de Inspiración (Mantle of Inspiration)",
         nv: 3,
         a: "B",
-        d: "Como Acción Adicional gastas un uso de Inspiración Bárdica y tiras el dado: hasta mod. CAR (mínimo 1) criaturas a 60 pies ganan PG temporales = el doble del resultado y pueden usar su reacción para moverse su Velocidad sin provocar ataques de oportunidad."
+        d: "Como Acción Adicional gastas un uso de Inspiración Bárdica y tiras el dado: eliges hasta mod. CAR (mínimo 1) otras criaturas a 60 pies; cada una gana PG temporales = el doble del resultado y puede usar su reacción para moverse su Velocidad sin provocar ataques de oportunidad."
       },
       {
         n: "Manto de Majestad (Mantle of Majesty)",
@@ -424,7 +434,7 @@ const CLASE_BARDO = {
         n: "Juego de Pies Deslumbrante (Dazzling Footwork)",
         nv: 3,
         a: "O",
-        d: "Virtuoso de la Danza: ventaja en pruebas de Interpretación que impliquen bailar. Defensa sin Armadura: sin armadura ni escudo, tu CA base = 10 + mod. DES + mod. CAR. Golpes Ágiles: cuando gastas un uso de Inspiración Bárdica como parte de una acción, acción adicional o reacción, puedes hacer un ataque desarmado como parte de ella. Daño Bárdico: puedes usar DES en tus ataques desarmados y, al impactar, infligir daño contundente = dado de Inspiración Bárdica + mod. DES en lugar del normal (sin gastar el dado)."
+        d: "Mientras no lleves armadura ni empuñes un escudo, ganas estos beneficios. Virtuoso de la Danza: ventaja en las pruebas de CAR (Interpretación) que impliquen bailar. Defensa sin Armadura: tu CA base = 10 + mod. DES + mod. CAR. Golpes Ágiles: cuando gastas un uso de Inspiración Bárdica como parte de una acción, acción adicional o reacción, puedes hacer un ataque desarmado como parte de ella. Daño Bárdico: puedes usar DES en lugar de FUE en las tiradas de ataque desarmado y, al impactar, infligir daño contundente = dado de Inspiración Bárdica + mod. DES en lugar del normal (esta tirada no gasta el dado)."
       },
       {
         n: "Movimiento Inspirador (Inspiring Movement)",

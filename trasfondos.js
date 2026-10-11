@@ -155,7 +155,7 @@ const DND_TRASFONDOS = {
     comp: "Perspicacia, Religión",
     idiomas: "2 a elegir",
     equipo: "Símbolo sagrado, libro de oraciones o rueda de oración, 5 varillas de incienso, vestimentas, ropa común, bolsa con 15 po.",
-    rasgo: "Refugio de los Fieles: tú y tus compañeros recibís curación y cuidados gratuitos en templos de tu fe; puedes contar con el clero de tu religión para apoyo.",
+    rasgo: "Refugio de los Fieles: tú y tus compañeros podéis recibir curación y cuidados gratuitos en un templo, santuario u otra presencia establecida de tu fe, pero debéis aportar los componentes materiales de los conjuros. Quienes comparten tu religión te mantienen (solo a ti) con un estilo de vida modesto. Cerca de tu templo puedes pedir ayuda a los sacerdotes si no es peligrosa y sigues en buenos términos con él.",
   },
   "Charlatán (Charlatan) [PHB 2014]": {
     desc: "Siempre has sabido qué decirle a la gente.",
@@ -165,18 +165,18 @@ const DND_TRASFONDOS = {
     rasgo: "Identidad Falsa: tienes una segunda identidad documentada (papeles, disfraz) y puedes falsificar documentos que hayas visto.",
   },
   "Criminal [PHB 2014]": {
-    desc: "Eres un delincuente con experiencia. Variante Espía: mismas competencias, rasgo y equipo.",
+    desc: "Eres un delincuente con experiencia. Variante Espía: mismas competencias y equipo; el rasgo pasa a llamarse Contacto Espía (Spy Contact) y el contacto enlaza con una red de espías, con el mismo efecto.",
     comp: "Engaño, Sigilo",
     herr: "1 Juego de mesa, Herramientas de ladrón",
     equipo: "Palanca, ropa común oscura con capucha, bolsa con 15 po.",
     rasgo: "Contacto Criminal: tienes un contacto de confianza que actúa de enlace con una red criminal y puede enviar y recibir mensajes a larga distancia.",
   },
   "Artista (Entertainer) [PHB 2014]": {
-    desc: "Vives del espectáculo. Variante Gladiador: mismas competencias y rasgo, con la arena como escenario.",
+    desc: "Vives del espectáculo. Variante Gladiador: mismas competencias; en lugar del instrumento musical llevas un arma barata pero inusual (tridente o red, a elegir), y Por Aclamación Popular solo se aplica en lugares con combates como espectáculo (arena de gladiadores, club de lucha clandestino).",
     comp: "Acrobacias, Interpretación",
     herr: "Kit de disfraz, 1 Instrumento musical",
     equipo: "Un instrumento musical, un favor de un admirador, un disfraz, bolsa con 15 po.",
-    rasgo: "Por Aclamación Popular: puedes encontrar un lugar donde actuar y recibir alojamiento y comida modestos gratis mientras actúes; la gente te reconoce.",
+    rasgo: "Por Aclamación Popular: siempre encuentras un lugar donde actuar (posada, taberna, circo, teatro o corte noble). Allí recibes alojamiento y comida gratis de nivel modesto o cómodo (según la calidad del local) mientras actúes cada noche. Además, quienes te reconocen en una ciudad donde has actuado suelen tomarte simpatía.",
   },
   "Héroe del Pueblo (Folk Hero) [PHB 2014]": {
     desc: "Vienes de un origen humilde pero estás destinado a más.",
@@ -186,12 +186,12 @@ const DND_TRASFONDOS = {
     rasgo: "Hospitalidad Rústica: la gente humilde te acoge y esconde, siempre que no pongas en peligro a quienes te ayudan.",
   },
   "Artesano de Gremio (Guild Artisan) [PHB 2014]": {
-    desc: "Perteneces a un gremio de artesanos. Variante Mercader de Gremio: Herramientas de navegante o un idioma extra en lugar de herramientas de artesano.",
+    desc: "Perteneces a un gremio de artesanos. Variante Mercader de Gremio: Herramientas de navegante o un idioma extra en lugar de herramientas de artesano; en el equipo, una mula y un carro en lugar del juego de herramientas de artesano.",
     comp: "Perspicacia, Persuasión",
     herr: "1 tipo de Herramientas de artesano (Mercader: Herramientas de navegante o un idioma extra)",
     idiomas: "1 a elegir",
     equipo: "Un juego de herramientas de artesano, carta de presentación de tu gremio, ropa de viajero, bolsa con 15 po.",
-    rasgo: "Membresía del Gremio: los miembros del gremio te dan alojamiento y comida, tienes apoyo legal y político, y puedes pagar la cuota para acceder a recursos del gremio.",
+    rasgo: "Membresía del Gremio: los miembros del gremio te dan alojamiento y comida si lo necesitas y pagan tu funeral. Si te acusan de un delito, el gremio te apoya si hay un buen caso para tu inocencia o el delito es justificable, y puede darte acceso a figuras políticas poderosas (puede exigir donar dinero u objetos mágicos). Debes pagar una cuota de 5 po al mes; si te retrasas, debes pagar los atrasos para seguir en buenos términos con el gremio.",
   },
   "Ermitaño (Hermit) [PHB 2014]": {
     desc: "Viviste en aislamiento y descubriste algo importante.",
@@ -207,7 +207,7 @@ const DND_TRASFONDOS = {
     herr: "1 Juego de mesa",
     idiomas: "1 a elegir",
     equipo: "Ropa fina, anillo de sello, pergamino de linaje, bolsa con 25 po.",
-    rasgo: "Posición de Privilegio: la gente de clase alta te trata con deferencia y eres bienvenido en cortes y mansiones. (Caballero: tienes 2 sirvientes y un escudero o corcel.)",
+    rasgo: "Posición de Privilegio: por tu cuna, la gente tiende a pensar lo mejor de ti. Eres bienvenido en la alta sociedad y se asume que tienes derecho a estar donde estés. El pueblo llano procura acomodarte y evitar tu enfado, y la gente de alta cuna te trata como uno de los suyos. Puedes conseguir una audiencia con un noble local si la necesitas. (Caballero: sustituye Posición de Privilegio por Séquito: tienes el servicio de tres sirvientes leales a tu familia (asistentes o mensajeros; uno puede ser mayordomo). Uno es un noble que actúa como tu escudero a cambio de formación en su camino a la caballería (puede ser tu vínculo); los otros dos pueden ser un mozo de cuadra que cuida tu caballo y un criado que pule tu armadura. No luchan por ti, no te siguen a lugares obviamente peligrosos (como mazmorras) y se marchan si los pones en peligro con frecuencia o los maltratas.)",
   },
   "Forastero (Outlander) [PHB 2014]": {
     desc: "Creciste en tierras salvajes, lejos de la civilización.",
@@ -243,7 +243,7 @@ const DND_TRASFONDOS = {
     comp: "Juego de Manos, Sigilo",
     herr: "Kit de disfraz, Herramientas de ladrón",
     equipo: "Cuchillo pequeño, mapa de tu ciudad natal, ratón de mascota, recuerdo de tus padres, ropa común, bolsa con 10 po.",
-    rasgo: "Secretos de la Ciudad: conoces pasadizos y atajos; al moverte por una ciudad (fuera de combate) viajas al doble de velocidad.",
+    rasgo: "Secretos de la Ciudad: conoces los patrones y el flujo secretos de las ciudades y encuentras pasos que otros pasan por alto. Fuera de combate, tú y los compañeros a quienes guíes podéis viajar entre dos lugares cualesquiera de la ciudad al doble de la velocidad normal.",
   },
 
   /* ════════════════════════════════════════════════
@@ -280,7 +280,7 @@ const DND_TRASFONDOS = {
   },
   "Agente de Facción (Faction Agent) [SCAG]": {
     desc: "Sirves a una facción (Arpistas, Orden del Guantelete, Enclave Esmeralda, Alianza de los Señores o Zhentarim).",
-    comp: "Perspicacia, y una de INT/SAB/CAR según facción (Investigación, Religión, Naturaleza, Historia o Engaño)",
+    comp: "Perspicacia, y una habilidad de INT, SAB o CAR a elegir, según tu facción",
     idiomas: "2 a elegir",
     equipo: "Insignia de facción, texto o código de la facción, ropa común, bolsa con 15 po.",
     rasgo: "Refugio Seguro: reconoces a miembros de tu facción por señas y contraseñas y accedes a refugios y apoyo de información.",
@@ -337,7 +337,7 @@ const DND_TRASFONDOS = {
     herr: "1 Juego de mesa o Instrumento musical",
     idiomas: "1 a elegir",
     equipo: "Ropa fina, anillo de sello o broche, pergamino de linaje, odre de vino o zzar, bolsa con 20 po.",
-    rasgo: "Mantenido con Estilo: tu casa cubre tus gastos de vida en Aguas Profundas y el Norte (línea de crédito, no ingresos).",
+    rasgo: "Mantenido con Estilo: mientras estés en Aguas Profundas u otro lugar del Norte, tu casa cubre tus necesidades diarias (posadas, tabernas y salas de fiestas anotan tu deuda y la envían a la finca de tu familia). Puedes llevar un estilo de vida cómodo sin pagar los 2 po diarios, o reducir en esa cantidad el coste de un estilo de vida rico o aristocrático. No puedes mantener un estilo de vida más modesto y quedarte con la diferencia: es una línea de crédito, no dinero.",
   },
 
   /* ════════════════════════════════════════════════
@@ -346,10 +346,9 @@ const DND_TRASFONDOS = {
   "Pescador (Fisher) [GoS]": {
     desc: "Has vivido de la pesca.",
     comp: "Historia, Supervivencia",
-    herr: "Aparejos de pesca",
     idiomas: "1 a elegir",
     equipo: "Aparejos de pesca, red, señuelo o botas de vadeo, ropa de viajero, bolsa con 10 po.",
-    rasgo: "Cosechar el Agua: Ventaja con los aparejos de pesca y, cerca de vida marina, mantienes un estilo de vida modesto y alimentas a ti y hasta 10 personas por día. Anécdota de Pesca: 1/día cuentas tu historia para que los oyentes se muestren amistosos.",
+    rasgo: "Cosechar el Agua: Ventaja en las pruebas de característica hechas con aparejos de pesca y, con acceso a una masa de agua con vida marina, mantienes un estilo de vida modesto como pescador y pescas comida para ti y hasta 10 personas más por día. Anécdota de Pesca: 1/día puedes contar tu historia a oyentes dispuestos; a criterio del DM, algunos se vuelven amistosos contigo. No es un efecto mágico y su simpatía depende de tus actos.",
   },
   "Carpintero Naval (Shipwright) [GoS]": {
     desc: "Has construido y reparado barcos.",
@@ -363,13 +362,13 @@ const DND_TRASFONDOS = {
     comp: "Atletismo, Engaño",
     herr: "Vehículos (agua)",
     equipo: "Chaleco o botas de cuero llamativos, ropa común, bolsa con 15 po.",
-    rasgo: "Bajo Cuerda: conoces una red de contrabandistas que te dan alojamiento seguro y discreción.",
+    rasgo: "Bajo Cuerda: conoces una red de contrabandistas dispuestos a sacarte de apuros. En un pueblo, ciudad o comunidad de tamaño similar (a criterio del DM), tú y tus compañeros podéis alojaros gratis en refugios seguros (estilo de vida pobre). Mientras estáis en uno, puedes elegir mantener en secreto vuestra presencia.",
   },
   "Perseguido (Haunted One) [CoS]": {
     desc: "Algo horrible te marcó y lo has dejado atrás... o no.",
     comp: "2 a elegir entre Arcana, Investigación, Religión y Supervivencia",
     idiomas: "2 a elegir, uno de ellos exótico",
-    equipo: "Kit de cazamonstruos (cofre, palanca, martillo, estacas de madera, símbolo sagrado, agua bendita, grilletes, espejo de acero, frasco de aceite, yesquero, antorchas), un baratija gótica, ropa común, 1 pp.",
+    equipo: "Kit de cazamonstruos (cofre, palanca, martillo, 3 estacas de madera, símbolo sagrado, frasco de agua bendita, grilletes, espejo de acero, frasco de aceite, yesquero, 3 antorchas), ropa común, una baratija de especial significado (a elegir o tirar en la tabla de Baratijas de Terror) y 1 pieza de plata.",
     rasgo: "Corazón de Oscuridad: los plebeyos te tratan con cortesía y te ayudarán o combatirán a tu lado, salvo que hayas demostrado ser peligroso para ellos.",
   },
   "Antropólogo (Anthropologist) [ToA]": {
@@ -377,7 +376,7 @@ const DND_TRASFONDOS = {
     comp: "Perspicacia, Religión",
     idiomas: "2 a elegir",
     equipo: "Diario encuadernado en cuero, frasco de tinta, pluma, ropa de viajero, baratija, bolsa con 10 po.",
-    rasgo: "Camaleón Cultural: adoptas costumbres de una cultura ajena. Lingüista Hábil: tras observar a humanoides un día puedes comunicarte con ellos con palabras y gestos básicos.",
+    rasgo: "Lingüista Hábil: puedes comunicarte con humanoides que no hablen ningún idioma que conozcas. Debes observarlos interactuar entre sí al menos 1 día; después aprendes un puñado de palabras, expresiones y gestos importantes, suficiente para comunicarte de forma rudimentaria. (Cultura adoptada, a elegir o tirar: Aarakocra, Enano, Elfo, Goblin, Mediano, Humano, Hombre Lagarto u Orco.)",
   },
   "Arqueólogo (Archaeologist) [ToA]": {
     desc: "Estudias ruinas y civilizaciones desaparecidas.",
@@ -385,6 +384,6 @@ const DND_TRASFONDOS = {
     herr: "Herramientas de cartógrafo o de navegante",
     idiomas: "1 a elegir",
     equipo: "Estuche de mapas, linterna de ojo de buey, pico de minero, ropa de viajero, pala, tienda para 2, baratija recuperada, bolsa con 25 po.",
-    rasgo: "Excavador de Polvo: al examinar ruinas averiguas su propósito original y quiénes las construyeron; además tasas objetos de arte antiguos.",
+    rasgo: "Conocimiento Histórico: al entrar en unas ruinas o una mazmorra, averiguas con acierto su propósito original y quiénes las construyeron (enanos, elfos, humanos, yuan-ti u otra raza conocida). Además, puedes determinar el valor monetario de objetos de arte con más de un siglo de antigüedad.",
   },
 };

@@ -44,12 +44,12 @@ const CLASE_MAGO = {
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "Lanzador completo. INT es tu característica de conjuros (CD = 8 + comp. + mod. INT); usas un foco arcano o tu libro de conjuros. Trucos: 3 (4 en Nv.4, 5 en Nv.10). Libro de conjuros: empiezas con 6 conjuros de Nv.1 y añades 2 conjuros nuevos por cada nivel; copiar un conjuro cuesta 50 po y 2 horas por nivel del conjuro. Preparas conjuros de tu libro: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 18, 19, 21, 22, 23, 24, 25 en Nv.2-20); cambias la lista tras un descanso largo. [2014: preparas mod. INT + nivel de Mago conjuros (mín. 1)]"
+      d: "Lanzador completo. INT es tu característica de conjuros (CD = 8 + comp. + mod. INT); usas un foco arcano o tu libro de conjuros. Trucos: 3 (4 en Nv.4, 5 en Nv.10). Libro de conjuros: empiezas con 6 conjuros de Nv.1 y añades 2 conjuros nuevos por cada nivel; copiar un conjuro nuevo cuesta 50 po y 2 horas por nivel del conjuro. Copiar un conjuro de tu libro a otro libro cuesta solo 1 hora y 10 po por nivel del conjuro; si pierdes tu libro, puedes transcribir con el mismo procedimiento los conjuros que tengas preparados a uno nuevo (el resto de páginas exige encontrar conjuros nuevos). Preparas conjuros de tu libro: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 18, 19, 21, 22, 23, 24, 25 en Nv.2-20); cambias la lista tras un descanso largo. Los conjuros que otro rasgo de Mago te da siempre preparados (p. ej. Maestría de Conjuros, Conjuros de Firma, Rompehechizos) no cuentan para tu límite de conjuros preparados, pero se consideran conjuros de Mago para ti. Al terminar un Descanso Largo puedes sustituir uno de tus trucos de este rasgo por otro truco de Mago. [2014: preparas mod. INT + nivel de Mago conjuros (mín. 1); los trucos solo se cambian con el rasgo opcional Fórmulas de Trucos de TCE]"
     },
     {
       n: "Adepto de Rituales (Ritual Adept)",
       nv: 1,
-      d: "Puedes lanzar como ritual cualquier conjuro con la etiqueta Ritual que esté en tu libro de conjuros, sin tenerlo preparado. [2014: Lanzamiento de Rituales]"
+      d: "Puedes lanzar como ritual cualquier conjuro con la etiqueta Ritual que esté en tu libro de conjuros. No necesitas tenerlo preparado, pero debes leerlo del libro para lanzarlo así. [2014: Lanzamiento de Rituales; el conjuro debe estar en tu libro, sin necesidad de leer de él]"
     },
     {
       n: "Recuperación Arcana (Arcane Recovery)",
@@ -69,7 +69,7 @@ const CLASE_MAGO = {
     {
       n: "Fórmulas de Trucos (Cantrip Formulas)",
       nv: 3,
-      d: "Al terminar un descanso largo y consultar tu libro, puedes sustituir un truco de Mago que conozcas por otro truco de la lista de Mago. [2014: rasgo opcional de TCE]"
+      d: "Al terminar un descanso largo y consultar tu libro, puedes sustituir un truco de Mago que conozcas por otro truco de la lista de Mago. [Sólo 2014, opcional de TCE]"
     },
     {
       n: "Mejora de Característica",
@@ -84,7 +84,7 @@ const CLASE_MAGO = {
     {
       n: "Maestría de Conjuros (Spell Mastery)",
       nv: 18,
-      d: "Eliges un conjuro de Nv.1 y otro de Nv.2 de tu libro de conjuros; siempre los tienes preparados y puedes lanzarlos a su nivel más bajo sin gastar espacio. Puedes cambiar uno de ellos tras un descanso corto o largo estudiando tu libro."
+      d: "Eliges un conjuro de Nv.1 y otro de Nv.2 de tu libro de conjuros que tengan tiempo de lanzamiento de 1 acción; siempre los tienes preparados y puedes lanzarlos a su nivel más bajo sin gastar espacio. Para lanzar cualquiera a un nivel superior debes gastar un espacio. Al terminar un Descanso Largo puedes estudiar tu libro y sustituir uno de ellos por otro conjuro elegible del mismo nivel de tu libro. [2014: sin requisito de tiempo de lanzamiento; solo los lanzas sin espacio si los tienes preparados; cambias uno o ambos con 8 horas de estudio]"
     },
     {
       n: "Don Épico (Epic Boon)",
@@ -144,7 +144,7 @@ const CLASE_MAGO = {
         n: "Conjuración Menor (Minor Conjuration)",
         nv: 2,
         a: "A",
-        d: "Con una acción conjuras un objeto inanimado en un espacio libre a 10 pies (hasta 3 pies por lado y 10 libras); es visiblemente mágico y emite luz tenue 5 pies. Desaparece tras 1 hora, si lo dañas o si vuelves a usar el rasgo."
+        d: "Con una acción conjuras un objeto inanimado en tu mano o en un espacio libre que veas a 10 pies (hasta 3 pies por lado y 10 libras; con la forma de un objeto no mágico que hayas visto). Es visiblemente mágico y emite luz tenue en 5 pies. Desaparece tras 1 hora, si vuelves a usar este rasgo, si sufre cualquier daño o si inflige cualquier daño."
       },
       {
         n: "Transposición Benigna (Benign Transposition)",
@@ -204,13 +204,13 @@ const CLASE_MAGO = {
         n: "Mirada Hipnótica (Hypnotic Gaze)",
         nv: 2,
         a: "A",
-        d: "Con una acción eliges a una criatura que veas a 5 pies: hace una salvación de SAB (CD de tus conjuros) o queda hechizada hasta el final de tu siguiente turno (Velocidad 0, Incapacitada y aturdida). En turnos posteriores puedes usar tu acción para mantenerlo; termina si te alejas más de 5 pies, no puede verte u oírte, o sufre daño. Cuando termina, o si supera la salvación, no puedes usarlo sobre ella hasta un descanso largo."
+        d: "Con una acción eliges a una criatura que veas a 5 pies; si puede verte u oírte, hace una salvación de SAB (CD de tus conjuros de Mago) o queda hechizada por ti hasta el final de tu siguiente turno: Velocidad 0 e Incapacitada (visiblemente aturdida, sin ser la condición Aturdido). En turnos posteriores puedes usar tu acción para mantener el efecto hasta el final de tu siguiente turno; termina si te alejas más de 5 pies, si no puede verte ni oírte, o si sufre daño. Cuando termina, o si supera la salvación inicial, no puedes usarlo sobre ella hasta terminar un Descanso Largo."
       },
       {
         n: "Encanto Instintivo (Instinctive Charm)",
         nv: 6,
         a: "R",
-        d: "Cuando una criatura que veas a 30 pies te ataca, usas tu Reacción para desviar el ataque: hace una salvación de SAB (CD de tus conjuros) o debe atacar a la criatura más cercana a ella distinta de ti y de sí misma. Si la supera, no puedes volver a usarlo sobre ella hasta un descanso largo. Las criaturas inmunes a ser hechizadas no se ven afectadas."
+        d: "Cuando una criatura que veas a 30 pies te hace una tirada de ataque, usas tu Reacción para desviar el ataque, siempre que haya otra criatura en el alcance del ataque. El atacante hace una salvación de SAB (CD de tus conjuros de Mago); si falla, debe atacar a la criatura más cercana a él distinta de ti y de sí mismo (si hay varias igual de cercanas, elige el atacante). Si la supera, no puedes volver a usarlo sobre él hasta terminar un Descanso Largo. Debes decidir usarlo antes de saber si el ataque impacta o falla. Las criaturas inmunes a ser hechizadas son inmunes a este efecto."
       },
       {
         n: "Encantamiento Dividido (Split Enchantment)",
@@ -221,7 +221,7 @@ const CLASE_MAGO = {
         n: "Alterar Recuerdos (Alter Memories)",
         nv: 14,
         a: "A",
-        d: "Al lanzar un conjuro de encantamiento que hechice, puedes hacer que una criatura no sepa que fue afectada mágicamente. Además, una vez durante el conjuro, con una acción puedes hacer que una criatura hechizada olvide horas = 1 + mod. CAR (mín. 1) de recuerdos recientes (salvación de INT)."
+        d: "Al lanzar un conjuro de encantamiento que hechice a una o más criaturas, puedes hacer que una de ellas no sepa que está hechizada. Además, una vez antes de que termine el conjuro, con una acción puedes intentar que esa criatura olvide parte del tiempo que pasó hechizada: hace una salvación de INT contra la CD de tus conjuros de Mago o pierde horas de recuerdos = 1 + tu mod. CAR (mín. 1). Puedes hacer que olvide menos tiempo, y el total no puede exceder la duración de tu conjuro de encantamiento."
       },
     ],
 
@@ -244,7 +244,7 @@ const CLASE_MAGO = {
       {
         n: "Evocación Potenciada (Empowered Evocation)",
         nv: 10,
-        d: "Sumas tu mod. INT (mín. +1) a una tirada de daño de cualquier conjuro de evocación de Mago que lances."
+        d: "Sumas tu mod. INT a una tirada de daño de cualquier conjuro de evocación de Mago que lances."
       },
       {
         n: "Sobrecanalización (Overchannel)",
@@ -311,7 +311,7 @@ const CLASE_MAGO = {
         n: "Mando sobre los No-Muertos (Command Undead)",
         nv: 14,
         a: "A",
-        d: "Con una acción eliges un no-muerto a 60 pies: hace una salvación de CAR (CD de tus conjuros); si falla, queda amistoso y obediente hasta que lo dejes (si tiene INT 8+, Ventaja en la salvación; INT 12+, repite la salvación cada hora). Si la supera, no puedes usar el rasgo sobre él de nuevo."
+        d: "Con una acción eliges un no-muerto que veas a 60 pies (incluso uno creado por otro mago): hace una salvación de CAR (CD de tus conjuros de Mago). Si la supera, no puedes usar este rasgo sobre él de nuevo. Si falla, queda amistoso hacia ti y obedece tus órdenes hasta que vuelvas a usar este rasgo. Si su INT es 8+, tiene Ventaja en la salvación; si falla y su INT es 12+, repite la salvación al final de cada hora hasta superarla y liberarse."
       },
     ],
 
@@ -341,7 +341,7 @@ const CLASE_MAGO = {
         n: "Maestro Transmutador (Master Transmuter)",
         nv: 14,
         a: "A",
-        d: "Con una acción consumes tu piedra del transmutador (queda destruida hasta el próximo descanso largo) para un efecto: Transformación Mayor (transformas un objeto no mágico de hasta 5 pies cúbicos en otro similar, manejándolo 10 minutos); Panacea (quitas maldiciones, enfermedades y venenos y restauras todos los PG de la criatura que toques); Restaurar la Vida (lanzas Raise Dead sin espacio ni componentes); Restaurar la Juventud (reduces la edad aparente en 3d10 años, mínimo 13)."
+        d: "Con una acción consumes tu piedra del transmutador (queda destruida hasta el próximo Descanso Largo) para un efecto: Transformación Mayor (transmutas un objeto no mágico de hasta un cubo de 5 pies de lado en otro objeto no mágico de tamaño y masa similares y de valor igual o menor, manejándolo 10 minutos); Panacea (quitas maldiciones, enfermedades y venenos y restauras todos los PG de la criatura que toques con la piedra); Restaurar la Vida (lanzas Raise Dead sobre una criatura que toques con la piedra, sin gastar espacio ni necesitar el conjuro en tu libro); Restaurar la Juventud (reduces la edad aparente de una criatura voluntaria que toques en 3d10 años, mínimo 13; no alarga su vida)."
       },
     ],
 
@@ -432,7 +432,7 @@ const CLASE_MAGO = {
         n: "Sobrecanalización (Overchannel)",
         nv: 14,
         a: "O",
-        d: "Al lanzar un conjuro de Mago con un espacio de Nv.1-5 que cause daño, puedes infligir el daño máximo. La primera vez no hay penalización; cada uso posterior antes de un descanso largo te inflige 2d12 de daño necrótico por nivel del espacio (+1d12 por cada uso adicional), que ignora resistencia e inmunidad."
+        d: "Al lanzar un conjuro de Mago con un espacio de Nv.1-5 que cause daño, puedes infligir el daño máximo con ese conjuro en el turno en que lo lanzas. La primera vez no hay penalización; cada uso posterior antes de un Descanso Largo te inflige 2d12 de daño necrótico por nivel del espacio justo después de lanzarlo (+1d12 por nivel por cada uso adicional), que ignora resistencia e inmunidad."
       },
     ],
 
@@ -450,13 +450,13 @@ const CLASE_MAGO = {
       {
         n: "Criaturas Fantasmales (Phantasmal Creatures)",
         nv: 6,
-        d: "Siempre tienes preparados Summon Beast y Summon Fey. Puedes lanzar cada uno una vez sin gastar espacio (recuperas el uso con un descanso largo). Al lanzar cualquiera de ellos puedes cambiar su escuela a ilusión: la criatura es espectral y tiene la mitad de sus PG."
+        d: "Siempre tienes preparados Summon Beast y Summon Fey. Al lanzar cualquiera de ellos puedes cambiar su escuela a ilusión, y la criatura invocada parece espectral. Puedes lanzar la versión de ilusión de cada conjuro sin gastar espacio, pero entonces la criatura tiene la mitad de sus PG. Tras lanzar uno de ellos sin espacio, debes terminar un Descanso Largo antes de volver a lanzar ese conjuro así."
       },
       {
         n: "Yo Ilusorio (Illusory Self)",
         nv: 10,
         a: "R",
-        d: "Cuando una criatura hace una tirada de ataque contra ti, usas tu Reacción para interponer un doble ilusorio: el ataque falla automáticamente y la ilusión se disipa. Se recupera tras un descanso corto o largo, o gastando un espacio de conjuro de Nv.2+."
+        d: "Cuando una criatura te impacta con una tirada de ataque, usas tu Reacción para interponer un doble ilusorio entre el atacante y tú: el ataque falla automáticamente y la ilusión se disipa. Tras usarlo no puedes volver a hacerlo hasta terminar un Descanso Corto o Largo; también puedes recuperar el uso gastando un espacio de conjuro de Nv.2+ (sin acción)."
       },
       {
         n: "Realidad Ilusoria (Illusory Reality)",
@@ -516,18 +516,18 @@ const CLASE_MAGO = {
         n: "Mente Manifiesta (Manifest Mind)",
         nv: 6,
         a: "B",
-        d: "Mientras llevas tu libro, como Acción Adicional creas una mente espectral intangible a 60 pies (luz tenue 10 pies, Visión en la oscuridad 60 pies, comparte tu vista y oído por telepatía). Puedes lanzar conjuros de Mago desde su espacio (tu bonificador de competencia en veces por día) y moverla 30 pies como Acción Adicional atravesando criaturas. Se disipa a más de 300 pies, con Dispel Magic, si destruyen el libro, al morir o si la descartas. Para volver a crearla gastas un espacio de conjuro tras un descanso largo."
+        d: "Mientras llevas contigo tu libro, como Acción Adicional creas una mente espectral Diminuta e intangible en un espacio libre a 60 pies (luz tenue 10 pies, Visión en la oscuridad 60 pies; te comparte por telepatía lo que ve y oye). Cuando lances un conjuro de Mago en tu turno, puedes lanzarlo como si estuvieras en el espacio de la mente, usando sus sentidos, un número de veces por día igual a tu bonificador de competencia (se recuperan con un Descanso Largo). Como Acción Adicional la mueves hasta 30 pies a un espacio libre que tú o ella veáis; puede atravesar criaturas, no objetos. Se disipa si está a más de 300 pies de ti, si alguien le lanza Dispel Magic, si el libro es destruido, si mueres o si la descartas con una Acción Adicional. Una vez creada, no puedes volver a crearla hasta terminar un Descanso Largo, salvo que gastes un espacio de conjuro de cualquier nivel."
       },
       {
         n: "Maestro Escribano (Master Scrivener)",
         nv: 10,
-        d: "Tras un descanso largo creas un pergamino mágico copiando un conjuro de Mago de Nv.1-2 (tiempo de lanzamiento de 1 acción) de tu libro a 5 pies; el conjuro cuenta como un nivel superior. Sólo tú puedes leerlo; desaparece al lanzarlo o en el siguiente descanso largo. El coste de crear pergaminos se reduce a la mitad."
+        d: "Tras un Descanso Largo puedes crear un pergamino mágico tocando tu Pluma Mágica a papel o pergamino en blanco y copiando en él un conjuro de tu Libro de Conjuros Despierto (el libro debe estar a 5 pies). El conjuro debe ser de Nv.1 o 2 y tener tiempo de lanzamiento de 1 acción; en el pergamino cuenta como un nivel superior. Lo lanzas leyéndolo con una acción; solo tú puedes entenderlo y el conjuro desaparece al lanzarlo o al terminar tu siguiente Descanso Largo. Además, el oro y el tiempo para crear pergaminos de conjuro se reducen a la mitad si usas tu Pluma Mágica."
       },
       {
         n: "Uno con la Palabra (One with the Word)",
         nv: 14,
         a: "R",
-        d: "Ventaja en pruebas de INT (Arcanos) con tu libro presente. Cuando sufres daño con la mente manifestada, usas tu Reacción para descartar la mente y evitar todo el daño; luego tiras 3d6 y pierdes conjuros preparados cuyos niveles sumen ese total (no puedes lanzarlos durante 1d6 descansos largos). Una vez por descanso largo."
+        d: "Ventaja en todas las pruebas de INT (Arcanos) mientras llevas contigo el libro. Si sufres daño con la mente manifestada, puedes usar tu Reacción para descartar la mente y evitar todo ese daño. Luego tiras 3d6: tu libro pierde temporalmente conjuros de tu elección cuyos niveles sumen igual o más que el resultado (con un 9: un conjuro de Nv.9, tres de Nv.3 u otra combinación). Si el libro no tiene conjuros suficientes, caes a 0 PG. Hasta que termines 1d6 Descansos Largos no puedes lanzar los conjuros perdidos, ni siquiera desde un pergamino u otro libro; después reaparecen. Una vez por Descanso Largo."
       },
     ],
 
@@ -549,7 +549,7 @@ const CLASE_MAGO = {
         n: "Ataque Extra (Extra Attack)",
         nv: 6,
         a: "A",
-        d: "Atacas dos veces al realizar la acción Atacar; puedes sustituir uno de esos ataques por un truco de Mago de 1 acción."
+        d: "Atacas dos veces, en lugar de una, al realizar la acción Atacar en tu turno. Además puedes lanzar uno de tus trucos en lugar de uno de esos ataques."
       },
       {
         n: "Canción de Defensa (Song of Defense)",
@@ -620,7 +620,7 @@ const CLASE_MAGO = {
       {
         n: "Suspensión Arcana (Arcane Abeyance)",
         nv: 10,
-        d: "Al lanzar un conjuro con un espacio de Nv.4 o inferior, puedes condensar su magia en una cuenta gris (AC 15, 1 PG) que dura 1 hora; una criatura puede usar una acción para liberar el conjuro. Una cuenta por descanso corto o largo."
+        d: "Al lanzar un conjuro con un espacio de Nv.4 o inferior, puedes condensar su magia en una cuenta gris Diminuta (CA 15, 1 PG, inmune a veneno y psíquico) que retiene el conjuro 1 hora; si el tiempo termina o la cuenta se destruye, se desvanece y el conjuro se pierde. Una criatura que la sostenga puede usar una acción para liberar el conjuro: usa tu bonificador de ataque de conjuro y tu CD, pero esa criatura cuenta como lanzadora a todos los demás efectos. Una cuenta por Descanso Corto o Largo."
       },
       {
         n: "Futuro Convergente (Convergent Future)",

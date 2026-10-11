@@ -37,7 +37,7 @@ const CLASE_HECHICERO = {
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "Lanzador completo. CAR es tu característica de conjuros (CD = 8 + comp. + mod. CAR); usas un foco arcano. Trucos: 4 (5 en Nv.4, 6 en Nv.10). Preparas conjuros de la lista de Hechicero: 2 en Nv.1 (4, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); al subir de nivel puedes cambiar 1 conjuro preparado. [2014: conoces 2 conjuros en Nv.1 (3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 13, 14, 14, 15, 15, 15, 15 en Nv.2-20) y cambias 1 al subir de nivel]"
+      d: "Lanzador completo. CAR es tu característica de conjuros (CD = 8 + comp. + mod. CAR); usas un foco arcano. Trucos: 4 (5 en Nv.4, 6 en Nv.10); al subir de nivel puedes cambiar 1 truco por otro truco de Hechicero [2014: solo con el rasgo opcional de TCE Versatilidad Hechiceril]. Preparas conjuros de la lista de Hechicero: 2 en Nv.1 (4, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); al subir de nivel puedes cambiar 1 conjuro preparado. [2014: conoces 2 conjuros en Nv.1 (3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 13, 14, 14, 15, 15, 15, 15 en Nv.2-20) y cambias 1 al subir de nivel]"
     },
     {
       n: "Hechicería Innata (Innate Sorcery)",
@@ -49,12 +49,12 @@ const CLASE_HECHICERO = {
       n: "Fuente de Magia (Font of Magic)",
       nv: 2,
       a: "B",
-      d: "Tienes Puntos de Hechicería (PH) = tu nivel de Hechicero (mínimo 2 en Nv.2); los recuperas todos con un descanso largo. Como Acción Adicional puedes gastar un espacio de conjuro para ganar PH iguales a su nivel, o gastar PH para crear un espacio: nivel 1 = 2 PH, 2 = 3 PH, 3 = 5 PH, 4 = 6 PH, 5 = 7 PH (mínimo nivel de Hechicero 2, 3, 5, 7 y 9 respectivamente; el espacio desaparece al terminar un descanso largo). [2014: sin nivel mínimo para crear espacios de nivel 1-5; los PH se obtienen en Nv.2 con 2 PH]"
+      d: "Tienes Puntos de Hechicería (PH) = tu nivel de Hechicero (mínimo 2 en Nv.2); los recuperas todos con un descanso largo. Puedes gastar un espacio de conjuro para ganar PH iguales a su nivel (sin acción). Como Acción Adicional puedes gastar PH para crear un espacio de conjuro de nivel 5 o menor: nivel 1 = 2 PH, 2 = 3 PH, 3 = 5 PH, 4 = 6 PH, 5 = 7 PH (mínimo nivel de Hechicero 2, 3, 5, 7 y 9 respectivamente; el espacio desaparece al terminar un descanso largo). [2014: convertir un espacio en PH también es una Acción Adicional; sin nivel mínimo para crear espacios de nivel 1-5; los PH se obtienen en Nv.2 con 2 PH]"
     },
     {
       n: "Metamagia (Metamagic)",
       nv: 2,
-      d: "Aprendes 2 opciones de Metamagia (puedes cambiar 1 al subir de nivel). Sólo puedes aplicar 1 opción por conjuro, salvo Conjuro Potenciado (Empowered) y Conjuro Buscador (Seeking), que pueden sumarse a otra. • Cuidadoso (Careful, 1 PH): eliges hasta mod. CAR (mín. 1) criaturas que superan automáticamente la salvación del conjuro y [2024: no sufren daño aunque normalmente sufrirían la mitad]. • Distante (Distant, 1 PH): alcance de 5 pies o más se duplica; alcance de toque pasa a 30 pies. • Potenciado (Empowered, 1 PH): vuelves a tirar hasta mod. CAR (mín. 1) dados de daño y usas los nuevos resultados. • Prolongado (Extended, 1 PH): duración de 1 minuto o más se duplica (máx. 24 h) [2024: además Ventaja en las salvaciones de concentración de ese conjuro]. • Acentuado (Heightened, 2 PH): un objetivo tiene Desventaja en su primera salvación contra el conjuro [2014: 3 PH]. • Acelerado (Quickened, 2 PH): un conjuro de 1 acción se lanza como Acción Adicional [2024: no si ya lanzaste un conjuro de Nv.1+ este turno, ni lanzar uno de Nv.1+ después en ese turno]. • Buscador (Seeking, 1 PH): si fallas la tirada de ataque de un conjuro, repites el d20 y usas el nuevo resultado [2014: opcional de TCE]. • Sutil (Subtle, 1 PH): el conjuro no requiere componentes verbales ni somáticos. • Transmutado (Transmuted, 1 PH): cambias el tipo de daño del conjuro a ácido, frío, fuego, rayo, veneno o trueno [2014: opcional de TCE]. • Gemelo (Twinned, PH = nivel del conjuro, mín. 1): un conjuro que sólo pueda apuntar a una criatura (y no tenga alcance Personal) puede apuntar también a una segunda criatura en alcance. [2014: eliges 2 opciones en Nv.3]"
+      d: "Aprendes 2 opciones de Metamagia (puedes cambiar 1 al subir de nivel) [2014: se obtiene en Nv.3 eligiendo 2 opciones, +1 en Nv.10 y +1 en Nv.17; cambiar opciones solo con el opcional de TCE Versatilidad Hechiceril]. Sólo puedes aplicar 1 opción por conjuro, salvo Conjuro Potenciado (Empowered) y Conjuro Buscador (Seeking), que pueden sumarse a otra. • Cuidadoso (Careful, 1 PH): eliges hasta mod. CAR (mín. 1) criaturas que superan automáticamente la salvación del conjuro y [2024: no sufren daño aunque normalmente sufrirían la mitad]. • Distante (Distant, 1 PH): alcance de 5 pies o más se duplica; alcance de toque pasa a 30 pies. • Potenciado (Empowered, 1 PH): vuelves a tirar hasta mod. CAR (mín. 1) dados de daño y usas los nuevos resultados. • Prolongado (Extended, 1 PH): duración de 1 minuto o más se duplica (máx. 24 h) [2024: además Ventaja en las salvaciones de concentración de ese conjuro]. • Acentuado (Heightened, 2 PH): un objetivo del conjuro tiene Desventaja en las salvaciones contra ese conjuro [2014: 3 PH; solo en su primera salvación contra el conjuro]. • Acelerado (Quickened, 2 PH): un conjuro de 1 acción se lanza como Acción Adicional [2024: no si ya lanzaste un conjuro de Nv.1+ este turno, ni lanzar uno de Nv.1+ después en ese turno]. • Buscador (Seeking, 1 PH): si fallas la tirada de ataque de un conjuro, repites el d20 y usas el nuevo resultado [2014: opcional de TCE; 2 PH]. • Sutil (Subtle, 1 PH): el conjuro no requiere componentes verbales, somáticos ni materiales, salvo los materiales que consuma el conjuro o que tengan un coste indicado [2014: solo sin componentes verbales ni somáticos]. • Transmutado (Transmuted, 1 PH): cambias el tipo de daño del conjuro a ácido, frío, fuego, rayo, veneno o trueno [2014: opcional de TCE]. • Gemelo (Twinned, 1 PH): al lanzar un conjuro que puede lanzarse con un espacio de nivel superior para afectar a una criatura adicional (p. ej. Charm Person), aumentas en 1 su nivel efectivo. [2014: PH = nivel del conjuro (mín. 1); un conjuro que sólo pueda apuntar a una criatura a su nivel actual (y no tenga alcance Personal) puede apuntar también a una segunda criatura en alcance; no valen Magic Missile ni Scorching Ray, sí Ray of Frost y Chromatic Orb]"
     },
     {
       n: "Subclase de Hechicero (Origen Hechiceril)",
@@ -67,6 +67,11 @@ const CLASE_HECHICERO = {
       d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]"
     },
     {
+      n: "Versatilidad Hechiceril (Sorcerous Versatility)",
+      nv: 4,
+      d: "Cada vez que subes a un nivel de Hechicero que concede Mejora de Característica, puedes cambiar una opción de Metamagia por otra disponible, o cambiar un truco de Hechicero por otro truco de la lista de Hechicero. [Sólo 2014, opcional de TCE; en 2024 está integrado en Lanzamiento de Conjuros y Metamagia]"
+    },
+    {
       n: "Restauración Hechiceril (Sorcerous Restoration)",
       nv: 5,
       d: "Al terminar un descanso corto recuperas PH gastados hasta la mitad de tu nivel de Hechicero (redondeando hacia abajo). Una vez por descanso largo. [2024; en 2014 es un rasgo de Nv.20: recuperas 4 PH con un descanso corto]"
@@ -74,7 +79,7 @@ const CLASE_HECHICERO = {
     {
       n: "Orientación Mágica (Magical Guidance)",
       nv: 5,
-      d: "Cuando fallas una prueba de característica, puedes gastar 1 PH para repetir el d20 y debes usar el nuevo resultado. [2014: rasgo opcional de TCE]"
+      d: "Cuando fallas una prueba de característica, puedes gastar 1 PH para repetir el d20 y debes usar el nuevo resultado. [Sólo 2014, opcional de TCE]"
     },
     {
       n: "Hechicería Encarnada (Sorcery Incarnate)",
@@ -143,7 +148,12 @@ const CLASE_HECHICERO = {
       {
         n: "Oleada de Magia Salvaje (Wild Magic Surge)",
         nv: 1,
-        d: "Tras lanzar un conjuro de Nv.1 o superior, el DM puede hacerte tirar 1d20 (una vez por turno); con un 1 tiras en la tabla de Oleada de Magia Salvaje (d100) para obtener un efecto mágico."
+        d: "Tras lanzar un conjuro de Hechicero de Nv.1 o superior, el DM puede hacerte tirar 1d20 (una vez por turno); con un 1 tiras en la tabla de Oleada de Magia Salvaje (d100) para obtener un efecto mágico. Si el efecto es un conjuro, es demasiado salvaje para ser afectado por Metamagia; si normalmente requiere concentración, aquí no la requiere y dura toda su duración."
+      },
+      {
+        n: "Tabla de Oleada de Magia Salvaje (Wild Magic Surge table)",
+        nv: 1,
+        d: "Tabla d100 (2014) de la Oleada de Magia Salvaje: • 01-02: tira en esta tabla al inicio de cada uno de tus turnos durante el siguiente minuto, ignorando este resultado en las tiradas posteriores • 03-04: durante el siguiente minuto ves cualquier criatura invisible si tienes línea de visión hasta ella • 05-06: un modron elegido y controlado por el DM aparece en un espacio libre a 5 pies de ti y desaparece 1 minuto después • 07-08: lanzas Fireball como conjuro de nivel 3 centrado en ti • 09-10: lanzas Magic Missile como conjuro de nivel 5 • 11-12: tira 1d10 y tu altura cambia tantas pulgadas como el resultado (impar: encoges; par: creces) • 13-14: lanzas Confusion centrado en ti • 15-16: durante el siguiente minuto recuperas 5 PG al inicio de cada uno de tus turnos • 17-18: te crece una larga barba de plumas que dura hasta que estornudes, momento en que las plumas salen disparadas de tu cara • 19-20: lanzas Grease centrado en ti • 21-22: las criaturas tienen Desventaja en las salvaciones contra el siguiente conjuro que lances en el próximo minuto y que implique una salvación • 23-24: tu piel se vuelve de un azul vibrante; un conjuro Remove Curse puede terminar este efecto • 25-26: durante el siguiente minuto te aparece un ojo en la frente y tienes Ventaja en las pruebas de Sabiduría (Percepción) que dependan de la vista • 27-28: durante el siguiente minuto, todos tus conjuros con tiempo de lanzamiento de 1 acción pasan a lanzarse como Acción Adicional • 29-30: te teletransportas hasta 60 pies a un espacio libre de tu elección que veas • 31-32: eres transportado al Plano Astral hasta el final de tu siguiente turno, tras lo cual vuelves al espacio que ocupabas o al espacio libre más cercano si estaba ocupado • 33-34: maximiza el daño del siguiente conjuro dañino que lances durante el próximo minuto • 35-36: tira 1d10 y tu edad cambia tantos años como el resultado (impar: rejuveneces, mínimo 1 año; par: envejeces) • 37-38: 1d6 flumphs controlados por el DM aparecen en espacios libres a 60 pies de ti y te tienen miedo (Asustados); desaparecen tras 1 minuto • 39-40: recuperas 2d10 PG • 41-42: te conviertes en una planta en maceta hasta el inicio de tu siguiente turno; como planta estás Incapacitado y tienes Vulnerabilidad a todo el daño; si caes a 0 PG, la maceta se rompe y recuperas tu forma • 43-44: durante el siguiente minuto puedes teletransportarte hasta 20 pies como Acción Adicional en cada uno de tus turnos • 45-46: lanzas Levitate sobre ti • 47-48: un unicornio controlado por el DM aparece en un espacio a 5 pies de ti y desaparece 1 minuto después • 49-50: no puedes hablar durante el siguiente minuto; cuando lo intentas, te salen burbujas rosas de la boca • 51-52: un escudo espectral flota junto a ti durante el siguiente minuto y te da +2 a la CA e inmunidad a Magic Missile • 53-54: eres inmune a la embriaguez por alcohol durante los siguientes 5d6 días • 55-56: se te cae todo el pelo, pero vuelve a crecer en 24 horas • 57-58: durante el siguiente minuto, cualquier objeto inflamable que toques y que no lleve ni sostenga otra criatura arde en llamas • 59-60: recuperas tu espacio de conjuro gastado de nivel más bajo • 61-62: durante el siguiente minuto debes gritar al hablar • 63-64: lanzas Fog Cloud centrado en ti • 65-66: hasta tres criaturas que elijas a 30 pies de ti sufren 4d10 de daño de rayo • 67-68: tienes miedo de la criatura más cercana (Asustado) hasta el final de tu siguiente turno • 69-70: cada criatura a 30 pies de ti se vuelve invisible durante el siguiente minuto; la invisibilidad termina en una criatura cuando ataca o lanza un conjuro • 71-72: tienes resistencia a todo el daño durante el siguiente minuto • 73-74: una criatura al azar a 60 pies de ti queda Envenenada durante 1d4 horas • 75-76: brillas con luz brillante en un radio de 30 pies durante el siguiente minuto; toda criatura que termine su turno a 5 pies de ti queda Cegada hasta el final de su siguiente turno • 77-78: lanzas Polymorph sobre ti; si fallas la salvación, te conviertes en oveja mientras dure el conjuro • 79-80: mariposas ilusorias y pétalos de flores revolotean a 10 pies de ti durante el siguiente minuto • 81-82: puedes realizar una acción extra de inmediato • 83-84: cada criatura a 30 pies de ti sufre 1d10 de daño necrótico y recuperas PG iguales a la suma del daño necrótico infligido • 85-86: lanzas Mirror Image • 87-88: lanzas Fly sobre una criatura al azar a 60 pies de ti • 89-90: te vuelves invisible durante el siguiente minuto y las demás criaturas no pueden oírte; la invisibilidad termina si atacas o lanzas un conjuro • 91-92: si mueres en el siguiente minuto, vuelves a la vida de inmediato como si te hubieran lanzado Reincarnate • 93-94: tu tamaño aumenta una categoría durante el siguiente minuto • 95-96: tú y todas las criaturas a 30 pies de ti ganáis Vulnerabilidad al daño perforante durante el siguiente minuto • 97-98: te rodea una música etérea tenue durante el siguiente minuto • 99-00: recuperas todos tus PH gastados."
       },
       {
         n: "Mareas de Caos (Tides of Chaos)",
@@ -180,7 +190,7 @@ const CLASE_HECHICERO = {
       {
         n: "Conjuros Dracónicos (Draconic Spells)",
         nv: 3,
-        d: "Siempre tienes preparados (no cuentan en tu límite): Nv.3: Alter Self, Chromatic Orb, Command, Dragon's Breath. Nv.5: Fear, Fly. Nv.7: Arcane Eye, Charm Monster. Nv.9: Legend Lore, Summon Dragon. Puedes cambiar uno de ellos por otro conjuro de la lista de Hechicero al subir de nivel."
+        d: "Siempre tienes preparados (no cuentan en tu límite): Nv.3: Alter Self, Chromatic Orb, Command, Dragon's Breath. Nv.5: Fear, Fly. Nv.7: Arcane Eye, Charm Monster. Nv.9: Legend Lore, Summon Dragon."
       },
       {
         n: "Afinidad Elemental (Elemental Affinity)",
@@ -197,7 +207,7 @@ const CLASE_HECHICERO = {
         n: "Compañero Dragón (Dragon Companion)",
         nv: 18,
         a: "A",
-        d: "Puedes lanzar Summon Dragon sin componentes materiales. Una vez por descanso largo puedes lanzarlo sin gastar espacio de conjuro; así lanzado no requiere concentración y dura 1 minuto."
+        d: "Puedes lanzar Summon Dragon sin componentes materiales. También puedes lanzarlo una vez sin gastar espacio de conjuro, y recuperas esa posibilidad al terminar un descanso largo. Cada vez que empiezas a lanzar el conjuro, puedes modificarlo para que no requiera concentración; si lo haces, su duración pasa a ser 1 minuto en ese lanzamiento."
       },
     ],
 
@@ -206,6 +216,11 @@ const CLASE_HECHICERO = {
         n: "Oleada de Magia Salvaje (Wild Magic Surge)",
         nv: 3,
         d: "Una vez por turno, inmediatamente después de lanzar un conjuro de Hechicero con espacio de conjuro, tiras 1d20; con un 20 tiras en la tabla de Oleada de Magia Salvaje para crear un efecto mágico. Si el efecto es un conjuro, es demasiado salvaje para ser afectado por tu Metamagia."
+      },
+      {
+        n: "Tabla de Oleada de Magia Salvaje (Wild Magic Surge table)",
+        nv: 3,
+        d: "Tabla 1d100 (2024) de la Oleada de Magia Salvaje: • 01-04: tira en esta tabla al inicio de cada uno de tus turnos durante el siguiente minuto, ignorando este resultado en las tiradas posteriores • 05-08: una criatura Amistosa hacia ti aparece en un espacio libre al azar a 60 pies de ti, bajo el control del DM, y desaparece 1 minuto después; tira 1d4 para determinar la criatura (1 = Modron Duodrone, 2 = Flumph, 3 = Modron Monodrone, 4 = Unicornio; ver el Monster Manual) • 09-12: durante el siguiente minuto recuperas 5 PG al inicio de cada uno de tus turnos • 13-16: las criaturas tienen Desventaja en las salvaciones contra el siguiente conjuro que lances en el próximo minuto y que implique una salvación • 17-20: sufres un efecto de 1 minuto de duración salvo que se indique otra cosa; tira 1d8: 1 = música etérea tenue que solo oyen tú y las criaturas a 5 pies de ti; 2 = tu tamaño aumenta una categoría; 3 = te crece una larga barba de plumas que dura hasta que estornudes, momento en que las plumas salen de tu cara y desaparecen; 4 = debes gritar al hablar; 5 = mariposas ilusorias revolotean a 10 pies de ti; 6 = te aparece un ojo en la frente que te da Ventaja en las pruebas de Sabiduría (Percepción); 7 = salen burbujas rosas de tu boca cuando hablas; 8 = tu piel se vuelve de un azul vibrante durante 24 horas o hasta que un conjuro Remove Curse termine el efecto • 21-24: durante el siguiente minuto, todos tus conjuros con tiempo de lanzamiento de una acción pasan a lanzarse como Acción Adicional • 25-28: eres transportado al Plano Astral hasta el final de tu siguiente turno; después vuelves al espacio que ocupabas o al espacio libre más cercano si estaba ocupado • 29-32: la próxima vez que lances un conjuro que cause daño en el siguiente minuto, no tires sus dados de daño: usa el número más alto posible en cada dado • 33-36: tienes Resistencia a todo el daño durante el siguiente minuto • 37-40: te conviertes en una planta en maceta hasta el inicio de tu siguiente turno; como planta tienes la condición Incapacitado y Vulnerabilidad a todo el daño; si caes a 0 PG, la maceta se rompe y recuperas tu forma • 41-44: durante el siguiente minuto puedes teletransportarte hasta 20 pies como Acción Adicional en cada uno de tus turnos • 45-48: tú y hasta tres criaturas que elijas a 30 pies de ti tenéis la condición Invisible durante 1 minuto; la invisibilidad termina en una criatura justo después de que haga una tirada de ataque, inflija daño o lance un conjuro • 49-52: un escudo espectral flota junto a ti durante el siguiente minuto y te da +2 a la CA e inmunidad a Magic Missile • 53-56: puedes realizar una acción extra en este turno • 57-60: lanzas un conjuro al azar; si normalmente requiere Concentración, aquí no la requiere y dura toda su duración; tira 1d10: 1 = Confusion; 2 = Fireball; 3 = Fog Cloud; 4 = Fly (sobre una criatura al azar a 60 pies de ti); 5 = Grease; 6 = Levitate (sobre ti); 7 = Magic Missile (como conjuro de nivel 5); 8 = Mirror Image; 9 = Polymorph (sobre ti; si fallas la salvación, te conviertes en cabra); 10 = See Invisibility • 61-64: durante el siguiente minuto, cualquier objeto inflamable y no mágico que toques y que no lleve ni sostenga otra criatura estalla en llamas, sufre 1d4 de daño de fuego y arde • 65-68: si mueres en la siguiente hora, revives de inmediato como si te hubieran lanzado Reincarnate • 69-72: tienes la condición Asustado hasta el final de tu siguiente turno; el DM determina el origen de tu miedo • 73-76: te teletransportas hasta 60 pies a un espacio libre que veas • 77-80: una criatura al azar a 60 pies de ti tiene la condición Envenenado durante 1d4 horas • 81-84: emites Luz brillante en un radio de 30 pies durante el siguiente minuto; toda criatura que termine su turno a 5 pies de ti tiene la condición Cegado hasta el final de su siguiente turno • 85-88: hasta tres criaturas de tu elección que veas a 30 pies de ti sufren 1d10 de daño necrótico y recuperas PG iguales a la suma del daño necrótico infligido • 89-92: hasta tres criaturas de tu elección que veas a 30 pies de ti sufren 4d10 de daño de rayo • 93-96: tú y todas las criaturas a 30 pies de ti tenéis Vulnerabilidad al daño perforante durante el siguiente minuto • 97-00: tira 1d6: 1 = recuperas 2d10 PG; 2 = un aliado de tu elección a 300 pies de ti recupera 2d10 PG; 3 = recuperas tu espacio de conjuro gastado de nivel más bajo; 4 = un aliado de tu elección a 300 pies de ti recupera su espacio de conjuro gastado de nivel más bajo; 5 = recuperas todos tus PH gastados; 6 = los efectos de la fila 17-20 se aplican sobre ti a la vez."
       },
       {
         n: "Mareas de Caos (Tides of Chaos)",
@@ -236,7 +251,7 @@ const CLASE_HECHICERO = {
       {
         n: "Conjuros Psiónicos (Psionic Spells)",
         nv: 3,
-        d: "Siempre tienes preparados (no cuentan en tu límite): Nv.3: Arms of Hadar, Calm Emotions, Detect Thoughts, Dissonant Whispers, Mind Sliver. Nv.5: Hunger of Hadar, Sending. Nv.7: Evard's Black Tentacles, Summon Aberration. Nv.9: Rary's Telepathic Bond, Telekinesis. Puedes cambiar uno por otro conjuro de adivinación o encantamiento de la lista de Hechicero al subir de nivel."
+        d: "Siempre tienes preparados (no cuentan en tu límite): Nv.3: Arms of Hadar, Calm Emotions, Detect Thoughts, Dissonant Whispers, Mind Sliver. Nv.5: Hunger of Hadar, Sending. Nv.7: Evard's Black Tentacles, Summon Aberration. Nv.9: Rary's Telepathic Bond, Telekinesis."
       },
       {
         n: "Habla Telepática (Telepathic Speech)",
@@ -252,13 +267,13 @@ const CLASE_HECHICERO = {
       {
         n: "Defensas Psíquicas (Psychic Defenses)",
         nv: 6,
-        d: "Resistencia al daño psíquico y Ventaja en las salvaciones contra ser hechizado o asustado."
+        d: "Resistencia al daño psíquico y Ventaja en las salvaciones para evitar o terminar las condiciones Hechizado o Asustado."
       },
       {
         n: "Revelación en Carne (Revelation in Flesh)",
         nv: 14,
         a: "B",
-        d: "Como Acción Adicional gastas 1 o más PH para transformar tu cuerpo durante 10 minutos; cada PH concede un beneficio: Adaptación Acuática (Velocidad de nado = el doble de tu Velocidad, respiras bajo el agua); Vuelo Reluciente (Velocidad de vuelo = tu Velocidad, puedes flotar); Ver lo Invisible (ves criaturas invisibles a 60 pies); Movimiento Vermiforme (pasas por espacios de 1 pulgada sin apretarte; escapas de agarres o ataduras gastando 5 pies de movimiento)."
+        d: "Como Acción Adicional gastas 1 o más PH para transformar tu cuerpo durante 10 minutos; cada PH concede un beneficio: Adaptación Acuática (Velocidad de nado = el doble de tu Velocidad, respiras bajo el agua); Vuelo Reluciente (Velocidad de vuelo = tu Velocidad, puedes flotar); Ver lo Invisible (ves criaturas invisibles a 60 pies que no estén tras Cobertura total); Movimiento Vermiforme (pasas por espacios de 1 pulgada sin apretarte; escapas de agarres o ataduras gastando 5 pies de movimiento)."
       },
       {
         n: "Implosión Distorsionante (Warping Implosion)",
@@ -272,7 +287,7 @@ const CLASE_HECHICERO = {
       {
         n: "Conjuros de Relojería (Clockwork Spells)",
         nv: 3,
-        d: "Siempre tienes preparados (no cuentan en tu límite): Nv.3: Aid, Alarm, Lesser Restoration, Protection from Evil and Good. Nv.5: Dispel Magic, Protection from Energy. Nv.7: Freedom of Movement, Summon Construct. Nv.9: Greater Restoration, Wall of Force. Puedes cambiar uno por otro conjuro de la lista de Hechicero al subir de nivel. Además, al lanzar conjuros de Hechicero aparecen manifestaciones de orden (tabla d6: engranajes espectrales, tictac de relojes…)."
+        d: "Siempre tienes preparados (no cuentan en tu límite): Nv.3: Aid, Alarm, Lesser Restoration, Protection from Evil and Good. Nv.5: Dispel Magic, Protection from Energy. Nv.7: Freedom of Movement, Summon Construct. Nv.9: Greater Restoration, Wall of Force. Además, al lanzar conjuros de Hechicero aparecen manifestaciones de orden (tabla d6: engranajes espectrales, tictac de relojes…)."
       },
       {
         n: "Restaurar el Equilibrio (Restore Balance)",
@@ -306,7 +321,7 @@ const CLASE_HECHICERO = {
       {
         n: "Magia Divina (Divine Magic)",
         nv: 1,
-        d: "Al aprender conjuros de Hechicero puedes elegirlos también de la lista de Clérigo. Eliges una afinidad: bien (Cure Wounds), mal (Inflict Wounds), ley (Bless), caos (Bane) o neutralidad (Protection from Evil and Good); aprendes ese conjuro además, sin que cuente en tus conjuros conocidos."
+        d: "Cuando Lanzamiento de Conjuros te permite aprender o cambiar un truco o conjuro de Hechicero, puedes elegir el nuevo de la lista de Clérigo o de la de Hechicero (es un conjuro de Hechicero para ti; respetas el resto de restricciones). Eliges una afinidad: bien (Cure Wounds), mal (Inflict Wounds), ley (Bless), caos (Bane) o neutralidad (Protection from Evil and Good); aprendes ese conjuro además, sin que cuente en tus conjuros conocidos. Si luego lo cambias, debe ser por un conjuro de la lista de Clérigo."
       },
       {
         n: "Favorecido por los Dioses (Favored by the Gods)",
@@ -318,7 +333,7 @@ const CLASE_HECHICERO = {
         n: "Curación Potenciada (Empowered Healing)",
         nv: 6,
         a: "O",
-        d: "Cuando tú o un aliado a 5 pies tira dados para determinar los PG que recupera un conjuro, puedes gastar 1 PH para repetir cualquier número de esos dados una vez. Una vez por turno."
+        d: "Cuando tú o un aliado a 5 pies tira dados para determinar los PG que recupera un conjuro, puedes gastar 1 PH para repetir cualquier número de esos dados una vez, siempre que no estés Incapacitado. Una vez por turno."
       },
       {
         n: "Alas Sobrenaturales (Otherworldly Wings)",
@@ -344,7 +359,7 @@ const CLASE_HECHICERO = {
         n: "Fuerza de la Tumba (Strength of the Grave)",
         nv: 1,
         a: "O",
-        d: "Cuando un daño te reduciría a 0 PG, haces una salvación de CAR (CD 5 + daño sufrido); si la superas, quedas a 1 PG. No funciona con daño radiante ni con un golpe crítico. Una vez usado, necesitas un descanso largo."
+        d: "Cuando un daño te reduciría a 0 PG, haces una salvación de CAR (CD 5 + daño sufrido); si la superas, quedas a 1 PG. No funciona con daño radiante ni con un golpe crítico. Tras superar la salvación, no puedes volver a usarlo hasta terminar un descanso largo."
       },
       {
         n: "Ojos de la Oscuridad: Oscuridad (Darkness)",
@@ -355,7 +370,7 @@ const CLASE_HECHICERO = {
         n: "Sabueso del Mal Agüero (Hound of Ill Omen)",
         nv: 6,
         a: "B",
-        d: "Como Acción Adicional gastas 3 PH para señalar a una criatura que veas a 120 pies: aparece un perro espectral (estadísticas de lobo terrible, monstruosidad Mediana) en un espacio libre a 30 pies del objetivo, con PG temporales = la mitad de tu nivel de Hechicero. Sólo se mueve hacia el objetivo y sólo lo ataca; atraviesa criaturas y objetos (5 de daño de fuerza si termina su turno dentro). Mientras esté a 5 pies del objetivo, este tiene Desventaja en las salvaciones contra tus conjuros. Dura 5 minutos o hasta que tú o el objetivo lleguéis a 0 PG."
+        d: "Como Acción Adicional gastas 3 PH para señalar a una criatura que veas a 120 pies: aparece un perro espectral (estadísticas de lobo terrible, monstruosidad Mediana) en un espacio libre a 30 pies del objetivo, con PG temporales = la mitad de tu nivel de Hechicero. Tira iniciativa por el sabueso. En su turno solo puede moverse hacia el objetivo por la ruta más directa y usar su acción solo para atacarlo; puede hacer ataques de oportunidad, pero solo contra su objetivo. Al inicio de su turno conoce automáticamente la ubicación del objetivo y, si estaba oculto, deja de estarlo para el sabueso. Atraviesa criaturas y objetos como terreno difícil (5 de daño de fuerza si termina su turno dentro de un objeto). Mientras esté a 5 pies del objetivo, este tiene Desventaja en las salvaciones contra tus conjuros. Desaparece si llega a 0 PG, si su objetivo llega a 0 PG o tras 5 minutos."
       },
       {
         n: "Caminar entre Sombras (Shadow Walk)",
@@ -367,7 +382,7 @@ const CLASE_HECHICERO = {
         n: "Forma Umbral (Umbral Form)",
         nv: 18,
         a: "B",
-        d: "Como Acción Adicional gastas 6 PH: durante 1 minuto tienes resistencia a todo daño salvo fuerza y radiante, y atraviesas criaturas y objetos como terreno difícil (5 de daño de fuerza si terminas tu turno dentro de un objeto)."
+        d: "Como Acción Adicional gastas 6 PH: te transformas mágicamente en una forma sombría durante 1 minuto. Tienes resistencia a todo daño salvo fuerza y radiante y atraviesas criaturas y objetos como terreno difícil (5 de daño de fuerza si terminas tu turno dentro de un objeto). Termina antes si quedas Incapacitado, mueres o la descartas (Acción Adicional)."
       },
     ],
 
@@ -392,7 +407,7 @@ const CLASE_HECHICERO = {
         n: "Guía de la Tormenta (Storm Guide)",
         nv: 6,
         a: "AB",
-        d: "Si llueve, con una acción detienes la lluvia en una esfera de 20 pies de radio centrada en ti (la terminas con una Acción Adicional). Si hay viento, como Acción Adicional eliges la dirección del viento en una esfera de 100 pies de radio centrada en ti hasta el final de tu siguiente turno."
+        d: "Si llueve, con una acción detienes la lluvia en una esfera de 20 pies de radio centrada en ti (la terminas con una Acción Adicional). Si hay viento, como Acción Adicional eliges la dirección del viento en una esfera de 100 pies de radio centrada en ti hasta el final de tu siguiente turno; no cambia su velocidad."
       },
       {
         n: "Furia de la Tormenta (Storm's Fury)",
@@ -414,13 +429,13 @@ const CLASE_HECHICERO = {
       {
         n: "Conjuros Psiónicos (Psionic Spells)",
         nv: 1,
-        d: "Aprendes conjuros adicionales que no cuentan en tus conjuros conocidos: Nv.1: Arms of Hadar, Dissonant Whispers, Mind Sliver. Nv.3: Calm Emotions, Detect Thoughts. Nv.5: Hunger of Hadar, Sending. Nv.7: Evard's Black Tentacles, Summon Aberration. Nv.9: Rary's Telepathic Bond, Telekinesis. Al ganar un nivel de Hechicero puedes cambiar uno de ellos por otro conjuro de adivinación o encantamiento de Hechicero, Brujo o Mago."
+        d: "Aprendes conjuros adicionales que no cuentan en tus conjuros conocidos: Nv.1: Arms of Hadar, Dissonant Whispers, Mind Sliver. Nv.3: Calm Emotions, Detect Thoughts. Nv.5: Hunger of Hadar, Sending. Nv.7: Evard's Black Tentacles, Summon Aberration. Nv.9: Rary's Telepathic Bond, Telekinesis. Al ganar un nivel de Hechicero puedes cambiar uno de estos conjuros por otro del mismo nivel, que debe ser de adivinación o encantamiento de la lista de Hechicero, Brujo o Mago."
       },
       {
         n: "Habla Telepática (Telepathic Speech)",
         nv: 1,
         a: "B",
-        d: "Como Acción Adicional eliges una criatura que veas a 30 pies: podéis hablar telepáticamente mientras estéis a una distancia en millas ≤ tu mod. CAR (mín. 1 milla). Dura minutos = tu nivel de Hechicero."
+        d: "Como Acción Adicional eliges una criatura que veas a 30 pies: podéis hablar telepáticamente mientras estéis a una distancia en millas ≤ tu mod. CAR (mín. 1 milla). Dura minutos = tu nivel de Hechicero; termina antes si quedas Incapacitado, mueres o usas el rasgo para conectar con otra criatura."
       },
       {
         n: "Hechicería Psiónica (Psionic Sorcery)",
@@ -436,7 +451,7 @@ const CLASE_HECHICERO = {
         n: "Revelación en Carne (Revelation in Flesh)",
         nv: 14,
         a: "B",
-        d: "Como Acción Adicional gastas 1 o más PH para transformar tu cuerpo durante 10 minutos; cada PH concede un beneficio: ver criaturas invisibles a 60 pies; Velocidad de vuelo igual a tu Velocidad (flotas); Velocidad de nado el doble de tu Velocidad y respiras bajo el agua; forma viscosa (pasas por espacios de 1 pulgada y escapas de agarres o ataduras gastando 5 pies de movimiento)."
+        d: "Como Acción Adicional gastas 1 o más PH para transformar tu cuerpo durante 10 minutos; cada PH concede un beneficio: ves cualquier criatura invisible a 60 pies de ti que no esté tras una Cobertura; Velocidad de vuelo igual a tu Velocidad (flotas); Velocidad de nado el doble de tu Velocidad y respiras bajo el agua; forma viscosa (pasas por espacios de 1 pulgada y escapas de agarres o ataduras gastando 5 pies de movimiento)."
       },
       {
         n: "Implosión Distorsionante (Warping Implosion)",
@@ -450,7 +465,7 @@ const CLASE_HECHICERO = {
       {
         n: "Magia de Relojería (Clockwork Magic)",
         nv: 1,
-        d: "Aprendes conjuros adicionales que no cuentan en tus conjuros conocidos: Nv.1: Alarm, Protection from Evil and Good. Nv.3: Aid, Lesser Restoration. Nv.5: Dispel Magic, Protection from Energy. Nv.7: Freedom of Movement, Summon Construct. Nv.9: Greater Restoration, Wall of Force. Al ganar un nivel de Hechicero puedes cambiar uno de tus conjuros conocidos por otro de abjuración o transmutación de Hechicero, Brujo o Mago."
+        d: "Aprendes conjuros adicionales que no cuentan en tus conjuros conocidos: Nv.1: Alarm, Protection from Evil and Good. Nv.3: Aid, Lesser Restoration. Nv.5: Dispel Magic, Protection from Energy. Nv.7: Freedom of Movement, Summon Construct. Nv.9: Greater Restoration, Wall of Force. Al ganar un nivel de Hechicero puedes cambiar uno de los conjuros de este rasgo por otro del mismo nivel, que debe ser de abjuración o transmutación de la lista de Hechicero, Brujo o Mago."
       },
       {
         n: "Restaurar el Equilibrio (Restore Balance)",
@@ -500,18 +515,18 @@ const CLASE_HECHICERO = {
         n: "Crecer y Menguar (Waxing and Waning)",
         nv: 6,
         a: "B",
-        d: "Como Acción Adicional gastas 1 PH para cambiar de fase lunar."
+        d: "Como Acción Adicional gastas 1 PH para cambiar de fase lunar. Además, puedes lanzar una vez sin gastar espacio el conjuro de Nv.1 de cada fase de la tabla de Conjuros Lunares (Shield, Ray of Sickness, Color Spray), siempre que tu fase actual sea la de ese conjuro; tras lanzar un conjuro de fase así, no puedes volver a hacerlo hasta terminar un descanso largo."
       },
       {
         n: "Potenciación Lunar (Lunar Empowerment)",
         nv: 14,
-        d: "Beneficio según tu fase: Llena: como Acción Adicional emites luz brillante 10 pies y tenue otros 10 pies (o la apagas); tú y las criaturas que elijas tenéis Ventaja en Investigación y Percepción con luz brillante. Nueva: Ventaja en Sigilo y las tiradas de ataque contra ti tienen Desventaja mientras estás totalmente en la oscuridad. Creciente: resistencia al daño necrótico y radiante."
+        d: "Beneficio según tu fase: Llena: como Acción Adicional emites luz brillante 10 pies y tenue otros 10 pies (o la apagas); tú y las criaturas que elijas tenéis Ventaja en Investigación y Percepción con luz brillante. Nueva: Ventaja en pruebas de Destreza (Sigilo). Además, mientras estás totalmente en la oscuridad, las tiradas de ataque contra ti tienen Desventaja. Creciente: resistencia al daño necrótico y radiante."
       },
       {
         n: "Fenómeno Lunar (Lunar Phenomenon)",
         nv: 18,
         a: "B",
-        d: "Como Acción Adicional (o al cambiar de fase con Crecer y Menguar) activas el efecto de tu fase. Llena: criaturas a 30 pies hacen salvación de CON o quedan cegadas hasta el final de tu siguiente turno, y una criatura que elijas recupera 3d8 PG. Nueva: criaturas a 30 pies hacen salvación de DES o sufren 3d10 necrótico y su Velocidad pasa a 0 hasta el final de tu siguiente turno; tú quedas invisible hasta el final de tu siguiente turno o hasta que ataques o lances un conjuro. Creciente: te teletransportas hasta 60 pies a un espacio libre y puedes llevar a una criatura voluntaria a 5 pies; ambos tenéis resistencia a todo daño hasta el inicio de tu siguiente turno. Una vez por descanso largo o gastando 5 PH."
+        d: "Como Acción Adicional (o al cambiar de fase con Crecer y Menguar) activas el efecto de tu fase. Llena: cada criatura de tu elección a 30 pies hace una salvación de CON o queda cegada hasta el final de tu siguiente turno, y una criatura que elijas en esa área recupera 3d8 PG. Nueva: cada criatura de tu elección a 30 pies hace una salvación de DES o sufre 3d10 necrótico y su Velocidad pasa a 0 hasta el final de tu siguiente turno; tú quedas invisible hasta el final de tu siguiente turno o hasta justo después de que hagas una tirada de ataque o lances un conjuro. Creciente: te teletransportas hasta 60 pies a un espacio libre y puedes llevar a una criatura voluntaria a 5 pies; ambos tenéis resistencia a todo daño hasta el inicio de tu siguiente turno. Cada efecto de fase (Llena, Nueva, Creciente) puede usarse una vez por descanso largo, o de nuevo gastando 5 PH."
       },
     ],
 
@@ -522,7 +537,7 @@ const CLASE_HECHICERO = {
         n: "Estallido de Fuego Hechizado (Spellfire Burst)",
         nv: 3,
         a: "O",
-        d: "Una vez por turno, cuando gastas 1 o más PH durante una acción Mágica o Adicional, eliges un efecto: Llamas Fortalecedoras: una criatura a 30 pies gana PG temporales = 1d4 + mod. CAR. Fuego Radiante: una criatura a 30 pies sufre 1d4 de daño de fuego o radiante (a tu elección)."
+        d: "Una vez por turno, cuando gastas 1 o más PH durante una acción Mágica o Adicional, eliges un efecto: Llamas Fortalecedoras: tú o una criatura que veas a 30 pies gana PG temporales = 1d4 + mod. CAR. Fuego Radiante: una criatura que veas a 30 pies sufre 1d4 de daño de fuego o radiante (a tu elección)."
       },
       {
         n: "Conjuros de Spellfire (Spellfire Spells)",
@@ -543,7 +558,7 @@ const CLASE_HECHICERO = {
         n: "Corona de Fuego Hechizado (Crown of Spellfire)",
         nv: 18,
         a: "O",
-        d: "Modifica tu Hechicería Innata (una vez por descanso largo o gastando 5 PH): Fuerza Vital Ardiente: una vez por turno, cuando te impactan, gastas Dados de Golpe (hasta tu mod. CAR) para reducir el daño. Vuelo: Velocidad de vuelo 60 pies (flotas). Evitación de Conjuros: en salvaciones de DES contra conjuros, el éxito evita todo el daño y el fallo sufre la mitad."
+        d: "Modifica tu Hechicería Innata (una vez por descanso largo o gastando 5 PH): Fuerza Vital Ardiente: una vez por turno, cuando una tirada de ataque te impacta, gastas Dados de Golpe hasta tu mod. CAR (mín. 1), los tiras y reduces el daño de ese ataque en el total. Vuelo: Velocidad de vuelo 60 pies (flotas). Evitación de Conjuros: cuando te afecta un conjuro o efecto mágico que permite una salvación para sufrir solo la mitad del daño, no sufres daño si la superas y sufres la mitad si fallas; no puedes usarlo si tienes la condición Incapacitado."
       },
     ],
 
@@ -559,13 +574,13 @@ const CLASE_HECHICERO = {
         n: "Poder de la Sombra (Power of Shadow)",
         nv: 3,
         a: "O",
-        d: "Ojos de la Oscuridad: Visión en la oscuridad 120 pies y Vista ciega 10 pies. Fuerza de la Tumba: cuando caes a 0 PG, haces una salvación de CAR (CD 5 + daño sufrido); si la superas, tus PG pasan a ser tu mod. CAR + tu nivel de Hechicero. Una vez por descanso largo."
+        d: "Ojos de la Oscuridad: Visión en la oscuridad 120 pies y Vista ciega 10 pies; además, si un conjuro que lanzas crea un área de Oscuridad, ves con normalidad a través de ella. Fuerza de la Tumba: si cayeras a 0 PG sin morir de inmediato, puedes hacer una salvación de CAR (CD 5 + daño sufrido); si la superas, tus PG pasan a ser tu mod. CAR + tu nivel de Hechicero. Tras superar esta salvación, no puedes volver a usarlo hasta terminar un descanso largo."
       },
       {
         n: "Bestias de Mal Agüero (Beasts of Ill Omen)",
         nv: 6,
         a: "B",
-        d: "Como Acción Adicional gastas 3 PH para lanzar Summon Beast sin espacio ni preparación (con aspecto de bestia de sombra). Mientras la bestia esté a 5 pies de un enemigo, este tiene Desventaja en las salvaciones contra tus conjuros. Puedes lanzarlo sin concentración (dura 1 minuto y termina si vuelves a lanzarlo)."
+        d: "Como Acción Adicional gastas 3 PH para lanzar Summon Beast sin espacio de conjuro, sin tenerlo preparado y sin componentes materiales; la criatura invocada tiene aspecto de bestia de sombra. Los enemigos a 5 pies de ella tienen Desventaja en las salvaciones contra tus conjuros. Al lanzar el conjuro puedes modificarlo para que no requiera concentración; si lo haces, su duración pasa a ser 1 minuto en ese lanzamiento y el conjuro termina antes si lo vuelves a lanzar."
       },
       {
         n: "Caminar entre Sombras (Shadow Walk)",
@@ -577,7 +592,7 @@ const CLASE_HECHICERO = {
         n: "Forma Umbral (Umbral Form)",
         nv: 18,
         a: "B",
-        d: "Mientras tu Hechicería Innata está activa, adoptas Movimiento Incorpóreo (atraviesas criaturas y objetos como terreno difícil; 1d10 de daño de fuerza si terminas tu turno dentro) y tienes resistencia a todo daño salvo fuerza y radiante. Una vez por descanso largo o gastando 6 PH."
+        d: "Cuando usas Hechicería Innata, puedes adoptar una forma sombría que dura mientras tu Hechicería Innata esté activa o hasta que la termines (sin acción). Movimiento Incorpóreo: atraviesas criaturas y objetos como terreno difícil, pero sufres 1d10 de daño de fuerza si terminas tu turno dentro de una criatura o un objeto. Resiliencia Umbral: resistencia a todo daño salvo fuerza y radiante. Una vez por descanso largo o gastando 6 PH (sin acción)."
       },
     ],
   },

@@ -45,13 +45,13 @@ const CLASE_MONJE = {
       n: "Artes Marciales (Martial Arts)",
       nv: 1,
       a: "B",
-      d: "Mientras no llevas armadura ni escudo: usas DES (en lugar de FUE) para ataques y daño con golpes sin armas y armas de monje (armas simples cuerpo a cuerpo y marciales Ligeras); tu dado de Artes Marciales es d6 (d8 en Nv.5, d10 en Nv.11, d12 en Nv.17) y sustituye el daño base del golpe sin arma; y cuando realizas la acción Atacar con un golpe sin arma o un arma de monje, puedes hacer un golpe sin arma como Acción Adicional. [2014: dados d4, d6 (Nv.5), d8 (Nv.11), d10 (Nv.17); el golpe adicional lo haces tras la acción Atacar con un golpe sin arma o arma de monje]"
+      d: "Mientras vas sin armas o solo con armas de monje y no llevas armadura ni escudo: usas DES (en lugar de FUE) para ataques y daño con golpes sin armas y armas de monje (armas simples cuerpo a cuerpo y armas marciales cuerpo a cuerpo con la propiedad Ligera); además, al usar las opciones Agarrar o Empujar de tu golpe sin arma, puedes usar tu mod. DES en lugar de FUE para determinar la CD de la salvación; tu dado de Artes Marciales es d6 (d8 en Nv.5, d10 en Nv.11, d12 en Nv.17) y sustituye el daño base del golpe sin arma; y puedes hacer un golpe sin arma como Acción Adicional (sin necesidad de haber realizado antes la acción Atacar). [2014: armas de monje = espadas cortas y armas simples cuerpo a cuerpo sin las propiedades Dos manos ni Pesada; dados d4, d6 (Nv.5), d8 (Nv.11), d10 (Nv.17); el golpe adicional lo haces tras la acción Atacar con un golpe sin arma o arma de monje]"
     },
     {
       n: "Foco del Monje (Monk's Focus)",
       nv: 2,
       a: "B",
-      d: "Tienes Puntos de Enfoque (PE) = tu nivel de Monje (desde Nv.2); los recuperas todos con un descanso corto o largo. CD de salvación de Enfoque = 8 + comp. + mod. SAB. Con ellos: Ráfaga de Golpes (Flurry of Blows): gastas 1 PE para hacer 2 golpes sin armas con tu Acción Adicional de Artes Marciales en lugar de 1. Defensa Paciente (Patient Defense): Acción Adicional, Retirarse gratis; con 1 PE también Esquivar. Paso del Viento (Step of the Wind): Acción Adicional, Correr gratis; con 1 PE también Retirarse y tu distancia de salto se duplica. [2014: Ki, mismos usos con 1 punto de ki cada uno: Ráfaga de Golpes y Paso del Viento como Acción Adicional, Defensa Paciente = Esquivar]"
+      d: "Tienes Puntos de Enfoque (PE) = tu nivel de Monje (desde Nv.2); los recuperas todos con un descanso corto o largo. CD de salvación de Enfoque = 8 + comp. + mod. SAB. Con ellos: Ráfaga de Golpes (Flurry of Blows): gastas 1 PE para hacer 2 golpes sin armas con tu Acción Adicional de Artes Marciales en lugar de 1. Defensa Paciente (Patient Defense): Acción Adicional, Retirarse gratis; con 1 PE también Esquivar. Paso del Viento (Step of the Wind): Acción Adicional, Correr gratis; con 1 PE también Retirarse y tu distancia de salto se duplica. [2014: Ki, 1 punto de ki por uso: Ráfaga de Golpes (dos golpes sin armas como Acción Adicional, solo inmediatamente después de realizar la acción Atacar en tu turno), Defensa Paciente (Esquivar como Acción Adicional) y Paso del Viento (Retirarse o Correr como Acción Adicional; tu distancia de salto se duplica ese turno)]"
     },
     {
       n: "Movimiento sin Armadura (Unarmored Movement)",
@@ -65,6 +65,11 @@ const CLASE_MONJE = {
       d: "Cuando tiras iniciativa, puedes recuperar todos tus Puntos de Enfoque gastados; además tiras tu dado de Artes Marciales y recuperas PG = tu nivel de Monje + el resultado. Una vez por descanso largo. [Sólo 2024]"
     },
     {
+      n: "Arma Dedicada (Dedicated Weapon)",
+      nv: 2,
+      d: "Cada vez que terminas un Descanso Corto o Largo, puedes tocar un arma, concentrar tu ki en ella y hacer que cuente como arma de monje hasta que uses este rasgo de nuevo. Debe ser un arma simple o marcial, debes ser competente con ella y no puede tener las propiedades Pesada ni Especial. [Sólo 2014, opcional de TCE]"
+    },
+    {
       n: "Subclase de Monje (Tradición Monástica)",
       nv: 3,
       d: "Eliges una subclase. Concede rasgos en Nv.3, 6, 11 y 17. [2014: Tradición Monástica, mismos niveles]"
@@ -73,7 +78,13 @@ const CLASE_MONJE = {
       n: "Desviar Ataques (Deflect Attacks)",
       nv: 3,
       a: "R",
-      d: "Cuando un ataque te impacta y causa daño contundente, perforante o cortante, usas tu Reacción para reducir el daño en 1d10 + mod. DES + nivel de Monje. Si lo reduces a 0, puedes gastar 1 PE para redirigirlo: una criatura que veas a 5 pies (ataque cuerpo a cuerpo) o 60 pies (a distancia) hace una salvación de DES (CD de Enfoque) o sufre 2 dados de Artes Marciales + mod. DES de daño del mismo tipo (la mitad si la supera). [2014: Desviar Proyectiles: sólo ataques a distancia con arma; reduces 1d10 + mod. DES + nivel de Monje y, si llega a 0, puedes atrapar el proyectil y gastar 1 ki para devolverlo como ataque a distancia (20/60 pies) con la misma Reacción]"
+      d: "Cuando un ataque te impacta y causa daño contundente, perforante o cortante, usas tu Reacción para reducir el daño en 1d10 + mod. DES + nivel de Monje. Si lo reduces a 0, puedes gastar 1 PE para redirigirlo: una criatura que veas a 5 pies (si el ataque fue cuerpo a cuerpo) o a 60 pies y que no esté tras Cobertura Total (si fue a distancia) hace una salvación de DES (CD de Enfoque); si falla, sufre 2 dados de Artes Marciales + mod. DES de daño del mismo tipo que el ataque; si la supera, no sufre daño. [2014: Desviar Proyectiles: sólo ataques a distancia con arma; reduces 1d10 + mod. DES + nivel de Monje y, si llega a 0 y el proyectil es lo bastante pequeño para sostenerlo con una mano y tienes una mano libre, puedes atraparlo y gastar 1 ki para devolverlo como ataque a distancia (20/60 pies) con la misma Reacción, con competencia y como arma de monje]"
+    },
+    {
+      n: "Ataque Potenciado por Ki (Ki-Fueled Attack)",
+      nv: 3,
+      a: "B",
+      d: "Si gastas 1 punto de ki o más como parte de tu acción en tu turno, puedes hacer un ataque con un golpe sin arma o un arma de monje como Acción Adicional antes del final del turno. [Sólo 2014, opcional de TCE]"
     },
     {
       n: "Mejora de Característica",
@@ -87,6 +98,12 @@ const CLASE_MONJE = {
       d: "Cuando caes, usas tu Reacción para reducir el daño de la caída en 5 × tu nivel de Monje."
     },
     {
+      n: "Curación Acelerada (Quickened Healing)",
+      nv: 4,
+      a: "A",
+      d: "Con una acción, gastas 2 puntos de ki y tiras un dado de Artes Marciales; recuperas PG = el resultado + tu bonificador de competencia. [Sólo 2014, opcional de TCE]"
+    },
+    {
       n: "Ataque Extra (Extra Attack)",
       nv: 5,
       a: "A",
@@ -96,7 +113,13 @@ const CLASE_MONJE = {
       n: "Golpe Aturdidor (Stunning Strike)",
       nv: 5,
       a: "O",
-      d: "Una vez por turno, cuando impactas con un arma de monje o un golpe sin arma, puedes gastar 1 PE: el objetivo hace una salvación de CON (CD de Enfoque); si falla queda Aturdido hasta el inicio de tu siguiente turno; si la supera, su Velocidad se reduce a la mitad hasta el inicio de tu siguiente turno y el siguiente ataque contra él tiene Ventaja. [2014: gastas 1 ki; si falla queda aturdido hasta el final de tu siguiente turno; sin efecto si la supera]"
+      d: "Una vez por turno, cuando impactas con un arma de monje o un golpe sin arma, puedes gastar 1 PE: el objetivo hace una salvación de CON (CD de Enfoque); si falla queda Aturdido hasta el inicio de tu siguiente turno; si la supera, su Velocidad se reduce a la mitad hasta el inicio de tu siguiente turno y el siguiente ataque contra él tiene Ventaja. [2014: al impactar a otra criatura con un ataque cuerpo a cuerpo con arma (sin límite por turno), gastas 1 ki; si falla la salvación de CON queda aturdido hasta el final de tu siguiente turno; sin efecto si la supera]"
+    },
+    {
+      n: "Puntería Enfocada (Focused Aim)",
+      nv: 5,
+      a: "O",
+      d: "Cuando fallas una tirada de ataque, puedes gastar de 1 a 3 puntos de ki para aumentarla en 2 por cada punto de ki gastado, pudiendo convertir el fallo en impacto. [Sólo 2014, opcional de TCE]"
     },
     {
       n: "Golpes Potenciados (Empowered Strikes)",
@@ -121,7 +144,7 @@ const CLASE_MONJE = {
     {
       n: "Concentración Elevada (Heightened Focus)",
       nv: 10,
-      d: "Mejoras tus opciones de Foco: Ráfaga de Golpes hace 3 golpes sin armas por 1 PE; Defensa Paciente concede además PG temporales = 2 tiradas de tu dado de Artes Marciales; Paso del Viento permite llevar contigo a una criatura voluntaria Grande o menor adyacente. [Sólo 2024]"
+      d: "Mejoras tus opciones de Foco: Ráfaga de Golpes hace 3 golpes sin armas por 1 PE; Defensa Paciente: cuando gastas 1 PE para usarla, ganas PG temporales = 2 tiradas de tu dado de Artes Marciales; Paso del Viento: cuando gastas 1 PE para usarlo, puedes elegir una criatura voluntaria Grande o menor a 5 pies de ti; la mueves contigo hasta el final de tu turno y su movimiento no provoca Ataques de Oportunidad. [Sólo 2024]"
     },
     {
       n: "Autorrestauración (Self-Restoration)",
@@ -157,7 +180,7 @@ const CLASE_MONJE = {
     {
       n: "Cuerpo Atemporal (Timeless Body)",
       nv: 15,
-      d: "Tu cuerpo no envejece por magia ni sufre sus efectos; no necesitas comer ni beber. [Sólo 2014]"
+      d: "No sufres la fragilidad de la vejez ni puedes envejecer por medios mágicos (aun así puedes morir de viejo). Además ya no necesitas comer ni beber. [Sólo 2014]"
     },
     {
       n: "Defensa Superior (Superior Defense)",
@@ -251,7 +274,7 @@ const CLASE_MONJE = {
         n: "Discípulo de los Elementos (Disciple of the Elements)",
         nv: 3,
         a: "A",
-        d: "Conoces Atunamiento Elemental (Elemental Attunement: con una acción creas un efecto sensorial inofensivo de aire, tierra, agua o fuego, enciendes o apagas una vela, enfrías o calientas 1 libra de material o moldeas elementos) y una disciplina elemental más; aprendes otra en Nv.6, 11 y 17 (puedes cambiar una al aprender otra). Las disciplinas que lanzan conjuros no requieren componentes materiales. Desde Nv.5, puedes gastar ki adicional para subir el nivel del conjuro (+1 por ki; máximo de ki por conjuro: 3 en Nv.5-8, 4 en 9-12, 5 en 13-16, 6 en 17-20). Cualquier nivel: Colmillos de la Serpiente de Fuego (1 ki: alcance +10 pies y daño de fuego; +1 ki al impactar = +1d10), Puño de los Cuatro Truenos (2 ki: Thunderwave), Puño del Aire Inquebrantable (2+ ki: salvación de FUE a 30 pies, 3d10 contundente +1d10 por ki extra, empuja 20 pies y derriba), Ráfaga de los Espíritus del Vendaval (2 ki: Gust of Wind), Dar Forma al Río Fluyente (1 ki: controlas agua/hielo en 30 pies), Golpe Barrido de Ceniza (2 ki: Burning Hands), Látigo de Agua (2+ ki: salvación de DES a 30 pies, 3d10 contundente +1d10 por ki extra, derriba o atrae 25 pies). Nv.6: Agarre del Viento del Norte (3 ki: Hold Person), Gong de la Cumbre (3 ki: Shatter). Nv.11: Llamas del Fénix (4 ki: Fireball), Postura de Niebla (4 ki: Gaseous Form), Cabalgar el Viento (4 ki: Fly). Nv.17: Aliento del Invierno (6 ki: Cone of Cold), Defensa de la Montaña Eterna (5 ki: Stoneskin), Río de Llama Hambrienta (5 ki: Wall of Fire), Ola de Tierra Rodante (6 ki: Wall of Stone)."
+        d: "Conoces Atunamiento Elemental (Elemental Attunement: con una acción controlas brevemente fuerzas elementales a 30 pies, con uno de estos efectos: crear un efecto sensorial inofensivo e instantáneo relacionado con aire, tierra, fuego o agua; encender o apagar al instante una vela, una antorcha o una pequeña hoguera; enfriar o calentar hasta 1 libra de material no vivo durante hasta 1 hora; o hacer que tierra, fuego, agua o niebla que quepan en un cubo de 1 pie adopten una forma tosca que designes durante 1 minuto) y una disciplina elemental más; aprendes otra en Nv.6, 11 y 17 (puedes cambiar una al aprender otra). Las disciplinas que lanzan conjuros no requieren componentes materiales. Desde Nv.5, puedes gastar ki adicional para subir el nivel del conjuro (+1 por ki; máximo de ki por conjuro: 3 en Nv.5-8, 4 en 9-12, 5 en 13-16, 6 en 17-20). Cualquier nivel: Colmillos de la Serpiente de Fuego (al usar la acción Atacar, 1 ki: tus golpes sin armas tienen +10 pies de alcance durante esa acción y el resto del turno e infligen daño de fuego en lugar de contundente; gastando 1 ki más al impactar, +1d10 de daño de fuego), Puño de los Cuatro Truenos (2 ki: Thunderwave), Puño del Aire Inquebrantable (Unbroken Air; acción, 2+ ki: eliges una criatura a 30 pies que hace una salvación de FUE; si falla, sufre 3d10 de daño contundente, +1d10 por cada ki adicional, y puedes empujarla hasta 20 pies y derribarla; si la supera, sufre la mitad y no la empujas ni derribas), Ráfaga de los Espíritus del Vendaval (2 ki: Gust of Wind), Dar Forma al Río Fluyente (Shape the Flowing River; acción, 1 ki: eliges un área de hielo o agua de hasta 30 pies de lado a 120 pies de ti; puedes convertir el agua en hielo y viceversa y remodelar el hielo a tu gusto: subir o bajar su elevación, crear o rellenar una zanja, levantar o aplanar un muro o formar un pilar; los cambios no pueden superar la mitad de la mayor dimensión del área, y no puedes moldear el hielo para atrapar o dañar a una criatura), Golpe Barrido de Ceniza (2 ki: Burning Hands), Látigo de Agua (Water Whip; acción, 2+ ki: una criatura que veas a 30 pies hace una salvación de DES; si falla, sufre 3d10 de daño contundente, +1d10 por cada ki adicional, y puedes derribarla o atraerla hasta 25 pies hacia ti; si la supera, sufre la mitad y no la atraes ni derribas). Nv.6: Agarre del Viento del Norte (3 ki: Hold Person), Gong de la Cumbre (3 ki: Shatter). Nv.11: Llamas del Fénix (4 ki: Fireball), Postura de Niebla (4 ki: Gaseous Form, solo a ti), Cabalgar el Viento (4 ki: Fly, solo a ti). Nv.17: Aliento del Invierno (6 ki: Cone of Cold), Defensa de la Montaña Eterna (5 ki: Stoneskin, solo a ti), Río de Llama Hambrienta (5 ki: Wall of Fire), Ola de Tierra Rodante (6 ki: Wall of Stone)."
       },
     ],
 
@@ -303,7 +326,7 @@ const CLASE_MONJE = {
         n: "Estallido Solar Abrasador (Searing Sunburst)",
         nv: 11,
         a: "A",
-        d: "Con una acción lanzas una esfera hasta un punto a 150 pies que estalla en 20 pies de radio: salvación de CON o 2d6 de daño radiante (sin cobertura total opaca). Puedes gastar hasta 3 ki: +2d6 de daño por ki."
+        d: "Con una acción lanzas una esfera hasta un punto a 150 pies que estalla en 20 pies de radio: salvación de CON o 2d6 de daño radiante (una criatura tras una Cobertura opaca no hace la salvación). Puedes gastar hasta 3 ki: +2d6 de daño por ki."
       },
       {
         n: "Escudo Solar (Sun Shield)",
@@ -350,7 +373,7 @@ const CLASE_MONJE = {
         n: "Camino del Kensei (Path of the Kensei)",
         nv: 3,
         a: "B",
-        d: "Armas de Kensei: eliges 2 tipos de arma (uno cuerpo a cuerpo y uno a distancia; simples o marciales sin Pesada ni Especial; el arco largo vale) y ganas competencia con ellas; cuentan como armas de monje (otro tipo más en Nv.6, 11 y 17). Parada Ágil: si haces un golpe sin arma como parte de Atacar y llevas un arma cuerpo a cuerpo de Kensei, ganas +2 a la CA hasta el inicio de tu siguiente turno. Disparo del Kensei: como Acción Adicional, tus ataques a distancia con arma de Kensei infligen +1d4 de daño este turno. Camino del Pincel: competencia con suministros de caligrafía o pintura."
+        d: "Armas de Kensei: eliges 2 tipos de arma (uno cuerpo a cuerpo y uno a distancia; simples o marciales sin Pesada ni Especial; el arco largo vale) y ganas competencia con ellas; cuentan como armas de monje (otro tipo más en Nv.6, 11 y 17). Parada Ágil: si haces un golpe sin arma como parte de la acción Atacar en tu turno y llevas un arma de Kensei, puedes usarla para defenderte si es cuerpo a cuerpo: ganas +2 a la CA hasta el inicio de tu siguiente turno, mientras el arma esté en tu mano y no estés Incapacitado. Disparo del Kensei: como Acción Adicional, hasta el final del turno tus ataques a distancia con arma de Kensei infligen +1d4 de daño del mismo tipo que el arma. Camino del Pincel: competencia con suministros de caligrafía o pintura."
       },
       {
         n: "Uno con la Hoja (One with the Blade)",
@@ -416,13 +439,13 @@ const CLASE_MONJE = {
         n: "Brazos del Ser Astral (Arms of the Astral Self)",
         nv: 3,
         a: "B",
-        d: "Como Acción Adicional gastas 1 ki: durante 10 minutos aparecen brazos espectrales. Al invocarlos, criaturas a 10 pies hacen salvación de DES o sufren daño de fuerza = 2 dados de Artes Marciales. Mientras duran: usas SAB en lugar de FUE en pruebas y salvaciones de FUE; puedes hacer golpes sin armas con ellos con 5 pies más de alcance, usando SAB para ataque y daño, y el daño es de fuerza."
+        d: "Como Acción Adicional gastas 1 ki: durante 10 minutos aparecen brazos espectrales. Al invocarlos, cada criatura de tu elección que veas a 10 pies de ti hace una salvación de DES o sufre daño de fuerza = 2 dados de Artes Marciales. Mientras duran: usas SAB en lugar de FUE en pruebas y salvaciones de FUE; puedes hacer golpes sin armas con ellos con 5 pies más de alcance, usando SAB para ataque y daño, y el daño es de fuerza. Terminan antes de tiempo si quedas Incapacitado o mueres."
       },
       {
         n: "Rostro del Ser Astral (Visage of the Astral Self)",
         nv: 6,
         a: "B",
-        d: "Como Acción Adicional gastas 1 ki (o con Brazos) para invocar un rostro espectral 10 minutos: Visión Astral (ves 120 pies en oscuridad mágica o no), Sabiduría del Espíritu (Ventaja en Perspicacia y Intimidación) y Palabra del Espíritu (hablas a una criatura a 60 pies o a todos en 600 pies, sólo audible para quien elijas)."
+        d: "Como Acción Adicional gastas 1 ki (o con Brazos) para invocar un rostro espectral 10 minutos: Visión Astral (ves 120 pies en oscuridad mágica o no), Sabiduría del Espíritu (Ventaja en Perspicacia y Intimidación) y Palabra del Espíritu (hablas a una criatura a 60 pies o a todos en 600 pies, sólo audible para quien elijas). Termina antes de tiempo si quedas Incapacitado o mueres."
       },
       {
         n: "Cuerpo del Ser Astral (Body of the Astral Self)",
@@ -434,7 +457,7 @@ const CLASE_MONJE = {
         n: "Ser Astral Despierto (Awakened Astral Self)",
         nv: 17,
         a: "B",
-        d: "Como Acción Adicional gastas 5 ki: invocas brazos, rostro y cuerpo despiertos 10 minutos. Armadura del Espíritu: +2 a la CA. Ráfaga Astral: al usar Ataque Extra atacas tres veces en lugar de dos si todos los ataques usan los brazos astrales."
+        d: "Como Acción Adicional gastas 5 ki: invocas brazos, rostro y cuerpo despiertos 10 minutos. Armadura del Espíritu: +2 a la CA. Ráfaga Astral: al usar Ataque Extra atacas tres veces en lugar de dos si todos los ataques usan los brazos astrales. Termina antes de tiempo si quedas Incapacitado o mueres."
       },
     ],
 
@@ -445,13 +468,13 @@ const CLASE_MONJE = {
         n: "Discípulo Dracónico (Draconic Disciple)",
         nv: 3,
         a: "O",
-        d: "Presencia Dracónica: si fallas una prueba de CAR (Intimidación o Persuasión), puedes repetirla con tu Reacción (una vez por descanso largo). Golpe Dracónico: tus golpes sin armas pueden infligir daño ácido, frío, fuego, rayo o veneno. Lengua de Dragones: aprendes Dracónico u otro idioma."
+        d: "Presencia Dracónica: si fallas una prueba de CAR (Intimidación) o de CAR (Persuasión), puedes repetirla con tu Reacción. Cuando este rasgo convierte un fallo en un éxito, no puedes volver a usarlo hasta un descanso largo. Golpe Dracónico: tus golpes sin armas pueden infligir daño ácido, frío, fuego, rayo o veneno. Lengua de Dragones: aprendes Dracónico u otro idioma."
       },
       {
         n: "Aliento del Dragón (Breath of the Dragon)",
         nv: 3,
         a: "O",
-        d: "Sustituyes un ataque de la acción Atacar por un cono de 20 pies o línea de 30 pies × 5 pies de energía dracónica: salvación de DES (CD de ki) o sufren 2 dados de Artes Marciales de daño (la mitad si la superan); 3 dados desde Nv.11. Usos = tu bonificador de competencia por descanso largo; puedes gastar 2 ki para usos extra."
+        d: "Sustituyes un ataque de la acción Atacar por una exhalación de energía dracónica en un cono de 20 pies o una línea de 30 pies × 5 pies (a tu elección). Elige un tipo de daño: ácido, frío, fuego, rayo o veneno. Cada criatura del área hace una salvación de DES (CD de ki) o sufre daño del tipo elegido = 2 dados de Artes Marciales (la mitad si la supera); 3 dados desde Nv.11. Usos = tu bonificador de competencia por descanso largo; puedes gastar 2 ki para usos extra."
       },
       {
         n: "Alas Desplegadas (Wings Unfurled)",
@@ -463,12 +486,12 @@ const CLASE_MONJE = {
         n: "Aspecto del Wyrm (Aspect of the Wyrm)",
         nv: 11,
         a: "B",
-        d: "Como Acción Adicional creas un aura de 10 pies durante 1 minuto: Presencia Aterradora (criatura en el aura hace salvación de SAB o queda asustada 1 minuto) o Resistencia (tú y tus aliados tenéis resistencia a ácido, frío, fuego, rayo o veneno, a tu elección). Una vez por descanso largo o gastando 3 ki."
+        d: "Como Acción Adicional creas un aura de 10 pies durante 1 minuto: Presencia Aterradora (al crear el aura, y como Acción Adicional en turnos posteriores, puedes elegir una criatura dentro del aura; hace una salvación de SAB contra tu CD de ki o queda Asustada de ti durante 1 minuto, y puede repetir la salvación al final de cada uno de sus turnos, terminando el efecto si la supera) o Resistencia (tú y tus aliados dentro del aura tenéis resistencia a ácido, frío, fuego, rayo o veneno, a tu elección). Una vez por descanso largo o gastando 3 ki."
       },
       {
         n: "Aspecto Ascendente (Ascendant Aspect)",
         nv: 17,
-        d: "Aliento Aumentado: gastas 1 ki para que tu Aliento del Dragón sea cono de 60 pies o línea de 90 pies con 4 dados de Artes Marciales. Vista Ciega 10 pies. Furia Explosiva: criaturas de tu elección en el aura de Aspecto del Wyrm hacen salvación de DES o sufren 3d10 de daño ácido, frío, fuego, rayo o veneno."
+        d: "Aliento Aumentado: gastas 1 ki para que tu Aliento del Dragón sea cono de 60 pies o línea de 90 pies con 4 dados de Artes Marciales. Vista Ciega 10 pies. Furia Explosiva: cuando activas tu Aspecto del Wyrm, eliges cualquier número de criaturas que veas en tu aura; cada una hace una salvación de DES (CD de ki) o sufre 3d10 de daño ácido, frío, fuego, rayo o veneno (a tu elección)."
       },
     ],
 
@@ -530,7 +553,7 @@ const CLASE_MONJE = {
         n: "Palma Vibrante (Quivering Palm)",
         nv: 17,
         a: "O",
-        d: "Al impactar con un golpe sin arma, gastas 4 PE para implantar vibraciones imperceptibles durante días = tu nivel de Monje. Después, las terminas (sin acción): el objetivo hace una salvación de CON; si falla sufre 10d12 de daño de fuerza, si la supera la mitad. Sólo una criatura a la vez."
+        d: "Al impactar con un golpe sin arma, gastas 4 PE para implantar vibraciones imperceptibles durante días = tu nivel de Monje. Después, las terminas con una acción (o, al realizar la acción Atacar en tu turno, renunciando a uno de los ataques; tú y el objetivo debéis estar en el mismo plano de existencia): el objetivo hace una salvación de CON; si falla sufre 10d12 de daño de fuerza, si la supera la mitad. Puedes terminarlas sin daño y sin acción. Sólo una criatura a la vez."
       },
     ],
 
@@ -538,7 +561,7 @@ const CLASE_MONJE = {
       {
         n: "Artes de las Sombras (Shadow Arts)",
         nv: 3,
-        d: "Oscuridad: gastas 1 PE para lanzar Darkness sin componentes y ver dentro de ella; al inicio de tu turno puedes mover el área hasta 60 pies. Visión en la Oscuridad: ganas 60 pies de Visión en la oscuridad (o +60 pies si ya la tenías). Figuras Sombrías: conoces Minor Illusion (SAB es tu característica de lanzamiento)."
+        d: "Oscuridad: gastas 1 PE para lanzar Darkness sin componentes y ver dentro de ella; mientras el conjuro persista, al inicio de cada uno de tus turnos puedes mover su área de Darkness a un espacio a 60 pies o menos de ti. Visión en la Oscuridad: ganas 60 pies de Visión en la oscuridad (o +60 pies si ya la tenías). Figuras Sombrías: conoces Minor Illusion (SAB es tu característica de lanzamiento)."
       },
       {
         n: "Paso de las Sombras (Shadow Step)",
@@ -549,13 +572,13 @@ const CLASE_MONJE = {
       {
         n: "Paso de las Sombras Mejorado (Improved Shadow Step)",
         nv: 11,
-        d: "Al usar Paso de las Sombras, puedes gastar 1 PE para eliminar el requisito de empezar y terminar en luz tenue u oscuridad; además puedes hacer un golpe sin arma inmediatamente después de teletransportarte."
+        d: "Al usar Paso de las Sombras, puedes gastar 1 PE para eliminar el requisito de empezar y terminar en luz tenue u oscuridad; además, como parte de esa misma Acción Adicional, puedes hacer un golpe sin arma inmediatamente después de teletransportarte."
       },
       {
         n: "Capa de Sombras (Cloak of Shadows)",
         nv: 17,
         a: "A",
-        d: "Con una acción Mágica, totalmente en luz tenue u oscuridad, gastas 3 PE para envolverte en sombras 1 minuto (termina si quedas Incapacitado o terminas tu turno en luz brillante): ganas Invisibilidad, atraviesas espacios ocupados como terreno difícil y usas Ráfaga de Golpes sin gastar PE."
+        d: "Con una acción Mágica, totalmente en luz tenue u oscuridad, gastas 3 PE para envolverte en sombras 1 minuto (termina si quedas Incapacitado o terminas tu turno en luz brillante): ganas Invisibilidad, atraviesas espacios ocupados como terreno difícil (si terminas tu turno en uno de ellos, eres desplazado al último espacio libre en el que estuviste) y usas Ráfaga de Golpes sin gastar PE."
       },
     ],
 
@@ -585,7 +608,7 @@ const CLASE_MONJE = {
       {
         n: "Epítome Elemental (Elemental Epitome)",
         nv: 17,
-        d: "Mientras tu Sintonía Elemental está activa: tienes resistencia a un tipo de daño (ácido, frío, fuego, rayo o trueno) que puedes cambiar al inicio de tu turno; Paso del Viento aumenta tu Velocidad 20 pies y las criaturas cercanas al moverte sufren 1 dado de Artes Marciales de daño; una vez por turno añades 1 dado de Artes Marciales al daño de tus golpes sin armas."
+        d: "Mientras tu Sintonía Elemental está activa: tienes resistencia a un tipo de daño (ácido, frío, fuego, rayo o trueno) que puedes cambiar al inicio de tu turno; Zancada Destructiva (Destructive Stride): al usar Paso del Viento, tu Velocidad aumenta 20 pies hasta el final del turno; durante ese tiempo, cualquier criatura de tu elección sufre 1 dado de Artes Marciales de daño (ácido, frío, fuego, rayo o trueno, a tu elección) cuando entras en un espacio a 5 pies o menos de ella; una criatura solo sufre este daño una vez por turno. Golpes Potenciados (Empowered Strikes): una vez por turno, al impactar a un objetivo con un golpe sin arma, infliges daño adicional = 1 dado de Artes Marciales, del mismo tipo que el daño del golpe."
       },
     ],
 
@@ -616,7 +639,7 @@ const CLASE_MONJE = {
         n: "Ráfaga de Curación y Daño (Flurry of Healing and Harm)",
         nv: 11,
         a: "O",
-        d: "Al usar Ráfaga de Golpes, puedes sustituir cada golpe por Mano de Curación sin gastar PE; Mano de Daño funciona con los golpes de la Ráfaga sin gastar PE (sigue limitado a una vez por turno). Usos = mod. SAB por descanso largo."
+        d: "Al usar Ráfaga de Golpes, puedes sustituir cada golpe por Mano de Curación sin gastar PE; Mano de Daño funciona con los golpes de la Ráfaga sin gastar PE (sigue limitado a una vez por turno). Usos = mod. SAB (mín. 1) por descanso largo."
       },
       {
         n: "Mano de la Misericordia Suprema (Hand of Ultimate Mercy)",

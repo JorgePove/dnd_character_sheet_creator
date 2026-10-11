@@ -37,7 +37,7 @@ const CLASE_GUERRERO = {
     {
       n: "Estilo de Combate",
       nv: 1,
-      d: "Ganas una dote de Estilo de Combate de tu elección (Arquería, Combate a Ciegas, Defensa, Duelo, Combate con Armas a Dos Manos, Interceptación, Protección, Combate con Armas Arrojadizas, Combate con Dos Armas, Combate sin Armas). Al subir de nivel de Guerrero puedes cambiarla por otra. [2014: eliges un Estilo de la lista del PHB; TCE añade Combate a Ciegas, Interceptación, Técnica Superior, Armas Arrojadizas y Combate sin Armas]. Los efectos están en Dotes."
+      d: "Ganas una dote de Estilo de Combate de tu elección (Arquería, Combate a Ciegas, Defensa, Duelo, Combate con Armas a Dos Manos, Interceptación, Protección, Combate con Armas Arrojadizas, Combate con Dos Armas, Combate sin Armas). Al subir de nivel de Guerrero puedes cambiarla por otra. [2014: eliges un Estilo de la lista del PHB; TCE añade Combate a Ciegas, Interceptación, Técnica Superior, Armas Arrojadizas y Combate sin Armas]. [2014: Versatilidad Marcial (Martial Versatility, TCE, opcional, Nv.4): al subir a un nivel con Mejora de Característica puedes cambiar un Estilo de Combate que conozcas por otro disponible para el Guerrero, o una maniobra de Maestro de Batalla por otra.] Los efectos están en Dotes."
     },
     {
       n: "Segundo Aliento",
@@ -136,7 +136,7 @@ const CLASE_GUERRERO = {
       {
         n: "Superviviente",
         nv: 18,
-        d: "Al inicio de cada uno de tus turnos recuperas PG = 5 + mod. de CON si tienes menos de la mitad de tus PG máximos y al menos 1 PG."
+        d: "Al inicio de cada uno de tus turnos recuperas PG = 5 + mod. de CON si te quedan la mitad o menos de tus PG máximos. No recuperas si tienes 0 PG."
       },
     ],
 
@@ -145,7 +145,7 @@ const CLASE_GUERRERO = {
         n: "Superioridad de Combate",
         nv: 3,
         a: "O",
-        d: "Aprendes 3 maniobras (5 en Nv.7, 7 en Nv.10, 9 en Nv.15); al subir de nivel de Guerrero puedes cambiar una. Tienes 4 Dados de Superioridad d8 (5 en Nv.7, 6 en Nv.15), que recuperas con un descanso corto o largo. CD de las maniobras = 8 + BC + mod. FUE o DES (a tu elección). Maniobras del PHB: Orden de Comandante (renuncias a un ataque y, con AA, un aliado ataca con su reacción: +dado al daño), Ataque Desarmador (+dado al daño; salvación FUE o suelta el objeto), Ataque Distractor (+dado al daño; el siguiente ataque de otro contra él tiene ventaja), Paso Evasivo (+dado a la CA mientras te mueves), Ataque de Finta (AA: ventaja en tu siguiente ataque contra una criatura a 5 pies, +dado al daño), Ataque Provocador (+dado al daño; salvación SAB o desventaja contra otros), Ataque de Embestida (+dado al daño si te moviste 5+ pies en línea recta), Ataque Maniobrado (+dado al daño; un aliado se mueve media velocidad sin provocar), Ataque Amenazante (+dado al daño; salvación SAB o asustado), Parada (Reacción: reduce el daño cuerpo a cuerpo en dado + mod. DES), Ataque Certero (+dado al ataque), Ataque de Empuje (+dado al daño; salvación FUE o 15 pies de empuje), Reagrupar (AA: aliado gana PGT = dado + mod. CAR), Contraataque (Reacción al fallarte un ataque cuerpo a cuerpo: atacas con +dado al daño), Ataque Barredor (daño = dado a otra criatura a 5 pies del objetivo) y Ataque de Derribo (+dado al daño; salvación FUE o derribado)."
+        d: "Aprendes 3 maniobras (5 en Nv.7, 7 en Nv.10, 9 en Nv.15); al subir de nivel de Guerrero puedes cambiar una. Tienes 4 Dados de Superioridad d8 (5 en Nv.7, 6 en Nv.15), que recuperas con un descanso corto o largo. CD de las maniobras = 8 + BC + mod. FUE o DES (a tu elección). Maniobras del PHB: Orden de Comandante (renuncias a un ataque y, con AA, un aliado ataca con su reacción: +dado al daño), Ataque Desarmador (+dado al daño; salvación FUE o suelta el objeto), Ataque Distractor (+dado al daño; el siguiente ataque de otro contra él tiene ventaja), Paso Evasivo (+dado a la CA mientras te mueves), Ataque de Finta (AA: ventaja en tu siguiente ataque contra una criatura a 5 pies, +dado al daño), Ataque Provocador (+dado al daño; salvación SAB o desventaja contra otros), Ataque de Embestida (al hacer un ataque cuerpo a cuerpo con arma en tu turno, tu alcance aumenta 5 pies en ese ataque; si impactas, +dado al daño), Ataque Maniobrado (+dado al daño; un aliado se mueve media velocidad sin provocar), Ataque Amenazante (+dado al daño; salvación SAB o asustado), Parada (Reacción: reduce el daño cuerpo a cuerpo en dado + mod. DES), Ataque Certero (+dado al ataque), Ataque de Empuje (+dado al daño; si el objetivo es Grande o menor, salvación FUE o lo empujas hasta 15 pies), Reagrupar (AA: aliado gana PGT = dado + mod. CAR), Contraataque (Reacción al fallarte un ataque cuerpo a cuerpo: atacas con +dado al daño), Ataque Barredor (al impactar con un ataque cuerpo a cuerpo con arma, eliges otra criatura a 5 pies del objetivo y a tu alcance; si la tirada de ataque original la habría impactado, sufre daño = dado, del mismo tipo que el del ataque) y Ataque de Derribo (+dado al daño; si el objetivo es Grande o menor, salvación FUE o queda derribado). Maniobras opcionales de TCE: Emboscada (+dado a una prueba de DES (Sigilo) o a la iniciativa), Cambiazo (intercambias sitio con una criatura voluntaria a 5 pies gastando 5+ pies de movimiento, sin ataques de oportunidad; tiras el dado: tú o ella ganáis +resultado a la CA hasta tu siguiente turno), Plantar Cara (Brace; Reacción: cuando una criatura que veas entra en el alcance de tu arma cuerpo a cuerpo, atacas con ella; si impactas, +dado al daño), Presencia Imponente (+dado a una prueba de CAR (Intimidación, Interpretación o Persuasión)), Golpe de Presa (Grappling Strike; tras impactar cuerpo a cuerpo en tu turno, Acción Adicional para intentar apresar al objetivo, +dado a tu prueba de FUE (Atletismo)), Lanzamiento Rápido (Quick Toss; Acción Adicional: ataque a distancia con un arma arrojadiza, que puedes sacar como parte del ataque; si impactas, +dado al daño) y Evaluación Táctica (+dado a una prueba de INT (Investigación o Historia) o SAB (Perspicacia))."
       },
       {
         n: "Estudiante de la Guerra",
@@ -174,7 +174,7 @@ const CLASE_GUERRERO = {
       {
         n: "Lanzamiento de Conjuros",
         nv: 3,
-        d: "INT es tu característica de lanzamiento (CD = 8 + BC + mod. INT; foco arcano). Lista del Mago; lanzador de un tercio. Trucos: 2 (3 en Nv.10). Conjuros conocidos: 3 en Nv.3, 4 en Nv.4, 5 en Nv.7, 6 en Nv.8, 7 en Nv.10, 8 en Nv.11, 9 en Nv.13, 10 en Nv.14, 11 en Nv.16, 12 en Nv.19 y 13 en Nv.20. Los conjuros de Nv.1+ deben ser de Abjuración o Evocación, salvo 1 de los 3 iniciales y los que aprendas en Nv.8, 14 y 20 (cualquier escuela). Al subir de nivel puedes cambiar uno conocido."
+        d: "INT es tu característica de lanzamiento (CD = 8 + BC + mod. INT; ataque de conjuro = BC + mod. INT). Lista del Mago; lanzador de un tercio. Trucos: 2 (3 en Nv.10). Conjuros conocidos: 3 en Nv.3, 4 en Nv.4, 5 en Nv.7, 6 en Nv.8, 7 en Nv.10, 8 en Nv.11, 9 en Nv.13, 10 en Nv.14, 11 en Nv.16, 12 en Nv.19 y 13 en Nv.20. Los conjuros de Nv.1+ deben ser de Abjuración o Evocación, salvo 1 de los 3 iniciales y los que aprendas en Nv.8, 14 y 20 (cualquier escuela). Al subir de nivel puedes cambiar uno conocido."
       },
       {
         n: "Vínculo con Arma",
@@ -248,7 +248,7 @@ const CLASE_GUERRERO = {
         n: "Superioridad de Combate",
         nv: 3,
         a: "O",
-        d: "Aprendes 3 maniobras (5 en Nv.7, 7 en Nv.10, 9 en Nv.15); al subir de nivel de Guerrero puedes cambiar una. Tienes 4 Dados de Superioridad d8 (5 en Nv.7, 6 en Nv.15), que recuperas con un descanso corto o largo. CD = 8 + BC + mod. FUE o DES. Maniobras (2024): Emboscada, Cambiazo, Orden de Comandante, Presencia Imponente, Ataque Desarmador, Ataque Distractor, Paso Evasivo, Ataque de Finta, Ataque Provocador, Ataque de Embestida, Ataque Maniobrado, Ataque Amenazante, Parada, Ataque Certero, Ataque de Empuje, Reagrupar, Contraataque, Ataque Barredor, Evaluación Táctica y Ataque de Derribo. La mayoría añaden el dado al daño del ataque con un efecto adicional (salvación o movimiento); Parada y Contraataque son Reacciones."
+        d: "Aprendes 3 maniobras (5 en Nv.7, 7 en Nv.10, 9 en Nv.15); al subir de nivel de Guerrero puedes cambiar una. Tienes 4 Dados de Superioridad d8 (5 en Nv.7, 6 en Nv.15), que recuperas con un descanso corto o largo. CD = 8 + BC + mod. FUE o DES. Maniobras (2024): Emboscada (+dado a una prueba de DES (Sigilo) o a la Iniciativa), Cambiazo (intercambias sitio con una criatura voluntaria a 5 pies gastando 5+ pies de movimiento, sin ataques de oportunidad; tiras el dado: tú o ella ganáis +resultado a la CA hasta tu siguiente turno), Orden de Comandante (al realizar la acción de Atacar, sustituyes uno de tus ataques: una criatura voluntaria que te vea u oiga ataca con su Reacción con un arma o ataque desarmado, +dado al daño si impacta), Presencia Imponente (+dado a una prueba de CAR (Intimidación, Interpretación o Persuasión)), Ataque Desarmador (+dado al daño; salvación FUE o suelta un objeto a tu elección), Ataque Distractor (+dado al daño; el siguiente ataque de otro contra el objetivo antes de tu siguiente turno tiene Ventaja), Paso Evasivo (Acción Adicional: Retirarse y +dado a la CA hasta tu siguiente turno), Ataque de Finta (Acción Adicional: Ventaja en tu siguiente ataque este turno contra una criatura a 5 pies; +dado al daño si impacta), Ataque Provocador (+dado al daño; salvación SAB o Desventaja en ataques contra otros hasta el final de tu siguiente turno), Ataque de Embestida (Acción Adicional: Correr; si te mueves 5+ pies en línea recta justo antes de impactar con un ataque cuerpo a cuerpo este turno, +dado al daño), Ataque Maniobrado (+dado al daño; una criatura voluntaria que te vea u oiga usa su Reacción para moverse hasta la mitad de su Velocidad sin provocar ataques de oportunidad del objetivo), Ataque Amenazante (+dado al daño; salvación SAB o Asustado hasta el final de tu siguiente turno), Parada (Reacción: reduces el daño de un ataque cuerpo a cuerpo en dado + mod. FUE o DES), Ataque Certero (al fallar una tirada de ataque, +dado a la tirada), Ataque de Empuje (+dado al daño; si el objetivo es Grande o menor, salvación FUE o lo empujas hasta 15 pies), Reagrupar (Acción Adicional: un aliado a 30 pies que te vea u oiga gana PGT = dado + mitad de tu nivel de Guerrero, redondeado abajo), Contraataque (Reacción al fallarte un ataque cuerpo a cuerpo: atacas a esa criatura con arma o desarmado, +dado al daño si impactas), Ataque Barredor (al impactar cuerpo a cuerpo, otra criatura a 5 pies del objetivo y a tu alcance sufre daño = dado, del mismo tipo, si la tirada original la habría impactado), Evaluación Táctica (+dado a una prueba de INT (Historia o Investigación) o SAB (Perspicacia)) y Ataque de Derribo (+dado al daño; si el objetivo es Grande o menor, salvación FUE o queda Derribado)."
       },
       {
         n: "Estudiante de la Guerra",
@@ -282,13 +282,13 @@ const CLASE_GUERRERO = {
       {
         n: "Lanzamiento de Conjuros",
         nv: 3,
-        d: "INT es tu característica de lanzamiento (CD = 8 + BC + mod. INT; foco arcano). Lista del Mago; lanzador de un tercio. Trucos: 2 (3 en Nv.10). Conjuros preparados: 3 en Nv.3, hasta 13 en Nv.20 (según la tabla de la subclase); al subir de nivel de Guerrero puedes cambiar uno. Espacios de conjuro como lanzador de un tercio (2 de Nv.1 en Nv.3; 4/3/3/1 en Nv.19)."
+        d: "INT es tu característica de lanzamiento (CD = 8 + BC + mod. INT; foco arcano). Lista del Mago; lanzador de un tercio. Trucos: 2 (3 en Nv.10); al subir de nivel de Guerrero puedes cambiar un truco por otro truco de la lista del Mago. Conjuros preparados: 3 en Nv.3, hasta 13 en Nv.20 (según la tabla de la subclase); al subir de nivel de Guerrero puedes cambiar un conjuro preparado por otro conjuro de la lista del Mago para el que tengas espacios de conjuro. Espacios de conjuro como lanzador de un tercio (2 de Nv.1 en Nv.3; 4/3/3/1 en Nv.19)."
       },
       {
         n: "Vínculo de Guerra (War Bond)",
         nv: 3,
         a: "B",
-        d: "Ritual de 1 hora (puede hacerse en un descanso corto) para vincularte a un arma. Un arma vinculada no te puede ser desarmada salvo que estés incapacitado, y como Acción Adicional la haces aparecer en tu mano si está en el mismo plano. Hasta 2 armas vinculadas (sólo invocas una por turno)."
+        d: "Ritual de 1 hora (puede hacerse en un descanso corto) para vincularte a un arma. El vínculo falla si otro Guerrero ya está vinculado al arma o si es un objeto mágico con el que otra persona está sintonizada. Un arma vinculada no te puede ser desarmada salvo que estés incapacitado, y como Acción Adicional la haces aparecer en tu mano si está en el mismo plano. Hasta 2 armas vinculadas (sólo invocas una por turno)."
       },
       {
         n: "Magia de Guerra",
@@ -360,7 +360,7 @@ const CLASE_GUERRERO = {
         n: "Disparo Arcano",
         nv: 3,
         a: "O",
-        d: "Aprendes 2 opciones de Disparo Arcano (3 en Nv.7, 4 en Nv.10, 5 en Nv.15 y 6 en Nv.18). Una vez por turno, al disparar una flecha con arco corto o largo como parte de la acción de Atacar, puedes aplicarle una opción. Decides usarla al impactar (salvo que no requiera tirada de ataque). 2 usos; los recuperas con un descanso corto o largo. CD = 8 + BC + mod. INT. Opciones: Flecha Desterradora, Seductora, Explosiva, Debilitante, Aprehensora, Perforadora, Buscadora y Sombría. En Nv.18 los dados de daño de las opciones se duplican (2d6 → 4d6; 1d6 → 2d6)."
+        d: "Aprendes 2 opciones de Disparo Arcano (3 en Nv.7, 4 en Nv.10, 5 en Nv.15 y 6 en Nv.18). Una vez por turno, al disparar una flecha con arco corto o largo como parte de la acción de Atacar, puedes aplicarle una opción. Decides usarla al impactar (salvo que no requiera tirada de ataque). 2 usos; los recuperas con un descanso corto o largo. CD = 8 + BC + mod. INT. Opciones: Flecha Desterradora (salvación CAR o el objetivo queda desterrado: Velocidad 0 e incapacitado; reaparece al final de su siguiente turno; Nv.18: +2d6 de fuerza al impactar), Flecha Seductora (+2d6 psíquico; eliges un aliado a 30 pies del objetivo: salvación SAB o el objetivo queda hechizado por ese aliado hasta el inicio de tu siguiente turno; termina si el aliado lo ataca, le daña o le obliga a una salvación; 4d6 en Nv.18), Flecha Explosiva (al impactar, el objetivo y las criaturas a 10 pies de él sufren 2d6 de fuerza; 4d6 en Nv.18), Flecha Debilitante (+2d6 necrótico; salvación CON o su daño con ataques de arma se reduce a la mitad hasta el inicio de tu siguiente turno; 4d6 en Nv.18), Flecha Aprehensora (+2d6 de veneno, Velocidad -10 pies y 2d6 cortante la primera vez en cada turno que se mueva 1+ pie sin teletransportarse; se quita con una acción y prueba de FUE (Atletismo) contra tu CD, o dura 1 minuto o hasta que uses de nuevo esta opción; ambos daños 4d6 en Nv.18), Flecha Perforadora (sin tirada de ataque: la flecha recorre una línea de 1 pie de ancho y 30 pies ignorando cobertura; cada criatura en ella hace salvación DES: fallo = daño del arma + 1d6 perforante, éxito = mitad; 2d6 en Nv.18), Flecha Buscadora (sin tirada de ataque: eliges una criatura que hayas visto en el último minuto; la flecha la persigue rodeando esquinas e ignorando cobertura, si está al alcance del arma y hay camino suficiente; salvación DES: fallo = daño del arma + 1d6 de fuerza y sabes dónde está, éxito = mitad y no lo sabes; 2d6 en Nv.18), Flecha Sombría (+2d6 psíquico; salvación SAB o no ve nada a más de 5 pies hasta el inicio de tu siguiente turno; 4d6 en Nv.18). En Nv.18 mejoran las opciones: los 2d6 pasan a 4d6 y los 1d6 a 2d6, y la Flecha Desterradora causa además 2d6 de daño de fuerza al impactar."
       },
       {
         n: "Flecha Mágica",
@@ -395,7 +395,7 @@ const CLASE_GUERRERO = {
         n: "Marca Inquebrantable",
         nv: 3,
         a: "O",
-        d: "Cuando impactas a una criatura con un ataque cuerpo a cuerpo, la marcas hasta el final de tu siguiente turno: tiene desventaja en los ataques contra otros que no seas tú mientras esté a 5 pies de ti, y si daña a otro, puedes hacer como Acción Adicional un ataque cuerpo a cuerpo con ventaja contra ella con daño extra = mitad de tu nivel de Guerrero. Usos: tu mod. de FUE (mín. 1) por descanso largo."
+        d: "Cuando impactas a una criatura con un ataque cuerpo a cuerpo, la marcas hasta el final de tu siguiente turno (la marca termina antes si quedas incapacitado o mueres, o si otra criatura la marca): tiene desventaja en los ataques contra otros que no seas tú mientras esté a 5 pies de ti, y si daña a otro, puedes hacer en tu siguiente turno, como Acción Adicional, un ataque cuerpo a cuerpo con ventaja contra ella con daño extra = mitad de tu nivel de Guerrero. Usos: tu mod. de FUE (mín. 1) por descanso largo."
       },
       {
         n: "Maniobra Protectora",
@@ -417,7 +417,7 @@ const CLASE_GUERRERO = {
         n: "Defensor Vigilante",
         nv: 18,
         a: "R",
-        d: "En cada turno que no sea el tuyo dispones de una reacción adicional que sólo puedes usar para un ataque de oportunidad."
+        d: "En combate dispones de una reacción especial que puedes usar una vez en cada turno que no sea el tuyo. Sólo puedes usarla para un ataque de oportunidad y no puedes usarla en el mismo turno en que uses tu reacción normal."
       },
     ],
 
@@ -462,7 +462,7 @@ const CLASE_GUERRERO = {
       {
         n: "Grito de Guerra",
         nv: 3,
-        d: "Cuando usas Segundo Aliento, hasta 3 aliados a 60 pies recuperan PG = tu nivel de Guerrero (además de lo que recuperas tú)."
+        d: "Cuando usas Segundo Aliento, eliges hasta 3 aliados a 60 pies que te vean u oigan: cada uno recupera PG = tu nivel de Guerrero (además de lo que recuperas tú)."
       },
       {
         n: "Enviado Real",
@@ -490,7 +490,7 @@ const CLASE_GUERRERO = {
         n: "Manifestar Eco",
         nv: 3,
         a: "B",
-        d: "Como Acción Adicional creas un eco en un espacio libre a 15 pies (CA 14 + BC, 1 PG, inmune a todas las condiciones; usa tus salvaciones, y su ataque cuenta como tuyo). Dura hasta que se destruya, lo descartes (AA), crees otro o quedes incapacitado. Puedes mover el eco 30 pies en tu turno (mentalmente) e intercambiar posición con él (gasta 15 pies de movimiento). Puedes atacar y lanzar conjuros desde su espacio y hacer un ataque de oportunidad desde el eco."
+        d: "Como Acción Adicional creas un eco translúcido en un espacio libre que veas a 15 pies. Dura hasta que se destruya, lo descartes (AA), crees otro o quedes incapacitado. Tiene CA 14 + BC, 1 PG e inmunidad a todas las condiciones; usa tu bonificador de salvación; es de tu tamaño y ocupa su espacio. En tu turno puedes moverlo mentalmente hasta 30 pies (sin acción); si al final de tu turno está a más de 30 pies de ti, se destruye. Usos del eco: (1) Acción Adicional: te teletransportas intercambiando posición con el eco, gastando 15 pies de movimiento, sea cual sea la distancia. (2) Al realizar la acción de Atacar, cada ataque puede originarse desde tu espacio o desde el del eco (eliges por ataque). (3) Cuando una criatura que veas a 5 pies del eco se mueve 5+ pies lejos de él, puedes usar tu Reacción para hacerle un ataque de oportunidad como si estuvieras en el espacio del eco."
       },
       {
         n: "Desatar Encarnación",
@@ -508,7 +508,7 @@ const CLASE_GUERRERO = {
         n: "Mártir de la Sombra",
         nv: 10,
         a: "R",
-        d: "Cuando una criatura que veas hace una tirada de ataque contra otra criatura que no seas tú, usas tu Reacción para teletransportar el eco a 5 pies del objetivo, y el ataque se resuelve contra el eco. Una vez por descanso corto o largo."
+        d: "Cuando se va a hacer una tirada de ataque contra otra criatura que veas, antes de la tirada puedes usar tu Reacción para teletransportar el eco a un espacio libre a 5 pies del objetivo; el ataque se resuelve contra el eco. Una vez por descanso corto o largo."
       },
       {
         n: "Reclamar Potencial",
@@ -568,7 +568,7 @@ const CLASE_GUERRERO = {
         n: "Tallador de Runas",
         nv: 3,
         a: "O",
-        d: "Conoces 2 runas (3 en Nv.7, 4 en Nv.10, 5 en Nv.15) y puedes cambiar una al subir de nivel de Guerrero. Tras un descanso largo inscribes cada runa conocida en un objeto (arma, armadura, escudo, joya...; una runa por objeto, 24 horas). Cada runa da un beneficio pasivo y otro activo, usable 1 vez por descanso corto o largo (CD = 8 + BC + mod. CON): Nube (Reacción: rediriges un ataque contra un aliado a otra criatura a 30 pies del atacante), Fuego (daño extra 2d6 de fuego y salvación FUE o apresado 1 min), Escarcha (AA: +2 a pruebas y salvaciones de FUE y CON 10 min), Piedra (Reacción: al acabar su turno una criatura a 60 pies, salvación SAB o hechizada 1 min con Velocidad 0 e incapacitada), Colina (Nv.7, AA: resistencia a daño contundente, perforante y cortante 1 min), Tormenta (Nv.7, AA: 1 min en que como Reacción das ventaja o desventaja a una tirada cercana)."
+        d: "Conoces 2 runas (3 en Nv.7, 4 en Nv.10, 5 en Nv.15) y puedes cambiar una al subir de nivel de Guerrero. Tras un descanso largo inscribes cada runa conocida en un objeto distinto (arma, armadura, escudo, joya o algo que puedas llevar puesto o sostener; una runa por objeto). La runa permanece hasta que termines un descanso largo. Cada runa da un beneficio pasivo y otro activo, usable 1 vez por descanso corto o largo (CD = 8 + BC + mod. CON): Nube (Reacción: cuando tú o una criatura que veas a 30 pies de ti es impactada por un ataque, eliges otra criatura a 30 pies de ti, distinta del atacante, que pasa a ser el objetivo del ataque con la misma tirada, sea cual sea el alcance del ataque), Fuego (al impactar con un ataque con arma: daño extra 2d6 de fuego; salvación FUE o apresado 1 min, y sufre 2d6 de fuego al inicio de cada uno de sus turnos; repite la salvación al final de cada turno y la termina si la supera), Escarcha (AA: +2 a pruebas y salvaciones de FUE y CON 10 min), Piedra (Reacción: cuando una criatura que veas acaba su turno a 30 pies de ti, salvación SAB o queda hechizada por ti 1 min, con Velocidad 0 e incapacitada; repite la salvación al final de cada uno de sus turnos), Colina (Nv.7, AA: resistencia a daño contundente, perforante y cortante 1 min), Tormenta (Nv.7, AA: 1 min en que como Reacción das ventaja o desventaja a una tirada cercana)."
       },
       {
         n: "Fuerza de Gigante",

@@ -41,7 +41,7 @@ const CLASE_CLERIGO = {
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "Lanzador completo. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); puedes usar un símbolo sagrado como foco. Trucos: 3 (4 en Nv.4, 5 en Nv.10). Preparas conjuros de la lista de Clérigo: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); cambias uno al terminar un descanso largo. [2014: preparas SAB + nivel de Clérigo conjuros (mín. 1) de la lista completa]"
+      d: "Lanzador completo. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); puedes usar un símbolo sagrado como foco. Trucos: 3 (4 en Nv.4, 5 en Nv.10); cada vez que ganas un nivel de Clérigo puedes sustituir uno de tus trucos por otro truco de la lista de Clérigo [2014: solo con la opción de TCE Versatilidad de Trucos]. Preparas conjuros de la lista de Clérigo: 4 en Nv.1 (5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 en Nv.2-20); al terminar un Descanso Largo puedes cambiar tu lista de conjuros preparados, sustituyendo cualquiera de ellos por otros conjuros de Clérigo de un nivel para el que tengas espacios. [2014: preparas SAB + nivel de Clérigo conjuros (mín. 1) de la lista completa y puedes cambiar la lista entera al terminar un descanso largo; puedes lanzar como ritual un conjuro de Clérigo con la etiqueta ritual si lo tienes preparado]"
     },
     {
       n: "Orden Divino (Divine Order)",
@@ -68,7 +68,13 @@ const CLASE_CLERIGO = {
       n: "Expulsar No-Muertos (Turn Undead)",
       nv: 2,
       a: "A",
-      d: "Como acción Mágica presentas tu símbolo sagrado: cada no-muerto de tu elección a 30 pies hace una salvación de SAB; si falla queda Asustado e Incapacitado 1 minuto y huye de ti lo más lejos que pueda. El efecto termina si recibe daño, si quedas Incapacitado o si mueres. Gasta un uso de Canalizar Divinidad. [2014: la criatura sólo queda Expulsada (no se acerca a menos de 30 pies ni usa reacciones; sólo puede Correr o escapar) 1 minuto]"
+      d: "Como acción Mágica presentas tu símbolo sagrado: cada no-muerto de tu elección a 30 pies hace una salvación de SAB; si falla queda Asustado e Incapacitado 1 minuto y huye de ti lo más lejos que pueda. El efecto termina si recibe daño, si quedas Incapacitado o si mueres. Gasta un uso de Canalizar Divinidad. [2014: cada no-muerto que pueda verte u oírte hace la salvación; si falla queda Expulsado 1 minuto o hasta recibir daño: gasta sus turnos alejándose de ti lo más posible, no puede moverse voluntariamente a un espacio a 30 pies de ti ni usar reacciones, y como acción sólo puede Correr o intentar escapar de un efecto que le impida moverse (si no puede moverse, puede Esquivar)]"
+    },
+    {
+      n: "Canalizar Divinidad: Aprovechar Poder Divino (Harness Divine Power)",
+      nv: 2,
+      a: "B",
+      d: "[Sólo 2014, opcional de TCE] Puedes gastar un uso de Canalizar Divinidad para alimentar tus conjuros. Como Acción Adicional tocas tu símbolo sagrado, pronuncias una oración y recuperas un espacio de conjuro gastado de nivel igual o inferior a la mitad de tu bonificador de competencia (redondeado hacia arriba). Veces que puedes usarlo: 1 en Nv.2, 2 en Nv.6, 3 en Nv.18; recuperas todos los usos con un Descanso Largo."
     },
     {
       n: "Subclase de Clérigo (Dominio Divino)",
@@ -81,6 +87,11 @@ const CLASE_CLERIGO = {
       d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra mejora en Nv.19]"
     },
     {
+      n: "Versatilidad de Trucos (Cantrip Versatility)",
+      nv: 4,
+      d: "[Sólo 2014, opcional de TCE] Cada vez que alcanzas un nivel de Clérigo que concede Mejora de Característica, puedes sustituir un truco aprendido con Lanzamiento de Conjuros por otro truco de la lista de Clérigo."
+    },
+    {
       n: "Fulgor contra No-Muertos (Sear Undead)",
       nv: 5,
       d: "Cuando usas Expulsar No-Muertos tiras mod. SAB d8 (mínimo 1) y cada no-muerto que falle la salvación sufre ese daño radiante total (sin acabar el efecto). [2014: Destruir No-Muertos: los no-muertos que fallen la salvación son destruidos si su CR ≤ 1/2 (1 en Nv.8, 2 en Nv.11, 3 en Nv.14, 4 en Nv.17)]"
@@ -88,7 +99,12 @@ const CLASE_CLERIGO = {
     {
       n: "Golpes Bendecidos (Blessed Strikes)",
       nv: 7,
-      d: "Eliges una opción. Golpe Divino: una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño necrótico o radiante adicional (a tu elección). Lanzamiento Potente: sumas tu mod. SAB al daño de tus trucos de Clérigo. [2014: Golpe Divino (Nv.8) o Lanzamiento Potente (Nv.8) los concede el dominio]"
+      d: "Eliges una opción (si una subclase de un libro anterior te da alguna de estas dos opciones, usa solo la que elijas con este rasgo). Golpe Divino: una vez por turno, al impactar con un ataque con arma, infliges 1d8 de daño necrótico o radiante adicional (a tu elección). Lanzamiento Potente: sumas tu mod. SAB al daño de tus trucos de Clérigo. [2014: Golpe Divino (Nv.8) o Lanzamiento Potente (Nv.8) los concede el dominio]"
+    },
+    {
+      n: "Golpes Bendecidos de TCE (Blessed Strikes)",
+      nv: 8,
+      d: "[Sólo 2014, opcional de TCE] En Nv.8 puedes sustituir el Golpe Divino o el Lanzamiento Potente de tu dominio por Golpes Bendecidos: cuando una criatura sufre daño de uno de tus trucos o de un ataque con arma, puedes infligirle además 1d8 de daño radiante; una vez infligido, no puedes volver a usarlo hasta el inicio de tu siguiente turno."
     },
     {
       n: "Intervención Divina (Divine Intervention)",
@@ -220,7 +236,7 @@ const CLASE_CLERIGO = {
         n: "Canalizar Divinidad: Hechizar Animales y Plantas (Charm Animals and Plants)",
         nv: 2,
         a: "A",
-        d: "Como acción presentas tu símbolo sagrado: cada bestia o planta que veas a 30 pies hace una salvación de SAB o queda Hechizada 1 minuto (o hasta recibir daño); te trata como amigo."
+        d: "Como acción presentas tu símbolo sagrado e invocas el nombre de tu deidad: cada bestia o planta que pueda verte a 30 pies hace una salvación de SAB; si falla queda Hechizada por ti 1 minuto (o hasta recibir daño) y es amistosa contigo y con las criaturas que designes."
       },
       {
         n: "Atenuar Elementos (Dampen Elements)",
@@ -343,7 +359,7 @@ const CLASE_CLERIGO = {
         n: "Canalizar Divinidad: Leer Pensamientos (Read Thoughts)",
         nv: 6,
         a: "A",
-        d: "Eliges una criatura que veas a 60 pies: hace una salvación de SAB; si falla, durante 1 minuto lees sus pensamientos superficiales mientras esté a 60 pies y puedes usar tu acción para terminar este efecto y lanzar Suggestion sobre ella sin espacio (falla automáticamente la salvación)."
+        d: "Como acción eliges una criatura que veas a 60 pies: hace una salvación de SAB. Si la supera, no puedes volver a usar este rasgo contra ella hasta un descanso largo. Si falla, durante 1 minuto lees sus pensamientos superficiales mientras esté a 60 pies, y puedes usar tu acción para terminar este efecto y lanzar Suggestion sobre ella sin gastar espacio (falla automáticamente la salvación contra ese conjuro)."
       },
       {
         n: "Lanzamiento Potente (Potent Spellcasting)",
@@ -354,7 +370,7 @@ const CLASE_CLERIGO = {
         n: "Visiones del Pasado (Visions of the Past)",
         nv: 17,
         a: "O",
-        d: "Puedes meditar (concentración, hasta tu SAB en minutos) para tener visiones de un objeto que sostienes o de una zona en la que estás, de hasta tantos días atrás como tu puntuación de SAB. Una vez por descanso corto o largo."
+        d: "Dedicas al menos 1 minuto a meditar y rezar y recibes visiones oníricas y sombrías de sucesos recientes; puedes meditar tantos minutos como tu puntuación de SAB, manteniendo concentración como con un conjuro. Una vez por descanso corto o largo. Lectura de objeto: sosteniendo un objeto, tras 1 minuto ves a su anterior propietario y sabes cómo lo obtuvo y lo perdió y el suceso importante más reciente que los involucró; si lo tuvo otra criatura en los últimos días (hasta tu SAB), gastas 1 minuto adicional por cada propietario para saber lo mismo. Lectura de zona: ves sucesos recientes en tu entorno inmediato (sala, calle, túnel, claro…, hasta un cubo de 50 pies) de hasta tantos días atrás como tu SAB; por cada minuto conoces un suceso importante, empezando por el más reciente."
       },
     ],
 
@@ -374,7 +390,7 @@ const CLASE_CLERIGO = {
         n: "Canalizar Divinidad: Invocar Duplicidad (Invoke Duplicity)",
         nv: 2,
         a: "A",
-        d: "Como acción creas una ilusión perfecta de ti a 30 pies durante 1 minuto (concentración). Puedes moverla 30 pies como Acción Adicional (hasta 120 pies de ti) y lanzar conjuros desde su espacio usando tus sentidos. Tienes ventaja en ataques contra criaturas a 5 pies de la ilusión que también vean a la ilusión."
+        d: "Como acción creas una ilusión perfecta de ti a 30 pies durante 1 minuto (concentración). Puedes moverla 30 pies como Acción Adicional (hasta 120 pies de ti) y lanzar conjuros desde su espacio usando tus sentidos. Tienes ventaja en las tiradas de ataque contra una criatura que vea la ilusión cuando tanto tú como la ilusión estáis a 5 pies de ella."
       },
       {
         n: "Canalizar Divinidad: Manto de Sombras (Cloak of Shadows)",
@@ -452,7 +468,7 @@ const CLASE_CLERIGO = {
         n: "Canalizar Divinidad: Abjuración Arcana (Arcane Abjuration)",
         nv: 2,
         a: "A",
-        d: "Como acción presentas tu símbolo sagrado: un celestial, elemental, feérico o infernal a 30 pies hace una salvación de SAB; si falla queda Expulsado 1 minuto (o hasta recibir daño): se aleja, no puede acabar su turno a 30 pies de ti ni usar reacciones, y sólo puede Correr o intentar escapar. Desde Nv.5 las criaturas que fallen son desterradas a su plano de origen si su CR ≤ 1/2 (1 en Nv.8, 2 en Nv.11, 3 en Nv.14, 4 en Nv.17)."
+        d: "Como acción presentas tu símbolo sagrado: un celestial, elemental, feérico o infernal de tu elección a 30 pies que pueda verte u oírte hace una salvación de SAB; si falla queda Expulsado 1 minuto (o hasta recibir daño): gasta sus turnos alejándose de ti lo más posible, no puede acabar voluntariamente su movimiento a 30 pies de ti ni usar reacciones, y como acción sólo puede Correr o intentar escapar de un efecto que le impida moverse (si no puede moverse, puede Esquivar). Desde Nv.5, si una criatura falla la salvación y no está en su plano de origen, además es desterrada 1 minuto (como el conjuro Banishment, sin concentración) cuando su CR es 1/2 o menos (1 en Nv.8, 2 en Nv.11, 3 en Nv.14, 4 en Nv.17)."
       },
       {
         n: "Rompehechizos (Spell Breaker)",
@@ -494,7 +510,7 @@ const CLASE_CLERIGO = {
         n: "Canalizar Divinidad: Bendición del Artesano (Artisan's Blessing)",
         nv: 2,
         a: "O",
-        d: "Con un ritual de 1 hora y metal por el valor, creas un objeto metálico no mágico (armas, armaduras, herramientas, municiones…) de valor máximo 100 po."
+        d: "Con un ritual de 1 hora y metal (puede incluir monedas) por el valor del objeto, creas un objeto no mágico que contenga metal: un arma simple o marcial, una armadura, diez piezas de munición, un juego de herramientas u otro objeto metálico, de valor máximo 100 po. Aparece en un espacio libre sobre una superficie a 5 pies de ti al terminar la hora. El metal se transforma de forma irreversible. Puede duplicar un objeto metálico no mágico (p. ej. una llave) si posees el original durante el ritual."
       },
       {
         n: "Alma de la Forja (Soul of the Forge)",
@@ -541,7 +557,7 @@ const CLASE_CLERIGO = {
         n: "Centinela en el Umbral de la Muerte (Sentinel at Death's Door)",
         nv: 6,
         a: "R",
-        d: "Cuando una criatura a 30 pies sufre un golpe crítico, puedes usar tu reacción para convertirlo en un impacto normal. Usos = mod. SAB (mínimo 1) por descanso largo."
+        d: "Como Reacción, cuando tú o una criatura que veas a 30 pies sufre un golpe crítico, puedes convertirlo en un impacto normal; se cancelan los efectos que active un golpe crítico. Usos = mod. SAB (mínimo 1) por descanso largo."
       },
       {
         n: "Lanzamiento Potente (Potent Spellcasting)",
@@ -551,7 +567,7 @@ const CLASE_CLERIGO = {
       {
         n: "Guardián de las Almas (Keeper of Souls)",
         nv: 17,
-        d: "Cuando un enemigo muere a 30 pies de ti, tú o un aliado que veas a 30 pies recupera PG = al número de Dados de Golpe del enemigo. Una vez por turno si no estás Incapacitado."
+        d: "Cuando un enemigo que veas muere a 60 pies de ti, tú o una criatura de tu elección a 60 pies recupera PG = al número de Dados de Golpe del enemigo. Solo puedes usarlo si no estás Incapacitado. Una vez usado, no puedes volver a usarlo hasta el inicio de tu siguiente turno."
       },
     ],
 
@@ -578,7 +594,7 @@ const CLASE_CLERIGO = {
         n: "Canalizar Divinidad: Bálsamo de Paz (Balm of Peace)",
         nv: 2,
         a: "A",
-        d: "Como acción te mueves hasta tu Velocidad sin provocar ataques de oportunidad; cuando pasas a 5 pies de otra criatura puedes restaurarle 2d6 + mod. SAB PG (mínimo 1)."
+        d: "Como acción te mueves hasta tu Velocidad sin provocar ataques de oportunidad; cuando pasas a 5 pies de otra criatura puedes restaurarle 2d6 + mod. SAB PG (mínimo 1). Una criatura solo puede recibir esta curación una vez por cada vez que realizas esta acción."
       },
       {
         n: "Vínculo Protector (Protective Bond)",
@@ -613,7 +629,7 @@ const CLASE_CLERIGO = {
         n: "Voz de Autoridad (Voice of Authority)",
         nv: 1,
         a: "O",
-        d: "Si lanzas un conjuro con espacio de nivel 1+ que tenga como objetivo a un aliado, éste puede usar su reacción inmediatamente después para hacer un ataque con arma contra una criatura de tu elección que veas."
+        d: "Si lanzas un conjuro con espacio de nivel 1+ que tenga como objetivo a un aliado, éste puede usar su Reacción inmediatamente después para hacer un ataque con arma contra una criatura de tu elección que veas. Si el conjuro afecta a varios aliados, tú eliges cuál hace el ataque."
       },
       {
         n: "Canalizar Divinidad: Exigencia del Orden (Order's Demand)",
@@ -667,7 +683,7 @@ const CLASE_CLERIGO = {
         n: "Canalizar Divinidad: Santuario del Crepúsculo (Twilight Sanctuary)",
         nv: 2,
         a: "A",
-        d: "Como acción presentas tu símbolo sagrado: una esfera de crepúsculo de 30 pies (luz tenue) te sigue durante 1 minuto o hasta que quedes Incapacitado o mueras. Al final de cada turno, cada criatura de tu elección en ella gana 1d6 + nivel de Clérigo PG temporales o termina un efecto de Hechizado o Asustado."
+        d: "Como acción presentas tu símbolo sagrado: una esfera de crepúsculo de 30 pies de radio, centrada en ti y llena de luz tenue, te sigue durante 1 minuto o hasta que quedes Incapacitado o mueras. Al final de cada turno, cada criatura de tu elección en ella gana 1d6 + nivel de Clérigo PG temporales o termina un efecto de Hechizado o Asustado."
       },
       {
         n: "Pasos de la Noche (Steps of Night)",
@@ -693,7 +709,7 @@ const CLASE_CLERIGO = {
       {
         n: "Discípulo de la Vida (Disciple of Life)",
         nv: 3,
-        d: "Cuando un conjuro que lanzas con un espacio restaura PG a una criatura, ésta recupera PG adicionales = 2 + nivel del espacio."
+        d: "Cuando un conjuro que lanzas con un espacio restaura PG a una criatura, ésta recupera PG adicionales en el turno en que lanzas el conjuro. Los PG adicionales = 2 + nivel del espacio."
       },
       {
         n: "Conjuros del Dominio de la Vida",
@@ -775,7 +791,7 @@ const CLASE_CLERIGO = {
       {
         n: "Duplicidad Mejorada (Improved Duplicity)",
         nv: 17,
-        d: "Tu ilusión gana: Distracción Compartida (tú y tus aliados tenéis ventaja en ataques contra criaturas a 5 pies de ella) y Ilusión Sanadora (cuando termina, tú o una criatura cercana recupera PG = tu nivel de Clérigo)."
+        d: "Tu ilusión gana: Distracción Compartida (tú y tus aliados tenéis ventaja en ataques contra criaturas a 5 pies de ella) y Ilusión Sanadora (cuando la ilusión termina, tú o una criatura de tu elección a 5 pies de ella recupera PG = tu nivel de Clérigo)."
       },
     ],
 
@@ -783,14 +799,14 @@ const CLASE_CLERIGO = {
       {
         n: "Golpe Guiado (Guided Strike)",
         nv: 3,
-        a: "O",
-        d: "Cuando tú o una criatura a 30 pies falla una tirada de ataque, puedes gastar un uso de Canalizar Divinidad para darle +10, quizá haciéndola impactar."
+        a: "OR",
+        d: "Cuando tú o una criatura a 30 pies falla una tirada de ataque, puedes gastar un uso de Canalizar Divinidad para darle +10, quizá haciéndola impactar. Si lo usas sobre la tirada de otra criatura, debes gastar tu Reacción."
       },
       {
         n: "Sacerdote de Guerra (War Priest)",
         nv: 3,
         a: "B",
-        d: "Como Acción Adicional puedes hacer un ataque con un arma o un ataque desarmado. Usos = mod. SAB (mínimo 1) por descanso largo."
+        d: "Como Acción Adicional puedes hacer un ataque con un arma o un Ataque Desarmado. Puedes usar esta Acción Adicional un número de veces igual a tu mod. SAB (mínimo 1); recuperas todos los usos al terminar un Descanso Corto o Largo."
       },
       {
         n: "Conjuros del Dominio de la Guerra",

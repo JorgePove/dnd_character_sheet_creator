@@ -36,13 +36,13 @@ const CLASE_EXPLORADOR = {
     {
       n: "Lanzamiento de Conjuros",
       nv: 1,
-      d: "Lanzador a medias. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); usas un foco druídico. No conoces trucos. Preparas 2 conjuros de Explorador en Nv.1 (3, 4, 5, 6, 6, 7, 7, 9, 9, 10, 10, 11, 11, 12, 12, 14, 14, 15, 15 en Nv.2-20); cambias uno al subir de nivel. [2014: empiezas a lanzar en Nv.2 y conoces conjuros en lugar de prepararlos]"
+      d: "Lanzador a medias. SAB es tu característica de conjuros (CD = 8 + comp. + mod. SAB); usas un foco druídico. No conoces trucos. Preparas 2 conjuros de Explorador en Nv.1 (3, 4, 5, 6, 6, 7, 7, 9, 9, 10, 10, 11, 11, 12, 12, 14, 14, 15, 15 en Nv.2-20); tras un Descanso Largo puedes cambiar uno por otro conjuro de Explorador de un nivel para el que tengas espacios. [2014: empiezas a lanzar en Nv.2 y conoces conjuros en lugar de prepararlos: 2 en Nv.2, 3 en Nv.3, 4 en Nv.5, 5 en Nv.7, 6 en Nv.9, 7 en Nv.11, 8 en Nv.13, 9 en Nv.15, 10 en Nv.17 y 11 en Nv.19; cada conjuro debe ser de un nivel para el que tengas espacios; al subir de nivel puedes cambiar uno de ellos por otro de la lista de Explorador]"
     },
     {
       n: "Enemigo Predilecto (Favored Enemy)",
       nv: 1,
       a: "O",
-      d: "Siempre tienes preparado Hunter's Mark y puedes lanzarlo sin gastar espacio 2 veces (3 en Nv.5, 4 en Nv.9, 5 en Nv.13, 6 en Nv.17); recuperas todos los usos con un descanso largo. [2014: eliges un tipo de criatura enemiga: ventaja en pruebas de Supervivencia para rastrearla y de INT para recordar información sobre ella; un idioma; más tipos en Nv.6 y 14]"
+      d: "Siempre tienes preparado Hunter's Mark y puedes lanzarlo sin gastar espacio 2 veces (3 en Nv.5, 4 en Nv.9, 5 en Nv.13, 6 en Nv.17); recuperas todos los usos con un descanso largo. [2014: eliges un tipo de criatura enemiga: ventaja en pruebas de Supervivencia para rastrearla y de INT para recordar información sobre ella; un idioma; más tipos en Nv.6 y 14] [Opcional TCE, sustituye al Enemigo Predilecto de 2014 (Favored Foe): al impactar con una tirada de ataque a una criatura, puedes marcarla como enemigo predilecto 1 minuto o hasta que pierdas la concentración (como si concentraras un conjuro). La primera vez en cada uno de tus turnos que impactes al enemigo marcado y le infligas daño (también al marcarlo), puedes sumar 1d4 de daño (1d6 en Nv.6; 1d8 en Nv.14). Usos = comp. por Descanso Largo. Funciona con Cazador de Enemigos]"
     },
     {
       n: "Maestría con Armas (Weapon Mastery)",
@@ -52,17 +52,17 @@ const CLASE_EXPLORADOR = {
     {
       n: "Explorador Natural (Natural Explorer)",
       nv: 1,
-      d: "[Sólo 2014] Eliges un tipo de terreno predilecto (ártico, costa, desierto, bosque, pradera, montaña, pantano, Underdark): el doble de competencia en pruebas de INT y SAB relacionadas con él, no te pierdes, no te ralentiza el terreno difícil, alerta ante peligros, forrajeas el doble y rastreas con precisión. Más terrenos en Nv.6 y 10. [2024: sustituido por Explorador Diestro]"
+      d: "[Sólo 2014] Eliges un tipo de terreno predilecto (ártico, costa, desierto, bosque, pradera, montaña, pantano, Underdark). En pruebas de INT o SAB relacionadas con él, duplicas tu bonificador de competencia si usas una habilidad en la que seas competente. Tras viajar 1 hora o más por él: el terreno difícil no ralentiza a tu grupo; tu grupo no se pierde salvo por medios mágicos; sigues alerta ante peligros aunque hagas otra actividad (forrajear, orientarte, rastrear); si viajas solo, te mueves con sigilo a ritmo normal; al forrajear encuentras el doble de comida; al rastrear criaturas conoces su número exacto, sus tamaños y cuánto hace que pasaron. Más terrenos en Nv.6 y 10. [2024: sustituido por Explorador Diestro]"
     },
     {
       n: "Explorador Diestro (Deft Explorer)",
       nv: 2,
-      d: "Ganas Pericia en una habilidad en la que seas competente y conoces 2 idiomas a tu elección. [Sólo 2024]"
+      d: "Ganas Pericia en una habilidad en la que seas competente y conoces 2 idiomas a tu elección. [2014: opcional TCE (sustituye a Explorador Natural, Nv.1): Habilidad Astuta (Canny): eliges una de tus competencias en habilidades y duplicas tu bonificador de competencia en las pruebas con ella; además hablas, lees y escribes 2 idiomas más. Mejoras en Nv.6 (Vagabundo) y Nv.10 (Incansable)]"
     },
     {
       n: "Estilo de Combate",
       nv: 2,
-      d: "Ganas una dote de Estilo de Combate de tu elección (o la opción Guerrero Druídico: 2 trucos de Druida que cuentan como de Explorador, con SAB). Puedes cambiarla al subir de nivel de Explorador. [2014: eliges un Estilo de la lista del Explorador]"
+      d: "Ganas una dote de Estilo de Combate de tu elección. En lugar de una dote puedes elegir la opción Guerrero Druídico (Druidic Warrior): aprendes 2 trucos de Druida a tu elección, que cuentan como conjuros de Explorador y usan SAB; cada vez que subes de nivel de Explorador puedes cambiar uno de ellos por otro truco de Druida. [2014: eliges un Estilo de la lista del Explorador; opcional TCE (Versatilidad Marcial): al subir a un nivel con Mejora de Característica puedes cambiar un Estilo de Combate por otro de la lista del Explorador]"
     },
     {
       n: "Subclase de Explorador (Arquetipo / Conclave)",
@@ -72,7 +72,7 @@ const CLASE_EXPLORADOR = {
     {
       n: "Consciencia Primigenia (Primeval Awareness)",
       nv: 3,
-      d: "[Sólo 2014] Gastando un espacio de conjuro y 1 minuto por nivel del espacio, percibes la presencia de ciertas criaturas a 1 milla (6 millas en su terreno predilecto). [2014: rasgo de Nv.3]"
+      d: "[Sólo 2014] Como acción y gastando un espacio de conjuro de Explorador, durante 1 minuto por nivel del espacio percibes si hay aberraciones, celestiales, dragones, elementales, feéricos, infernales o muertos vivientes a 1 milla (hasta 6 millas en tu terreno predilecto). No revela su ubicación ni su número. [2014: rasgo de Nv.3] [Opcional TCE, sustituye a este rasgo: Consciencia Primal (Primal Awareness). Aprendes conjuros adicionales que no cuentan para tu límite de conjuros de Explorador: Nv.3 Speak with Animals, Nv.5 Beast Sense, Nv.9 Speak with Plants, Nv.13 Locate Creature, Nv.17 Commune with Nature. Puedes lanzar cada uno una vez sin gastar espacio; recuperas el uso con un Descanso Largo]"
     },
     {
       n: "Mejora de Característica",
@@ -88,7 +88,7 @@ const CLASE_EXPLORADOR = {
     {
       n: "Vagabundo (Roving)",
       nv: 6,
-      d: "Tu Velocidad aumenta 10 pies mientras no lleves armadura pesada, y ganas Velocidad de trepar y de nadar = tu Velocidad. [Sólo 2024; en 2014 Nv.6 mejora Enemigo Predilecto y Explorador Natural]"
+      d: "Tu Velocidad aumenta 10 pies mientras no lleves armadura pesada, y ganas Velocidad de trepar y de nadar = tu Velocidad. [2014: Nv.6 mejora Enemigo Predilecto y Explorador Natural; opcional TCE (Explorador Diestro): +5 pies de Velocidad y Velocidad de trepar y nadar = tu Velocidad, sin la restricción de armadura pesada]"
     },
     {
       n: "Paso por la Tierra (Land's Stride)",
@@ -104,7 +104,7 @@ const CLASE_EXPLORADOR = {
       n: "Incansable (Tireless)",
       nv: 10,
       a: "A",
-      d: "Como acción Mágica ganas 1d8 + mod. SAB PG temporales (mínimo 1). Usos = mod. SAB (mínimo 1) por descanso largo. Además, al terminar un descanso corto reduces tu agotamiento en 1 nivel. [Sólo 2024; en 2014 Nv.10 da Esconderse a Plena Vista: camuflaje de 1 minuto para mimetizarte con el terreno]"
+      d: "Como acción Mágica ganas 1d8 + mod. SAB PG temporales (mínimo 1). Usos = mod. SAB (mínimo 1) por descanso largo. Además, al terminar un descanso corto reduces tu agotamiento en 1 nivel. [2014: Nv.10 Esconderse a Plena Vista (Hide in Plain Sight): tras 1 minuto creando camuflaje con barro, tierra, plantas, hollín u otros materiales naturales, puedes esconderte pegado a una superficie sólida al menos tan alta y ancha como tú; ganas +10 a las pruebas de DES (Sigilo) mientras no te muevas ni realices acciones. Si te mueves o realizas una acción o reacción, debes camuflarte de nuevo] [2014: opcional TCE (Explorador Diestro): como acción ganas 1d8 + mod. SAB PG temporales (mínimo 1), con usos = bonificador de competencia por Descanso Largo; y al terminar un Descanso Corto reduces tu agotamiento en 1 nivel]"
     },
     {
       n: "Cazador Implacable (Relentless Hunter)",
@@ -115,7 +115,7 @@ const CLASE_EXPLORADOR = {
       n: "Velo de la Naturaleza (Nature's Veil)",
       nv: 14,
       a: "B",
-      d: "Como Acción Adicional quedas Invisible hasta el final de tu siguiente turno. Usos = mod. SAB (mínimo 1) por descanso largo. [2014: Desvanecerse: puedes Esconderte como Acción Adicional y no puedes ser rastreado por medios no mágicos]"
+      d: "Como Acción Adicional quedas Invisible hasta el final de tu siguiente turno. Usos = mod. SAB (mínimo 1) por descanso largo. [2014: Desvanecerse: puedes Esconderte como Acción Adicional y no puedes ser rastreado por medios no mágicos] [Opcional TCE, Nv.10, sustituye a Esconderse a Plena Vista: como Acción Adicional quedas Invisible (tú y tu equipo) hasta el inicio de tu siguiente turno; usos = bonificador de competencia por Descanso Largo]"
     },
     {
       n: "Cazador Preciso (Precise Hunter)",
@@ -125,7 +125,7 @@ const CLASE_EXPLORADOR = {
     {
       n: "Sentidos Feroces (Feral Senses)",
       nv: 18,
-      d: "Ganas Vista ciega a 30 pies. [2014: sin ataque a ciegas: no tienes desventaja al atacar a criaturas que no veas, si no estás Cegado, y sabes dónde están las criaturas invisibles a 30 pies]"
+      d: "Ganas Vista ciega a 30 pies. [2014: al atacar a una criatura que no veas, no sufres desventaja por ello; además conoces la ubicación de cualquier criatura invisible a 30 pies, siempre que no esté oculta de ti y no estés Cegado ni Ensordecido]"
     },
     {
       n: "Don Épico (Epic Boon)",
@@ -175,7 +175,8 @@ const CLASE_EXPLORADOR = {
       {
         n: "Compañero del Explorador (Ranger's Companion)",
         nv: 3,
-        d: "Ganas un compañero bestia de CR 1/4 o menos y tamaño Mediano o menor. Sumas tu comp. a su CA, tiradas de ataque y daño, salvaciones y habilidades; sus PG = el máximo normal o 4 × tu nivel de Explorador (el mayor). Actúa en tu iniciativa; las órdenes verbales no cuestan acción y, con Ataque Extra, puedes atacar tú cuando le ordenas atacar. Si muere, domas otra bestia con 8 horas de vínculo. [Opcional TCE: Compañero Primigenio (Primal Companion): bestia de la Tierra, el Mar o el Cielo]"
+        a: "A",
+        d: "Ganas un compañero bestia de CR 1/4 o menos y tamaño Mediano o menor. Sumas tu comp. a su CA, tiradas de ataque y daño, y a las salvaciones y habilidades en las que sea competente; sus PG = el máximo normal o 4 × tu nivel de Explorador (el mayor). Puede gastar Dados de Golpe en un Descanso Corto. Actúa en tu iniciativa. En tu turno puedes ordenarle verbalmente adónde moverse (sin acción); con tu acción puedes ordenarle Atacar, Correr, Retirarse o Ayudar. Si no das órdenes, usa Esquivar. Con Ataque Extra, puedes hacer un ataque tú cuando le ordenas Atacar. Si estás Incapacitado o ausente, la bestia actúa por su cuenta, centrada en protegeros a ti y a ella; nunca necesita tu orden para usar su reacción (p. ej. un ataque de oportunidad). Viajando por tu terreno predilecto solo con la bestia, te mueves con sigilo a ritmo normal. Si muere, domas otra bestia con 8 horas de vínculo mágico (no hostil y que cumpla los requisitos). [Opcional TCE: Compañero Primigenio (Primal Companion): bestia de la Tierra, el Mar o el Cielo]"
       },
       {
         n: "Entrenamiento Excepcional (Exceptional Training)",
@@ -301,7 +302,7 @@ const CLASE_EXPLORADOR = {
         n: "Contraataque del Cazador (Slayer's Counter)",
         nv: 15,
         a: "R",
-        d: "Si tu presa te obliga a hacer una salvación, puedes usar tu reacción para hacerle un ataque con arma antes de la salvación; si impacta, tu salvación tiene éxito automáticamente (y el efecto de la salvación se aplica normal)."
+        d: "Si tu presa te obliga a hacer una salvación, puedes usar tu reacción para hacerle un ataque con arma justo antes de la salvación; si impacta, tu salvación tiene éxito automáticamente, además de los efectos normales del ataque."
       },
     ],
 
@@ -324,10 +325,15 @@ const CLASE_EXPLORADOR = {
         d: "Sumas tu mod. SAB (mínimo +1) a tus pruebas de CAR y ganas competencia en Engaño, Interpretación o Persuasión (a tu elección)."
       },
       {
+        n: "Dones del Feywild (Feywild Gifts)",
+        nv: 3,
+        d: "Eliges (o tiras 1d6) un don cosmético: mariposas ilusorias, flores que brotan, aroma de hierbas, sombra danzante, cuernos/astas o piel/pelo que cambia de color."
+      },
+      {
         n: "Giro Seductor (Beguiling Twist)",
         nv: 7,
         a: "R",
-        d: "Ventaja en salvaciones contra Hechizado y Asustado. Cuando tú o una criatura a 120 pies supera una salvación contra esas condiciones, puedes usar tu reacción para obligar a otra criatura a 120 pies a una salvación de SAB (tu CD): si falla, queda Hechizada o Asustada de ti 1 minuto (repite la salvación al final de cada turno)."
+        d: "Ventaja en salvaciones contra Hechizado y Asustado. Cuando tú o una criatura que veas a 120 pies supera una salvación contra esas condiciones, puedes usar tu reacción para obligar a otra criatura que veas a 120 pies a una salvación de SAB (tu CD): si falla, queda Hechizada o Asustada de ti (a tu elección) 1 minuto (repite la salvación al final de cada uno de sus turnos)."
       },
       {
         n: "Refuerzos Feéricos (Fey Reinforcements)",
@@ -348,7 +354,7 @@ const CLASE_EXPLORADOR = {
         n: "Enjambre Reunido (Gathered Swarm)",
         nv: 3,
         a: "O",
-        d: "Un enjambre de espíritus de la naturaleza te acompaña en tu espacio. Una vez por turno, al impactar con un ataque, eliges un efecto: el objetivo sufre 1d6 de daño perforante; el objetivo hace una salvación de FUE (tu CD) o lo mueves 15 pies horizontalmente; o tú te mueves 5 pies horizontalmente sin provocar ataques de oportunidad."
+        d: "Un enjambre de espíritus de la naturaleza te acompaña en tu espacio. Una vez en cada uno de tus turnos, justo después de impactar a una criatura con un ataque, eliges un efecto: el objetivo sufre 1d6 de daño perforante; el objetivo hace una salvación de FUE (tu CD) o el enjambre lo mueve hasta 15 pies horizontalmente en la dirección que elijas; o el enjambre te mueve 5 pies horizontalmente en la dirección que elijas."
       },
       {
         n: "Magia del Guardián del Enjambre (Swarmkeeper Magic)",
@@ -380,30 +386,30 @@ const CLASE_EXPLORADOR = {
       {
         n: "Don Dracónico (Draconic Gift)",
         nv: 3,
-        d: "Aprendes el truco Thaumaturgy (cuenta como de Explorador) y a hablar, leer y escribir Dracónico (u otro idioma si ya lo conoces)."
+        d: "Aprendes el truco Thaumaturgy, que es un conjuro de Explorador para ti, y a hablar, leer y escribir Dracónico o un idioma adicional a tu elección."
       },
       {
         n: "Drake Compañero (Drake Companion)",
         nv: 3,
         a: "A",
-        d: "Como acción invocas a tu drake (elige esencia: ácido, frío, fuego, rayo o veneno) en un espacio libre a 30 pies. Comparte tu iniciativa y actúa tras ti; sólo Esquiva salvo que le ordenes algo con una Acción Adicional. CA 14 + comp., PG 5 + 5 × nivel de Explorador, Velocidad 40 pies, inmune a su tipo de daño; Mordisco: ataque +3 + comp., 1d6 + comp. perforante. Reacción: Golpes Infundidos (+1d6 de daño de la esencia a los golpes de tus aliados cercanos). Lo reinvocas tras un descanso largo o gastando un espacio de nivel 1+."
+        d: "Como acción invocas a tu drake (elige esencia: ácido, frío, fuego, rayo o veneno) en un espacio libre a 30 pies. Comparte tu iniciativa y actúa tras ti; sólo Esquiva salvo que le ordenes algo con una Acción Adicional. Si estás Incapacitado, puede hacer cualquier acción, no solo Esquivar. CA 14 + comp., PG 5 + 5 × nivel de Explorador, Velocidad 40 pies, inmune a su tipo de daño; Mordisco: ataque +3 + comp., 1d6 + comp. perforante. Reacción: Golpes Infundidos (+1d6 de daño de la esencia a los golpes de tus aliados cercanos). Permanece hasta que llegue a 0 PG, hasta que lo invoques de nuevo o hasta que mueras; lo que llevase puesto o encima queda atrás cuando desaparece. Lo reinvocas tras un descanso largo o gastando un espacio de nivel 1+."
       },
       {
         n: "Vínculo de Colmillo y Escama (Bond of Fang and Scale)",
         nv: 7,
-        d: "El drake gana alas y Velocidad de vuelo = su Velocidad, pasa a ser Mediano y puedes montarlo; su Mordisco inflige +1d6 de daño de la esencia. Ganas resistencia al tipo de daño de tu drake."
+        d: "Al invocar a tu drake, le salen alas y gana Velocidad de vuelo igual a su Velocidad. Mientras está invocado, tú y él ganáis: Montura de Drake: pasa a ser Mediano y puedes montarlo si tu tamaño es Mediano o menor; mientras lo montas no puede usar la Velocidad de vuelo de este rasgo. Colmillo Mágico: su Mordisco inflige +1d6 del tipo de daño de su esencia. Resistencia: ganas resistencia al tipo de daño elegido para su Esencia Dracónica."
       },
       {
         n: "Aliento del Drake (Drake's Breath)",
         nv: 11,
         a: "A",
-        d: "Como acción tú o tu drake exhaláis un cono de 30 pies: salvación de DES; 8d6 de daño de la esencia (10d6 en Nv.15), mitad si superan. Una vez por descanso largo, o gastando un espacio de nivel 3+."
+        d: "Como acción tú o tu drake exhaláis un cono de 30 pies de daño de ácido, frío, fuego, rayo o veneno (a tu elección; no tiene que coincidir con la esencia del drake). Cada criatura del cono hace una salvación de DES contra tu CD de conjuros: 8d6 de daño (10d6 en Nv.15), mitad si supera. Una vez por Descanso Largo, o gastando un espacio de nivel 3+."
       },
       {
         n: "Vínculo Perfecto (Perfected Bond)",
         nv: 15,
         a: "R",
-        d: "El Mordisco del drake inflige 2d6 de daño de esencia adicional en total; pasa a ser Grande y vuela con jinete. Resistencia Refleja: puede usar su reacción para darse resistencia al daño de un ataque (comp. veces por descanso)."
+        d: "Mientras tu drake está invocado, tú y él ganáis: Mordisco Potenciado: su Mordisco inflige 1d6 más del tipo de su esencia (2d6 adicionales en total). Drake Grande: pasa a ser Grande y, cuando lo montas, ya puede usar la Velocidad de vuelo de Vínculo de Colmillo y Escama. Resistencia Refleja: cuando tú o el drake recibís daño estando a 30 pies uno del otro, puedes usar tu Reacción para darte a ti o al drake resistencia a ese daño. Usos = comp. por Descanso Largo."
       },
     ],
 
@@ -524,7 +530,7 @@ const CLASE_EXPLORADOR = {
         n: "Giro Seductor (Beguiling Twist)",
         nv: 7,
         a: "R",
-        d: "Ventaja en salvaciones para evitar o terminar Hechizado o Asustado. Cuando tú o una criatura a 120 pies supera una salvación contra esas condiciones, puedes usar tu reacción para obligar a otra criatura a 120 pies a una salvación de SAB (tu CD): si falla queda Hechizada o Asustada 1 minuto (repite la salvación al final de cada turno)."
+        d: "Ventaja en salvaciones para evitar o terminar Hechizado o Asustado. Cuando tú o una criatura a 120 pies supera una salvación contra esas condiciones, puedes usar tu reacción para obligar a otra criatura a 120 pies a una salvación de SAB (tu CD): si falla queda Hechizada o Asustada (a tu elección) 1 minuto (repite la salvación al final de cada turno)."
       },
       {
         n: "Refuerzos Feéricos (Fey Reinforcements)",
@@ -568,13 +574,13 @@ const CLASE_EXPLORADOR = {
         n: "Represalia Gélida (Chilling Retribution)",
         nv: 11,
         a: "R",
-        d: "Cuando te impacta un ataque, puedes usar tu reacción para que el atacante haga una salvación de SAB (tu CD): si falla queda Aturdido hasta el final de tu siguiente turno y su Velocidad pasa a 0. Usos = mod. SAB por descanso largo."
+        d: "Cuando te impacta un ataque, puedes usar tu reacción para que el atacante haga una salvación de SAB (tu CD): si falla queda Aturdido hasta el final de tu siguiente turno y su Velocidad pasa a 0. Usos = mod. SAB (mínimo 1) por Descanso Largo."
       },
       {
         n: "Aparición Helada (Frozen Haunt)",
         nv: 15,
         a: "O",
-        d: "Al lanzar Hunter's Mark adoptas una forma fantasmal y nevada hasta que termine el conjuro: inmunidad al frío; al final de cada uno de tus turnos las criaturas a 15 pies sufren 2d4 de frío; inmunidad a Agarrado, Derribado y Apresado; atraviesas criaturas y objetos como terreno difícil (sufres 1d10 de fuerza si terminas dentro). Una vez por descanso largo, o gastando un espacio de nivel 4+."
+        d: "Al lanzar Hunter's Mark puedes adoptar una forma fantasmal y nevada hasta que termine el conjuro. Una vez por Descanso Largo, o gastando un espacio de nivel 4+ (sin acción). Alma Gélida: inmunidad al daño de frío; al adoptar la forma y al inicio de cada uno de tus turnos siguientes, cada criatura de tu elección en una Emanación de 15 pies sufre 2d4 de frío. Parcialmente Incorpóreo: inmunidad a Agarrado, Derribado y Apresado; atraviesas criaturas y objetos como terreno difícil, pero sufres 1d10 de fuerza si terminas tu turno dentro; si la forma termina estando dentro de uno, eres expulsado al espacio libre más cercano."
       },
     ],
   },

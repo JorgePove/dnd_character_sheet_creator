@@ -41,17 +41,17 @@ const CLASE_PICARO = {
     {
       n: "Ataque Furtivo (Sneak Attack)",
       nv: 1,
-      d: "Una vez por turno infliges 1d6 de daño adicional a una criatura que impactes con una tirada de ataque si tienes Ventaja en ella y el ataque usa un arma Sutil o a distancia. No necesitas Ventaja si otro enemigo del objetivo está a 5 pies de él, no está Incapacitado y no tienes Desventaja. Dados: 1d6 (Nv.1), 2d6 (3), 3d6 (5), 4d6 (7), 5d6 (9), 6d6 (11), 7d6 (13), 8d6 (15), 9d6 (17), 10d6 (19)."
+      d: "Una vez por turno infliges 1d6 de daño adicional a una criatura que impactes con una tirada de ataque si tienes Ventaja en ella y el ataque usa un arma Sutil o a distancia. El daño adicional es del mismo tipo que el del arma. No necesitas Ventaja si al menos un aliado tuyo está a 5 pies del objetivo, ese aliado no tiene la condición Incapacitado y tú no tienes Desventaja en la tirada. [2014: basta con que otro enemigo del objetivo esté a 5 pies de él y no esté Incapacitado] Dados: 1d6 (Nv.1), 2d6 (3), 3d6 (5), 4d6 (7), 5d6 (9), 6d6 (11), 7d6 (13), 8d6 (15), 9d6 (17), 10d6 (19)."
     },
     {
       n: "Jerga de Ladrones (Thieves' Cant)",
       nv: 1,
-      d: "Conoces la Jerga de Ladrones y otro idioma a tu elección."
+      d: "Conoces la Jerga de Ladrones y otro idioma a tu elección. [2014: no concede idioma adicional; la Jerga es un dialecto secreto que oculta mensajes en conversaciones normales (solo la entienden quienes la conocen; transmitir un mensaje lleva 4 veces más tiempo que decirlo con claridad) y además entiendes signos y símbolos secretos para mensajes cortos: zona peligrosa, territorio de un gremio de ladrones, botín cerca, gente fácil de engañar o refugio seguro]"
     },
     {
       n: "Maestría con Armas (Weapon Mastery)",
       nv: 1,
-      d: "Puedes usar las propiedades de maestría de 2 tipos de armas a tu elección; puedes cambiar uno tras un descanso largo. [Sólo 2024]"
+      d: "Puedes usar las propiedades de maestría de 2 tipos de armas a tu elección con las que tengas competencia. Cada vez que termines un Descanso Largo, puedes cambiar los tipos de armas elegidos. [Sólo 2024]"
     },
     {
       n: "Acción Astuta (Cunning Action)",
@@ -90,7 +90,7 @@ const CLASE_PICARO = {
     {
       n: "Evasión (Evasion)",
       nv: 7,
-      d: "Cuando una salvación de DES permite la mitad de daño, no sufres daño si la superas y sólo la mitad si fallas (no funciona si estás Incapacitado)."
+      d: "Cuando una salvación de DES permite la mitad de daño, no sufres daño si la superas y sólo la mitad si fallas (no funciona si estás Incapacitado). [2014: sin la restricción de Incapacitado]"
     },
     {
       n: "Talento Fiable (Reliable Talent)",
@@ -185,7 +185,7 @@ const CLASE_PICARO = {
       {
         n: "Pericia de Infiltración (Infiltration Expertise)",
         nv: 9,
-        d: "Tras 7 días y 25 po estableces una identidad falsa con historial, profesión y afiliaciones: quienes la conozcan creen que eres esa persona salvo motivo evidente."
+        d: "Puedes crear identidades falsas sin fallo. Dedica 7 días y 25 po a establecer el historial, la profesión y las afiliaciones de una identidad; no puede ser la identidad de otra persona. Después, si adoptas esa identidad como disfraz, las demás criaturas creen que eres esa persona salvo motivo evidente en contra."
       },
       {
         n: "Impostor (Impostor)",
@@ -203,7 +203,7 @@ const CLASE_PICARO = {
       {
         n: "Lanzamiento de Conjuros (Spellcasting)",
         nv: 3,
-        d: "Lanzador de un tercio con INT como característica de conjuros (CD = 8 + comp. + mod. INT); usas un foco arcano. Trucos: Mage Hand + 2 de la lista de Mago (3; 4 en Nv.10). Conjuros conocidos de la lista de Mago (3 en Nv.3, hasta 13 en Nv.20); la mayoría deben ser de encantamiento o ilusión, salvo 1 en Nv.3, 8, 14 y 20 (cualquier escuela)."
+        d: "Lanzador de un tercio con INT como característica de conjuros (CD = 8 + comp. + mod. INT). Trucos: Mage Hand + 2 de la lista de Mago (3; 4 en Nv.10). Conjuros conocidos de la lista de Mago (3 en Nv.3, hasta 13 en Nv.20); la mayoría deben ser de encantamiento o ilusión, salvo 1 en Nv.3, 8, 14 y 20 (cualquier escuela). Al subir un nivel de Pícaro puedes sustituir uno de tus conjuros de Mago conocidos por otro de la lista de Mago; el nuevo debe ser de un nivel para el que tengas espacios y de encantamiento o ilusión, salvo que sustituyas el conjuro obtenido en Nv.3, 8, 14 o 20 (cualquier escuela)."
       },
       {
         n: "Mano de Mago Prestidigitadora (Mage Hand Legerdemain)",
@@ -235,7 +235,7 @@ const CLASE_PICARO = {
       {
         n: "Maestro de la Intriga (Master of Intrigue)",
         nv: 3,
-        d: "Ganas competencia con kit de disfraz, kit de falsificación y un juego; aprendes 2 idiomas. Puedes imitar sin error el habla y acento de una criatura que hayas oído durante al menos 1 minuto."
+        d: "Ganas competencia con el kit de disfraz, el kit de falsificación y un juego a tu elección; aprendes 2 idiomas a tu elección. Además puedes imitar sin error el habla y el acento de una criatura que hayas oído hablar al menos 1 minuto, lo que te permite hacerte pasar por nativo de una tierra concreta, siempre que conozcas el idioma."
       },
       {
         n: "Maestro de Tácticas (Master of Tactics)",
@@ -257,7 +257,7 @@ const CLASE_PICARO = {
       {
         n: "Alma de Embaucador (Soul of Deceit)",
         nv: 17,
-        d: "Tus pensamientos no pueden leerse por telepatía salvo que lo permitas (el lector hace una prueba opuesta de SAB (Perspicacia) contra tu CAR (Engaño)). La magia que detecta mentiras te muestra como veraz si quieres, y no pueden obligarte a decir la verdad."
+        d: "Tus pensamientos no pueden leerse por telepatía ni por otros medios, salvo que lo permitas. Puedes mostrar pensamientos falsos si superas una prueba de CAR (Engaño) enfrentada a la de SAB (Perspicacia) de quien intenta leerte. Además, la magia que determine si dices la verdad indica que eres veraz si quieres, y no pueden obligarte por magia a decir la verdad."
       },
     ],
 
@@ -308,7 +308,7 @@ const CLASE_PICARO = {
         n: "Panache (Panache)",
         nv: 9,
         a: "A",
-        d: "Con una acción haces una prueba de CAR (Persuasión) contra su SAB (Perspicacia). Si es hostil y la superas, tiene Desventaja en ataques contra criaturas que no seas tú y no puede hacer ataques de oportunidad contra otras 1 minuto (termina si quedas Incapacitado o te alejas más de 60 pies de ella). Si no es hostil, queda hechizada 1 minuto."
+        d: "Con una acción haces una prueba de CAR (Persuasión) contra la SAB (Perspicacia) de una criatura que pueda oírte y con la que compartas idioma. Si la superas y es hostil, tiene Desventaja en las tiradas de ataque contra objetivos distintos de ti y no puede hacer ataques de oportunidad contra objetivos distintos de ti. El efecto dura 1 minuto, hasta que uno de tus compañeros ataque a la criatura o la afecte con un conjuro, o hasta que tú y ella estéis a más de 60 pies. Si la superas y no es hostil, queda hechizada por ti 1 minuto y te considera un conocido amistoso; el efecto termina de inmediato si tú o tus compañeros le hacéis algo dañino."
       },
       {
         n: "Maniobra Elegante (Elegant Maneuver)",
@@ -366,7 +366,7 @@ const CLASE_PICARO = {
       {
         n: "Susurros de los Muertos (Whispers of the Dead)",
         nv: 3,
-        d: "Cada vez que terminas un descanso corto o largo, ganas una competencia en una habilidad o herramienta a tu elección (una presencia fantasmal comparte su conocimiento); la pierdes al elegir otra."
+        d: "Cada vez que terminas un descanso corto o largo, ganas una competencia en una habilidad o herramienta que no tengas, a tu elección (una presencia fantasmal comparte su conocimiento); la pierdes al elegir otra con este rasgo."
       },
       {
         n: "Lamentos desde la Tumba (Wails from the Grave)",
@@ -377,8 +377,8 @@ const CLASE_PICARO = {
       {
         n: "Fichas de los Difuntos (Tokens of the Departed)",
         nv: 9,
-        a: "R",
-        d: "Cuando una criatura muere a 30 pies de ti, usas tu Reacción para crear una ficha de alma (máx. = bonificador de competencia). Con al menos una: Ventaja en salvaciones de muerte y de CON. Puedes destruir una para usar Lamentos desde la Tumba sin gastar uso, o para preguntar una cosa al espíritu asociado."
+        a: "AR",
+        d: "Cuando una criatura que veas a 30 pies de ti muere, usas tu Reacción para crear una ficha de alma (máx. = bonificador de competencia; no puedes crear otra estando en el máximo). Con al menos una: Ventaja en salvaciones de muerte y de CON. Puedes destruir una para usar Lamentos desde la Tumba sin gastar uso. Con una acción, puedes destruir una ficha de alma, esté donde esté, para hacer una pregunta al espíritu asociado: aparece ante ti y responde lo más brevemente posible en un idioma que conociera en vida; no está obligado a ser veraz y solo sabe lo que sabía en vida."
       },
       {
         n: "Caminar Fantasmal (Ghost Walk)",
@@ -398,7 +398,7 @@ const CLASE_PICARO = {
         n: "Poder Psiónico (Psionic Power)",
         nv: 3,
         a: "O",
-        d: "Tienes dados de energía psiónica = 2 × tu bonificador de competencia (d6; d8 en Nv.5, d10 en Nv.11, d12 en Nv.17); recuperas todos con un descanso largo, y uno como Acción Adicional (una vez por descanso corto o largo). Conocimiento Psi-Reforzado: al fallar una prueba con una competencia, tiras un dado y lo sumas (se gasta sólo si logras el éxito). Susurros Psíquicos: con una acción, telepatía con hasta tu bonificador de competencia de criaturas que veas durante horas = un dado, a 1 milla."
+        d: "Tienes dados de energía psiónica = 2 × tu bonificador de competencia (d6; d8 en Nv.5, d10 en Nv.11, d12 en Nv.17); recuperas todos con un descanso largo, y uno como Acción Adicional (una vez por descanso corto o largo). Conocimiento Psi-Reforzado: al fallar una prueba con una competencia, tiras un dado y lo sumas (se gasta sólo si logras el éxito). Susurros Psíquicos: con una acción eliges criaturas que veas (hasta tu bonificador de competencia) y tiras un dado de energía psiónica; durante tantas horas como el resultado, podéis hablar telepáticamente (sin acción) estando a 1 milla o menos; no funciona con criaturas sin idioma y cualquiera puede terminar la conexión cuando quiera. La primera vez que lo usas tras cada descanso largo no gastas el dado; las demás veces sí."
       },
       {
         n: "Cuchillas Psíquicas (Psychic Blades)",
@@ -449,7 +449,7 @@ const CLASE_PICARO = {
       {
         n: "Usar Dispositivos Mágicos (Use Magic Device)",
         nv: 13,
-        d: "Puedes sintonizar con hasta 4 objetos mágicos. Al usar un objeto con cargas, tiras 1d6: con un 6 no gastas cargas. Puedes usar cualquier Pergamino de Conjuro con INT como característica de lanzamiento: los trucos y conjuros de Nv.1 funcionan; los de nivel superior requieren una prueba de INT (Arcanos) CD 10 + nivel del conjuro."
+        d: "Puedes sintonizar con hasta 4 objetos mágicos. Al usar un objeto con cargas, tiras 1d6: con un 6 no gastas cargas. Puedes usar cualquier Pergamino de Conjuro con INT como característica de lanzamiento: con un truco o un conjuro de Nv.1 lo lanzas sin fallo; si contiene un conjuro de nivel superior, antes debes superar una prueba de INT (Arcanos) CD 10 + nivel del conjuro: si la superas, lanzas el conjuro del pergamino; si fallas, el pergamino se desintegra."
       },
       {
         n: "Reflejos del Ladrón (Thief's Reflexes)",
@@ -467,7 +467,7 @@ const CLASE_PICARO = {
       {
         n: "Herramientas de Asesino (Assassin's Tools)",
         nv: 3,
-        d: "Ganas competencia con el kit de disfraz y el kit de envenenador."
+        d: "Ganas un kit de disfraz y un kit de envenenador, y tienes competencia con ellos."
       },
       {
         n: "Pericia de Infiltración (Infiltration Expertise)",
@@ -501,7 +501,7 @@ const CLASE_PICARO = {
       {
         n: "Emboscada Mágica (Magical Ambush)",
         nv: 9,
-        d: "Si tienes la condición Invisible cuando lanzas un conjuro sobre una criatura, esta tiene Desventaja en cualquier salvación contra él."
+        d: "Si tienes la condición Invisible cuando lanzas un conjuro sobre una criatura, esta tiene Desventaja en cualquier salvación contra él durante ese mismo turno."
       },
       {
         n: "Embaucador Versátil (Versatile Trickster)",
@@ -512,7 +512,7 @@ const CLASE_PICARO = {
         n: "Ladrón de Conjuros (Spell Thief)",
         nv: 17,
         a: "R",
-        d: "Después de que una criatura lance un conjuro que te tenga como objetivo o te incluya, usas tu Reacción: salvación de INT de la criatura (CD de tus conjuros); si falla, el efecto del conjuro se anula para ti y, si es de Nv.1+ y puedes lanzarlo, lo robas: durante 8 horas lo tienes preparado. Una vez por descanso largo."
+        d: "Después de que una criatura lance un conjuro que te tenga como objetivo o te incluya, usas tu Reacción: salvación de INT de la criatura (CD de tus conjuros); si falla, el efecto del conjuro se anula para ti y, si es de Nv.1+ y puedes lanzarlo, lo robas: durante 8 horas lo tienes preparado y la criatura no puede lanzarlo hasta que pasen esas 8 horas. Una vez que robas un conjuro con este rasgo, no puedes volver a usarlo hasta terminar un Descanso Largo. [2014: el límite se aplica en cuanto usas el rasgo, robes o no el conjuro]"
       },
     ],
 
@@ -521,7 +521,7 @@ const CLASE_PICARO = {
         n: "Poder Psiónico (Psionic Power)",
         nv: 3,
         a: "O",
-        d: "Tienes dados de energía psiónica: 4d6 (Nv.3), 6d8 (Nv.5), 8d8 (Nv.9), 8d10 (Nv.11), 10d10 (Nv.13), 12d12 (Nv.17); recuperas 1 con un descanso corto y todos con uno largo. Conocimiento Psi-Reforzado: al fallar una prueba con una competencia, tiras un dado y lo sumas (se gasta sólo si logras el éxito). Susurros Psíquicos: con una acción Mágica, telepatía con criaturas que veas (hasta tu bonificador de competencia) durante horas = un dado, a 1 milla."
+        d: "Tienes dados de energía psiónica: 4d6 (Nv.3), 6d8 (Nv.5), 8d8 (Nv.9), 8d10 (Nv.11), 10d10 (Nv.13), 12d12 (Nv.17); recuperas 1 con un descanso corto y todos con uno largo. Conocimiento Psi-Reforzado: al fallar una prueba con una competencia, tiras un dado y lo sumas (se gasta sólo si logras el éxito). Susurros Psíquicos: con una acción Mágica eliges criaturas que veas (hasta tu bonificador de competencia) y tiras un dado de energía psiónica; durante tantas horas como el resultado, podéis hablar telepáticamente (sin acción) estando a 1 milla o menos; cualquiera puede terminar la conexión cuando quiera. La primera vez que lo usas tras cada Descanso Largo no gastas el dado; las demás veces sí."
       },
       {
         n: "Cuchillas Psíquicas (Psychic Blades)",
@@ -545,7 +545,7 @@ const CLASE_PICARO = {
         n: "Rasgar la Mente (Rend Mind)",
         nv: 17,
         a: "O",
-        d: "Al infligir Ataque Furtivo, fuerzas una salvación de SAB (CD 8 + mod. DES + comp.): si falla queda Aturdida 1 minuto (repite al final de sus turnos). Una vez por descanso largo, o gastando 3 dados de energía psiónica."
+        d: "Al infligir Ataque Furtivo con tus cuchillas psíquicas, puedes forzar a ese objetivo a una salvación de SAB (CD 8 + mod. DES + comp.): si falla queda Aturdida 1 minuto (repite la salvación al final de sus turnos). Una vez por descanso largo, o gastando 3 dados de energía psiónica."
       },
     ],
 
@@ -566,13 +566,13 @@ const CLASE_PICARO = {
       {
         n: "Fichas de los Difuntos (Tokens of the Departed)",
         nv: 9,
-        a: "R",
-        d: "Tienes 2 fichas de alma (objetos Diminutos; se teletransportan a ti si se alejan más de 30 pies; hasta 3 en Nv.13 y 4 en Nv.17). Destruyendo una al infligir Ataque Furtivo usas Lamentos sin gastar uso. Con al menos una: Ventaja en salvaciones de muerte y de CON. Destruyendo una con una acción Mágica lanzas Augury o interrogas al espíritu asociado. Cuando una criatura muere a 30 pies, ganas una ficha con tu Reacción."
+        a: "AR",
+        d: "Tienes 2 fichas de alma (objetos Diminutos; se teletransportan a ti si se alejan más de 30 pies; hasta 3 en Nv.13 y 4 en Nv.17). Destruyendo una al infligir Ataque Furtivo usas Lamentos sin gastar uso. Con al menos una: Ventaja en salvaciones de muerte y de CON. Consulta al Espíritu: con una acción Mágica destruyes una ficha de alma y lanzas Augury de inmediato, sin componentes y usando CON como modificador de lanzamiento. Si conoces a la criatura asociada a la ficha, en lugar de lanzar el conjuro puedes hacerle una pregunta a su espíritu: aparece ante ti y responde lo más brevemente posible en un idioma que conociera en vida. Cuando una criatura que veas a 30 pies de ti muere, puedes usar tu Reacción para ganar otra ficha de alma. Si ganas una ficha de alma estando en tu máximo, una de tus fichas se destruye de inmediato y es sustituida por la nueva. Cada vez que terminas un Descanso Largo con menos de dos fichas de alma, ganas fichas hasta tener dos."
       },
       {
         n: "Voz de la Muerte (Voice of Death)",
         nv: 9,
-        d: "Una vez por descanso corto o largo puedes lanzar Speak with Dead sin espacio, usando tus fichas de alma en lugar de un cadáver."
+        d: "Una vez por Descanso Corto o Largo puedes lanzar Speak with Dead sin espacio de conjuro, sin componentes y usando DES como modificador de lanzamiento. Al lanzarlo, puedes elegir como objetivo una de tus fichas de alma en lugar de un cadáver, y el espíritu asociado puede responder."
       },
       {
         n: "Caminar Fantasmal (Ghost Walk)",

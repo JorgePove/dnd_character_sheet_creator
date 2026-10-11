@@ -39,7 +39,7 @@ const CLASE_BARBARO = {
       n: "Furia (Rage)",
       nv: 1,
       a: "B",
-      d: "Como Acción Adicional entras en Furia (no puedes si llevas armadura pesada). Usos: 2 (3 en Nv.3, 4 en Nv.6, 5 en Nv.12, 6 en Nv.17); recuperas 1 uso con un descanso corto y todos con uno largo. Mientras dura: resistencia al daño contundente, perforante y cortante; daño adicional de Furia (+2; +3 en Nv.9; +4 en Nv.16) en ataques con FUE (armas o desarmados); ventaja en pruebas y salvaciones de FUE; no puedes mantener concentración ni lanzar conjuros. Dura hasta el final de tu siguiente turno y termina antes si te pones armadura pesada o quedas Incapacitado. Para prolongarla al turno siguiente debes: hacer una tirada de ataque contra un enemigo, obligar a un enemigo a hacer una salvación, o usar una Acción Adicional. Máximo 10 minutos. [2014: dura 1 minuto y termina si te quedas inconsciente o si al acabar tu turno no has atacado ni recibido daño desde el anterior; la bonificación de daño sólo vale para ataques cuerpo a cuerpo con FUE; usos ilimitados en Nv.20]"
+      d: "Como Acción Adicional entras en Furia (no puedes si llevas armadura pesada). Usos: 2 (3 en Nv.3, 4 en Nv.6, 5 en Nv.12, 6 en Nv.17); recuperas 1 uso con un descanso corto y todos con uno largo. Mientras dura: resistencia al daño contundente, perforante y cortante; daño adicional de Furia (+2; +3 en Nv.9; +4 en Nv.16) en ataques con FUE (armas o desarmados); ventaja en pruebas y salvaciones de FUE; no puedes mantener concentración ni lanzar conjuros. Dura hasta el final de tu siguiente turno y termina antes si te pones armadura pesada o quedas Incapacitado. Para prolongarla al turno siguiente debes: hacer una tirada de ataque contra un enemigo, obligar a un enemigo a hacer una salvación, o usar una Acción Adicional. Máximo 10 minutos. [2014: dura 1 minuto y termina si te quedas inconsciente o si al acabar tu turno no has atacado ni recibido daño desde el anterior; puedes entrar en Furia con armadura pesada, pero no obtienes sus beneficios mientras la lleves; la bonificación de daño sólo vale para ataques cuerpo a cuerpo con FUE; los usos sólo se recuperan con un descanso largo (no hay recuperación con descanso corto); usos ilimitados en Nv.20]"
     },
     {
       n: "Defensa sin Armadura",
@@ -108,7 +108,7 @@ const CLASE_BARBARO = {
       n: "Furia Implacable (Relentless Rage)",
       nv: 11,
       a: "O",
-      d: "Si caes a 0 PG con la Furia activa y no mueres directamente, puedes hacer una salvación de CON CD 10; si la superas, tus PG pasan a ser el doble de tu nivel de Bárbaro. Cada vez que lo usas después de la primera, la CD sube 5; con un descanso corto o largo vuelve a 10. [2014: recuperas PG = tu nivel de Bárbaro]"
+      d: "Si caes a 0 PG con la Furia activa y no mueres directamente, puedes hacer una salvación de CON CD 10; si la superas, tus PG pasan a ser el doble de tu nivel de Bárbaro. Cada vez que lo usas después de la primera, la CD sube 5; con un descanso corto o largo vuelve a 10. [2014: tus PG pasan a ser 1]"
     },
     {
       n: "Golpe Brutal Mejorado (Improved Brutal Strike)",
@@ -120,7 +120,7 @@ const CLASE_BARBARO = {
       n: "Furia Persistente (Persistent Rage)",
       nv: 15,
       a: "O",
-      d: "Cuando tiras Iniciativa puedes recuperar todos los usos gastados de Furia (una vez; no puedes volver a hacerlo hasta un descanso largo). Además tu Furia dura 10 minutos sin necesidad de prolongarla; sólo termina antes si quedas Inconsciente o te pones armadura pesada (o si decides terminarla). [2014: sólo termina si caes inconsciente o decides terminarla; sin recuperación de usos]"
+      d: "Cuando tiras Iniciativa puedes recuperar todos los usos gastados de Furia (una vez; no puedes volver a hacerlo hasta un descanso largo). Además tu Furia dura 10 minutos sin necesidad de prolongarla; sólo termina antes si quedas Inconsciente o te pones armadura pesada. [2014: sólo termina si caes inconsciente o decides terminarla; sin recuperación de usos]"
     },
     {
       n: "Golpe Brutal Mejorado (Nv.17)",
@@ -130,7 +130,7 @@ const CLASE_BARBARO = {
     {
       n: "Poder Indomable (Indomitable Might)",
       nv: 18,
-      d: "Si tu total en una prueba o salvación de FUE es menor que tu puntuación de FUE, puedes usar tu puntuación en su lugar."
+      d: "Si tu total en una prueba o salvación de FUE es menor que tu puntuación de FUE, puedes usar tu puntuación en su lugar. [2014: sólo en pruebas de FUE, no en salvaciones]"
     },
     {
       n: "Don Épico (Epic Boon)",
@@ -186,12 +186,12 @@ const CLASE_BARBARO = {
         n: "Espíritu Tótem (Totem Spirit)",
         nv: 3,
         a: "B",
-        d: "Eliges un espíritu tótem y obtienes su rasgo mientras estás en Furia. Oso: resistencia a todo el daño salvo psíquico. Águila (sin armadura pesada): las criaturas tienen desventaja en ataques de oportunidad contra ti y puedes usar Correr como Acción Adicional. Lobo: tus aliados tienen ventaja en ataques cuerpo a cuerpo contra criaturas hostiles a 5 pies de ti. Alce (XGtE; sin armadura pesada): +15 pies a tu Velocidad. Tigre (XGtE): +10 pies a tu salto de longitud y +3 a tu salto de altura."
+        d: "Eliges un espíritu tótem y obtienes su rasgo mientras estás en Furia. Oso: resistencia a todo el daño salvo psíquico. Águila (sin armadura pesada): las criaturas tienen desventaja en ataques de oportunidad contra ti y puedes usar Correr como Acción Adicional. Lobo: tus aliados tienen ventaja en ataques cuerpo a cuerpo contra criaturas hostiles a 5 pies de ti. Alce (SCAG; sin armadura pesada): +15 pies a tu Velocidad. Tigre (SCAG): +10 pies a tu salto de longitud y +3 a tu salto de altura."
       },
       {
         n: "Aspecto de la Bestia (Aspect of the Beast)",
         nv: 6,
-        d: "Ganas un beneficio mágico según un tótem (puede ser distinto). Oso: capacidad de carga doble y ventaja en pruebas de FUE para empujar, tirar, levantar o romper. Águila: ves hasta 1 milla con gran detalle y la luz tenue no te da desventaja en Percepción. Lobo: rastreas a ritmo rápido y te mueves sigilosamente a ritmo normal. Alce (XGtE): tu ritmo de viaje (y el de hasta 10 compañeros a 60 pies) se duplica. Tigre (XGtE): competencia en 2 entre Atletismo, Acrobacias, Sigilo y Supervivencia."
+        d: "Ganas un beneficio mágico según un tótem (puede ser distinto). Oso: capacidad de carga doble y ventaja en pruebas de FUE para empujar, tirar, levantar o romper. Águila: ves hasta 1 milla con gran detalle y la luz tenue no te da desventaja en Percepción. Lobo: rastreas a ritmo rápido y te mueves sigilosamente a ritmo normal. Alce (SCAG): tu ritmo de viaje (y el de hasta 10 compañeros a 60 pies) se duplica. Tigre (SCAG): competencia en 2 entre Atletismo, Acrobacias, Sigilo y Supervivencia."
       },
       {
         n: "Caminante Espiritual (Spirit Walker)",
@@ -203,7 +203,7 @@ const CLASE_BARBARO = {
         n: "Sintonía Totémica (Totemic Attunement)",
         nv: 14,
         a: "B",
-        d: "Ganas un beneficio mágico según un tótem (puede ser distinto) mientras estás en Furia. Oso: las criaturas hostiles a 5 pies tienen desventaja en ataques contra otros objetivos que no seas tú (u otro con este rasgo). Águila: Velocidad de vuelo = tu Velocidad (caes si terminas el turno en el aire). Lobo: como Acción Adicional derribas a una criatura Grande o menor al impactarla con un ataque cuerpo a cuerpo. Alce (XGtE): como Acción Adicional durante tu movimiento atraviesas el espacio de una criatura Grande o menor (salvación FUE CD 8 + FUE + comp.; si falla cae Tumbada y sufre 1d12 + mod. FUE contundente). Tigre (XGtE): si te mueves 20 pies en línea recta hacia un objetivo Grande o menor justo antes de atacarlo cuerpo a cuerpo, haces un ataque adicional como Acción Adicional."
+        d: "Ganas un beneficio mágico según un tótem (puede ser distinto) mientras estás en Furia. Oso: las criaturas hostiles a 5 pies tienen desventaja en ataques contra otros objetivos que no seas tú (u otro con este rasgo); un enemigo es inmune a este efecto si no puede verte ni oírte o si no puede ser Asustado. Águila: Velocidad de vuelo = tu Velocidad (caes si terminas el turno en el aire). Lobo: como Acción Adicional derribas a una criatura Grande o menor al impactarla con un ataque cuerpo a cuerpo. Alce (SCAG): como Acción Adicional durante tu movimiento atraviesas el espacio de una criatura Grande o menor (salvación FUE CD 8 + FUE + comp.; si falla cae Tumbada y sufre 1d12 + mod. FUE contundente). Tigre (SCAG): si te mueves 20 pies en línea recta hacia un objetivo Grande o menor justo antes de atacarlo cuerpo a cuerpo, haces un ataque adicional como Acción Adicional."
       },
     ],
 
@@ -318,7 +318,7 @@ const CLASE_BARBARO = {
         n: "Furia de los Dioses (Rage of the Gods)",
         nv: 14,
         a: "OR",
-        d: "Al activar la Furia puedes adoptar una forma divina durante 1 minuto o hasta quedar Incapacitado o morir (una vez por descanso largo). Mientras tanto: Velocidad de vuelo = tu Velocidad (flotas); resistencia al daño Necrótico, Psíquico y Radiante; Revivificación: cuando una criatura a 30 pies fuese a caer a 0 PG, puedes usar tu reacción y gastar un uso de Furia para que sus PG pasen a ser igual a tu nivel de Bárbaro."
+        d: "Al activar la Furia puedes adoptar una forma divina durante 1 minuto o hasta que caigas a 0 PG (una vez por descanso largo). Mientras tanto: Velocidad de vuelo = tu Velocidad (flotas); resistencia al daño Necrótico, Psíquico y Radiante; Revivificación: cuando una criatura a 30 pies fuese a caer a 0 PG, puedes usar tu reacción y gastar un uso de Furia para que sus PG pasen a ser igual a tu nivel de Bárbaro."
       },
     ],
 
@@ -328,7 +328,7 @@ const CLASE_BARBARO = {
       {
         n: "Protectores Ancestrales (Ancestral Protectors)",
         nv: 3,
-        d: "Aparecen guerreros espectrales al entrar en Furia. La primera criatura que golpees en tu turno durante la Furia queda marcada: hasta el inicio de tu siguiente turno tiene desventaja en tiradas de ataque que no sean contra ti, y cuando impacta a otra criatura distinta de ti, esa criatura tiene resistencia al daño de ese ataque."
+        d: "Aparecen guerreros espectrales al entrar en Furia. La primera criatura que golpees en tu turno durante la Furia queda marcada: hasta el inicio de tu siguiente turno tiene desventaja en tiradas de ataque que no sean contra ti, y cuando impacta a otra criatura distinta de ti, esa criatura tiene resistencia al daño de ese ataque. El efecto termina antes si termina tu Furia."
       },
       {
         n: "Escudo Espiritual (Spirit Shield)",
@@ -359,7 +359,7 @@ const CLASE_BARBARO = {
       {
         n: "Alma de la Tormenta (Storm Soul)",
         nv: 6,
-        d: "Beneficio permanente según tu entorno. Desierto: resistencia al fuego, inmunidad al calor extremo y puedes prender como acción un objeto inflamable no llevado por nadie. Mar: resistencia al rayo, respiras bajo el agua y Velocidad de nadar 30 pies. Tundra: resistencia al frío, inmunidad al frío extremo y puedes convertir como acción un cubo de agua de 5 pies en hielo (se derrite en 1 minuto)."
+        d: "Beneficio permanente según tu entorno. Desierto: resistencia al fuego, inmunidad al calor extremo y puedes tocar un objeto inflamable que nadie más lleve puesto o en la mano y prenderlo como acción. Mar: resistencia al rayo, respiras bajo el agua y Velocidad de nadar 30 pies. Tundra: resistencia al frío, inmunidad al frío extremo y puedes tocar agua y convertir como acción un cubo de 5 pies de ella en hielo (se derrite en 1 minuto; la acción falla si hay una criatura en el cubo)."
       },
       {
         n: "Tormenta Protectora (Shielding Storm)",
@@ -370,7 +370,7 @@ const CLASE_BARBARO = {
         n: "Tormenta Furiosa (Raging Storm)",
         nv: 14,
         a: "R",
-        d: "Según tu entorno. Desierto: cuando una criatura de tu aura te impacta con un ataque, puedes usar tu reacción para forzarla a una salvación de DES; si falla, sufre daño de fuego = mitad de tu nivel de Bárbaro. Mar: cuando impactas a una criatura de tu aura, puedes usar tu reacción para forzarla a una salvación de FUE; si falla, cae Tumbada. Tundra: cuando tu aura da PG temporales a una criatura, puedes obligarla a una salvación de FUE; si falla, su Velocidad pasa a 0 hasta el inicio de tu siguiente turno."
+        d: "Según tu entorno. Desierto: cuando una criatura de tu aura te impacta con un ataque, puedes usar tu reacción para forzarla a una salvación de DES; si falla, sufre daño de fuego = mitad de tu nivel de Bárbaro. Mar: cuando impactas a una criatura de tu aura, puedes usar tu reacción para forzarla a una salvación de FUE; si falla, cae Tumbada. Tundra: cada vez que se activa el efecto de tu Aura de Tormenta, puedes elegir a una criatura que veas en el aura; debe superar una salvación de FUE o su Velocidad pasa a 0 hasta el inicio de tu siguiente turno."
       },
     ],
 
@@ -411,7 +411,7 @@ const CLASE_BARBARO = {
         n: "Armadura de Rabioso (Battlerager Armor)",
         nv: 3,
         a: "B",
-        d: "Camino Battlerager: sólo los enanos pueden seguirlo. Mientras vistas armadura de pinchos y estés en Furia, puedes usar una Acción Adicional para atacar cuerpo a cuerpo con los pinchos a un objetivo a 5 pies (usa FUE); si impacta, inflige 1d4 perforante. Además, cuando usas la acción de Atacar para agarrar a una criatura y lo consigues, el objetivo sufre 3 de daño perforante."
+        d: "Camino del Rabioso (Battlerager): sólo los enanos pueden seguirlo (tu DM puede levantar la restricción). Mientras vistas armadura de pinchos y estés en Furia, puedes usar una Acción Adicional para atacar cuerpo a cuerpo con los pinchos a un objetivo a 5 pies (usa FUE); si impacta, inflige 1d4 perforante. Además, cuando usas la acción de Atacar para agarrar a una criatura y lo consigues, el objetivo sufre 3 de daño perforante."
       },
       {
         n: "Abandono Imprudente (Reckless Abandon)",
@@ -438,12 +438,12 @@ const CLASE_BARBARO = {
         n: "Forma de la Bestia (Form of the Beast)",
         nv: 3,
         a: "OR",
-        d: "Al entrar en Furia puedes manifestar un arma natural (eliges cada vez). Mordisco: 1d8 perforante; una vez por turno, al dañar a una criatura recuperas PG = comp. si tienes menos de la mitad de tus PG máximos. Garras: 1d6 cortante; una vez por turno al atacar con garra con la acción de Atacar haces un ataque adicional con ella. Cola: 1d8 perforante con alcance; cuando una criatura a 10 pies te impacta con un ataque puedes usar tu reacción para tirar 1d8 y sumarlo a tu CA, quizá haciéndole fallar."
+        d: "Al entrar en Furia puedes transformarte y manifestar un arma natural hasta que termine la Furia (eliges la forma cada vez). Cuenta como arma simple cuerpo a cuerpo para ti y sumas tu mod. FUE a las tiradas de ataque y daño. Mordisco: 1d8 perforante; una vez por turno, al dañar a una criatura recuperas PG = comp. si tienes menos de la mitad de tus PG máximos. Garras: 1d6 cortante (cada mano es una garra que puedes usar como arma si está vacía); una vez por turno al atacar con garra con la acción de Atacar haces un ataque adicional con ella. Cola: 1d8 perforante con alcance; cuando una criatura que veas a 10 pies te impacta con un ataque puedes usar tu reacción para tirar 1d8 y sumarlo a tu CA, quizá haciéndole fallar."
       },
       {
         n: "Alma Bestial (Bestial Soul)",
         nv: 6,
-        d: "Tus armas naturales de Forma de la Bestia cuentan como mágicas. Tras un descanso corto o largo eliges un beneficio hasta el siguiente descanso: Nadar (Velocidad de nadar = tu Velocidad y respiras bajo el agua); Trepar (Velocidad de trepar = tu Velocidad, incluso por techos); Saltar (al saltar sumas el resultado de una prueba de Atletismo a la distancia)."
+        d: "Tus armas naturales de Forma de la Bestia cuentan como mágicas. Tras un descanso corto o largo eliges un beneficio hasta el siguiente descanso: Nadar (Velocidad de nadar = tu Velocidad y respiras bajo el agua); Trepar (Velocidad de trepar = tu Velocidad, incluso por techos); Saltar (al saltar puedes hacer una prueba de Fuerza (Atletismo) y sumar su total a la distancia; sólo una vez por turno)."
       },
       {
         n: "Furia Infecciosa (Infectious Fury)",
@@ -470,13 +470,13 @@ const CLASE_BARBARO = {
         n: "Oleada Salvaje (Wild Surge)",
         nv: 3,
         a: "O",
-        d: "Al entrar en Furia tiras 1d8 en la tabla de Magia Salvaje (CD = 8 + comp. + mod. CON): 1 Tentáculos de sombra (salvación CON a criaturas a 30 pies o 1d12 necrótico; ganas 1d12 PG temporales). 2 Teletransporte hasta 30 pies (repetible como Acción Adicional). 3 Espíritu intangible que explota (salvación DES o 1d6 fuerza a 5 pies; repetible como Acción Adicional). 4 Un arma pasa a daño de fuerza con propiedades ligera y arrojadiza (20/60) y vuelve a tu mano. 5 Quien te impacta sufre 1d6 de fuerza. 6 +1 CA para ti y aliados a 10 pies. 7 Terreno difícil para tus enemigos a 15 pies. 8 Rayo de luz (salvación CON o 1d6 radiante y Cegado; repetible como Acción Adicional)."
+        d: "Al entrar en Furia tiras 1d8 en la tabla de Magia Salvaje (CD = 8 + comp. + mod. CON): 1 Tentáculos de sombra (salvación CON a criaturas a 30 pies o 1d12 necrótico; ganas 1d12 PG temporales). 2 Teletransporte hasta 30 pies (repetible como Acción Adicional). 3 Espíritu intangible que aparece a 5 pies de una criatura que veas a 30 pies y explota al final del turno (salvación DES o 1d6 fuerza a las criaturas a 5 pies de él; repetible como Acción Adicional). 4 Un arma que sostienes pasa a daño de fuerza con propiedades ligera y arrojadiza (20/60); si sale de tu mano, reaparece en ella al final del turno actual. 5 Quien te impacta sufre 1d6 de fuerza. 6 +1 CA para ti y aliados a 10 pies. 7 Terreno difícil para tus enemigos a 15 pies. 8 Rayo de luz contra otra criatura que veas a 30 pies (salvación CON o 1d6 radiante y Cegado hasta el inicio de tu siguiente turno; repetible como Acción Adicional)."
       },
       {
         n: "Magia Reforzante (Bolstering Magic)",
         nv: 6,
         a: "A",
-        d: "Con una acción tocas a otra criatura para darle uno de estos beneficios: durante 10 minutos suma 1d3 a sus tiradas de ataque y pruebas de característica; o recupera un espacio de conjuro gastado de nivel igual o inferior a 1d3 (mínimo nivel 1). Una criatura no puede recibir de nuevo un beneficio hasta un descanso largo. Usos = comp.; se recuperan con un descanso largo."
+        d: "Con una acción tocas a una criatura (puede ser tú) para darle uno de estos beneficios: durante 10 minutos suma 1d3 a sus tiradas de ataque y pruebas de característica; o recupera un espacio de conjuro gastado de nivel igual o inferior a 1d3 (a su elección; mínimo nivel 1). Una criatura que recibe el espacio de conjuro no puede recibirlo de nuevo hasta un descanso largo. Usos = comp.; se recuperan con un descanso largo."
       },
       {
         n: "Reacción Inestable (Unstable Backlash)",
@@ -508,13 +508,13 @@ const CLASE_BARBARO = {
         n: "Cuchilla Elemental (Elemental Cleaver)",
         nv: 6,
         a: "B",
-        d: "Al entrar en Furia infundes un arma que sostengas con ácido, frío, fuego, trueno o rayo: cambia su tipo de daño, inflige 1d6 adicional de ese tipo y gana la propiedad arrojadiza (20/60 pies); si la lanzas, vuelve a tu mano tras impactar o fallar. Mientras estás en Furia puedes cambiar el tipo de daño como Acción Adicional."
+        d: "Al entrar en Furia infundes un arma que sostengas con ácido, frío, fuego, trueno o rayo: mientras la empuñes en Furia, cambia su tipo de daño, inflige 1d6 adicional de ese tipo y gana la propiedad arrojadiza (20/60 pies); si la lanzas, vuelve a tu mano tras impactar o fallar. Mientras estás en Furia y sostienes el arma puedes cambiar su tipo de daño como Acción Adicional. Los beneficios del arma se suprimen mientras otra criatura la empuñe."
       },
       {
         n: "Impulso Poderoso (Mighty Impel)",
         nv: 10,
         a: "B",
-        d: "Como Acción Adicional en Furia, mueves a una criatura Mediana o menor a tu alcance a un espacio libre que veas a 30 pies. Una criatura involuntaria debe superar una salvación de FUE (CD 8 + comp. + mod. FUE). Si acaba en el aire, cae con normalidad."
+        d: "Como Acción Adicional en Furia, mueves a una criatura Mediana o menor a tu alcance a un espacio libre que veas a 30 pies. Una criatura involuntaria debe superar una salvación de FUE (CD 8 + comp. + mod. FUE). Si al final del movimiento no está sobre una superficie o líquido que la sostenga, cae, sufre el daño normal por caída y queda Tumbada."
       },
       {
         n: "Coloso Demiurgo (Demiurgic Colossus)",

@@ -41,18 +41,23 @@ const CLASE_BRUJO = {
     {
       n: "Magia de Pacto (Pact Magic)",
       nv: 1,
-      d: "CAR es tu característica de conjuros (CD = 8 + comp. + mod. CAR). Puedes usar un foco arcano. Trucos: 2 (3 en Nv.4, 4 en Nv.10). Conjuros preparados: 2 en Nv.1 (3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15 en Nv.2-20); cambias uno al subir de nivel. Espacios de Pacto, todos del mismo nivel: Nv.1: 1 de nv.1; Nv.2: 2 de nv.1; Nv.3: 2 de nv.2; Nv.5: 2 de nv.3; Nv.7: 2 de nv.4; Nv.9: 2 de nv.5; Nv.11: 3 de nv.5; Nv.17: 4 de nv.5. Recuperas todos con un descanso corto o largo. [2014: conoces conjuros en lugar de prepararlos]"
+      d: "CAR es tu característica de conjuros (CD = 8 + comp. + mod. CAR). Puedes usar un foco arcano. Trucos: 2 (3 en Nv.4, 4 en Nv.10); al subir de nivel de Brujo puedes cambiar un truco por otro truco de Brujo. Conjuros preparados: 2 en Nv.1 (3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15 en Nv.2-20); cambias uno al subir de nivel. Espacios de Pacto, todos del mismo nivel: Nv.1: 1 de nv.1; Nv.2: 2 de nv.1; Nv.3: 2 de nv.2; Nv.5: 2 de nv.3; Nv.7: 2 de nv.4; Nv.9: 2 de nv.5; Nv.11: 3 de nv.5; Nv.17: 4 de nv.5. Recuperas todos con un descanso corto o largo. [2014: conoces conjuros en lugar de prepararlos; los trucos solo se pueden cambiar con el rasgo opcional Versatilidad Sobrenatural de TCE]"
     },
     {
       n: "Invocaciones Sobrenaturales (Eldritch Invocations)",
       nv: 1,
-      d: "Ganas 1 invocación en Nv.1 (3 en Nv.2, 5 en Nv.5, 6 en Nv.7, 7 en Nv.9, 8 en Nv.12, 9 en Nv.15, 10 en Nv.18); cada una puede tener requisitos (nivel, truco, Pacto…). Al subir de nivel de Brujo puedes cambiar una por otra para la que cumplas requisitos (no una que sea requisito de otra). Algunas de 2024: Pacto de la Hoja / de la Cadena / del Tomo, Explosión Agónica (Agonizing Blast: sumas CAR al daño de un truco), Armadura de Sombras (Armor of Shadows), Visión del Diablo (Devil's Sight), Mente Sobrenatural (Eldritch Mind: ventaja en salvaciones de CON para concentración), Lanza Sobrenatural (Eldritch Spear), Vigor Infernal (Fiendish Vigor), Mirada de Dos Mentes (Gaze of Two Minds), Lecciones de los Primeros (Lessons of the First Ones: una dote de Origen), Máscara de Mil Rostros (Mask of Many Faces), Visiones Brumosas (Misty Visions), Salto Sobrenatural (Otherworldly Leap), Explosión Repelente (Repelling Blast), Susurros de la Tumba (Whispers of the Grave), Visión de la Bruja (Witch Sight). [2014: Nv.2 con 2 invocaciones (3 en Nv.5, 4 en Nv.7, 5 en Nv.9, 6 en Nv.12, 7 en Nv.15, 8 en Nv.18); puedes cambiar una al subir de nivel]"
+      d: "Ganas 1 invocación en Nv.1 (3 en Nv.2, 5 en Nv.5, 6 en Nv.7, 7 en Nv.9, 8 en Nv.12, 9 en Nv.15, 10 en Nv.18); cada una puede tener requisitos (nivel, truco, Pacto…). Al subir de nivel de Brujo puedes cambiar una por otra para la que cumplas requisitos (no una que sea requisito de otra). No puedes elegir la misma invocación más de una vez salvo que sea Repetible (Explosión Agónica, Lanza Sobrenatural, Explosión Repelente y Lecciones de los Primeros: cada vez con un truco o una dote de Origen distintos). Opciones de 2024: Pacto de la Hoja / de la Cadena / del Tomo, Explosión Agónica (Agonizing Blast: sumas CAR al daño de un truco), Armadura de Sombras (Armor of Shadows), Visión del Diablo (Devil's Sight), Mente Sobrenatural (Eldritch Mind: ventaja en salvaciones de CON para concentración), Lanza Sobrenatural (Eldritch Spear), Vigor Infernal (Fiendish Vigor), Mirada de Dos Mentes (Gaze of Two Minds), Lecciones de los Primeros (Lessons of the First Ones: una dote de Origen), Máscara de Mil Rostros (Mask of Many Faces), Visiones Brumosas (Misty Visions), Salto Sobrenatural (Otherworldly Leap), Explosión Repelente (Repelling Blast), Susurros de la Tumba (Whispers of the Grave), Visión de la Bruja (Witch Sight), Paso Ascendente (Ascendant Step: lanzas Levitate sobre ti sin gastar espacio; Nv.5+), Hoja Sedienta (Thirsting Blade: Ataque Extra solo con tu arma de pacto, atacas dos veces en vez de una; Nv.5+, Pacto de la Hoja), Hoja Devoradora (Devouring Blade: la Hoja Sedienta concede dos ataques extra en vez de uno; Nv.12+, requiere Hoja Sedienta), Castigo Sobrenatural (Eldritch Smite: una vez por turno, al impactar con tu arma de pacto, gastas un espacio de Pacto para infligir 1d8 de fuerza adicional más 1d8 por nivel del espacio y puedes dejar Tumbado a un objetivo Enorme o menor; Nv.5+, Pacto de la Hoja), Sorbevidas (Lifedrinker: una vez por turno, al impactar con tu arma de pacto, +1d6 necrótico, psíquico o radiante y puedes gastar un Dado de Golpe para recuperar PG = su tirada + mod. CON (mín. 1); Nv.9+, Pacto de la Hoja), Don de las Profundidades (Gift of the Depths: respiras bajo el agua, Velocidad de nadar = tu Velocidad y lanzas Water Breathing una vez por descanso largo sin gastar espacio; Nv.5+), Don de los Protectores (Gift of the Protectors: página del Libro de las Sombras con tantos nombres como tu mod. CAR (mín. 1), que una criatura escribe con su permiso; si una criatura anotada cae a 0 PG sin morir, queda a 1 PG, una vez por descanso largo; Nv.9+, Pacto del Tomo), Inversión del Maestro de la Cadena (Investment of the Chain Master: tu familiar de Find Familiar gana Velocidad de vuelo o de nadar de 40 pies, ataca con tu Acción Adicional, puede infligir daño necrótico o radiante en vez del normal, usa tu CD y puedes darle resistencia a un daño con tu reacción; Nv.5+, Pacto de la Cadena), Maestro de Mil Formas (Master of Myriad Forms: lanzas Alter Self sin gastar espacio; Nv.5+), Uno con las Sombras (One with Shadows: en Luz Tenue u Oscuridad lanzas Invisibility sobre ti sin gastar espacio; Nv.5+), Visiones de Reinos Lejanos (Visions of Distant Realms: lanzas Arcane Eye sin gastar espacio; Nv.9+). [2014: Nv.2 con 2 invocaciones (3 en Nv.5, 4 en Nv.7, 5 en Nv.9, 6 en Nv.12, 7 en Nv.15, 8 en Nv.18); puedes cambiar una al subir de nivel; las opciones de 2014 están en el rasgo «Invocaciones Sobrenaturales (opciones 2014)»]"
     },
     {
       n: "Astucia Mágica (Magical Cunning)",
       nv: 2,
       a: "O",
       d: "Realizas un rito esotérico de 1 minuto y recuperas espacios de Pacto gastados hasta la mitad de tu máximo (redondeado hacia arriba). Una vez por descanso largo. [Sólo 2024; en 2014 el Maestro Sobrenatural de Nv.20 permite un rito similar que recupera todos]"
+    },
+    {
+      n: "Invocaciones Sobrenaturales (opciones 2014)",
+      nv: 2,
+      d: "[Sólo 2014] Opciones de invocación de 2014 (PHB, XGtE y TCE) sin equivalente en 2024. «Nv.» = nivel de Brujo; «Pacto» = tener esa Dádiva del Pacto; «a voluntad» = sin gastar espacio de conjuro. • Aspecto de la Luna (Aspect of the Moon) [XGtE; Pacto del Tomo]: no necesitas dormir ni pueden obligarte a dormir; para obtener los beneficios de un descanso largo basta pasar las 8 horas en actividad ligera (p. ej. leer tu Libro de las Sombras y vigilar). • Habla Bestial (Beast Speech) [PHB]: lanzas Speak with Animals a voluntad. • Influencia Seductora (Beguiling Influence) [PHB]: Competencia en Engaño y Persuasión. • Susurros Hechizantes (Bewitching Whispers) [PHB; Nv.7]: lanzas Compulsion una vez gastando un espacio de Brujo; no puedes repetirlo hasta un descanso largo. • Vínculo del Talismán (Bond of the Talisman) [TCE; Nv.12, Pacto del Talismán]: mientras otra criatura lleva tu talismán, puedes usar tu acción para teletransportarte al espacio libre más cercano a ella (y ella a ti con su acción), si estáis en el mismo plano; usos = comp.; recuperas todos con un descanso largo. • Libro de Secretos Antiguos (Book of Ancient Secrets) [PHB; Pacto del Tomo]: inscribes en tu Libro de las Sombras 2 conjuros de nivel 1 con la etiqueta Ritual de cualquier lista (no cuentan para tus conjuros conocidos y solo los lanzas como ritual); también puedes lanzar como ritual un conjuro de Brujo que conozcas con esa etiqueta. Puedes transcribir más rituales de nivel igual o inferior a la mitad de tu nivel de Brujo (redondeado hacia arriba): 2 horas y 50 po por nivel del conjuro. • Cadenas de Carceri (Chains of Carceri) [PHB; Nv.15, Pacto de la Cadena]: lanzas Hold Monster a voluntad, sin componentes materiales, sobre un celestial, infernal o elemental; no puedes usarlo de nuevo sobre la misma criatura hasta un descanso largo. • Capa de Moscas (Cloak of Flies) [XGtE; Nv.5]: como Acción Adicional te rodeas de un aura de moscas de 5 pies (no atraviesa Cobertura) hasta que quedes Incapacitado o la disipes con una Acción Adicional; Ventaja en pruebas de Intimidación y Desventaja en las demás pruebas de CAR; cualquier otra criatura que empiece su turno en el aura sufre daño de veneno = mod. CAR (mín. 0). Una vez por descanso corto o Largo. • Palabra Espantosa (Dreadful Word) [PHB; Nv.7]: lanzas Confusion una vez gastando un espacio de Brujo; no puedes repetirlo hasta un descanso largo. • Visión Sobrenatural (Eldritch Sight) [PHB]: lanzas Detect Magic a voluntad. • Ojos del Guardián de las Runas (Eyes of the Rune Keeper) [PHB]: puedes leer cualquier escritura. • Escriba Lejano (Far Scribe) [TCE; Nv.5, Pacto del Tomo]: aparece una página nueva en tu Libro de las Sombras en la que, con tu permiso, una criatura puede usar su acción para escribir su nombre (tantos nombres como tu bonificador de competencia). Lanzas Sending sobre una criatura anotada sin espacio ni componentes materiales escribiendo el mensaje en la página; si responde, su mensaje aparece en la página; lo escrito desaparece tras 1 minuto. Como acción puedes borrar un nombre tocándolo. • Mirada Fantasmal (Ghostly Gaze) [XGtE; Nv.7]: como acción ves a través de objetos sólidos hasta 30 pies y tienes Visión en la Oscuridad en ese radio si no la tenías; dura 1 minuto o hasta que se rompa tu concentración; ves los objetos como imágenes fantasmales y transparentes. Una vez por descanso corto o Largo. • Don de los Siempre Vivos (Gift of the Ever-Living Ones) [XGtE; Pacto de la Cadena]: cuando recuperas PG con tu familiar a 100 pies o menos de ti, los dados que tiras para determinar los PG recuperados cuentan como su valor máximo. • Agarre de Hadar (Grasp of Hadar) [XGtE; conocer Eldritch Blast]: una vez por turno, al impactar a una criatura con Eldritch Blast, la mueves 10 pies en línea recta hacia ti. • Arma de Pacto Mejorada (Improved Pact Weapon) [XGtE; Pacto de la Hoja]: cualquier arma que conjures con Pacto de la Hoja sirve de foco para tus conjuros de Brujo; gana +1 a las tiradas de ataque y daño (salvo que sea un arma mágica que ya tenga ese bonificador); además puede ser un arco corto, arco largo, ballesta ligera o ballesta pesada. • Lanza de Letargo (Lance of Lethargy) [XGtE; conocer Eldritch Blast]: una vez por turno, al impactar a una criatura con Eldritch Blast, reduces su Velocidad 10 pies hasta el final de tu siguiente turno. • Maleficio Enloquecedor (Maddening Hex) [XGtE; Nv.5, conjuro Hex o rasgo de Brujo que maldiga]: como Acción Adicional provocas una perturbación psíquica alrededor del objetivo maldito por tu Hex o por un rasgo de Brujo (p. ej. Maldición del Hexblade o Signo de Mal Agüero): ese objetivo y cada criatura de tu elección que veas a 5 pies de él sufren daño psíquico = mod. CAR (mín. 1). Debes ver al objetivo maldito y estar a 30 pies o menos de él. • Esbirros del Caos (Minions of Chaos) [PHB; Nv.9]: lanzas Conjure Elemental una vez gastando un espacio de Brujo; no puedes repetirlo hasta un descanso largo. • Enfangar la Mente (Mire the Mind) [PHB; Nv.5]: lanzas Slow una vez gastando un espacio de Brujo; no puedes repetirlo hasta un descanso largo. • Protección del Talismán (Protection of the Talisman) [TCE; Nv.7, Pacto del Talismán]: cuando quien lleva tu talismán falla una tirada de salvación, puede sumar 1d4 a la tirada y convertirla en éxito; usos = comp.; recuperas todos con un descanso largo. • Reprensión del Talismán (Rebuke of the Talisman) [TCE; Pacto del Talismán]: cuando un atacante que veas a 30 pies de ti impacta a quien lleva tu talismán, puedes usar tu reacción para infligirle daño psíquico = bonificador de competencia y empujarlo hasta 10 pies lejos del portador. • Maleficio Implacable (Relentless Hex) [XGtE; Nv.7, conjuro Hex o rasgo de Brujo que maldiga]: como Acción Adicional te teletransportas hasta 30 pies a un espacio libre que veas a 5 pies del objetivo maldito por tu Hex o por un rasgo de Brujo; debes ver al objetivo maldito. • Escultor de Carne (Sculptor of Flesh) [PHB; Nv.7]: lanzas Polymorph una vez gastando un espacio de Brujo; no puedes repetirlo hasta un descanso largo. • Sudario de Sombra (Shroud of Shadow) [XGtE; Nv.15]: lanzas Invisibility a voluntad. • Signo de Mal Agüero (Sign of Ill Omen) [PHB; Nv.5]: lanzas Bestow Curse una vez gastando un espacio de Brujo; no puedes repetirlo hasta un descanso largo. • Ladrón de los Cinco Destinos (Thief of Five Fates) [PHB]: lanzas Bane una vez gastando un espacio de Brujo; no puedes repetirlo hasta un descanso largo. • Tumba de Levistus (Tomb of Levistus) [XGtE; Nv.5]: como reacción al recibir daño te encierras en hielo, que se derrite al final de tu siguiente turno; ganas 10 PG temporales por nivel de Brujo, que absorben todo el daño posible del golpe que lo activó. Justo después de recibir ese daño tienes vulnerabilidad al daño de fuego, Velocidad 0 y estás Incapacitado; esos efectos (y los PG temporales que queden) terminan cuando el hielo se derrite. Una vez por descanso corto o Largo. • Escape del Embaucador (Trickster's Escape) [XGtE; Nv.7]: lanzas Freedom of Movement sobre ti una vez sin gastar espacio; la recuperas con un descanso largo. • Servidumbre Eterna (Undying Servitude) [TCE; Nv.5]: lanzas Animate Dead sin gastar espacio; no puedes volver a hacerlo así hasta un descanso largo. • Voz del Maestro de la Cadena (Voice of the Chain Master) [PHB; Pacto de la Cadena]: te comunicas telepáticamente con tu familiar y percibes a través de sus sentidos mientras estéis en el mismo plano; al hacerlo también puedes hablar a través de él con tu propia voz, aunque normalmente no pueda hablar. Versiones de 2014 distintas de las de 2024: Explosión Agónica (Agonizing Blast), Lanza Sobrenatural (Eldritch Spear) y Explosión Repelente (Repelling Blast) exigen conocer Eldritch Blast y solo la afectan (suma mod. CAR al daño / alcance 300 pies / al impactar empujas a la criatura hasta 10 pies, sin límite de tamaño). Visión del Diablo (Devil's Sight): sin requisito; ves con normalidad en la oscuridad mágica y no mágica hasta 120 pies. Conjuros a voluntad: Armadura de Sombras (Mage Armor sobre ti, sin componentes materiales), Vigor Infernal (False Life sobre ti como conjuro de nivel 1, sin componentes materiales), Máscara de Mil Rostros (Disguise Self), Visiones Brumosas (Silent Image, sin componentes materiales), Salto Sobrenatural (Jump sobre ti, sin componentes materiales; Nv.9), Susurros de la Tumba (Speak with Dead; Nv.9), Paso Ascendente (Levitate sobre ti, sin componentes materiales; Nv.9), Maestro de Mil Formas (Alter Self; Nv.15), Visiones de Reinos Lejanos (Arcane Eye; Nv.15). Visión de la Bruja (Witch Sight, Nv.15): ves la forma verdadera de cambiaformas y de criaturas ocultas por magia de ilusión o transmutación a 30 pies en línea de visión. Mirada de Dos Mentes (Gaze of Two Minds): con tu acción tocas a un humanoide voluntario y percibes con sus sentidos hasta el final de tu siguiente turno (acción en cada turno posterior para mantenerlo); quedas Ciego y Sordo respecto a tu entorno. Uno con las Sombras (One with Shadows, Nv.5): en Luz Tenue u Oscuridad, con tu acción te vuelves Invisible hasta que te muevas o hagas una acción o reacción. Hoja Sedienta (Thirsting Blade, Nv.5, Pacto de la Hoja): atacas dos veces con tu arma de pacto al hacer la acción de Atacar. Sorbevidas (Lifedrinker, Nv.12, Pacto de la Hoja): al impactar con tu arma de pacto, daño necrótico adicional = mod. CAR (mín. 1). Castigo Sobrenatural (Eldritch Smite) [XGtE; Nv.5, Pacto de la Hoja]: como en 2024, gastando un espacio de conjuro de Brujo. Don de las Profundidades (Gift of the Depths) [XGtE; Nv.5]: nadas a tu Velocidad caminando y lanzas Water Breathing una vez sin espacio hasta un descanso largo. Don de los Protectores (Gift of the Protectors) [TCE; Nv.9, Pacto del Tomo]: nombres = bonificador de competencia; escribir y borrar un nombre cuesta una acción. Inversión del Maestro de la Cadena (Investment of the Chain Master) [TCE; Pacto de la Cadena]: sin requisito de nivel; los ataques con arma del familiar cuentan como mágicos (no puede infligir daño necrótico o radiante)."
     },
     {
       n: "Subclase de Brujo (Patrón Sobrenatural)",
@@ -62,12 +67,17 @@ const CLASE_BRUJO = {
     {
       n: "Dádiva del Pacto (Pact Boon)",
       nv: 3,
-      d: "[Sólo 2014] Tu patrón te da una dádiva: Pacto de la Cadena (Encontrar Familiar con formas especiales: diablillo, pseudodragón, quasit o sprite; el familiar puede atacar usando tu reacción), Pacto de la Hoja (creas un arma de pacto como acción; eres competente con ella, cuenta como mágica y puedes vincular un arma mágica), Pacto del Tomo (Libro de las Sombras con 3 trucos de cualquier clase), Pacto del Talismán [TCE] (amuleto: el portador suma 1d4 a una prueba de característica fallida; comp. veces por descanso largo). [2024: son invocaciones]"
+      d: "[Sólo 2014] Tu patrón te da una dádiva: Pacto de la Cadena (aprendes Find Familiar y lo lanzas como ritual sin que cuente para tus conjuros conocidos; formas especiales: diablillo, pseudodragón, quasit o sprite; al hacer la acción de Atacar puedes renunciar a uno de tus ataques para que tu familiar haga un ataque con su reacción), Pacto de la Hoja (creas un arma de pacto como acción; eres competente con ella, cuenta como mágica y puedes vincular un arma mágica), Pacto del Tomo (Libro de las Sombras con 3 trucos de cualquier clase), Pacto del Talismán [TCE] (amuleto: el portador suma 1d4 a una prueba de característica fallida; comp. veces por descanso largo). [2024: son invocaciones]"
     },
     {
       n: "Mejora de Característica",
       nv: 4,
       d: "Ganas la dote Mejora de Característica (o cualquier otra dote para la que cumplas requisitos) en Nv.4, 8, 12 y 16. [2014: +2 a una característica o +1 a dos (máx. 20), o una dote; además otra en Nv.19]"
+    },
+    {
+      n: "Versatilidad Sobrenatural (Eldritch Versatility)",
+      nv: 4,
+      d: "[Sólo 2014, opcional de TCE] Al alcanzar un nivel de Brujo que concede Mejora de Característica, puedes hacer una de estas cosas: cambiar un truco aprendido con Magia de Pacto por otro truco de la lista de Brujo; cambiar la opción elegida para la Dádiva del Pacto por otra de sus opciones; o, si eres de Nv.12+, cambiar un conjuro de Arcano Místico por otro conjuro de Brujo del mismo nivel. Si este cambio hace que dejes de cumplir los requisitos de alguna de tus invocaciones, debes cambiarlas también por otras para las que cumplas requisitos."
     },
     {
       n: "Contacto con el Patrón (Contact Patron)",
@@ -79,7 +89,7 @@ const CLASE_BRUJO = {
       n: "Arcano Místico (Mystic Arcanum)",
       nv: 11,
       a: "O",
-      d: "Eliges un conjuro de Brujo de nivel 6 como arcano: puedes lanzarlo una vez sin gastar espacio por descanso largo. Ganas otro arcano en Nv.13 (nivel 7), Nv.15 (nivel 8) y Nv.17 (nivel 9). Al subir de nivel puedes cambiar un arcano por otro del mismo nivel."
+      d: "Eliges un conjuro de Brujo de nivel 6 como arcano: puedes lanzarlo una vez sin gastar espacio por descanso largo. Ganas otro arcano en Nv.13 (nivel 7), Nv.15 (nivel 8) y Nv.17 (nivel 9). Al subir de nivel puedes cambiar un arcano por otro del mismo nivel. [2014: no se puede cambiar un arcano, salvo con el rasgo opcional Versatilidad Sobrenatural de TCE]"
     },
     {
       n: "Don Épico (Epic Boon)",
@@ -277,7 +287,7 @@ const CLASE_BRUJO = {
       {
         n: "Entre los Muertos (Among the Dead)",
         nv: 1,
-        d: "Aprendes el truco Spare the Dying (no cuenta para tu límite) y tienes ventaja en salvaciones contra enfermedades. Si un no-muerto te elige directamente como objetivo de un ataque o conjuro dañino, debe superar una salvación de SAB (tu CD) o elegir otro objetivo/perder el ataque; si la supera, es inmune a este efecto 24 horas. No protege contra efectos de área."
+        d: "Aprendes el truco Spare the Dying (no cuenta para tu límite) y tienes ventaja en salvaciones contra enfermedades. Si un no-muerto te elige directamente como objetivo de un ataque o conjuro dañino, debe superar una salvación de SAB (tu CD) o elegir otro objetivo/perder el ataque; si la supera, es inmune a este efecto 24 horas. No protege contra efectos de área. Un no-muerto también es inmune a este efecto 24 horas si tú lo eliges como objetivo de un ataque o conjuro dañino."
       },
       {
         n: "Burlar a la Muerte (Defy Death)",
@@ -304,13 +314,13 @@ const CLASE_BRUJO = {
       {
         n: "Lista de Conjuros del Patrón (Expanded Spell List)",
         nv: 1,
-        d: "Eliges tipo de genio (Dao, Djinni, Efreeti o Marid) y se añaden a la lista del Brujo — Nv.1: Detect Evil and Good + (Dao: Sanctuary; Djinni: Thunderwave; Efreeti: Burning Hands; Marid: Fog Cloud). Nv.2: Phantasmal Force + (Spike Growth; Gust of Wind; Scorching Ray; Blur). Nv.3: Create Food and Water + (Meld into Stone; Wind Wall; Fireball; Sleet Storm). Nv.4: Phantasmal Killer + (Stone Shape; Greater Invisibility; Fire Shield; Control Water). Nv.5: Creation + (Wall of Stone; Seeming; Flame Strike; Cone of Cold)."
+        d: "Eliges tipo de genio (Dao, Djinni, Efreeti o Marid) y se añaden a la lista del Brujo — Nv.1: Detect Evil and Good + (Dao: Sanctuary; Djinni: Thunderwave; Efreeti: Burning Hands; Marid: Fog Cloud). Nv.2: Phantasmal Force + (Spike Growth; Gust of Wind; Scorching Ray; Blur). Nv.3: Create Food and Water + (Meld into Stone; Wind Wall; Fireball; Sleet Storm). Nv.4: Phantasmal Killer + (Stone Shape; Greater Invisibility; Fire Shield; Control Water). Nv.5: Creation + (Wall of Stone; Seeming; Flame Strike; Cone of Cold). Nv.9: Wish (para todos los tipos de genio; se puede elegir como Arcano Místico de Nv.17)."
       },
       {
         n: "Vasija del Genio (Genie's Vessel)",
         nv: 1,
-        a: "A",
-        d: "Recibes una vasija Diminuta que sirve de foco de conjuros (CA = tu CD de conjuros; PG = nivel de Brujo + comp.). Reposo en la Botella (Bottled Respite): como acción entras en la vasija (espacio extradimensional cilíndrico de 20 pies) hasta 2 × comp. horas, oyendo el exterior. Ira del Genio (Genie's Wrath): una vez por turno al impactar con un ataque infliges daño adicional = comp. (Dao: contundente; Djinni: trueno; Efreeti: fuego; Marid: frío)."
+        a: "AB",
+        d: "Recibes una vasija Diminuta que sirve de foco de conjuros (CA = tu CD de conjuros; PG = nivel de Brujo + comp.; inmune a veneno y psíquico). Reposo en la Botella (Bottled Respite): como acción entras en la vasija (espacio extradimensional cilíndrico de 20 pies de radio y 20 de alto) hasta 2 × comp. horas, oyendo el exterior; sales antes con una Acción Adicional, si mueres o si la vasija es destruida, y apareces en el espacio libre más cercano. Una vez que entras, no puedes volver a entrar hasta terminar un descanso largo. Ira del Genio (Genie's Wrath): una vez por turno al impactar con un ataque infliges daño adicional = comp. (Dao: contundente; Djinni: trueno; Efreeti: fuego; Marid: frío). Si la vasija se destruye o la pierdes, una ceremonia de 1 hora (en un descanso corto o largo) te da otra y destruye la anterior; la vasija se desvanece si mueres."
       },
       {
         n: "Don Elemental (Elemental Gift)",
@@ -321,8 +331,8 @@ const CLASE_BRUJO = {
       {
         n: "Vasija Santuario (Sanctuary Vessel)",
         nv: 10,
-        a: "O",
-        d: "Al entrar en tu vasija con Reposo en la Botella puedes llevar hasta 5 criaturas voluntarias a 30 pies. Quien permanezca 10 minutos o más obtiene los beneficios de un descanso corto (una vez por descanso largo) y suma tu comp. a la curación de sus Dados de Golpe."
+        a: "BO",
+        d: "Al entrar en tu vasija con Reposo en la Botella puedes llevar hasta 5 criaturas voluntarias que veas a 30 pies. Como Acción Adicional puedes expulsar a cualquier número de criaturas de la vasija; todos salen si tú sales o mueres o si la vasija es destruida. Quien permanezca (tú incluido) 10 minutos o más obtiene los beneficios de un descanso corto y suma tu comp. a los PG que recupere al gastar Dados de Golpe allí."
       },
       {
         n: "Deseo Limitado (Limited Wish)",
@@ -336,13 +346,13 @@ const CLASE_BRUJO = {
       {
         n: "Lista de Conjuros del Patrón (Expanded Spell List)",
         nv: 1,
-        d: "Se añaden a la lista de conjuros del Brujo — Nv.1: Create or Destroy Water, Thunderwave. Nv.2: Gust of Wind, Silence. Nv.3: Lightning Bolt, Sleet Storm. Nv.4: Control Water, Summon Elemental. Nv.5: Bigby's Hand (en forma de tentáculo), Cone of Cold."
+        d: "Se añaden a la lista de conjuros del Brujo — Nv.1: Create or Destroy Water, Thunderwave. Nv.2: Gust of Wind, Silence. Nv.3: Lightning Bolt, Sleet Storm. Nv.4: Control Water, Summon Elemental (solo agua). Nv.5: Bigby's Hand (en forma de tentáculo), Cone of Cold."
       },
       {
         n: "Tentáculo de las Profundidades (Tentacle of the Deeps)",
         nv: 1,
         a: "B",
-        d: "Como Acción Adicional creas un tentáculo espectral de 10 pies en un punto que veas a 60 pies (1 minuto). Al crearlo y como Acción Adicional en tus turnos puedes moverlo 30 pies y hacer un ataque cuerpo a cuerpo de conjuro: 1d8 de frío (2d8 en Nv.10) y la Velocidad del objetivo baja 10 pies hasta el inicio de tu siguiente turno. Usos = comp.; se recuperan con un descanso largo."
+        d: "Como Acción Adicional creas un tentáculo espectral de 10 pies en un punto que veas a 60 pies (dura 1 minuto o hasta que crees otro). Al crearlo puedes hacer un ataque cuerpo a cuerpo de conjuro contra una criatura a 10 pies del tentáculo; como Acción Adicional en tus turnos puedes moverlo 30 pies y repetir el ataque. Impacto: 1d8 de frío (2d8 en Nv.10) y la Velocidad del objetivo baja 10 pies hasta el inicio de tu siguiente turno. Usos = comp.; se recuperan con un descanso largo."
       },
       {
         n: "Don del Mar (Gift of the Sea)",
@@ -364,13 +374,13 @@ const CLASE_BRUJO = {
         n: "Tentáculos Aprehensores (Grasping Tentacles)",
         nv: 10,
         a: "O",
-        d: "Aprendes Evard's Black Tentacles (cuenta como conjuro de Brujo); puedes lanzarlo una vez sin espacio por descanso largo y ganas PG temporales = nivel de Brujo al hacerlo."
+        d: "Aprendes Evard's Black Tentacles (cuenta como conjuro de Brujo, pero no cuenta para tu número de conjuros conocidos); puedes lanzarlo una vez sin espacio por descanso largo. Cada vez que lo lanzas ganas PG temporales = nivel de Brujo, y el daño no puede romper tu concentración en este conjuro."
       },
       {
         n: "Zambullida Insondable (Fathomless Plunge)",
         nv: 14,
         a: "A",
-        d: "Como acción, tú y hasta 5 criaturas voluntarias a 30 pies os teletransportáis hasta 1 milla a un espacio visible de agua que conozcas (debes haberlo visto). Una vez por descanso corto o largo."
+        d: "Como acción, tú y hasta 5 criaturas voluntarias a 30 pies os teletransportáis hasta 1 milla a una masa de agua que hayas visto (del tamaño de un estanque o mayor) o a 30 pies de ella; cada uno aparece en un espacio libre a 30 pies de los demás. Una vez por descanso corto o largo."
       },
     ],
 
@@ -391,7 +401,7 @@ const CLASE_BRUJO = {
       {
         n: "Tocado por la Tumba (Grave Touched)",
         nv: 6,
-        d: "No necesitas comer, beber ni respirar. Una vez por turno, cuando infliges daño con un ataque o conjuro puedes cambiar el tipo de daño a necrótico; durante Forma de Terror, tiras 1 dado de daño adicional al calcular el daño necrótico."
+        d: "No necesitas comer, beber ni respirar. Una vez por turno, cuando impactas a una criatura con una tirada de ataque (también de conjuro) y tiras daño contra ella, puedes cambiar el tipo de ese daño a necrótico; durante Forma de Terror, tiras 1 dado de daño adicional al calcular ese daño necrótico."
       },
       {
         n: "Caparazón Necrótico (Necrotic Husk)",
@@ -403,7 +413,7 @@ const CLASE_BRUJO = {
         n: "Proyección Espiritual (Spirit Projection)",
         nv: 14,
         a: "A",
-        d: "Como acción proyectas tu espíritu durante hasta 1 hora (concentración): resistencia al daño contundente, perforante y cortante; lanzas conjuros de conjuración o nigromancia sin componentes (salvo los que tengan coste en oro); Velocidad de vuelo = tu Velocidad; atravesar criaturas u objetos inflige 1d10 de fuerza; y recuperas PG = la mitad del daño necrótico que causes. Una vez por descanso largo."
+        d: "Como acción proyectas tu espíritu fuera de tu cuerpo; el cuerpo queda inconsciente en animación suspendida, tu espíritu replica tus estadísticas (no tus posesiones) y cualquier daño o efecto sobre uno afecta al otro. Dura hasta 1 hora o hasta que se rompa tu concentración; al terminar, tu espíritu vuelve al cuerpo o el cuerpo se teletransporta al espacio de tu espíritu (a tu elección). Mientras proyectas: tu espíritu y tu cuerpo tienen resistencia al daño contundente, perforante y cortante; lanzas conjuros de conjuración o nigromancia sin componentes verbales, somáticos ni materiales sin coste en oro; tienes Velocidad de vuelo = tu Velocidad (puedes flotar) y puedes atravesar criaturas u objetos como terreno difícil, pero sufres 1d10 de fuerza si terminas tu turno dentro de uno; y, mientras usas Forma de Terror, una vez por turno cuando infliges daño necrótico a una criatura recuperas PG = la mitad de ese daño. Una vez por descanso largo."
       },
     ],
 
@@ -435,7 +445,7 @@ const CLASE_BRUJO = {
         n: "Lanzar a Través del Infierno (Hurl Through Hell)",
         nv: 14,
         a: "O",
-        d: "Una vez por turno, tras impactar con una tirada de ataque, obligas al objetivo a una salvación de CAR (tu CD): si falla, es enviado a los planos inferiores y queda Incapacitado hasta el final de tu siguiente turno; sufre 8d10 de daño psíquico si no es un infernal. Una vez por descanso largo, o gastando un espacio de Pacto."
+        d: "Una vez por turno, tras impactar con una tirada de ataque, obligas al objetivo a una salvación de CAR (tu CD): si falla, desaparece y es lanzado a través de los planos inferiores; sufre 8d10 de daño psíquico si no es un infernal y queda Incapacitado hasta el final de tu siguiente turno, cuando regresa al espacio que ocupaba (o al libre más cercano). Una vez por descanso largo, o gastando un espacio de Pacto (sin acción)."
       },
     ],
 
@@ -449,7 +459,7 @@ const CLASE_BRUJO = {
         n: "Pasos Feéricos (Steps of the Fey)",
         nv: 3,
         a: "B",
-        d: "Puedes lanzar Misty Step sin gastar espacio mod. CAR veces (mínimo 1) por descanso largo. Cada vez que lo haces eliges un efecto adicional: Paso Reconfortante: tú o una criatura a 10 pies ganáis 1d10 PG temporales. Paso Provocador: las criaturas a 5 pies del punto de partida hacen una salvación de SAB o tienen desventaja en ataques contra objetivos que no seas tú hasta el inicio de tu siguiente turno."
+        d: "Puedes lanzar Misty Step sin gastar espacio mod. CAR veces (mínimo 1) por descanso largo. Además, siempre que lances ese conjuro (con o sin espacio) puedes elegir un efecto adicional: Paso Reconfortante: justo después de teletransportarte, tú o una criatura que veas a 10 pies de ti (a tu elección) gana 1d10 PG temporales. Paso Provocador: las criaturas a 5 pies del espacio que dejaste deben superar una salvación de SAB (tu CD) o tener desventaja en ataques contra criaturas que no seas tú hasta el inicio de tu siguiente turno."
       },
       {
         n: "Escape Brumoso (Misty Escape)",
@@ -461,7 +471,7 @@ const CLASE_BRUJO = {
         n: "Defensas Seductoras (Beguiling Defenses)",
         nv: 10,
         a: "R",
-        d: "Inmunidad a Hechizado. Cuando un ataque te impacta, puedes usar tu reacción para reducir el daño a la mitad (redondeado hacia abajo) y obligar al atacante a una salvación de SAB (tu CD): si falla, sufre daño psíquico = el daño que recibiste. Una vez por descanso largo, o gastando un espacio de Pacto."
+        d: "Inmunidad a Hechizado. Además, justo después de que una criatura que veas te impacte con una tirada de ataque, puedes usar tu reacción para reducir el daño que sufres a la mitad (redondeado hacia abajo) y obligar al atacante a una salvación de SAB (tu CD): si falla, sufre daño psíquico igual al daño que sufres tras la reducción. Una vez por descanso largo, o gastando un espacio de Pacto (sin acción)."
       },
       {
         n: "Magia Embrujadora (Bewitching Magic)",
@@ -476,7 +486,7 @@ const CLASE_BRUJO = {
         n: "Mente Despierta (Awakened Mind)",
         nv: 3,
         a: "B",
-        d: "Como Acción Adicional eliges una criatura que veas a 30 pies: podéis comunicaros telepáticamente mientras estéis a una distancia en millas = mod. CAR (mínimo 1). Dura minutos = nivel de Brujo y termina al conectar con otra criatura."
+        d: "Como Acción Adicional eliges una criatura que veas a 30 pies: podéis comunicaros telepáticamente mientras estéis a una distancia en millas = mod. CAR (mínimo 1); para entenderos, ambos debéis usar mentalmente un idioma que el otro conozca. Dura minutos = nivel de Brujo y termina antes si conectas con otra criatura."
       },
       {
         n: "Conjuros del Gran Antiguo (Great Old One Spells)",
@@ -526,7 +536,7 @@ const CLASE_BRUJO = {
       {
         n: "Alma Radiante (Radiant Soul)",
         nv: 6,
-        d: "Resistencia al daño radiante. Una vez por turno, cuando un conjuro tuyo de daño radiante o de fuego impacta a un objetivo, sumas tu mod. CAR al daño contra uno de sus objetivos."
+        d: "Resistencia al daño radiante. Una vez por turno, cuando un conjuro que lanzas inflige daño radiante o de fuego, sumas tu mod. CAR al daño de ese conjuro contra uno de sus objetivos."
       },
       {
         n: "Resistencia Celestial (Celestial Resilience)",
@@ -537,7 +547,7 @@ const CLASE_BRUJO = {
         n: "Venganza Abrasadora (Searing Vengeance)",
         nv: 14,
         a: "O",
-        d: "Cuando tú o una criatura aliada a 60 pies hace una salvación de muerte, puedes liberar energía radiante: la criatura recupera PG = la mitad de sus PG máximos y puede terminar la condición Tumbado. Las criaturas de tu elección a 30 pies sufren 2d8 + mod. CAR de daño radiante y quedan Cegadas hasta el final del turno. Una vez por descanso largo."
+        d: "Cuando tú o un aliado a 60 pies de ti vais a hacer una salvación de muerte, puedes liberar energía radiante para salvar a la criatura: recupera PG = la mitad de sus PG máximos y puede terminar la condición Tumbado. Las criaturas de tu elección a 30 pies de esa criatura sufren 2d8 + mod. CAR de daño radiante y quedan Cegadas hasta el final del turno actual. Una vez por descanso largo."
       },
     ],
 
@@ -558,18 +568,18 @@ const CLASE_BRUJO = {
       {
         n: "Tocado por la Tumba (Grave Touched)",
         nv: 6,
-        d: "Necrosis Arcana: tu daño necrótico ignora resistencias; una vez por turno puedes cambiar el tipo de daño de un conjuro a necrótico. Necrosis Aterradora: durante Forma de Terror, una vez por turno tiras 1 dado de daño adicional al calcular el daño necrótico. Resistencia de No-Muerto: no sufres agotamiento por deshidratación, desnutrición o asfixia, no necesitas dormir y la magia no puede obligarte a dormir."
+        d: "Necrosis Arcana: el daño necrótico de tus ataques, de tus conjuros de Brujo y de tus rasgos de Brujo ignora la resistencia al daño necrótico; una vez por turno, al lanzar un conjuro que inflige daño, puedes cambiar su tipo a necrótico. Necrosis Aterradora: al impactar a una criatura con una tirada de ataque e infligir daño necrótico mientras usas Forma de Terror, tiras 1 dado de daño adicional al calcular ese daño (una vez por turno). Resistencia de No-Muerto: no sufres agotamiento por deshidratación, desnutrición o asfixia, no necesitas dormir y la magia no puede obligarte a dormir."
       },
       {
         n: "Caparazón Necrótico (Necrotic Husk)",
         nv: 10,
         a: "O",
-        d: "Resiliencia Necrótica: resistencia al daño necrótico (inmunidad mientras usas Forma de Terror). Resucitación Impía: cuando caes a 0 PG, las criaturas de tu elección a 30 pies hacen una salvación de CON o sufren 2d10 + mod. CAR de daño necrótico (mitad si superan); tus PG pasan a ser el doble de tu nivel de Brujo y ganas 1 nivel de agotamiento. Se recupera con un descanso corto o largo."
+        d: "Resiliencia Necrótica: resistencia al daño necrótico (inmunidad mientras usas Forma de Terror). Resucitación Impía: si caes a 0 PG y no mueres de inmediato, puedes hacer que tu cuerpo estalle en energía letal: las criaturas de tu elección en una Emanación de 30 pies originada en ti hacen una salvación de CON (tu CD) o sufren 2d10 + mod. CAR de daño necrótico (mitad si superan); tus PG pasan a ser el doble de tu nivel de Brujo y ganas 1 nivel de agotamiento. Se recupera con un descanso corto o largo."
       },
       {
         n: "Pavor Superior (Superior Dread)",
         nv: 14,
-        d: "Durante Forma de Terror: Resistencia al Pavor: resistencia al daño contundente, perforante y cortante. Vuelo Fantasmal: Velocidad de vuelo = tu Velocidad (flotas); moverte a través de criaturas u objetos es terreno difícil y sufres 1d10 de fuerza si terminas el turno dentro. Lanzamiento Profano: lanzas conjuros de conjuración o nigromancia de Brujo sin componentes verbales, somáticos ni materiales sin coste."
+        d: "Durante Forma de Terror: Resistencia al Pavor: resistencia al daño contundente, perforante y cortante. Vuelo Fantasmal: Velocidad de vuelo = tu Velocidad (flotas); moverte a través de criaturas u objetos es terreno difícil y sufres 1d10 de fuerza si terminas el turno dentro. Lanzamiento Profano: lanzas conjuros de conjuración o nigromancia de Brujo sin componentes verbales, somáticos ni materiales, salvo los materiales con coste o que se consumen."
       },
     ],
   },

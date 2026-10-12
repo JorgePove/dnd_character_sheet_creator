@@ -4,18 +4,19 @@
    Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
    importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
    fuente y la edición a la que corresponde.
-   Fuentes de subclases: PHB 2014 · XGtE · MOoT/TCE · TCE · VRGtR · PHB 2024
+   Fuentes de subclases: PHB 2014 · XGtE · MOoT/TCE · TCE · VRGtR · PHB 2024 · THW 2024 · HoF 2024
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (12 entradas):
-     Colegio del Saber            [PHB 2014] / [PHB 2024]
-     Colegio del Valor            [PHB 2014] / [PHB 2024]
-     Colegio del Glamur           [XGtE] / [PHB 2024]
-     Colegio de las Espadas       [XGtE]
-     Colegio de los Susurros      [XGtE]
-     Colegio de la Elocuencia     [MOoT/TCE]
-     Colegio de la Creación       [TCE]
-     Colegio de los Espíritus     [VRGtR]
-     Colegio de la Danza          [PHB 2024]
+   SUBCLASES (14 entradas):
+     Colegio del Saber                       [PHB 2014] / [PHB 2024]
+     Colegio del Valor                       [PHB 2014] / [PHB 2024]
+     Colegio del Glamur                      [XGtE] / [PHB 2024]
+     Colegio de las Espadas                  [XGtE]
+     Colegio de los Susurros                 [XGtE]
+     Colegio de la Elocuencia                [MOoT/TCE]
+     Colegio de la Creación                  [TCE]
+     Colegio de los Espíritus                [VRGtR] / [THW 2024]
+     Colegio de la Danza                     [PHB 2024]
+     Colegio de la Luna                      [HoF 2024]
    ──────────────────────────────────────────────────────────────────
    Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
      "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
@@ -452,6 +453,58 @@ const CLASE_BARDO = {
         n: "Evasión Guía (Leading Evasion)",
         nv: 14,
         d: "Cuando haces una salvación de DES para sufrir la mitad del daño, no sufres daño si la superas y sólo la mitad si fallas. Puedes compartir este beneficio con las criaturas a 5 pies de ti que hagan la misma salvación. No funciona si estás Incapacitado."
+      },
+    ],
+
+    /* ── RAVENLOFT: THE HORRORS WITHIN (THW, 2024) ── */
+    "Colegio de los Espíritus [THW 2024]": [
+      {
+        n: "Canalizador (Channeler)",
+        nv: 3,
+        d: "Aprendes a contactar con espíritus de más allá de la tumba y dejas que su poder y su saber fluyan a través de ti. Susurros Guía (Guiding Whispers): conoces el truco Guidance; al lanzarlo tiene alcance de 60 pies. Foco Espiritual (Spiritual Focus): ganas un Juego de mesa (Gaming Set: baraja de cartas), con el que tienes competencia, y puedes usarlo o uno de estos objetos como foco de lanzamiento para tus conjuros de Bardo: Arcane Focus (cristal u orbe), Candle o Ink Pen."
+      },
+      {
+        n: "Espíritus del Más Allá (Spirits from Beyond)",
+        nv: 3,
+        a: "AB",
+        d: "Puedes invocar espíritus de los muertos para potenciarte a ti y a tus aliados. Cuando usas una Acción Adicional para dar un dado de Inspiración Bárdica a una criatura, puedes invocar el poder de un espíritu aleatorio: tira el dado de Inspiración Bárdica y consulta la tabla Espíritus del Más Allá. El espíritu queda canalizado hasta que lo liberes o termines un Descanso Corto o Largo. Canalización Controlada (Controlled Channeling): como Acción Adicional, gastas un uso de Inspiración Bárdica y canalizas un espíritu concreto, elegido en la tabla en lugar de tirar; su número debe ser menor o igual que el mayor número de tu dado de Inspiración Bárdica (con un d8 puedes elegir cualquier espíritu hasta el 8, la Sombra, inclusive). Liberar un Espíritu (Unleashing a Spirit): como acción Mágica, liberas uno de tus espíritus canalizados; eliges como objetivo a una criatura que veas a 30 pies de ti y el espíritu surte efecto; si su efecto exige una salvación, la CD es tu CD de conjuros de Bardo. En la tabla, «dado» = una tirada de tu dado de Inspiración Bárdica (2 dados = dos tiradas). Tabla (dado de Inspiración Bárdica: espíritu y efecto al liberarlo): 1: Amado (Beloved) — el objetivo recupera PG = dado + mod. CAR; 2: Tirador Certero (Sharpshooter) — el objetivo sufre daño de fuerza = dado + mod. CAR; 3: Vengador (Avenger) — hasta el final de tu siguiente turno, toda criatura que impacte al objetivo con una tirada de ataque cuerpo a cuerpo sufre daño de fuerza = dado; 4: Renegado (Renegade) — el objetivo puede usar de inmediato una Reacción para teletransportarse hasta 30 pies a un espacio libre que vea; 5: Adivino (Fortune Teller) — el objetivo tiene Ventaja en las Pruebas de d20 hasta el inicio de tu siguiente turno; 6: Viajero (Wayfarer) — el objetivo gana PG temporales = dado + nivel de Bardo y, mientras los tenga, su Velocidad aumenta 10 pies; 7: Embaucador (Trickster) — el objetivo hace una salvación de SAB: si falla, sufre daño psíquico = 2 dados y queda Hechizado hasta el inicio de tu siguiente turno; si la supera, sufre solo la mitad del daño; 8: Sombra (Shade) — el objetivo tiene la condición Invisible hasta el final de su siguiente turno o hasta que haga una tirada de ataque, inflija daño o lance un conjuro; cuando termina la invisibilidad, cada criatura en una Emanación de 5 pies que parte del objetivo debe superar una salvación de CON o sufrir daño necrótico = 2 dados; 9: Pirómano (Arsonist) — el objetivo hace una salvación de DES: si falla, sufre daño de fuego = 4 dados; si la supera, la mitad; 10: Cobarde (Coward) — el objetivo y cada criatura de tu elección en una Emanación de 30 pies que parte del objetivo deben superar una salvación de SAB o quedar Asustados hasta el inicio de tu siguiente turno; mientras una criatura esté Asustada, su Velocidad se reduce a la mitad (redondeando hacia abajo) y puede usar una acción o una Acción Adicional, no ambas; 11: Bruto (Brute) — cada criatura de tu elección en una Emanación de 30 pies que parte del objetivo hace una salvación de FUE: si falla, sufre daño de trueno = 3 dados y queda Tumbada; si la supera, sufre solo la mitad del daño; 12: Sacerdote (Priest) — el objetivo recupera PG = 2 dados y termina en él una de estas condiciones, a tu elección: Cegado, Hechizado, Ensordecido, Paralizado, Envenenado o Aturdido."
+      },
+      {
+        n: "Canalización Potenciada (Empowered Channeling)",
+        nv: 6,
+        a: "O",
+        d: "Tu capacidad de canalizar espíritus mejora. Poder del Más Allá (Power from Beyond): una vez por turno, cuando lanzas con un espacio de conjuro un conjuro de Bardo que inflige daño o restaura PG, tira 1d6 y suma el resultado a una de las tiradas de daño del conjuro o al total de PG que restaura. Manifestación Espiritual (Spiritual Manifestation): siempre tienes preparado Spirit Guardians; puedes lanzarlo una vez sin espacio de conjuro y recuperas esa capacidad al terminar un Descanso Largo. Siempre que lances el conjuro, puedes modificarlo para que los espíritus también protejan de amenazas terrenales: tú y los aliados dentro de la Emanación del conjuro tenéis Cobertura Media. Una vez que modificas el conjuro así, no puedes volver a hacerlo hasta terminar un Descanso Corto o Largo."
+      },
+      {
+        n: "Conexión Mística (Mystical Connection)",
+        nv: 14,
+        d: "Dominas a los espíritus que invocas. Cuando tiras en la tabla Espíritus del Más Allá, puedes tirar el dado dos veces y elegir cuál de los dos efectos conceder. Si sacas el mismo número en ambos dados, en su lugar puedes elegir cualquier efecto de la tabla."
+      },
+    ],
+
+    /* ── FORGOTTEN REALMS: HEROES OF FAERÛN (HoF, 2024) ── */
+    "Colegio de la Luna [HoF 2024]": [
+      {
+        n: "Inspiración de la Luna (Moon's Inspiration)",
+        nv: 3,
+        a: "BO",
+        d: "El poder primigenio y cambiante de la luna fluye por ti y te concede estos beneficios. Eclipse Inspirado (Inspired Eclipse): cuando usas una Acción Adicional para dar un dado de Inspiración Bárdica a una criatura, puedes obtener la condición Invisible y teletransportarte hasta 30 pies a un espacio libre que veas como parte de esa Acción Adicional. Esta invisibilidad dura hasta el inicio de tu siguiente turno y termina antes, de inmediato, después de que hagas una tirada de ataque, inflijas daño o lances un conjuro. Vitalidad Lunar (Lunar Vitality): una vez por turno, cuando restauras PG a una criatura con un conjuro, puedes gastar un dado de Inspiración Bárdica y aumentar los PG restaurados en una cantidad igual a una tirada de ese dado; además, la Velocidad de la criatura aumenta 10 pies hasta el final de su siguiente turno."
+      },
+      {
+        n: "Saber Primigenio (Primal Lore)",
+        nv: 3,
+        d: "Aprendes Druídico (Druidic) y un truco de la lista de conjuros de Druida. Cuenta como conjuro de Bardo para ti, pero no cuenta para el número de trucos que conoces. Cada vez que subes un nivel de Bardo, puedes sustituir este truco por otro truco a tu elección de la lista de conjuros de Druida. Además, eliges una de estas habilidades y ganas Competencia en ella: Trato con Animales, Perspicacia, Medicina, Naturaleza, Percepción o Supervivencia."
+      },
+      {
+        n: "Bendición de la Luz de la Luna (Blessing of Moonlight)",
+        nv: 6,
+        a: "O",
+        d: "Siempre tienes preparado el conjuro Moonbeam. Cuando lo lanzas, puedes modificarlo para que brilles tenuemente mientras el conjuro esté activo: emites Luz Tenue hasta 5 pies y, cada vez que una criatura falla su tirada de salvación contra los efectos de este Moonbeam, otra criatura de tu elección que veas a 60 pies de ti recupera 2d4 PG. Una vez que usas este rasgo para modificar un lanzamiento de Moonbeam, no puedes volver a usarlo hasta terminar un Descanso Largo."
+      },
+      {
+        n: "Esplendor del Atardecer (Eventide's Splendor)",
+        nv: 14,
+        d: "Te impregnas del poder de la luna y mejoras tu Inspiración de la Luna de estos modos. Sombra de la Luna Nueva (Shadow of the New Moon): cuando usas Eclipse Inspirado, la criatura que recibió el dado de Inspiración Bárdica también puede obtener la condición Invisible y usar de inmediato una Reacción para teletransportarse hasta 30 pies a un espacio libre que vea; permanece Invisible hasta el inicio de su siguiente turno. Vivacidad de la Luna Llena (Vibrance of the Full Moon): cuando usas Vitalidad Lunar, puedes tirar 1d6 y usar el número obtenido en lugar de gastar un dado de Inspiración Bárdica."
       },
     ],
   },

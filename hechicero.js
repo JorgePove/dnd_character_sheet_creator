@@ -4,19 +4,20 @@
    Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
    importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
    fuente y la edición a la que corresponde.
-   Fuentes de subclases: PHB 2014 · PHB 2024 · XGtE · TCE · SotDQ · HoF 2024 · THW 2024
+   Fuentes de subclases: PHB 2014 · PHB 2024 · XGtE · TCE · SotDQ · HoF 2024 · THW 2024 · PSK
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (14 entradas):
-     Origen Dracónico             [PHB 2014] / [PHB 2024]
-     Magia Salvaje                [PHB 2014] / [PHB 2024]
-     Magia Aberrante              [PHB 2024] / [TCE]
-     Magia del Reloj              [PHB 2024] / [TCE]
-     Hechicería Divina            [XGtE]
-     Alma de la Sombra            [XGtE]
-     Hechicería de Tormenta       [XGtE]
-     Magia Lunar                  [SotDQ]
-     Hechicería Spellfire         [HoF 2024]
-     Hechicería de Sombra         [THW 2024]
+   SUBCLASES (15 entradas):
+     Origen Dracónico                        [PHB 2014] / [PHB 2024]
+     Magia Salvaje                           [PHB 2014] / [PHB 2024]
+     Magia Aberrante                         [PHB 2024] / [TCE]
+     Magia del Reloj                         [PHB 2024] / [TCE]
+     Hechicería Divina                       [XGtE]
+     Alma de la Sombra                       [XGtE]
+     Hechicería de Tormenta                  [XGtE]
+     Magia Lunar                             [SotDQ]
+     Hechicería Spellfire                    [HoF 2024]
+     Hechicería de Sombra                    [THW 2024]
+     Piromante                               [PSK]
    ──────────────────────────────────────────────────────────────────
    Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
      "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
@@ -593,6 +594,31 @@ const CLASE_HECHICERO = {
         nv: 18,
         a: "B",
         d: "Cuando usas Hechicería Innata, puedes adoptar una forma sombría que dura mientras tu Hechicería Innata esté activa o hasta que la termines (sin acción). Movimiento Incorpóreo: atraviesas criaturas y objetos como terreno difícil, pero sufres 1d10 de daño de fuerza si terminas tu turno dentro de una criatura o un objeto. Resiliencia Umbral: resistencia a todo daño salvo fuerza y radiante. Una vez por descanso largo o gastando 6 PH (sin acción)."
+      },
+    ],
+
+    /* ── PLANE SHIFT: KALADESH (PSK) ── */
+    "Piromante [PSK]": [
+      {
+        n: "Corazón de Fuego (Heart of Fire)",
+        nv: 1,
+        d: "Cada vez que empiezas a lanzar un conjuro de nivel 1 o superior que inflige daño de fuego, brota de ti magia ígnea: las criaturas de tu elección que veas a 10 pies de ti sufren daño de fuego igual a la mitad de tu nivel de Hechicero (mínimo 1)."
+      },
+      {
+        n: "Fuego en las Venas (Fire in the Veins)",
+        nv: 6,
+        d: "Ganas Resistencia al daño de fuego. Además, tus conjuros ignoran la resistencia al daño de fuego."
+      },
+      {
+        n: "Furia del Piromante (Pyromancer's Fury)",
+        nv: 14,
+        a: "R",
+        d: "Cuando te impacta un ataque cuerpo a cuerpo, puedes usar tu Reacción para infligir daño de fuego al atacante. El daño es igual a tu nivel de Hechicero e ignora la resistencia al daño de fuego."
+      },
+      {
+        n: "Alma Ígnea (Fiery Soul)",
+        nv: 18,
+        d: "Ganas Inmunidad al daño de fuego. Además, todo conjuro o efecto que crees ignora la resistencia al daño de fuego y trata la inmunidad al daño de fuego como resistencia al daño de fuego."
       },
     ],
   },

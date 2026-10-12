@@ -4,18 +4,19 @@
    Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
    importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
    fuente y la edición a la que corresponde.
-   Fuentes de subclases: PHB 2014 · SCAG/XGtE · XGtE · TCE · PHB 2024 · THW 2024
+   Fuentes de subclases: PHB 2014 · SCAG/XGtE · XGtE · TCE · PHB 2024 · THW 2024 · HoF 2024
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (14 entradas):
-     Ladrón                       [PHB 2014] / [PHB 2024]
-     Asesino                      [PHB 2014] / [PHB 2024]
-     Tramposo Arcano              [PHB 2014] / [PHB 2024]
-     Maestro de Intrigas          [SCAG/XGtE]
-     Explorador                   [XGtE]
-     Espadachín                   [XGtE]
-     Inquisitivo                  [XGtE]
-     Fantasma                     [TCE] / [THW 2024]
-     Cuchillo de Alma             [TCE] / [PHB 2024]
+   SUBCLASES (15 entradas):
+     Ladrón                                  [PHB 2014] / [PHB 2024]
+     Asesino                                 [PHB 2014] / [PHB 2024]
+     Tramposo Arcano                         [PHB 2014] / [PHB 2024]
+     Maestro de Intrigas                     [SCAG/XGtE]
+     Explorador                              [XGtE]
+     Espadachín                              [XGtE]
+     Inquisitivo                             [XGtE]
+     Fantasma                                [TCE] / [THW 2024]
+     Cuchillo de Alma                        [TCE] / [PHB 2024]
+     Vástago de los Tres                     [HoF 2024]
    ──────────────────────────────────────────────────────────────────
    Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
      "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
@@ -584,6 +585,38 @@ const CLASE_PICARO = {
         n: "Amigo de la Muerte (Death's Friend)",
         nv: 17,
         d: "Lamento de la Muerte: Lamentos desde la Tumba inflige daño necrótico a ambas criaturas. Atracción de la Muerte: al tirar iniciativa sin fichas de alma, ganas una."
+      },
+    ],
+
+    /* ── FORGOTTEN REALMS: HEROES OF FAERÛN (HoF, 2024) ── */
+    "Vástago de los Tres [HoF 2024]": [
+      {
+        n: "Sed de Sangre (Bloodthirst)",
+        nv: 3,
+        a: "R",
+        d: "Cuando un enemigo que veas a 30 pies de ti sufre daño y queda Malherido tras sufrirlo, sin morir de golpe, puedes usar una Reacción para teletransportarte a un espacio libre que veas a 5 pies de ese enemigo. Después puedes hacer un ataque cuerpo a cuerpo. Puedes usar este rasgo un número de veces igual a tu mod. INT (mínimo una) y recuperas todos los usos gastados al terminar un Descanso Largo."
+      },
+      {
+        n: "Lealtad Temible (Dread Allegiance)",
+        nv: 3,
+        a: "O",
+        d: "Eliges a uno de los Tres Muertos (Dead Three): Bane, Bhaal o Myrkul. Ganas Resistencia a un tipo de daño y la capacidad de lanzar un truco, según la tabla; INT es tu característica de lanzamiento para este truco. Al terminar un Descanso Largo, puedes cambiar tu elección. Tabla — Bane: Resistencia al daño psíquico y Minor Illusion; Bhaal: Resistencia al daño de veneno y Blade Ward; Myrkul: Resistencia al daño necrótico y Chill Touch."
+      },
+      {
+        n: "Infundir Miedo (Strike Fear)",
+        nv: 9,
+        a: "O",
+        d: "Ganas esta opción de Golpe Astuto (Cunning Strike). Aterrorizar (Terrify, coste 1d6): el objetivo debe superar una salvación de SAB o queda Asustado durante 1 minuto. Mientras el objetivo esté Asustado de este modo, tienes Ventaja en las tiradas de ataque contra él. El objetivo Asustado repite la salvación al final de cada uno de sus turnos y, si la supera, el efecto termina en él."
+      },
+      {
+        n: "Aura de Malevolencia (Aura of Malevolence)",
+        nv: 13,
+        d: "Irradias poder maligno asociado a uno de los Tres Muertos. Cuando usas Sed de Sangre y te teletransportas, cada criatura de tu elección a 10 pies del espacio que dejaste o de tu espacio de destino (a tu elección) sufre daño igual a tu mod. INT; el tipo de daño es el mismo que el de la Resistencia concedida por tu elección en Lealtad Temible. El daño de este rasgo ignora la Resistencia."
+      },
+      {
+        n: "Encarnación Temible (Dread Incarnate)",
+        nv: 17,
+        d: "Ganas estos beneficios. Degollador (Cutthroat): recuperas un uso gastado de Sed de Sangre al terminar un Descanso Corto. Intención Asesina (Murderous Intent): cuando tiras el daño de tu Ataque Furtivo, puedes tratar un 1 o un 2 en el dado como un 3."
       },
     ],
   },

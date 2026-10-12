@@ -4,18 +4,19 @@
    Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
    importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
    fuente y la edición a la que corresponde.
-   Fuentes de subclases: PHB 2014 · XGtE · TCE · FToD · PHB 2024 · HoF 2024
+   Fuentes de subclases: PHB 2014 · XGtE · TCE · FToD · PHB 2024 · HoF 2024 · THW 2024
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (13 entradas):
-     Cazador                      [PHB 2014] / [PHB 2024]
-     Amo de Bestias               [PHB 2014] / [PHB 2024]
-     Acechador Tenebroso          [XGtE] / [PHB 2024]
-     Caminante del Horizonte      [XGtE]
-     Cazador de Monstruos         [XGtE]
-     Viajero Feérico              [TCE] / [PHB 2024]
-     Guardián del Enjambre        [TCE]
-     Guardián del Drake           [FToD]
-     Caminante del Invierno       [HoF 2024]
+   SUBCLASES (14 entradas):
+     Cazador                                 [PHB 2014] / [PHB 2024]
+     Amo de Bestias                          [PHB 2014] / [PHB 2024]
+     Acechador Tenebroso                     [XGtE] / [PHB 2024]
+     Caminante del Horizonte                 [XGtE]
+     Cazador de Monstruos                    [XGtE]
+     Viajero Feérico                         [TCE] / [PHB 2024]
+     Guardián del Enjambre                   [TCE]
+     Guardián del Drake                      [FToD]
+     Caminante del Invierno                  [HoF 2024]
+     Guardián Hueco                          [THW 2024]
    ──────────────────────────────────────────────────────────────────
    Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
      "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
@@ -581,6 +582,37 @@ const CLASE_EXPLORADOR = {
         nv: 15,
         a: "O",
         d: "Al lanzar Hunter's Mark puedes adoptar una forma fantasmal y nevada hasta que termine el conjuro. Una vez por Descanso Largo, o gastando un espacio de nivel 4+ (sin acción). Alma Gélida: inmunidad al daño de frío; al adoptar la forma y al inicio de cada uno de tus turnos siguientes, cada criatura de tu elección en una Emanación de 15 pies sufre 2d4 de frío. Parcialmente Incorpóreo: inmunidad a Agarrado, Derribado y Apresado; atraviesas criaturas y objetos como terreno difícil, pero sufres 1d10 de fuerza si terminas tu turno dentro; si la forma termina estando dentro de uno, eres expulsado al espacio libre más cercano."
+      },
+    ],
+
+    /* ── RAVENLOFT: THE HORRORS WITHIN (THW, 2024) ── */
+    "Guardián Hueco [THW 2024]": [
+      {
+        n: "Conjuros del Guardián Hueco (Hollow Warden Spells)",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Wrathful Smite. Nv.5: Alter Self. Nv.9: Phantom Steed. Nv.13: Dominate Beast. Nv.17: Steel Wind Strike."
+      },
+      {
+        n: "Ira de lo Salvaje (Wrath of the Wild)",
+        nv: 3,
+        a: "BR",
+        d: "Extraes poder de los horrores extraños y antiguos de la tierra: te brotan crecimientos antinaturales, como astas ensangrentadas o colmillos pútridos, o tu sombra se alarga o se retuerce a tu alrededor. Como Acción Adicional, puedes gastar un uso de Enemigo Predilecto (Favored Enemy) para transformarte en una forma espantosa durante 1 minuto o hasta que tengas la condición Incapacitado, mueras o termines la transformación (sin acción). Ganas estos beneficios. Armadura Ancestral (Ancient Armor): +1 a la CA, pues tu cuerpo se envuelve en corteza podrida y cerdas bestiales; el bonificador pasa a +2 al llegar a nivel 11 de Explorador. Represalia Acechante (Prowling Retribution): justo después de que una criatura que veas a 5 pies de ti inflija daño a ti o a uno de tus aliados, puedes hacer un Ataque de Oportunidad contra esa criatura. Aura Inquietante (Unnerving Aura): cuando te transformas y al inicio de cada uno de tus turnos siguientes, cada criatura de tu elección en una Emanación de 10 pies que parte de ti hace una salvación de SAB contra tu CD de conjuros; si falla, queda Asustada hasta el inicio de tu siguiente turno."
+      },
+      {
+        n: "Poder Hambriento (Hungering Might)",
+        nv: 7,
+        d: "Ganas un bonificador a las tiradas de salvación de CON igual a tu mod. SAB (mínimo +1). Además, una vez por turno, cuando impactas a una criatura con una tirada de ataque mientras estás transformado con Ira de lo Salvaje, recuperas PG = 1d10 + mod. SAB, siempre que estés Malherido al impactar."
+      },
+      {
+        n: "Podredumbre y Violencia (Rot and Violence)",
+        nv: 11,
+        d: "Tu dedicación a los seres salvajes y sobrenaturales te altera aún más. Mientras estés transformado con Ira de lo Salvaje, ganas estos beneficios adicionales. Aura Amenazante (Menacing Aura): cuando una criatura falla su tirada de salvación contra tu Aura Inquietante, además no puede recuperar PG ni usar Reacciones hasta el inicio de tu siguiente turno. Raíces Estranguladoras (Strangling Roots): cuando impactas a una criatura con una tirada de ataque con un arma, puedes activar la propiedad de maestría Debilitar (Sap) o Ralentizar (Slow) además de otra propiedad de maestría distinta que estés usando con esa arma."
+      },
+      {
+        n: "Poder Ancestral (Ancient Might)",
+        nv: 15,
+        a: "O",
+        d: "Te impregnas por completo del poder antiguo y terrible de lo salvaje y ganas estos beneficios. Golpes Ominosos (Ominous Strikes): cuando impactas con una tirada de ataque a una criatura que tiene la condición Asustado, el ataque inflige daño adicional igual a tu mod. SAB. Ira Persistente (Persistent Wrath): si quedas reducido a 0 PG sin morir de golpe mientras estás transformado con Ira de lo Salvaje, puedes liberar poder salvaje: tus PG pasan a ser un número igual al doble de tu nivel de Explorador. Una vez que usas este rasgo, no puedes volver a hacerlo hasta terminar un Descanso Largo; también puedes gastar un espacio de conjuro de nivel 4+ (sin acción) para recuperar el uso de este rasgo. Atemporal (Timeless): tienes Inmunidad a la condición Agotamiento (Exhaustion)."
       },
     ],
   },

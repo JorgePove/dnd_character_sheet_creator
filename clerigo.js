@@ -4,23 +4,27 @@
    Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
    importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
    fuente y la edición a la que corresponde.
-   Fuentes de subclases: PHB 2014 · DMG · SCAG · XGtE · TCE · PHB 2024 · HoF 2024
+   Fuentes de subclases: PHB 2014 · DMG · SCAG · XGtE · TCE · PHB 2024 · HoF 2024 · THW 2024 · PSA
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (19 entradas):
-     Dominio de la Vida           [PHB 2014] / [PHB 2024]
-     Dominio de la Luz            [PHB 2014] / [PHB 2024]
-     Dominio de la Naturaleza     [PHB 2014]
-     Dominio de la Tempestad      [PHB 2014]
-     Dominio de la Guerra         [PHB 2014] / [PHB 2024]
-     Dominio del Conocimiento     [PHB 2014] / [HoF 2024]
-     Dominio del Engaño           [PHB 2014] / [PHB 2024]
-     Dominio de la Muerte         [DMG]
-     Dominio Arcano               [SCAG]
-     Dominio de la Forja          [XGtE]
-     Dominio de las Tumbas        [XGtE]
-     Dominio de la Paz            [TCE]
-     Dominio del Orden            [TCE]
-     Dominio del Crepúsculo       [TCE]
+   SUBCLASES (25 entradas):
+     Dominio de la Vida                      [PHB 2014] / [PHB 2024]
+     Dominio de la Luz                       [PHB 2014] / [PHB 2024]
+     Dominio de la Naturaleza                [PHB 2014]
+     Dominio de la Tempestad                 [PHB 2014]
+     Dominio de la Guerra                    [PHB 2014] / [PHB 2024]
+     Dominio del Conocimiento                [PHB 2014] / [HoF 2024] / [PSA]
+     Dominio del Engaño                      [PHB 2014] / [PHB 2024]
+     Dominio de la Muerte                    [DMG]
+     Dominio Arcano                          [SCAG]
+     Dominio de la Forja                     [XGtE]
+     Dominio de las Tumbas                   [XGtE] / [THW 2024]
+     Dominio de la Paz                       [TCE]
+     Dominio del Orden                       [TCE]
+     Dominio del Crepúsculo                  [TCE]
+     Dominio de la Ambición                  [PSA]
+     Dominio de la Solidaridad               [PSA]
+     Dominio de la Fuerza                    [PSA]
+     Dominio del Celo                        [PSA]
    ──────────────────────────────────────────────────────────────────
    Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
      "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
@@ -855,6 +859,238 @@ const CLASE_CLERIGO = {
         nv: 17,
         a: "B",
         d: "Como Acción Adicional expandes tu mente hacia el futuro: durante 1 hora tienes ventaja en las pruebas de d20. Una vez por descanso largo, o gastando un espacio de nivel 6+ (sin acción) para recuperarlo."
+      },
+    ],
+
+    /* ── RAVENLOFT: THE HORRORS WITHIN (THW, 2024) ── */
+    "Dominio de las Tumbas [THW 2024]": [
+      {
+        n: "Conjuros del Dominio de las Tumbas",
+        nv: 3,
+        d: "Siempre preparados — Nv.3: Detect Evil and Good, False Life, Gentle Repose, Ray of Enfeeblement, Spare the Dying. Nv.5: Revivify, Vampiric Touch. Nv.7: Blight, Death Ward. Nv.9: Dispel Evil and Good, Raise Dead."
+      },
+      {
+        n: "Círculo de Mortalidad (Circle of Mortality)",
+        nv: 3,
+        a: "B",
+        d: "Atracción de la Muerte (Pull of Death): una vez por turno, cuando infliges daño con un conjuro o al impactar con una tirada de ataque a una criatura a la que le falten PG, sufre 1d4 de daño necrótico adicional (1d6 desde el Nv.11 de Clérigo). Regreso a la Vida (Return to Life): puedes lanzar Spare the Dying como Acción Adicional. Además, cuando tirarías dados para restaurar PG con un conjuro o Canalizar Divinidad a una criatura con 0 PG, no tiras esos dados: usas el valor máximo de cada dado (p. ej., en vez de 2d4, restauras 8)."
+      },
+      {
+        n: "Camino a la Tumba (Path to the Grave)",
+        nv: 3,
+        a: "B",
+        d: "Como Acción Adicional presentas tu símbolo sagrado y gastas un uso de Canalizar Divinidad para maldecir a una criatura que veas a 30 pies hasta el inicio de tu siguiente turno. Mientras esté maldita, tiene Desventaja en las tiradas de ataque y las tiradas de salvación. Cuando tú o un aliado que veas impactáis al objetivo maldito con una tirada de ataque, puedes terminar la maldición antes (sin acción) para que ese ataque inflija daño necrótico o radiante adicional (a tu elección) igual a tu nivel de Clérigo."
+      },
+      {
+        n: "Centinela en el Umbral de la Muerte (Sentinel at Death's Door)",
+        nv: 6,
+        a: "R",
+        d: "Cuando tú o una criatura Malherida que veas a 60 pies recibe un impacto de una tirada de ataque, puedes usar tu Reacción para reducir a la mitad el daño de ese ataque (redondeando hacia abajo). Si la tirada era un golpe crítico, se cancelan los efectos que active un golpe crítico. Usos = mod. SAB (mínimo 1) por Descanso Largo."
+      },
+      {
+        n: "Segador Divino (Divine Reaper)",
+        nv: 17,
+        a: "O",
+        d: "Nigromancia Mejorada (Enhanced Necromancy): cuando lanzas un conjuro de nivel 5 o inferior de la escuela de Nigromancia que tenga una sola criatura como objetivo, o un conjuro de la tabla de Conjuros del Dominio de las Tumbas, puedes gastar un uso de Canalizar Divinidad para apuntar también a una segunda criatura dentro del alcance del conjuro. Si el conjuro requiere componentes materiales costosos o que se consumen, debes aportar componentes materiales para cada objetivo. Guardián de Almas (Keeper of Souls): cuando muere un enemigo a 60 pies de ti, tú o una criatura que veas a 60 pies recupera PG = el doble de tu nivel de Clérigo. No puedes usarlo si estás Incapacitado. Tras usarlo, no puedes volver a usarlo hasta terminar un Descanso Corto o Largo, salvo que gastes un espacio de conjuro de nivel 6 o superior (sin acción) para recuperar su uso."
+      },
+    ],
+
+    /* ── PLANE SHIFT: AMONKHET (PSA) ── */
+    "Dominio de la Ambición [PSA]": [
+      {
+        n: "Conjuros de Dominio",
+        nv: 1,
+        d: "Siempre preparados — Nv.1: Bane, Disguise Self. Nv.3: Mirror Image, Ray of Enfeeblement. Nv.5: Bestow Curse, Vampiric Touch. Nv.7: Death Ward, Dimension Door. Nv.9: Dominate Person, Modify Memory."
+      },
+      {
+        n: "Fulgor Protector (Warding Flare)",
+        nv: 1,
+        a: "R",
+        d: "Cuando te ataca una criatura que veas a 30 pies, puedes usar tu reacción para imponer Desventaja a la tirada de ataque: una luz destella ante el atacante antes de que impacte o falle. Un atacante que no pueda ser cegado es inmune a este rasgo. Usos = mod. SAB (mínimo 1) por Descanso Largo."
+      },
+      {
+        n: "Canalizar Divinidad: Invocar Duplicidad (Invoke Duplicity)",
+        nv: 2,
+        a: "AB",
+        d: "Como acción usas Canalizar Divinidad para crear una ilusión perfecta de ti en un espacio libre que veas a 30 pies; dura 1 minuto o hasta que pierdas la concentración (como si te concentraras en un conjuro). Como Acción Adicional en tu turno puedes mover la ilusión hasta 30 pies a un espacio que veas, pero debe permanecer a 120 pies de ti. Mientras dure, puedes lanzar conjuros como si estuvieras en el espacio de la ilusión, pero usando tus propios sentidos. Además, cuando tanto tú como la ilusión estáis a 5 pies de una criatura que ve la ilusión, tienes Ventaja en las tiradas de ataque contra ella, por lo distraída que la deja."
+      },
+      {
+        n: "Canalizar Divinidad: Manto de Sombras (Cloak of Shadows)",
+        nv: 6,
+        a: "A",
+        d: "Como acción usas Canalizar Divinidad para desvanecerte: quedas Invisible hasta el final de tu siguiente turno. Dejas de ser invisible si atacas o lanzas un conjuro."
+      },
+      {
+        n: "Lanzamiento Potente (Potent Spellcasting)",
+        nv: 8,
+        d: "Sumas tu mod. SAB al daño de tus trucos de Clérigo."
+      },
+      {
+        n: "Duplicidad Mejorada (Improved Duplicity)",
+        nv: 17,
+        d: "Con Invocar Duplicidad puedes crear hasta 4 duplicados de ti en lugar de 1. Como Acción Adicional en tu turno puedes mover cualquier número de ellos hasta 30 pies, hasta un máximo de 120 pies de ti."
+      },
+    ],
+
+    /* ── PLANE SHIFT: AMONKHET (PSA) ── */
+    "Dominio del Conocimiento [PSA]": [
+      {
+        n: "Conjuros de Dominio",
+        nv: 1,
+        d: "Siempre preparados — Nv.1: Command, Identify. Nv.3: Augury, Suggestion. Nv.5: Nondetection, Speak with Dead. Nv.7: Arcane Eye, Confusion. Nv.9: Legend Lore, Scrying."
+      },
+      {
+        n: "Bendiciones del Conocimiento (Blessings of Knowledge)",
+        nv: 1,
+        d: "Aprendes 2 idiomas a tu elección y ganas competencia en 2 habilidades a tu elección entre Arcana, Historia, Naturaleza y Religión; tu bonificador de competencia se duplica en cualquier prueba de característica que use una de ellas."
+      },
+      {
+        n: "Canalizar Divinidad: Conocimiento de las Eras (Knowledge of the Ages)",
+        nv: 2,
+        a: "A",
+        d: "Como acción usas Canalizar Divinidad para acceder a un pozo divino de conocimiento: eliges una habilidad o herramienta y durante 10 minutos tienes competencia en ella."
+      },
+      {
+        n: "Canalizar Divinidad: Leer Pensamientos (Read Thoughts)",
+        nv: 6,
+        a: "A",
+        d: "Como acción usas Canalizar Divinidad y eliges una criatura que veas a 60 pies: hace una salvación de SAB. Si la supera, no puedes volver a usar este rasgo contra ella hasta terminar un Descanso Largo. Si falla, durante 1 minuto lees sus pensamientos superficiales (los que tiene en primer plano: sus emociones actuales y en qué piensa) mientras esté a 60 pies de ti. Durante ese tiempo, puedes usar tu acción para terminar este efecto y lanzar Suggestion sobre la criatura sin gastar espacio de conjuro; el objetivo falla automáticamente la salvación contra ese conjuro."
+      },
+      {
+        n: "Lanzamiento Potente (Potent Spellcasting)",
+        nv: 8,
+        d: "Sumas tu mod. SAB al daño de tus trucos de Clérigo."
+      },
+      {
+        n: "Visiones del Pasado (Visions of the Past)",
+        nv: 17,
+        a: "O",
+        d: "Puedes evocar visiones del pasado relacionadas con un objeto que sostengas o con tu entorno inmediato. Dedicas al menos 1 minuto a meditar y rezar y recibes atisbos oníricos y sombríos de sucesos recientes; puedes meditar tantos minutos como tu puntuación de SAB y debes mantener la concentración durante ese tiempo, como si lanzaras un conjuro. Una vez usado, no puedes volver a usarlo hasta terminar un Descanso Corto o Largo. Lectura de Objeto (Object Reading): sosteniendo un objeto mientras meditas, ves visiones de su anterior propietario; tras 1 minuto sabes cómo lo obtuvo y lo perdió y cuál fue el suceso importante más reciente que lo involucró a él y al objeto. Si el objeto perteneció a otra criatura en el pasado reciente (en un número de días hasta tu puntuación de SAB), puedes dedicar 1 minuto adicional por cada propietario para saber lo mismo de esa criatura. Lectura de Zona (Area Reading): mientras meditas, ves visiones de sucesos recientes en tu entorno inmediato (una sala, calle, túnel, claro o similar, hasta un cubo de 50 pies) de hasta tantos días atrás como tu puntuación de SAB. Por cada minuto de meditación conoces un suceso importante, empezando por el más reciente. Los sucesos importantes suelen implicar emociones intensas (batallas y traiciones, bodas y asesinatos, nacimientos y funerales), pero también pueden ser sucesos más mundanos que sean relevantes para tu situación actual."
+      },
+    ],
+
+    /* ── PLANE SHIFT: AMONKHET (PSA) ── */
+    "Dominio de la Solidaridad [PSA]": [
+      {
+        n: "Conjuros de Dominio",
+        nv: 1,
+        d: "Siempre preparados — Nv.1: Bless, Guiding Bolt. Nv.3: Aid, Warding Bond. Nv.5: Beacon of Hope, Crusader's Mantle. Nv.7: Aura of Life, Guardian of Faith. Nv.9: Circle of Power, Mass Cure Wounds."
+      },
+      {
+        n: "Competencia Adicional",
+        nv: 1,
+        d: "Ganas competencia con armadura pesada."
+      },
+      {
+        n: "Acción de Solidaridad (Solidarity's Action)",
+        nv: 1,
+        a: "B",
+        d: "Cuando realizas la acción de Ayuda para auxiliar el ataque de un aliado, puedes hacer un ataque con arma como Acción Adicional. Usos = mod. SAB (mínimo 1); recuperas los usos gastados al terminar un Descanso Largo."
+      },
+      {
+        n: "Canalizar Divinidad: Preservar Vida (Preserve Life)",
+        nv: 2,
+        a: "A",
+        d: "Como acción presentas tu símbolo sagrado y evocas energía curativa que puede restaurar PG = 5 × tu nivel de Clérigo. Eliges criaturas a 30 pies y repartes esos PG entre ellas; no puede restaurar a una criatura por encima de la mitad de sus PG máximos. No puedes usarlo con no-muertos ni constructos."
+      },
+      {
+        n: "Bendición de Oketra (Oketra's Blessing)",
+        nv: 6,
+        a: "R",
+        d: "Cuando una criatura a 30 pies hace una tirada de ataque, puedes usar tu reacción y Canalizar Divinidad para darle un bonificador de +10 a la tirada. Decides tras ver la tirada, pero antes de que el DM diga si el ataque impacta o falla."
+      },
+      {
+        n: "Golpe Divino (Divine Strike)",
+        nv: 8,
+        d: "Una vez por turno, al impactar a una criatura con un ataque con arma, infliges 1d8 de daño adicional del mismo tipo que el que inflige el arma (2d8 en Nv.14)."
+      },
+      {
+        n: "Curación Suprema (Supreme Healing)",
+        nv: 17,
+        d: "Cuando tirarías dados para restaurar PG con un conjuro, usas el valor máximo de cada dado (p. ej., en vez de 2d6 PG, restauras 12)."
+      },
+    ],
+
+    /* ── PLANE SHIFT: AMONKHET (PSA) ── */
+    "Dominio de la Fuerza [PSA]": [
+      {
+        n: "Conjuros de Dominio",
+        nv: 1,
+        d: "Siempre preparados — Nv.1: Divine Favor, Shield of Faith. Nv.3: Enhance Ability, Protection from Poison. Nv.5: Haste, Protection from Energy. Nv.7: Dominate Beast, Stoneskin. Nv.9: Destructive Wave, Insect Plague."
+      },
+      {
+        n: "Acólito de la Fuerza (Acolyte of Strength)",
+        nv: 1,
+        d: "Aprendes un truco de Druida a tu elección y ganas competencia en una habilidad a tu elección entre Trato con Animales, Atletismo, Naturaleza y Supervivencia."
+      },
+      {
+        n: "Competencia Adicional",
+        nv: 1,
+        d: "Ganas competencia con armadura pesada."
+      },
+      {
+        n: "Canalizar Divinidad: Proeza de Fuerza (Feat of Strength)",
+        nv: 2,
+        a: "O",
+        d: "Cuando haces una tirada de ataque, prueba de característica o tirada de salvación con FUE, puedes usar Canalizar Divinidad para ganar un bonificador de +10 a la tirada. Decides tras ver la tirada, pero antes de que el DM diga si tiene éxito o falla."
+      },
+      {
+        n: "Bendición de Rhonas (Rhonas's Blessing)",
+        nv: 6,
+        a: "R",
+        d: "Cuando una criatura a 30 pies hace una tirada de ataque, prueba de característica o tirada de salvación con FUE, puedes usar tu reacción y Canalizar Divinidad para darle un bonificador de +10 a la tirada. Decides tras ver la tirada, pero antes de que el DM diga si tiene éxito o falla."
+      },
+      {
+        n: "Golpe Divino (Divine Strike)",
+        nv: 8,
+        d: "Una vez por turno, al impactar a una criatura con un ataque con arma, infliges 1d8 de daño adicional del mismo tipo que el que inflige el arma (2d8 en Nv.14)."
+      },
+      {
+        n: "Avatar de la Batalla (Avatar of Battle)",
+        nv: 17,
+        d: "Resistencia al daño contundente, perforante y cortante de ataques no mágicos."
+      },
+    ],
+
+    /* ── PLANE SHIFT: AMONKHET (PSA) ── */
+    "Dominio del Celo [PSA]": [
+      {
+        n: "Conjuros de Dominio",
+        nv: 1,
+        d: "Siempre preparados — Nv.1: Searing Smite, Thunderous Smite. Nv.3: Magic Weapon, Shatter. Nv.5: Haste, Fireball. Nv.7: Fire Shield (solo el escudo cálido), Freedom of Movement. Nv.9: Destructive Wave, Flame Strike."
+      },
+      {
+        n: "Competencias Adicionales",
+        nv: 1,
+        d: "Ganas competencia con armas marciales y armadura pesada."
+      },
+      {
+        n: "Sacerdote del Celo (Priest of Zeal)",
+        nv: 1,
+        a: "B",
+        d: "Hazoret te envía destellos de inspiración mientras combates. Cuando realizas la acción de Atacar, puedes hacer un ataque con arma como Acción Adicional. Usos = mod. SAB (mínimo 1) por Descanso Largo."
+      },
+      {
+        n: "Canalizar Divinidad: Fervor Devorador (Consuming Fervor)",
+        nv: 2,
+        a: "O",
+        d: "Cuando tiras daño de fuego o de trueno, puedes usar Canalizar Divinidad para infligir el daño máximo en lugar de tirar."
+      },
+      {
+        n: "Golpe Resonante (Resounding Strike)",
+        nv: 6,
+        d: "Cuando infliges daño de trueno a una criatura de tamaño Grande o menor, puedes además empujarla hasta 10 pies lejos de ti."
+      },
+      {
+        n: "Golpe Divino (Divine Strike)",
+        nv: 8,
+        d: "Una vez por turno, al impactar a una criatura con un ataque con arma, infliges 1d8 de daño adicional del mismo tipo que el que inflige el arma (2d8 en Nv.14)."
+      },
+      {
+        n: "Llamarada de Gloria (Blaze of Glory)",
+        nv: 17,
+        a: "R",
+        d: "Puedes retrasar la muerte un instante para realizar un último acto heroico. Cuando un atacante que veas te reduce a 0 PG, incluso si fueras a morir en el acto, puedes usar tu reacción para moverte hasta tu Velocidad hacia el atacante y hacer un ataque cuerpo a cuerpo con arma contra él, siempre que el movimiento lo deje a tu alcance. Haces este ataque con Ventaja. Si impacta, la criatura sufre 5d10 de daño de fuego adicional y 5d10 adicionales del tipo del arma. Después caes Inconsciente y empiezas a hacer salvaciones de muerte con normalidad, o mueres si el daño recibido te habría matado en el acto. Una vez usado, no puedes volver a usarlo hasta terminar un Descanso Largo."
       },
     ],
   },

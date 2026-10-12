@@ -4,7 +4,9 @@
    Revisado contra: PHB 2024 y Eberron: Forge of the Artificer 2024 (wiki dnd2024),
    PHB 2014, Mordenkainen Presents: Monsters of the Multiverse (MotM) y libros
    anteriores (VGtM, MTF, SCAG, EEPC, GGtR, MOoT, EGtW, ERftLW, FTD, SCC, AAG,
-   VRGtR) según dnd5e.wikidot.com.
+   VRGtR) según dnd5e.wikidot.com. Ampliado y contrastado con 5etools: Plane Shift
+   (PSA, PSD, PSI, PSK, PSX, PSZ), ERftLW (Marcas del Dragón), OGA, LR, SotDQ,
+   Lorwyn–Shadowmoor (LFL 2024) y THW 2024.
    Convención: las especies de 2014 con ASI llevan una nota "Versión original".
    El campo opcional  a  marca rasgos activos para el panel de acciones:
      "A" = Acción · "B" = Acción Adicional · "R" = Reacción · "O" = otro/gratis
@@ -743,4 +745,623 @@ const DND_ESPECIES = {
     { n:"Rasgo Variable (Variable Trait)", d:"Eliges una opción: Visión en la Oscuridad de 60 pies, o competencia en una habilidad a tu elección." },
   ],
 
+  /* ═══════════════════════════════════════════
+     ONE GRUNG ABOVE (OGA)
+  ═══════════════════════════════════════════ */
+
+  "Grung [OGA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, trepar 25 pies. Inmune al daño de veneno y a la condición Envenenado. Competencia en Percepción. Idiomas: Grung. Aumento: DES +2, CON +1." },
+    { n:"Alerta Arbórea (Arboreal Alertness)", d:"Competencia en la habilidad Percepción." },
+    { n:"Anfibio (Amphibious)", d:"Puedes respirar aire y agua." },
+    { n:"Inmunidad al Veneno (Poison Immunity)", d:"Eres inmune al daño de veneno y a la condición Envenenado." },
+    { n:"Piel Venenosa (Poisonous Skin)", a:"O", d:"Cualquier criatura que te agarre o entre en contacto directo con tu piel debe superar una salvación de CON (CD 12) o queda Envenenada 1 minuto. Una criatura Envenenada que ya no esté en contacto directo contigo puede repetir la salvación al final de cada uno de sus turnos, terminando el efecto en sí misma si la supera. También puedes aplicar este veneno a cualquier arma perforante como parte de un ataque con ella; en ese caso, al impactar, el objetivo debe superar una salvación de CON (CD 12) o sufrir 2d4 de daño de veneno." },
+    { n:"Salto desde Parado (Standing Leap)", d:"Tu salto de longitud llega hasta 25 pies y tu salto de altura hasta 15 pies, con o sin carrerilla." },
+    { n:"Dependencia del Agua (Water Dependency)", d:"Si en un día no te sumerges en agua al menos 1 hora, sufres un nivel de Agotamiento al final de ese día. Solo puedes recuperarte de este Agotamiento con magia o sumergiéndote en agua al menos 1 hora." },
+  ],
+  /* ═══════════════════════════════════════════
+     DRAGONLANCE: SHADOW OF THE DRAGON QUEEN (SotDQ)
+  ═══════════════════════════════════════════ */
+
+  "Kender [SotDQ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 30 pies. Competencia en una habilidad a elegir (Curiosidad Kender). Idiomas: Común y uno más. Aumento: +2/+1 o +1/+1/+1." },
+    { n:"Intrépido (Fearless)", a:"O", d:"Ventaja en las salvaciones para evitar o terminar la condición Asustado. Cuando fallas una salvación para evitar o terminar la condición Asustado, puedes elegir superarla en su lugar. Una vez que superas así una salvación, no puedes volver a hacerlo hasta que termines un Descanso Largo." },
+    { n:"Curiosidad Kender (Kender Curiosity)", d:"Por el origen místico de tu pueblo, ganas competencia en una habilidad a tu elección entre Perspicacia, Investigación, Juego de Manos, Sigilo o Supervivencia." },
+    { n:"Provocar (Taunt)", a:"B", d:"Con una Acción Adicional lanzas una retahíla de palabras provocadoras a una criatura que esté a 60 pies de ti y pueda oírte y entenderte. El objetivo debe superar una salvación de SAB o tiene Desventaja en las tiradas de ataque contra objetivos que no seas tú hasta el inicio de tu siguiente turno. CD = 8 + bonificador de competencia + mod. INT, SAB o CAR (a elegir al escoger la especie). Usos = bonificador de competencia por Descanso Largo." },
+  ],
+  /* ═══════════════════════════════════════════
+     LOCATHAH RISING (LR)
+  ═══════════════════════════════════════════ */
+
+  "Locathah [LR]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies. Competencia en Atletismo y Percepción. Idiomas: Común y Aquan. Aumento: FUE +2, DES +1." },
+    { n:"Armadura Natural (Natural Armor)", d:"Tienes la piel dura y escamosa. Si no llevas armadura, tu CA es 12 + mod. de DES. Puedes usar tu armadura natural para determinar tu CA si la armadura que llevas te dejaría con una CA menor. Los beneficios de un escudo se aplican con normalidad mientras usas tu armadura natural." },
+    { n:"Observador y Atlético (Observant & Athletic)", d:"Competencia en Atletismo y Percepción." },
+    { n:"Voluntad de Leviatán (Leviathan Will)", d:"Ventaja en las salvaciones contra ser Hechizado, Asustado, Paralizado, Envenenado, Aturdido o puesto a dormir." },
+    { n:"Anfibio Limitado (Limited Amphibiousness)", d:"Puedes respirar aire y agua, pero debes sumergirte al menos una vez cada 4 horas para evitar asfixiarte." },
+  ],
+  /* ═══════════════════════════════════════════
+     LORWYN: FIRST LIGHT (LFL, 2024)
+  ═══════════════════════════════════════════ */
+
+  "Boggart [LFL 2024]": [
+    { n:"Rasgos Básicos", d:"Humanoide (cuenta también como goblinoide para cualquier requisito o efecto que pida un goblinoide), Pequeño, Velocidad 30 pies, Visión en la Oscuridad 60 pies." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones para evitar o terminar la condición Hechizado." },
+    { n:"Furia del Pequeño (Fury of the Small)", a:"O", d:"Cuando dañas con un ataque o conjuro a una criatura de tamaño mayor que el tuyo, puedes infligirle daño extra igual a tu bonificador de competencia. Usos = bonificador de competencia por Descanso Largo, y no más de una vez por turno." },
+    { n:"Escape Ágil (Nimble Escape)", a:"B", d:"Puedes realizar la acción Retirarse o Esconderse como Acción Adicional en cada uno de tus turnos." },
+  ],
+
+  "Elfo [LFL 2024]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano (5–6 pies), Velocidad 30 pies, Visión en la Oscuridad 60 pies." },
+    { n:"Linaje Élfico (Elven Lineage)", a:"A", d:"Eliges un linaje y una característica de lanzamiento (INT, SAB o CAR); ganas el beneficio de Nv.1 del linaje y, en Nv.3 y Nv.5, aprendes un conjuro de mayor nivel que siempre tienes preparado. Lorwyn: truco Thorn Whip (tras cada Descanso Largo puedes cambiarlo por otro truco de la lista de Druida); Nv.3 Command; Nv.5 Silence. Shadowmoor: tu Visión en la Oscuridad aumenta a 120 pies; truco Starry Wisp; Nv.3 Heroism; Nv.5 Gentle Repose. Los conjuros de Nv.3 y Nv.5 los lanzas una vez cada uno sin espacio por Descanso Largo (también con espacios del nivel adecuado)." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones para evitar o terminar la condición Hechizado." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Perspicacia, Percepción o Supervivencia (a tu elección)." },
+    { n:"Trance", d:"No necesitas dormir y la magia no puede dormirte. Haces un Descanso Largo en 4 horas si las pasas en una meditación similar a un trance, durante la cual conservas la consciencia." },
+  ],
+
+  "Faerie [LFL 2024]": [
+    { n:"Rasgos Básicos", d:"Feérico, Pequeño, Velocidad 30 pies, vuelo igual a tu Velocidad." },
+    { n:"Magia Feérica (Fairy Magic)", a:"A", d:"Conoces el truco Druidcraft. Nv.3: puedes lanzar Faerie Fire con este rasgo. Nv.5: puedes lanzar también Enlarge/Reduce con este rasgo. Una vez lanzado cada uno de ellos con este rasgo, no puedes volver a lanzarlo así hasta que termines un Descanso Largo (también puedes lanzarlos con espacios de conjuro del nivel adecuado). INT, SAB o CAR es tu característica de lanzamiento para estos conjuros (a elegir al escoger la especie)." },
+    { n:"Vuelo (Flight)", d:"Gracias a tus alas tienes Velocidad de vuelo igual a tu Velocidad caminando. No puedes usarla si llevas armadura media o pesada." },
+    { n:"Linaje Feérico (Faerie Lineage)", d:"Como nativo de Lorwyn o de Shadowmoor, puedes obtener rasgos adicionales. Lorwyn: ningún rasgo adicional. Shadowmoor: Visión en la Oscuridad con alcance 120 pies." },
+  ],
+
+  "Flamekin [LFL 2024]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano o Pequeño (a tu elección al escoger la especie), Velocidad 30 pies, Visión en la Oscuridad 60 pies, Resistencia al fuego." },
+    { n:"Resistencia al Fuego (Fire Resistance)", d:"Resistencia al daño de fuego." },
+    { n:"Alcanzar la Llama (Reach to the Blaze)", a:"A", d:"Conoces el truco Produce Flame. Nv.3: puedes lanzar Burning Hands con este rasgo. Nv.5: puedes lanzar también Flame Blade con este rasgo, sin componente material. Una vez lanzado cada uno de ellos con este rasgo, no puedes volver a lanzarlo así hasta que termines un Descanso Largo (también puedes lanzarlos con espacios de conjuro del nivel adecuado). INT, SAB o CAR es tu característica de lanzamiento para estos conjuros (a elegir al escoger la especie)." },
+  ],
+
+  "Kithkin [LFL 2024]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño (2–3 pies), Velocidad 30 pies." },
+    { n:"Valiente (Brave)", d:"Ventaja en las salvaciones para evitar o terminar la condición Asustado." },
+    { n:"Agilidad Mediana (Halfling Nimbleness)", d:"Puedes moverte por el espacio de cualquier criatura de un tamaño mayor que el tuyo, pero no detenerte en él." },
+    { n:"Suerte (Luck)", d:"Cuando sacas un 1 en el d20 de una Prueba de d20, puedes repetir la tirada y debes usar el nuevo resultado." },
+    { n:"Naturalmente Sigiloso (Naturally Stealthy)", d:"Puedes realizar la acción Esconderse incluso estando oculto solo por una criatura al menos un tamaño mayor que tú." },
+    { n:"Linaje Kithkin (Kithkin Lineage)", d:"Como nativo de Lorwyn o de Shadowmoor, puedes obtener rasgos adicionales. Lorwyn: ningún rasgo adicional. Shadowmoor: Visión en la Oscuridad con alcance 120 pies." },
+  ],
+
+  "Lorwyn Changeling [LFL 2024]": [
+    { n:"Rasgos Básicos", d:"Feérico, Mediano (4–7 pies) o Pequeño (2–4 pies), Velocidad 30 pies, Visión en la Oscuridad 120 pies." },
+    { n:"Cambiar de Forma (Shape Self)", a:"A", d:"Con una acción puedes remodelar tu cuerpo a una forma Humanoide bípeda o a una forma de Bestia cuadrúpeda. Mientras tengas forma Humanoide, puedes llevar ropa y armadura hechas para un Humanoide de tu tamaño." },
+    { n:"Imitador Encantador (Delightful Imitator)", d:"Competencia en Engaño o Interpretación (a tu elección)." },
+    { n:"Movimiento Impredecible (Unpredictable Movement)", a:"O", d:"Cuando tiras Iniciativa, puedes moverte de inmediato hasta la mitad de tu Velocidad, siempre que no tengas Desventaja en la tirada de Iniciativa." },
+  ],
+
+  "Rimekin [LFL 2024]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano (4–7 pies) o Pequeño (2–4 pies), Velocidad 30 pies, Visión en la Oscuridad 60 pies, Resistencia al frío." },
+    { n:"Magia de Fuego Frío (Cold Fire Magic)", a:"A", d:"Conoces el truco Ray of Frost. En los niveles de personaje 3 y 5 aprendes los conjuros Ice Knife y Flame Blade, respectivamente, y siempre los tienes preparados. Lanzas cada uno una vez sin espacio de conjuro y recuperas esa capacidad al terminar un Descanso Largo (también puedes lanzarlos con espacios de conjuro del nivel adecuado). Cuando lanzas Flame Blade con este rasgo, el conjuro inflige daño de frío en lugar de daño de fuego. INT, SAB o CAR es tu característica de lanzamiento para estos conjuros (a elegir al escoger la especie)." },
+    { n:"Resistencia al Frío (Cold Resistance)", d:"Resistencia al daño de frío." },
+  ],
+  /* ═══════════════════════════════════════════
+     EBERRON: FORGE OF THE ARTIFICER (EFotA, 2024)
+  ═══════════════════════════════════════════ */
+
+  "Shifter [EFotA 2024]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano (4–7 pies) o Pequeño (2–4 pies), Velocidad 30 pies, Visión en la Oscuridad 60 pies. (Eberron: Forge of the Artificer)" },
+    { n:"Instintos Bestiales (Bestial Instincts)", d:"Canalizando a la bestia que llevas dentro, ganas competencia en una habilidad a tu elección entre Acrobacias, Atletismo, Intimidación o Supervivencia." },
+    { n:"Cambio de Forma (Shifting)", a:"BR", d:"Con una Acción Adicional adoptas un aspecto más bestial durante 1 minuto o hasta que vuelvas a tu aspecto normal con una Acción Adicional. Al transformarte ganas PG temporales iguales a 2 × tu bonificador de competencia. Puedes transformarte un número de veces igual a tu bonificador de competencia y recuperas todos los usos al terminar un Descanso Largo. Cada vez que te transformas ganas el beneficio de una opción (se elige al escoger la especie). Beasthide: 1d6 PG temporales adicionales y, mientras estés transformado, +1 a la CA. Longtooth: al transformarte y, con una Acción Adicional, en tus otros turnos mientras estés transformado, puedes hacer un Ataque Desarmado con tus colmillos alargados; si impactas e infliges daño, puedes infligir daño perforante igual a 1d6 + mod. FUE en lugar del daño normal del Ataque Desarmado. Swiftstride: mientras estés transformado, tu Velocidad aumenta 10 pies; además, como Reacción, puedes moverte hasta 10 pies cuando una criatura termina su turno a 5 pies de ti, y este movimiento no provoca Ataques de Oportunidad. Wildhunt: mientras estés transformado, tienes Ventaja en las pruebas de SAB y ninguna criatura a 30 pies de ti puede tener Ventaja en una tirada de ataque contra ti, salvo que estés Incapacitado." },
+  ],
+  /* ═══════════════════════════════════════════
+     EBERRON: RISING FROM THE LAST WAR (ERftLW, 2014)
+  ═══════════════════════════════════════════ */
+
+  "Enano (Marca de la Protección, Mark of Warding) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies (no se reduce por llevar armadura pesada), Visión en la Oscuridad 60 pies. Idiomas: Común y Enano. Aumento: CON +2, INT +1." },
+    { n:"Resiliencia Enana (Dwarven Resilience)", d:"Ventaja en las salvaciones contra veneno y resistencia al daño de veneno." },
+    { n:"Entrenamiento Enano en Combate (Dwarven Combat Training)", d:"Competencia con hacha de batalla, hacha de mano, martillo ligero y martillo de guerra." },
+    { n:"Competencia con Herramientas (Tool Proficiency)", d:"Competencia con herramientas de herrero, suministros de cervecero o herramientas de albañil (a tu elección)." },
+    { n:"Sentido de la Piedra (Stonecunning)", d:"En pruebas de Inteligencia (Historia) sobre el origen de obras de piedra, cuentas como competente y sumas el doble de tu bonificador de competencia." },
+    { n:"Intuición del Guardián (Warder's Intuition)", d:"Cuando haces una prueba de Inteligencia (Investigación) o una prueba de característica con herramientas de ladrón, puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Protecciones y Sellos (Wards and Seals)", a:"A", d:"Puedes lanzar Alarm y Mage Armor con este rasgo. Desde Nv.3 también Arcane Lock. Una vez lanzado uno de estos conjuros así, no puedes volver a lanzarlo con este rasgo hasta terminar un Descanso Largo. INT es tu característica de lanzamiento y no necesitas componentes materiales." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Protección se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Alarm, Armor of Agathys; 2: Arcane Lock, Knock; 3: Glyph of Warding, Magic Circle; 4: Leomund's Secret Chest, Mordenkainen's Faithful Hound; 5: Antilife Shell." },
+  ],
+
+  "Elfo (Marca de la Sombra, Mark of Shadow) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común y Élfico. Aumento: DES +2, CAR +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Trance", d:"No necesitas dormir: meditas 4 horas al día, semiconsciente, y obtienes el beneficio de 8 horas de sueño. Si meditas durante un Descanso Largo, lo terminas en solo 4 horas; por lo demás se aplican todas las reglas del Descanso Largo." },
+    { n:"Intuición Astuta (Cunning Intuition)", d:"Cuando haces una prueba de Carisma (Interpretación) o de Destreza (Sigilo), puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Dar Forma a las Sombras (Shape Shadows)", a:"A", d:"Conoces el truco Minor Illusion. Desde Nv.3 puedes lanzar Invisibility una vez con este rasgo y recuperas esa capacidad al terminar un Descanso Largo. CAR es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Sombra se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Disguise Self, Silent Image; 2: Darkness, Pass without Trace; 3: Clairvoyance, Major Image; 4: Greater Invisibility, Hallucinatory Terrain; 5: Mislead." },
+  ],
+
+  "Gnomo (Marca de la Escritura, Mark of Scribing) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, Visión en la Oscuridad 60 pies. Idiomas: Común y Gnómico. Aumento: INT +2, CAR +1." },
+    { n:"Astucia Gnómica (Gnome Cunning)", d:"Ventaja en todas las salvaciones de INT, SAB y CAR contra magia." },
+    { n:"Escriba Dotado (Gifted Scribe)", d:"Cuando haces una prueba de Inteligencia (Historia) o una prueba de característica con útiles de caligrafía, puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Intuición del Escriba (Scribe's Insight)", a:"A", d:"Conoces el truco Message. También puedes lanzar Comprehend Languages una vez con este rasgo y recuperas esa capacidad al terminar un Descanso Corto o Largo. Desde Nv.3 puedes lanzar Magic Mouth con este rasgo y recuperas esa capacidad al terminar un Descanso Largo. INT es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Escritura se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Comprehend Languages, Illusory Script; 2: Animal Messenger, Silence; 3: Sending, Tongues; 4: Arcane Eye, Confusion; 5: Dream." },
+  ],
+
+  "Semielfo (Marca de la Detección, Mark of Detection) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común, Élfico y uno más. Aumento: SAB +2 y +1 a otra característica a tu elección (FUE, DES, CON, INT o CAR). Sustituye la Versatilidad con Habilidades del Semielfo." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Intuición Deductiva (Deductive Intuition)", d:"Cuando haces una prueba de Inteligencia (Investigación) o de Sabiduría (Perspicacia), puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Detección Mágica (Magical Detection)", a:"A", d:"Puedes lanzar Detect Magic y Detect Poison and Disease con este rasgo. Desde Nv.3 también See Invisibility. Una vez lanzado uno de estos conjuros así, no puedes volver a lanzarlo con este rasgo hasta terminar un Descanso Largo. SAB es tu característica de lanzamiento y no necesitas componentes materiales." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Detección se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Detect Evil and Good, Detect Poison and Disease; 2: Detect Thoughts, Find Traps; 3: Clairvoyance, Nondetection; 4: Arcane Eye, Divination; 5: Legend Lore." },
+  ],
+
+  "Semielfo (Marca de la Tormenta, Mark of Storm) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común, Élfico y uno más. Aumento: CAR +2, DES +1. Sustituye la Versatilidad con Habilidades del Semielfo." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Intuición del Viento (Windwright's Intuition)", d:"Cuando haces una prueba de Destreza (Acrobacias) o cualquier prueba de característica con herramientas de navegante, puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Don de la Tormenta (Storm's Boon)", d:"Resistencia al daño de relámpago." },
+    { n:"Vientos en Contra (Headwinds)", a:"A", d:"Conoces el truco Gust. Desde Nv.3 puedes lanzar Gust of Wind una vez con este rasgo y recuperas esa capacidad al terminar un Descanso Largo. CAR es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Tormenta se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Feather Fall, Fog Cloud; 2: Gust of Wind, Levitate; 3: Sleet Storm, Wind Wall; 4: Conjure Minor Elementals, Control Water; 5: Conjure Elemental." },
+  ],
+
+  "Semiorco (Marca del Hallazgo, Mark of Finding) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común y Goblin. Aumento: SAB +2, CON +1. Sustituye los rasgos Amenazante, Resistencia Implacable y Ataques Salvajes del Semiorco." },
+    { n:"Intuición del Cazador (Hunter's Intuition)", d:"Cuando haces una prueba de Sabiduría (Percepción) o de Sabiduría (Supervivencia), puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Magia del Buscador (Finder's Magic)", a:"AB", d:"Puedes lanzar Hunter's Mark con este rasgo. Desde Nv.3 también Locate Object. Una vez lanzado uno de estos conjuros así, no puedes volver a lanzarlo con este rasgo hasta terminar un Descanso Largo. SAB es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca del Hallazgo se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Faerie Fire, Longstrider; 2: Locate Animals or Plants, Locate Object; 3: Clairvoyance, Speak with Plants; 4: Divination, Locate Creature; 5: Commune with Nature." },
+  ],
+
+  "Mediano (Marca de la Curación, Mark of Healing) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies. Idiomas: Común y Mediano. Aumento: DES +2, SAB +1." },
+    { n:"Suerte (Lucky)", d:"Cuando sacas un 1 natural en una tirada de ataque, prueba de característica o salvación, puedes repetir la tirada y debes usar el nuevo resultado." },
+    { n:"Valiente (Brave)", d:"Ventaja en las salvaciones contra Asustado." },
+    { n:"Agilidad Mediana (Halfling Nimbleness)", d:"Puedes moverte por el espacio de cualquier criatura de un tamaño mayor que el tuyo." },
+    { n:"Intuición Médica (Medical Intuition)", d:"Cuando haces una prueba de Sabiduría (Medicina) o una prueba de característica con un kit de herboristería, puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Toque Curativo (Healing Touch)", a:"A", d:"Puedes lanzar Cure Wounds con este rasgo. Desde Nv.3 también Lesser Restoration. Una vez lanzado uno de estos conjuros así, no puedes volver a lanzarlo con este rasgo hasta terminar un Descanso Largo. SAB es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Curación se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Cure Wounds, Healing Word; 2: Lesser Restoration, Prayer of Healing; 3: Aura of Vitality, Mass Healing Word; 4: Aura of Purity, Aura of Life; 5: Greater Restoration." },
+  ],
+
+  "Mediano (Marca de la Hospitalidad, Mark of Hospitality) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies. Idiomas: Común y Mediano. Aumento: DES +2, CAR +1." },
+    { n:"Suerte (Lucky)", d:"Cuando sacas un 1 natural en una tirada de ataque, prueba de característica o salvación, puedes repetir la tirada y debes usar el nuevo resultado." },
+    { n:"Valiente (Brave)", d:"Ventaja en las salvaciones contra Asustado." },
+    { n:"Agilidad Mediana (Halfling Nimbleness)", d:"Puedes moverte por el espacio de cualquier criatura de un tamaño mayor que el tuyo." },
+    { n:"Siempre Hospitalario (Ever Hospitable)", d:"Cuando haces una prueba de Carisma (Persuasión) o una prueba de característica con suministros de cervecero o utensilios de cocinero, puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Magia del Posadero (Innkeeper's Magic)", a:"A", d:"Conoces el truco Prestidigitation. También puedes lanzar Purify Food and Drink y Unseen Servant con este rasgo. Una vez lanzado uno de estos conjuros así, no puedes volver a lanzarlo con este rasgo hasta terminar un Descanso Largo. CAR es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Hospitalidad se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Goodberry, Sleep; 2: Aid, Calm Emotions; 3: Create Food and Water, Leomund's Tiny Hut; 4: Aura of Purity, Mordenkainen's Private Sanctum; 5: Hallow." },
+  ],
+
+  "Humano (Marca de la Doma, Mark of Handling) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: SAB +2 y +1 a otra característica a tu elección (FUE, DES, CON, INT o CAR)." },
+    { n:"Intuición Salvaje (Wild Intuition)", d:"Cuando haces una prueba de Sabiduría (Trato con Animales) o de Inteligencia (Naturaleza), puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Conexión Primigenia (Primal Connection)", a:"A", d:"Puedes lanzar Animal Friendship y Speak with Animals con este rasgo, sin componente material. Una vez lanzado uno de estos conjuros así, no puedes volver a lanzarlo con este rasgo hasta terminar un Descanso Corto o Largo. SAB es tu característica de lanzamiento." },
+    { n:"Cuanto Más Grandes (The Bigger They Are)", d:"Desde Nv.3, al lanzar Animal Friendship o Speak with Animals puedes elegir como objetivo una Bestia o una Monstruosidad, siempre que su puntuación de Inteligencia sea 3 o menos." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Doma se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Animal Friendship, Speak with Animals; 2: Beast Sense, Calm Emotions; 3: Beacon of Hope, Conjure Animals; 4: Aura of Life, Dominate Beast; 5: Awaken." },
+  ],
+
+  "Humano (Marca de la Creación, Mark of Making) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: INT +2 y +1 a otra característica a tu elección (FUE, DES, CON, SAB o CAR)." },
+    { n:"Intuición del Artesano (Artisan's Intuition)", d:"Cuando haces una prueba de Arcana o una prueba de característica con herramientas de artesano, puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Don del Creador (Maker's Gift)", d:"Competencia con un tipo de herramientas de artesano a tu elección." },
+    { n:"Forjador de Conjuros (Spellsmith)", a:"B", d:"Conoces el truco Mending. También puedes lanzar Magic Weapon con este rasgo; si lo haces, el conjuro dura 1 hora y no requiere concentración. Una vez lanzado así, no puedes volver a hacerlo hasta terminar un Descanso Largo. INT es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca de la Creación se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Identify, Tenser's Floating Disk; 2: Continual Flame, Magic Weapon; 3: Conjure Barrage, Elemental Weapon; 4: Fabricate, Stone Shape; 5: Creation." },
+  ],
+
+  "Humano (Marca del Pasaje, Mark of Passage) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 35 pies. Idiomas: Común y uno más. Aumento: DES +2 y +1 a otra característica a tu elección (FUE, CON, INT, SAB o CAR)." },
+    { n:"Velocidad del Mensajero (Courier's Speed)", d:"Tu Velocidad base caminando aumenta a 35 pies." },
+    { n:"Movimiento Intuitivo (Intuitive Motion)", d:"Cuando haces una prueba de Destreza (Acrobacias) o cualquier prueba de característica para manejar o mantener un vehículo terrestre, puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Pasaje Mágico (Magical Passage)", a:"B", d:"Puedes lanzar Misty Step una vez con este rasgo y recuperas esa capacidad al terminar un Descanso Largo. DES es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca del Pasaje se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Expeditious Retreat, Jump; 2: Misty Step, Pass without Trace; 3: Blink, Phantom Steed; 4: Dimension Door, Freedom of Movement; 5: Teleportation Circle." },
+  ],
+
+  "Humano (Marca del Centinela, Mark of Sentinel) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: CON +2, SAB +1." },
+    { n:"Intuición del Centinela (Sentinel's Intuition)", d:"Cuando haces una prueba de Sabiduría (Perspicacia) o de Sabiduría (Percepción), puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Escudo del Guardián (Guardian's Shield)", a:"R", d:"Puedes lanzar Shield una vez con este rasgo y recuperas esa capacidad al terminar un Descanso Largo. SAB es tu característica de lanzamiento." },
+    { n:"Guardián Vigilante (Vigilant Guardian)", a:"R", d:"Cuando una tirada de ataque impacta a una criatura que veas a 5 pies de ti, puedes usar tu Reacción para intercambiar posiciones con ella; el ataque te impacta a ti en su lugar. Una vez usado, no puedes volver a hacerlo hasta terminar un Descanso Largo." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca del Centinela se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Compelled Duel, Shield of Faith; 2: Warding Bond, Zone of Truth; 3: Counterspell, Protection from Energy; 4: Death Ward, Guardian of Faith; 5: Bigby's Hand." },
+  ],
+
+  "Humano (Marca del Hallazgo, Mark of Finding) [ERftLW]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común y Goblin. Aumento: SAB +2, CON +1." },
+    { n:"Intuición del Cazador (Hunter's Intuition)", d:"Cuando haces una prueba de Sabiduría (Percepción) o de Sabiduría (Supervivencia), puedes tirar 1d4 y sumarlo a la prueba." },
+    { n:"Magia del Buscador (Finder's Magic)", a:"AB", d:"Puedes lanzar Hunter's Mark con este rasgo. Desde Nv.3 también Locate Object. Una vez lanzado uno de estos conjuros así, no puedes volver a lanzarlo con este rasgo hasta terminar un Descanso Largo. SAB es tu característica de lanzamiento." },
+    { n:"Hechizos de la Marca (Spells of the Mark)", d:"Si tienes el rasgo de clase Lanzamiento de Conjuros o Magia de Pacto, los conjuros de la tabla de la Marca del Hallazgo se añaden a la lista de conjuros de tu clase lanzadora. Nivel de conjuro 1: Faerie Fire, Longstrider; 2: Locate Animals or Plants, Locate Object; 3: Clairvoyance, Speak with Plants; 4: Divination, Locate Creature; 5: Commune with Nature." },
+  ],
+  /* ═══════════════════════════════════════════
+     PLANE SHIFT: KALADESH (PSK)
+  ═══════════════════════════════════════════ */
+
+  "Aetherborn [PSK]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Resistencia al daño necrótico. Competencia en Intimidación. Idiomas: Común y dos más. Aumento: CAR +2 y +1 a otras dos características distintas (a elegir entre FUE, DES, CON, INT y SAB)." },
+    { n:"Nacido del Éter (Born of Aether)", d:"Resistencia al daño necrótico." },
+    { n:"Amenazante (Menacing)", d:"Competencia en Intimidación." },
+    { n:"Don del Aetherborn (Gift of the Aetherborn)", a:"A", d:"Variante opcional a criterio del DM: investigar y someterse a la transformación sigue un proceso similar a inventar y fabricar un objeto mágico raro, pero con ungüentos e ingredientes raros en lugar de éter. Ganas Drenar Vida (Drain Life): un ataque natural, tocando a un ser vivo con una mano con garras, que inflige 1d6 de daño necrótico y te restaura los mismos PG. Si pasas 7 días sin infligir este daño, tus PG máximos se reducen en 1d6 por semana; esa reducción no se elimina hasta que uses Drain Life y termines un Descanso Largo." },
+  ],
+
+  "Enano de Kaladesh [PSK]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies (no se reduce por llevar armadura pesada), Visión en la Oscuridad 60 pies. Resistencia al daño de veneno. Idiomas: Común y Enano. Aumento: CON +2, SAB +1." },
+    { n:"Resiliencia Enana (Dwarven Resilience)", d:"Ventaja en las salvaciones contra veneno y resistencia al daño de veneno." },
+    { n:"Dureza Enana (Dwarven Toughness)", d:"Tus PG máximos aumentan en 1 y en 1 más cada vez que subes de nivel." },
+    { n:"Pericia de Artesano (Artisan's Expertise)", d:"Competencia con dos tipos de herramientas de artesano a tu elección. Tu bonificador de competencia se duplica en cualquier prueba de característica que use una de esas competencias. Además, en las pruebas de Inteligencia (Historia) sobre el origen de cualquier construcción arquitectónica (edificios, obras públicas como canales y acueductos y el enorme engranaje que sustenta gran parte de la construcción de Ghirapur), cuentas como competente en Historia y sumas el doble de tu bonificador de competencia en lugar del normal." },
+  ],
+
+  "Elfo de Kaladesh [PSK]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Competencia en Percepción. Idiomas: Común y Élfico. Aumento: DES +2, SAB +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Entrenamiento Élfico con Armas (Elf Weapon Training)", d:"Competencia con espada larga, espada corta, arco corto y arco largo." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Trance", d:"No necesitas dormir: meditas 4 horas al día, semiconsciente, y obtienes el beneficio de 8 horas de sueño. Si meditas durante un Descanso Largo, lo terminas en solo 4 horas; por lo demás se aplican todas las reglas del Descanso Largo." },
+    { n:"Cultura Élfica (Elf Culture)", d:"Los elfos de Kaladesh no se organizan en naciones ni tribus, pero reconocen tres grupos culturales (más bien actitudes ante el resto de la sociedad y el uso de la tecnología). Eliges una de estas culturas. Con rasgos propios (entradas aparte): Bishatar y Tirahar (Velocidad 35 pies y Máscara de lo Salvaje) y Vahadar (un truco de Druida y un idioma adicional)." },
+  ],
+
+  "Humano de Kaladesh [PSK]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: +1 a todas las características." },
+  ],
+
+  "Vedalken [PSK]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y Vedalken. Aumento: INT +2, SAB +1." },
+    { n:"Astucia Vedalken (Vedalken Cunning)", d:"Ventaja en todas las salvaciones de INT, SAB y CAR contra magia." },
+    { n:"Saber del Éter (Aether Lore)", d:"Cuando haces una prueba de Inteligencia (Historia) relacionada con objetos mágicos o dispositivos tecnológicos propulsados por éter, puedes sumar el doble de tu bonificador de competencia en lugar de cualquier bonificador de competencia que aplicaras normalmente." },
+  ],
+
+  "Elfo de Kaladesh (Bishatar y Tirahar) [PSK]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 35 pies, Visión en la Oscuridad 60 pies. Competencia en Percepción. Idiomas: Común y Élfico. Aumento: DES +2, SAB +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Entrenamiento Élfico con Armas (Elf Weapon Training)", d:"Competencia con espada larga, espada corta, arco corto y arco largo." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Trance", d:"No necesitas dormir: meditas 4 horas al día, semiconsciente, y obtienes el beneficio de 8 horas de sueño. Si meditas durante un Descanso Largo, lo terminas en solo 4 horas; por lo demás se aplican todas las reglas del Descanso Largo." },
+    { n:"Cultura Élfica (Elf Culture)", d:"Los elfos de Kaladesh no se organizan en naciones ni tribus, pero reconocen tres grupos culturales (más bien actitudes ante el resto de la sociedad y el uso de la tecnología). Esta entrada recoge la cultura Bishatar y Tirahar." },
+    { n:"Pies Ligeros (Fleet of Foot)", d:"Tu Velocidad caminando aumenta a 35 pies." },
+    { n:"Máscara de lo Salvaje (Mask of the Wild)", d:"Puedes intentar esconderte aunque solo estés ligeramente oculto por follaje, lluvia intensa, nieve que cae, niebla y otros fenómenos naturales." },
+  ],
+
+  "Elfo de Kaladesh (Vahadar) [PSK]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Competencia en Percepción. Idiomas: Común, Élfico y uno más. Aumento: DES +2, SAB +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Entrenamiento Élfico con Armas (Elf Weapon Training)", d:"Competencia con espada larga, espada corta, arco corto y arco largo." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Trance", d:"No necesitas dormir: meditas 4 horas al día, semiconsciente, y obtienes el beneficio de 8 horas de sueño. Si meditas durante un Descanso Largo, lo terminas en solo 4 horas; por lo demás se aplican todas las reglas del Descanso Largo." },
+    { n:"Cultura Élfica (Elf Culture)", d:"Los elfos de Kaladesh no se organizan en naciones ni tribus, pero reconocen tres grupos culturales (más bien actitudes ante el resto de la sociedad y el uso de la tecnología). Esta entrada recoge la cultura Vahadar." },
+    { n:"Truco (Cantrip)", d:"Conoces un truco a tu elección de la lista de conjuros de Druida. SAB es tu característica de lanzamiento para él." },
+    { n:"Idioma Adicional (Extra Language)", d:"Puedes hablar, leer y escribir un idioma adicional a tu elección." },
+  ],
+  /* ═══════════════════════════════════════════
+     PLANE SHIFT: AMONKHET (PSA)
+  ═══════════════════════════════════════════ */
+
+  "Aven [PSA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies, volar 30 pies. Idiomas: Común y Aven. Aumento: DES +2." },
+    { n:"Vuelo (Flight)", d:"Tienes Velocidad de vuelo de 30 pies. No puedes usarla mientras llevas armadura media o pesada (si tu campaña usa la regla variante de carga, tampoco si estás sobrecargado)." },
+  ],
+
+  "Khenra [PSA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 35 pies. Competencia con khopesh (espada larga), lanza y jabalina. Idiomas: Común y Khenra. Aumento: DES +2, FUE +1." },
+    { n:"Entrenamiento Khenra con Armas (Khenra Weapon Training)", d:"Competencia con el khopesh (espada larga), la lanza y la jabalina." },
+    { n:"Gemelos Khenra (Khenra Twins)", d:"Si tu gemelo está vivo y puedes verlo, cuando sacas un 1 en una tirada de ataque, prueba de característica o salvación, puedes repetir el dado y debes usar la nueva tirada. Si tu gemelo ha muerto (o naciste sin gemelo), no puedes quedar Asustado." },
+  ],
+
+  "Minotauro de Amonkhet [PSA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Competencia en Intimidación. Idiomas: Común y Minotauro. Aumento: FUE +2, CON +1." },
+    { n:"Arma Natural (Natural Weapon)", d:"Puedes usar tus cuernos como arma natural para hacer ataques desarmados. Si impactas con ellos, infliges daño contundente igual a 1d6 + mod. FUE." },
+    { n:"Amenazante (Menacing)", d:"Competencia en Intimidación." },
+    { n:"Resistencia Implacable (Relentless Endurance)", a:"O", d:"Cuando quedas a 0 PG sin morir de golpe, quedas a 1 PG en su lugar. No puedes volver a usarlo hasta terminar un Descanso Largo." },
+    { n:"Ataques Salvajes (Savage Attacks)", d:"Cuando haces un golpe crítico con un ataque cuerpo a cuerpo con arma, tiras uno de los dados de daño del arma una vez más y lo sumas al daño extra del crítico." },
+  ],
+
+  "Naga [PSA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Inmune al daño de veneno y a la condición Envenenado. Competencia con el Kit de envenenador. Idiomas: Común y Naga. Aumento: CON +2, INT +1." },
+    { n:"Ráfaga de Velocidad (Speed Burst)", a:"B", d:"Bajando el cuerpo al suelo e impulsándote con los brazos te mueves más rápido durante un rato. Con una Acción Adicional en tu turno, si tienes ambas manos libres, aumentas tu Velocidad caminando en 5 pies hasta el final de tu turno." },
+    { n:"Armas Naturales (Natural Weapons)", a:"A", d:"Tus fauces con colmillos y tu cuerpo serpentino constrictor son armas naturales con las que puedes hacer ataques desarmados. Mordisco: si impactas, infliges daño perforante igual a 1d4 + mod. FUE y el objetivo debe superar una salvación de CON (CD 8 + bonificador de competencia + mod. CON) o sufre 1d4 de daño de veneno. Constricción: si impactas, infliges daño contundente igual a 1d6 + mod. FUE y el objetivo queda Agarrado (CD de escape 8 + bonificador de competencia + mod. FUE); mientras dure el agarre, el objetivo está Apresado y tú no puedes constreñir a otro objetivo." },
+    { n:"Inmunidad al Veneno (Poison Immunity)", d:"Eres inmune al daño de veneno y no puedes quedar Envenenado." },
+    { n:"Afinidad con el Veneno (Poison Affinity)", d:"Competencia con el Kit de envenenador." },
+  ],
+
+  "Humano de Amonkhet [PSA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: +1 a dos características distintas a tu elección." },
+    { n:"Habilidad (Skills)", d:"Competencia en una habilidad a tu elección." },
+    { n:"Dote (Feat)", d:"Ganas una dote a tu elección." },
+  ],
+
+  "Aven (Cabeza de Halcón, Hawk-Headed) [PSA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies, volar 30 pies. Competencia en Percepción. Idiomas: Común y Aven. Aumento: DES +2, SAB +2." },
+    { n:"Vuelo (Flight)", d:"Tienes Velocidad de vuelo de 30 pies. No puedes usarla mientras llevas armadura media o pesada (si tu campaña usa la regla variante de carga, tampoco si estás sobrecargado)." },
+    { n:"Ojo de Halcón (Hawkeyed)", d:"Competencia en Percepción. Además, atacar a larga distancia no impone Desventaja en tus tiradas de ataque con armas a distancia." },
+  ],
+
+  "Aven (Cabeza de Ibis, Ibis-Headed) [PSA]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies, volar 30 pies. Idiomas: Común y Aven. Aumento: DES +2, INT +1." },
+    { n:"Vuelo (Flight)", d:"Tienes Velocidad de vuelo de 30 pies. No puedes usarla mientras llevas armadura media o pesada (si tu campaña usa la regla variante de carga, tampoco si estás sobrecargado)." },
+    { n:"Bendición de Kefnet (Kefnet's Blessing)", d:"Puedes sumar la mitad de tu bonificador de competencia, redondeada hacia abajo, a cualquier prueba de Inteligencia que hagas y que no incluya ya tu bonificador de competencia." },
+  ],
+  /* ═══════════════════════════════════════════
+     PLANE SHIFT: ZENDIKAR (PSZ)
+  ═══════════════════════════════════════════ */
+
+  "Elfo de Zendikar [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Competencia en Percepción. Idiomas: Común y Élfico. Aumento: SAB +2." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+  ],
+
+  "Goblin [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, Visión en la Oscuridad 60 pies, Resistencia al daño de fuego y psíquico. Idiomas: Común y Goblin. Sin aumento propio (cada tribu da CON +2)." },
+    { n:"Aguante (Grit)", d:"Resistencia al daño de fuego y al daño psíquico. Además, si no llevas armadura, tu CA es 11 + mod. de DES." },
+  ],
+
+  "Humano de Zendikar [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: +1 a todas las características." },
+  ],
+
+  "Kor [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, trepar 30 pies (mientras no estés sobrecargado ni lleves armadura pesada). Competencia en Atletismo y Acrobacias. Idiomas: Común y el habla silenciosa de los Kor. Aumento: DES +2, SAB +1." },
+    { n:"Valiente (Brave)", d:"Ventaja en las salvaciones contra Asustado." },
+    { n:"Trepar (Climbing)", d:"Tienes además Velocidad de trepar 30 pies, siempre que no estés sobrecargado ni lleves armadura pesada." },
+    { n:"Trepador Kor (Kor Climbing)", d:"Competencia en Atletismo y Acrobacias." },
+    { n:"Suerte (Lucky)", d:"Cuando sacas un 1 natural en una tirada de ataque, prueba de característica o salvación, puedes repetir la tirada y debes usar el nuevo resultado." },
+  ],
+
+  "Merfolk [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies, respirar aire y agua. Idiomas: Común, Merfolk y uno más. Aumento: CAR +1." },
+    { n:"Anfibio (Amphibious)", d:"Puedes respirar aire y agua." },
+    { n:"Nadar (Swimming)", d:"Tienes Velocidad de nadar 30 pies." },
+  ],
+
+  "Vampiro [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies, Resistencia al daño necrótico. Idiomas: Común y Vampiro. Aumento: CAR +2." },
+    { n:"Sed de Sangre (Blood Thirst)", a:"A", d:"Puedes drenar sangre y energía vital de una criatura voluntaria, o de una que tengas Agarrada, Incapacitada o Apresada. Haz un ataque cuerpo a cuerpo contra el objetivo. Si impactas, infliges 1 de daño perforante y 1d6 de daño necrótico. Los PG máximos del objetivo se reducen en una cantidad igual al daño necrótico sufrido y tú recuperas esa cantidad de PG. La reducción dura hasta que el objetivo termine un Descanso Largo. El objetivo muere si este efecto reduce sus PG máximos a 0." },
+    { n:"Resistencia Vampírica (Vampiric Resistance)", d:"Resistencia al daño necrótico." },
+  ],
+
+  "Elfo de Zendikar (Nación Joraga) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 35 pies, Visión en la Oscuridad 60 pies. Competencia en Percepción. Idiomas: Común y Élfico. Aumento: SAB +2, DES +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Máscara de lo Salvaje (Mask of the Wild)", d:"Puedes intentar esconderte aunque solo estés ligeramente oculto por follaje, lluvia intensa, nieve que cae, niebla u otros fenómenos naturales." },
+    { n:"Entrenamiento Élfico con Armas (Elf Weapon Training)", d:"Competencia con espada larga, espada corta, arco corto y arco largo." },
+    { n:"Pies Ligeros (Fleet of Foot)", d:"Tu Velocidad al caminar aumenta a 35 pies." },
+  ],
+
+  "Elfo de Zendikar (Nación Mul Daya) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad Superior 120 pies (radio de 120 pies en lugar de 60). Competencia en Percepción. Idiomas: Común y Élfico. Aumento: SAB +2, FUE +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Magia Mul Daya (Mul Daya Magic)", a:"AB", d:"Conoces el truco Chill Touch. Nv.3: Hex una vez por Descanso Largo. Nv.5: Darkness una vez por Descanso Largo. SAB es tu característica de lanzamiento." },
+    { n:"Sensibilidad a la Luz Solar (Sunlight Sensitivity)", d:"Desventaja en las tiradas de ataque y en las pruebas de Sabiduría (Percepción) basadas en la vista cuando tú, el objetivo de tu ataque o lo que intentas percibir estáis bajo luz solar directa." },
+    { n:"Entrenamiento Élfico con Armas (Elf Weapon Training)", d:"Competencia con espada larga, espada corta, arco corto y arco largo." },
+  ],
+
+  "Elfo de Zendikar (Nación Tajuru) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Competencia en Percepción y en otras dos habilidades o herramientas a elegir. Idiomas: Común y Élfico. Aumento: SAB +2, CAR +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Versatilidad con Habilidades (Skill Versatility)", d:"Competencia en cualquier combinación de otras dos habilidades o herramientas a tu elección." },
+  ],
+
+  "Goblin de Zendikar (Tribu Grotag) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, Visión en la Oscuridad 60 pies, Resistencia al daño de fuego y psíquico. Competencia en Trato con Animales. Idiomas: Común y Goblin. Aumento: CON +2." },
+    { n:"Aguante (Grit)", d:"Resistencia al daño de fuego y al daño psíquico. Además, si no llevas armadura, tu CA es 11 + mod. de DES." },
+    { n:"Domador Grotag (Grotag Tamer)", d:"Competencia en la habilidad Trato con Animales." },
+  ],
+
+  "Goblin de Zendikar (Tribu Lavastep) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, Visión en la Oscuridad 60 pies, Resistencia al daño de fuego y psíquico. Idiomas: Común y Goblin. Aumento: CON +2." },
+    { n:"Aguante (Grit)", d:"Resistencia al daño de fuego y al daño psíquico. Además, si no llevas armadura, tu CA es 11 + mod. de DES." },
+    { n:"Aguante Lavastep (Lavastep Grit)", d:"Ventaja en las pruebas de Destreza (Sigilo) para esconderte en entornos rocosos o subterráneos." },
+  ],
+
+  "Goblin de Zendikar (Tribu Tuktuk) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, Visión en la Oscuridad 60 pies, Resistencia al daño de fuego y psíquico. Competencia con herramientas de ladrón. Idiomas: Común y Goblin. Aumento: CON +2." },
+    { n:"Aguante (Grit)", d:"Resistencia al daño de fuego y al daño psíquico. Además, si no llevas armadura, tu CA es 11 + mod. de DES." },
+    { n:"Astucia Tuktuk (Tuktuk Cunning)", d:"Competencia con herramientas de ladrón." },
+  ],
+
+  "Merfolk de Zendikar (Credo Cosi) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies, respirar aire y agua. Competencia en Juego de Manos y Sigilo. Idiomas: Común, Merfolk y uno más. Aumento: CAR +1 (Merfolk), más INT +1 y CAR +2 (Credo Cosi)." },
+    { n:"Anfibio (Amphibious)", d:"Puedes respirar aire y agua." },
+    { n:"Nadar (Swimming)", d:"Tienes Velocidad de nadar 30 pies." },
+    { n:"Truco (Cantrip)", d:"Conoces un truco a tu elección de la lista de conjuros de Bardo. CAR es tu característica de lanzamiento para él." },
+    { n:"Credo del Embaucador (Creed of the Trickster)", d:"Competencia en Juego de Manos y Sigilo." },
+  ],
+
+  "Merfolk de Zendikar (Credo Emeria) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies, respirar aire y agua. Competencia en Engaño y Persuasión. Idiomas: Común, Merfolk y uno más. Aumento: CAR +1, SAB +2." },
+    { n:"Anfibio (Amphibious)", d:"Puedes respirar aire y agua." },
+    { n:"Nadar (Swimming)", d:"Tienes Velocidad de nadar 30 pies." },
+    { n:"Truco (Cantrip)", d:"Conoces un truco a tu elección de la lista de conjuros de Druida. SAB es tu característica de lanzamiento para él." },
+    { n:"Manipulación del Credo del Viento (Wind Creed Manipulation)", d:"Competencia en Engaño y Persuasión." },
+  ],
+
+  "Merfolk de Zendikar (Credo Ula) [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies, respirar aire y agua. Competencia en Supervivencia y con herramientas de navegante. Idiomas: Común, Merfolk y uno más. Aumento: CAR +1, INT +2." },
+    { n:"Anfibio (Amphibious)", d:"Puedes respirar aire y agua." },
+    { n:"Nadar (Swimming)", d:"Tienes Velocidad de nadar 30 pies." },
+    { n:"Truco (Cantrip)", d:"Conoces un truco a tu elección de la lista de conjuros de Mago. INT es tu característica de lanzamiento para él." },
+    { n:"Navegación del Credo del Agua (Water Creed Navigation)", d:"Competencia con herramientas de navegante y en la habilidad Supervivencia." },
+  ],
+
+  "Vampiro de Zendikar [PSZ]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies, Resistencia al daño necrótico. Idiomas: Común y Vampiro. Aumento: CAR +2, INT +1." },
+    { n:"Sed de Sangre (Blood Thirst)", a:"A", d:"Puedes drenar sangre y energía vital de una criatura voluntaria, o de una que tengas Agarrada, Incapacitada o Apresada. Haz un ataque cuerpo a cuerpo contra el objetivo. Si impactas, infliges 1 de daño perforante y 1d6 de daño necrótico. Los PG máximos del objetivo se reducen en una cantidad igual al daño necrótico sufrido y tú recuperas esa cantidad de PG. La reducción dura hasta que el objetivo termine un Descanso Largo. El objetivo muere si este efecto reduce sus PG máximos a 0." },
+    { n:"Resistencia Vampírica (Vampiric Resistance)", d:"Resistencia al daño necrótico." },
+    { n:"Transformación en Nulo (Null Transformation)", d:"Un humanoide al que mates con tu rasgo Sed de Sangre se convierte en un Nulo (Null)." },
+  ],
+  /* ═══════════════════════════════════════════
+     PLANE SHIFT: INNISTRAD (PSI)
+  ═══════════════════════════════════════════ */
+
+  "Humano de Innistrad [PSI]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: no tiene aumento propio; lo da la variante de Innistrad que elijas (Gavony, Kessig, Nephalia o Stensia)." },
+  ],
+
+  "Humano de Innistrad (Gavony) [PSI]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más. Aumento: +1 a todas las características." },
+  ],
+
+  "Humano de Innistrad (Kessig) [PSI]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 40 pies. Competencia en Supervivencia. Idiomas: Común y uno más. Aumento: DES +1, SAB +1." },
+    { n:"Gente del Bosque (Forest Folk)", d:"Competencia en la habilidad Supervivencia." },
+    { n:"Pies Ligeros (Fleet of Foot)", d:"Tu Velocidad base caminando es 40 pies." },
+    { n:"Paso Seguro (Sure-footed)", d:"Cuando usas la acción de Correr (Dash), el terreno difícil no te cuesta movimiento extra ese turno." },
+    { n:"Ataque Saltarín (Spring Attack)", d:"Cuando haces un ataque cuerpo a cuerpo contra una criatura, no provocas Ataques de Oportunidad de esa criatura durante el resto de tu turno, impactes o no." },
+  ],
+
+  "Humano de Innistrad (Nephalia) [PSI]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Competencia en cuatro habilidades o herramientas a elegir. Idiomas: Común y uno más. Aumento: INT +1, CAR +1." },
+    { n:"Amplitud de Conocimientos (Breadth of Knowledge)", d:"Ganas competencia en cualquier combinación de cuatro habilidades o con cuatro herramientas a tu elección." },
+  ],
+
+  "Humano de Innistrad (Stensia) [PSI]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Competencia en Intimidación. Idiomas: Común y uno más. Aumento: FUE +1, CON +1." },
+    { n:"Amedrentador (Daunting)", d:"Competencia en la habilidad Intimidación." },
+    { n:"Robusto (Tough)", d:"Tus PG máximos aumentan en 2, y en 2 más cada vez que subes de nivel." },
+  ],
+  /* ═══════════════════════════════════════════
+     PLANE SHIFT: IXALAN (PSX)
+  ═══════════════════════════════════════════ */
+
+  "Humano de Ixalan [PSX]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y uno más (ver Idiomas). Aumento: +1 a todas las características." },
+    { n:"Idiomas (Languages)", d:"Puedes hablar, leer y escribir Común y un idioma adicional a tu elección. Si tu campaña usa las reglas opcionales de idiomas, tu origen nacional determina tu lengua materna: Itzocan para el Imperio del Sol (Sun Empire), Coalition pidgin para la Coalición Descarada (Brazen Coalition) o Vampire para la Legión del Ocaso (Legion of Dusk). Sigues hablando además un idioma a tu elección y Común si existe en tu campaña." },
+  ],
+
+  "Orco de Ixalan [PSX]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Competencia en Intimidación. Idiomas: Común (si existe en tu campaña) y Orco. Aumento: FUE +2, CON +1." },
+    { n:"Amenazante (Menacing)", d:"Competencia en la habilidad Intimidación." },
+    { n:"Resistencia Implacable (Relentless Endurance)", a:"O", d:"Cuando quedas a 0 PG sin morir de golpe, quedas a 1 PG en su lugar. No puedes volver a usar este rasgo hasta terminar un Descanso Largo." },
+    { n:"Ataques Salvajes (Savage Attacks)", d:"Cuando haces un golpe crítico con un ataque cuerpo a cuerpo con arma, tiras uno de los dados de daño del arma una vez más y lo sumas al daño extra del crítico." },
+  ],
+
+  "Siren [PSX]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies, volar 30 pies (no con armadura media o pesada). Idiomas: Común (si existe en tu campaña) y Siren. Aumento: CAR +2." },
+    { n:"Canto de Sirena (Siren's Song)", d:"Conoces el truco Friends y puedes lanzarlo sin componentes materiales." },
+    { n:"Vuelo (Flight)", d:"Tienes Velocidad de vuelo de 30 pies. No puedes usarla mientras llevas armadura media o pesada. (Si tu campaña usa la regla variante de carga, tampoco puedes usarla si vas sobrecargado.)" },
+  ],
+
+  "Goblin de Ixalan [PSX]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, trepar 25 pies (no con armadura media o pesada), Visión en la Oscuridad 60 pies. Resistencia al daño de fuego y psíquico. Idiomas: Común (si existe en tu campaña) y Goblin. Aumento: DES +2." },
+    { n:"Agilidad Trepadora (Agile Climber)", d:"Tienes Velocidad de trepar de 25 pies. No puedes usarla mientras llevas armadura media o pesada. (Si tu campaña usa la regla variante de carga, tampoco puedes usarla si vas sobrecargado.)" },
+    { n:"Entereza (Grit)", d:"Tienes Resistencia al daño de fuego y al daño psíquico. Además, si no llevas armadura, tu CA es 11 + mod. DES." },
+  ],
+
+  "Merfolk de Ixalan (Azul, Blue) [PSX]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies. Competencia en Historia y Naturaleza. Idiomas: Común (si existe en tu campaña), Merfolk y uno más a tu elección. Aumento: INT +2, CAR +1." },
+    { n:"Anfibio (Amphibious)", d:"Puedes respirar aire y agua." },
+    { n:"Truco (Cantrip)", d:"Conoces un truco a tu elección de la lista de conjuros de Mago. INT es tu característica de lanzamiento para él." },
+    { n:"Saber de las Aguas (Lore of the Waters)", d:"Competencia en las habilidades Historia y Naturaleza." },
+  ],
+
+  "Merfolk de Ixalan (Verde, Green) [PSX]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies. Idiomas: Común (si existe en tu campaña), Merfolk y uno más a tu elección. Aumento: SAB +2, CAR +1." },
+    { n:"Anfibio (Amphibious)", d:"Puedes respirar aire y agua." },
+    { n:"Truco (Cantrip)", d:"Conoces un truco a tu elección de la lista de conjuros de Druida. SAB es tu característica de lanzamiento para él." },
+    { n:"Máscara de lo Salvaje (Mask of the Wild)", d:"Puedes intentar esconderte incluso cuando solo estás ligeramente oculto por follaje, lluvia intensa, nieve, niebla y otros fenómenos naturales." },
+  ],
+
+  "Vampire de Ixalan [PSX]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Resistencia al daño necrótico. Idiomas: Común (si existe en tu campaña) y Vampire. Aumento: CAR +2, SAB +1." },
+    { n:"Sed de Sangre (Blood Thirst)", a:"A", d:"Puedes drenar sangre y energía vital de una criatura voluntaria o que tengas Agarrada, Incapacitada o Apresada. Haces un ataque cuerpo a cuerpo contra el objetivo; si impactas, infliges 1 de daño perforante y 1d6 de daño necrótico. Los PG máximos del objetivo se reducen en una cantidad igual al daño necrótico sufrido y tú recuperas PG por esa misma cantidad. La reducción dura hasta que el objetivo termine un Descanso Largo. El objetivo muere si este efecto reduce sus PG máximos a 0." },
+    { n:"Banquete de Sangre (Feast of Blood)", d:"Cuando drenas sangre con Sed de Sangre, sientes una oleada de vitalidad: tu Velocidad aumenta en 10 pies y tienes Ventaja en las pruebas de FUE y DES y en las tiradas de salvación de FUE y DES durante 1 minuto." },
+    { n:"Resistencia Vampírica (Vampiric Resistance)", d:"Tienes Resistencia al daño necrótico." },
+  ],
+  /* ═══════════════════════════════════════════
+     PLANE SHIFT: DOMINARIA (PSD)
+  ═══════════════════════════════════════════ */
+
+  "Aven [PSD]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies, volar 30 pies (no con armadura media o pesada). Competencia en Percepción. Idiomas: Común y Aven. Aumento: DES +2, SAB +2." },
+    { n:"Vuelo (Flight)", d:"Tienes Velocidad de vuelo de 30 pies. No puedes usarla mientras llevas armadura media o pesada. (Si tu campaña usa la regla variante de carga, tampoco puedes usarla si vas sobrecargado.)" },
+    { n:"Ojo de Halcón (Hawkeyed)", d:"Competencia en la habilidad Percepción. Además, atacar a largo alcance no impone Desventaja en tus tiradas de ataque a distancia con arma." },
+  ],
+
+  "Humano (Keldon) [PSD]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Competencia en Atletismo y en las salvaciones de FUE. Idiomas: Común y Keldon. Aumento: FUE +2, CON +1." },
+    { n:"Atleta Natural (Natural Athlete)", d:"Competencia en la habilidad Atletismo." },
+    { n:"Resiliencia Keldon (Keldon Resilience)", d:"Competencia en las tiradas de salvación de Fuerza." },
+    { n:"Nacido en Icehaven (Icehaven Born)", d:"Estás adaptado de forma natural a los climas fríos, como se describe en el capítulo 5 de la Dungeon Master's Guide." },
+  ],
+  /* ═══════════════════════════════════════════
+     MORDENKAINEN’S TOME OF FOES (MTF, 2014)
+  ═══════════════════════════════════════════ */
+
+  "Gith [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y Gith. Aumento: INT +1. Especie base de Githyanki y Githzerai: cada una añade sus propios rasgos y su aumento de característica (ver sus entradas)." },
+  ],
+
+  "Enano Duergar [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 25 pies (no se reduce por llevar armadura pesada), Visión en la Oscuridad Superior 120 pies. Resistencia al daño de veneno. Idiomas: Común, Enano e Infracomún. Aumento: CON +2, FUE +1." },
+    { n:"Resiliencia Duergar (Duergar Resilience)", d:"Ventaja en las salvaciones contra veneno, contra ilusiones y contra Hechizado o Paralizado, y resistencia al daño de veneno." },
+    { n:"Entrenamiento Enano en Combate (Dwarven Combat Training)", d:"Competencia con hacha de batalla, hacha de mano, martillo ligero y martillo de guerra." },
+    { n:"Competencia con Herramientas (Tool Proficiency)", d:"Competencia con herramientas de herrero, suministros de cervecero o herramientas de albañil (a tu elección)." },
+    { n:"Sentido de la Piedra (Stonecunning)", d:"En pruebas de Inteligencia (Historia) sobre el origen de obras de piedra, cuentas como competente y sumas el doble de tu bonificador de competencia." },
+    { n:"Magia Duergar (Duergar Magic)", a:"A", d:"Nv.3: puedes lanzar Enlarge/Reduce sobre ti una vez, usando solo la opción de agrandar. Nv.5: puedes lanzar Invisibility sobre ti una vez. No necesitas componentes materiales y no puedes lanzarlos bajo luz solar directa (una vez lanzados, la luz solar no los afecta). Recuperas ambos usos al terminar un Descanso Largo. INT es tu característica de lanzamiento." },
+    { n:"Sensibilidad a la Luz Solar (Sunlight Sensitivity)", d:"Desventaja en tiradas de ataque y pruebas de Sabiduría (Percepción) basadas en la vista cuando tú, el objetivo de tu ataque o lo que intentas percibir estáis bajo luz solar directa." },
+  ],
+
+  "Elfo Eladrin [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común y Élfico. Aumento: DES +2, CAR +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Trance", d:"No necesitas dormir: meditas 4 horas al día, semiconsciente, y obtienes el beneficio de 8 horas de sueño. Si meditas durante un Descanso Largo, lo terminas en solo 4 horas; por lo demás se aplican todas las reglas del Descanso Largo." },
+    { n:"Paso Feérico (Fey Step)", a:"B", d:"Eliges la estación de tu eladrin (otoño, invierno, primavera o verano) y puedes cambiarla al terminar un Descanso Largo. Con una Acción Adicional te teletransportas hasta 30 pies a un espacio libre que veas; una vez usado, no puedes volver a hacerlo hasta terminar un Descanso Corto o Largo. Nv.3: Paso Feérico gana un efecto según tu estación (CD = 8 + bonificador de competencia + mod. CAR). Otoño: justo después de usarlo, hasta 2 criaturas de tu elección que veas a 10 pies de ti deben superar una salvación de SAB o quedan Hechizadas por ti 1 minuto, o hasta que tú o tus compañeros les causéis daño. Invierno: al usarlo, 1 criatura de tu elección que veas a 5 pies de ti antes de teletransportarte debe superar una salvación de SAB o queda Asustada de ti hasta el final de tu siguiente turno. Primavera: al usarlo, puedes tocar a 1 criatura voluntaria a 5 pies de ti; ella se teletransporta en tu lugar a un espacio libre de su elección que veas a 30 pies de ti. Verano: justo después de usarlo, cada criatura de tu elección que veas a 5 pies de ti sufre daño de fuego igual a tu mod. CAR (mín. 1)." },
+  ],
+
+  "Elfo Marino [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, nadar 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común, Élfico y Aquan. Aumento: DES +2, CON +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Trance", d:"No necesitas dormir: meditas 4 horas al día, semiconsciente, y obtienes el beneficio de 8 horas de sueño. Si meditas durante un Descanso Largo, lo terminas en solo 4 horas; por lo demás se aplican todas las reglas del Descanso Largo." },
+    { n:"Entrenamiento de Elfo Marino (Sea Elf Training)", d:"Competencia con lanza, tridente, ballesta ligera y red." },
+    { n:"Hijo del Mar (Child of the Sea)", d:"Velocidad de nado 30 pies y puedes respirar aire y agua." },
+    { n:"Amigo del Mar (Friend of the Sea)", d:"Con gestos y sonidos puedes comunicar ideas sencillas a cualquier Bestia que tenga Velocidad de nado innata." },
+  ],
+
+  "Elfo Shadar-kai [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Resistencia al daño necrótico. Idiomas: Común y Élfico. Aumento: DES +2, CON +1." },
+    { n:"Sentidos Agudos (Keen Senses)", d:"Competencia en Percepción." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Trance", d:"No necesitas dormir: meditas 4 horas al día, semiconsciente, y obtienes el beneficio de 8 horas de sueño. Si meditas durante un Descanso Largo, lo terminas en solo 4 horas; por lo demás se aplican todas las reglas del Descanso Largo." },
+    { n:"Resistencia Necrótica (Necrotic Resistance)", d:"Resistencia al daño necrótico." },
+    { n:"Bendición de la Reina Cuervo (Blessing of the Raven Queen)", a:"B", d:"Con una Acción Adicional te teletransportas hasta 30 pies a un espacio libre que veas. Una vez usado, no puedes volver a hacerlo hasta terminar un Descanso Largo. Desde Nv.3, además tienes resistencia a todo el daño cuando te teletransportas con este rasgo, hasta el inicio de tu siguiente turno; durante ese tiempo tu aspecto es fantasmal y translúcido." },
+  ],
+
+  "Githyanki [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común, Gith y uno más a tu elección (Maestría Decadente). Aumento: FUE +2, INT +1." },
+    { n:"Maestría Decadente (Decadent Mastery)", d:"Aprendes un idioma a tu elección y ganas competencia con una habilidad o herramienta a tu elección." },
+    { n:"Prodigio Marcial (Martial Prodigy)", d:"Competencia con armadura ligera y media y con espadas cortas, espadas largas y mandobles." },
+    { n:"Psiónica Githyanki (Githyanki Psionics)", a:"AB", d:"Conoces el truco Mage Hand y la mano es Invisible cuando lo lanzas con este rasgo. Nv.3: puedes lanzar Jump una vez; Nv.5: puedes lanzar Misty Step una vez. Recuperas cada uso al terminar un Descanso Largo. INT es tu característica de lanzamiento y estos conjuros no requieren componentes al lanzarlos con este rasgo." },
+  ],
+
+  "Githzerai [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies. Idiomas: Común y Gith. Aumento: SAB +2, INT +1." },
+    { n:"Disciplina Mental (Mental Discipline)", d:"Ventaja en las salvaciones contra las condiciones Hechizado y Asustado." },
+    { n:"Psiónica Githzerai (Githzerai Psionics)", a:"AR", d:"Conoces el truco Mage Hand y la mano es Invisible cuando lo lanzas con este rasgo. Nv.3: puedes lanzar Shield una vez; Nv.5: puedes lanzar Detect Thoughts una vez. Recuperas cada uso al terminar un Descanso Largo. SAB es tu característica de lanzamiento y estos conjuros no requieren componentes al lanzarlos con este rasgo." },
+  ],
+
+  "Gnomo de las Profundidades (Svirfneblin) [MTF]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, Visión en la Oscuridad Superior 120 pies. Idiomas: Común, Gnómico e Infracomún. Aumento: INT +2, DES +1." },
+    { n:"Astucia Gnómica (Gnome Cunning)", d:"Ventaja en todas las salvaciones de INT, SAB y CAR contra magia." },
+    { n:"Camuflaje de Piedra (Stone Camouflage)", d:"Ventaja en pruebas de Destreza (Sigilo) para esconderte en terreno rocoso." },
+  ],
+  /* ═══════════════════════════════════════════
+     SWORD COAST ADVENTURER’S GUIDE (SCAG)
+  ═══════════════════════════════════════════ */
+
+  "Gnomo de las Profundidades (Svirfneblin) [SCAG]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Pequeño, Velocidad 25 pies, Visión en la Oscuridad Superior 120 pies. Idiomas: Común, Gnómico e Infracomún. Aumento: INT +2, DES +1." },
+    { n:"Astucia Gnómica (Gnome Cunning)", d:"Ventaja en todas las salvaciones de INT, SAB y CAR contra magia." },
+    { n:"Camuflaje de Piedra (Stone Camouflage)", d:"Ventaja en pruebas de Destreza (Sigilo) para esconderte en terreno rocoso." },
+  ],
+
+  "Semielfo Variante (Descendencia de Elfo Acuático, Aquatic Elf Descent) [SCAG]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común, Élfico y uno más a tu elección. Aumento: CAR +2 y +1 a otras dos características a tu elección." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Rasgo Variante (Variant Feature, Choose 1)", d:"Sustituye a Versatilidad con Habilidades: eliges 1 de estas opciones. 1: Versatilidad con Habilidades (Skill Versatility): competencia en dos habilidades a tu elección; 2: Nadar (Swim): Velocidad de nado 30 pies." },
+  ],
+
+  "Semielfo Variante (Descendencia Drow, Drow Descent) [SCAG]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común, Élfico y uno más a tu elección. Aumento: CAR +2 y +1 a otras dos características a tu elección." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Rasgo Variante (Variant Feature, Choose 1)", a:"A", d:"Sustituye a Versatilidad con Habilidades: eliges 1 de estas opciones. 1: Versatilidad con Habilidades (Skill Versatility): competencia en dos habilidades a tu elección; 2: Magia Drow (Drow Magic): conoces el truco Dancing Lights; Nv.3: lanzas Faerie Fire una vez; Nv.5: lanzas también Darkness una vez; cada uno solo se vuelve a lanzar con este rasgo tras un Descanso Largo; CAR es tu característica de lanzamiento." },
+  ],
+
+  "Semielfo Variante (Descendencia de Elfo Lunar o Solar, Moon Elf or Sun Elf Descent) [SCAG]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común, Élfico y uno más a tu elección. Aumento: CAR +2 y +1 a otras dos características a tu elección." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Rasgo Variante (Variant Feature, Choose 1)", d:"Sustituye a Versatilidad con Habilidades: eliges 1 de estas opciones. 1: Versatilidad con Habilidades (Skill Versatility): competencia en dos habilidades a tu elección; 2: Entrenamiento Élfico con Armas (Elf Weapon Training): competencia con espada larga, espada corta, arco corto y arco largo; 3: Truco (Cantrip): conoces un truco a tu elección de la lista de conjuros de Mago (INT es tu característica de lanzamiento)." },
+  ],
+
+  "Semielfo Variante (Descendencia de Elfo del Bosque, Wood Elf Descent) [SCAG]": [
+    { n:"Rasgos Básicos", d:"Humanoide, Mediano, Velocidad 30 pies, Visión en la Oscuridad 60 pies. Idiomas: Común, Élfico y uno más a tu elección. Aumento: CAR +2 y +1 a otras dos características a tu elección." },
+    { n:"Ascendencia Feérica (Fey Ancestry)", d:"Ventaja en las salvaciones contra Hechizado y la magia no puede dormirte." },
+    { n:"Rasgo Variante (Variant Feature, Choose 1)", d:"Sustituye a Versatilidad con Habilidades: eliges 1 de estas opciones. 1: Versatilidad con Habilidades (Skill Versatility): competencia en dos habilidades a tu elección; 2: Entrenamiento Élfico con Armas (Elf Weapon Training): competencia con espada larga, espada corta, arco corto y arco largo; 3: Pies Ligeros (Fleet of Foot): tu Velocidad base caminando aumenta a 35 pies; 4: Máscara de lo Salvaje (Mask of the Wild): puedes intentar esconderte aunque solo estés ligeramente oculto por follaje, lluvia intensa, nieve, niebla y otros fenómenos naturales." },
+  ],
 };

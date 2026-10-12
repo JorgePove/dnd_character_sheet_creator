@@ -4,19 +4,20 @@
    Texto de la clase base: reglas 2024 (PHB 2024) con las diferencias
    importantes de 2014 entre corchetes. Cada subclase lleva en su clave la
    fuente y la edición a la que corresponde.
-   Fuentes de subclases: PHB 2014 · PHB 2024 · XGtE · SCAG · EGtW · TCE
+   Fuentes de subclases: PHB 2014 · PHB 2024 · XGtE · SCAG · EGtW · TCE · HoF 2024
    ──────────────────────────────────────────────────────────────────
-   SUBCLASES (14 entradas):
-     Campeón                      [PHB 2014] / [PHB 2024]
-     Maestro de Batalla           [PHB 2014] / [PHB 2024]
-     Caballero Arcano             [PHB 2014] / [PHB 2024]
-     Guerrero Psíquico            [PHB 2024] / [TCE]
-     Tirador Arcano               [XGtE]
-     Jinete                       [XGtE]
-     Caballero Samurái            [XGtE]
-     Caballero Banneret           [SCAG]
-     Caballero Eco                [EGtW]
-     Guerrero Rúnico              [TCE]
+   SUBCLASES (15 entradas):
+     Campeón                                 [PHB 2014] / [PHB 2024]
+     Maestro de Batalla                      [PHB 2014] / [PHB 2024]
+     Caballero Arcano                        [PHB 2014] / [PHB 2024]
+     Guerrero Psíquico                       [PHB 2024] / [TCE]
+     Tirador Arcano                          [XGtE]
+     Jinete                                  [XGtE]
+     Caballero Samurái                       [XGtE]
+     Caballero Banneret                      [SCAG]
+     Caballero Eco                           [EGtW]
+     Guerrero Rúnico                         [TCE]
+     Banneret                                [HoF 2024]
    ──────────────────────────────────────────────────────────────────
    Campo `a` de cada rasgo = cómo se usa en combate (lo lee el panel de Acciones):
      "A" Acción · "B" Acción Adicional · "R" Reacción · "O" Otros (sin acción, usos
@@ -596,6 +597,44 @@ const CLASE_GUERRERO = {
         n: "Juggernaut Rúnico",
         nv: 18,
         d: "El daño extra de Fuerza de Gigante pasa a 1d10 y, mientras está activa, puedes ser Enorme (si hay espacio) y tu alcance aumenta 5 pies."
+      },
+    ],
+
+    /* ── FORGOTTEN REALMS: HEROES OF FAERÛN (HoF, 2024) ── */
+    "Banneret [HoF 2024]": [
+      {
+        n: "Enviado Caballeresco (Knightly Envoy)",
+        nv: 3,
+        a: "O",
+        d: "Sabes comportarte con gracia como un embajador noble y ganas estos beneficios. Comprensión (Comprehension): puedes lanzar Comprehend Languages, pero solo como Ritual; CAR es tu característica de lanzamiento para él. Políglota (Polyglot): aprendes un idioma de las tablas de idiomas del Player's Handbook o del capítulo 2 de este libro; al terminar un Descanso Largo, puedes sustituir un idioma aprendido con este beneficio por otro que hayas oído, visto signar o leído en las últimas 24 horas. Buena Labia (Well Spoken): ganas Competencia en una de estas habilidades, a tu elección: Perspicacia, Intimidación, Persuasión o Interpretación."
+      },
+      {
+        n: "Recuperación Grupal (Group Recovery)",
+        nv: 3,
+        a: "O",
+        d: "Cuando usas Segundo Aliento para recuperar PG, puedes elegir aliados en una Emanación de 30 pies que parte de ti, hasta un número de aliados igual a tu mod. CAR (mínimo uno). Cada uno de ellos recupera PG = 1d4 + tu nivel de Guerrero. Una vez que usas esta capacidad, no puedes volver a usarla hasta terminar un Descanso Corto o Largo."
+      },
+      {
+        n: "Tácticas de Equipo (Team Tactics)",
+        nv: 7,
+        d: "Cuando usas Recuperación Grupal, cada aliado elegido tiene Ventaja en las Pruebas de d20 hasta el inicio de tu siguiente turno."
+      },
+      {
+        n: "Oleada de Arenga (Rallying Surge)",
+        nv: 10,
+        a: "O",
+        d: "Cuando usas Oleada de Acción, puedes elegir aliados en una Emanación de 30 pies que parte de ti, hasta un número de aliados igual a tu mod. CAR (mínimo uno). Cada uno de ellos puede usar de inmediato una Reacción para usar una de estas opciones. Ataque: el aliado hace un ataque con un arma o un Ataque Desarmado. Movimiento: el aliado se mueve hasta la mitad de su Velocidad sin provocar Ataques de Oportunidad."
+      },
+      {
+        n: "Resiliencia Compartida (Shared Resilience)",
+        nv: 15,
+        a: "R",
+        d: "Cuando un aliado que veas a 60 pies de ti falla una tirada de salvación, puedes usar una Reacción para gastar un uso de Indomable. El aliado puede repetir de inmediato la tirada de salvación con un bonificador igual a tu nivel de Guerrero; debe usar el nuevo resultado."
+      },
+      {
+        n: "Comandante Inspirador (Inspiring Commander)",
+        nv: 18,
+        d: "Ganas estos beneficios. Arenga Reforzada (Bolstered Rally): el área de efecto de Recuperación Grupal y de Oleada de Arenga pasa a ser una Emanación de 60 pies. Valentía Inquebrantable (Unshakable Bravery): tienes Inmunidad a las condiciones Hechizado y Asustado."
       },
     ],
   },

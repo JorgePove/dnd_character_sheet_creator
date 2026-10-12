@@ -837,6 +837,7 @@ function limpiarCaract(btn, tipo) {
         'especie':   { sel: '.sel-especie',   ta: '.caract-especie' },
         'dotes':     { sel: '.sel-dote',      ta: '.caract-dotes' },
         'trasfondo': { sel: '.sel-trasfondo', ta: '.caract-trasfondo-txt' },
+        'opciones':  { sel: '.sel-opcion',    ta: '.caract-opciones' },
     };
     const cfg = mapa[tipo];
     if (!cfg) return;
@@ -882,6 +883,12 @@ function limpiarCaract(btn, tipo) {
     if (tipo === 'especie') {
         const selCabE = panel.querySelector('.sel-especie-cab');
         if (selCabE) selCabE.value = '';
+    }
+
+    // Opciones de clase: contadores, ✓ del desplegable y mensajes al día
+    if (tipo === 'opciones') {
+        if (typeof _opcMensaje === 'function') _opcMensaje(panel, '');
+        if (typeof opcionesRefrescar === 'function') opcionesRefrescar(panel);
     }
 
     // Vaciar clase/subclase/especie/dotes cambia lo que debe mostrar el panel de Acciones
@@ -1195,6 +1202,8 @@ function _mcRenderTabs(panel) {
         };
         tabsEl.appendChild(tab);
     });
+    // Las opciones de clase (invocaciones, maniobras…) dependen de las clases, subclases y niveles
+    if (typeof opcionesRefrescar === 'function') opcionesRefrescar(panel);
 }
 
 function mcAddTab(btn) {

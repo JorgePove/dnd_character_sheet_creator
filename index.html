@@ -704,6 +704,29 @@
 
             </div>
 
+            <!-- FILA 2b: Opciones de clase (invocaciones, metamagia, maniobras, infusiones…) -->
+            <div class="caract-fila">
+                <div class="seccion-caja caract-completa caract-opciones-caja">
+                    <h3 class="titulo-caja">Opciones de clase</h3>
+                    <div class="opc-contadores" aria-live="polite"></div>
+                    <div class="caract-selector-wrap opc-selector-fila">
+                        <select class="caract-select sel-opcion">
+                            <option value="">— Añadir opción de clase —</option>
+                        </select>
+                        <select class="caract-select opc-filtro" title="Qué opciones mostrar en el desplegable" aria-label="Filtro de opciones de clase">
+                            <option value="mi">Mi clase</option>
+                            <option value="disp">Disponibles ahora</option>
+                            <option value="todas">Todas</option>
+                        </select>
+                        <button class="caract-btn-add" onclick="onOpcionAdd(this)" title="Añadir al listado">＋</button>
+                        <button class="caract-btn-limpiar" onclick="limpiarCaract(this,'opciones')" title="Limpiar todo">✕</button>
+                    </div>
+                    <div class="opc-vista" hidden></div>
+                    <div class="opc-aviso" hidden></div>
+                    <textarea class="caract-textarea caract-opciones" placeholder="Invocaciones, metamagia, maniobras, infusiones, runas, disciplinas… Elige arriba para añadirlas, o escribe libremente." oninput="guardarDebounced()"></textarea>
+                </div>
+            </div>
+
             <!-- FILA 3: Trasfondo -->
             <div class="caract-fila caract-fila-last">
                 <div class="seccion-caja caract-completa caract-trasfondo">
@@ -1214,6 +1237,7 @@
 <script src="especies.js"></script>
 <script src="dotes.js"></script>
 <script src="trasfondos.js"></script>
+<script src="opciones.js"></script>
 <!-- Hechizos por nivel -->
 <script src="hechizos-nivel-0.js"></script>
 <script src="hechizos-nivel-1.js"></script>
@@ -1229,6 +1253,7 @@
 <script src="hechizos-clases.js"></script>
 <!-- Ensamblador + UI -->
 <script src="caracteristicas.js"></script>
+<script src="opciones-ui.js"></script>
 <script src="hechizos-buscador.js"></script>
 <!-- Motor principal -->
 <script src="script.js"></script>

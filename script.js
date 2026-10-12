@@ -88,6 +88,7 @@ function nuevaFicha(datosGuardados, opciones) {
     })();
     if (typeof initCaractSelectores === 'function') initCaractSelectores(panel);
     if (typeof initMcWidget === 'function') initMcWidget(panel);
+    if (typeof initOpciones === 'function') initOpciones(panel);
     if (typeof initSpellcasting === 'function') initSpellcasting(panel);
     initNotasSubpags(panel);
     _initAutoAccionesBloque(panel);
@@ -1561,6 +1562,8 @@ function leerFicha(panel) {
         subclaseTxt:     panel.querySelector('.caract-subclase')?.value || '',
         especieTxt:      panel.querySelector('.caract-especie')?.value  || '',
         dotesTxt:        panel.querySelector('.caract-dotes')?.value    || '',
+        opcionesTxt:     panel.querySelector('.caract-opciones')?.value || '',
+        opcionesFiltro:  panel.querySelector('.opc-filtro')?.value      || 'mi',
         trasfondoTxt:    panel.querySelector('.caract-trasfondo-txt')?.value || '',
         // Trasfondo personalizado
         tfPersonalizado: panel.querySelector('.trasfondo-personalizado')?.style.display !== 'none',
@@ -1949,6 +1952,9 @@ function cargarDatosEnPanel(panel, d) {
         set('.caract-subclase',      c.subclaseTxt);
         set('.caract-especie',       c.especieTxt);
         set('.caract-dotes',         c.dotesTxt);
+        set('.caract-opciones',      c.opcionesTxt);
+        { const fl = panel.querySelector('.opc-filtro'); if (fl && c.opcionesFiltro) fl.value = c.opcionesFiltro; }
+        if (typeof opcionesRefrescar === 'function') opcionesRefrescar(panel);
         set('.caract-trasfondo-txt', c.trasfondoTxt);
 
         // Restaurar trasfondo personalizado
@@ -5131,6 +5137,16 @@ function _recogerEntradasAuto(fichaPanel) {
         });
     }
 
+    // ── Opciones de clase (invocaciones, metamagia, maniobras…): se leen de su cuadro de texto ──
+    if (typeof _opcElegidas === 'function') {
+        const vistas = new Set();
+        _opcElegidas(fichaPanel).forEach(o => {
+            if (vistas.has(o.n)) return;
+            vistas.add(o.n);
+            añadir(o, o.tipo);
+        });
+    }
+
     // ── Hechizos ───────────────────────────────────────
     fichaPanel.querySelectorAll('.spell-entry').forEach(entry => {
         const spId = entry.dataset.spellId;
@@ -5853,6 +5869,8 @@ function _pdfPrepararPanel(panel) {
 
     // 2. Fuera tooltips y ventanas emergentes
     panel.querySelectorAll('.modal-overlay, .spell-tooltip, .condicion-tooltip').forEach(el => estilo(el, 'visibility', 'hidden'));
+    // Opciones de clase: fuera el selector, la vista previa y los mensajes (los contadores y el texto se quedan)
+    panel.querySelectorAll('.opc-selector-fila, .opc-vista, .opc-aviso').forEach(el => estilo(el, 'display', 'none'));
 
     // 3. Pestañas de ACCIONES: se muestran todas las que tengan contenido, con su título
     panel.querySelectorAll('.caja-acciones').forEach(caja => {

@@ -1575,6 +1575,8 @@ function leerFicha(panel) {
         mcClases:        (typeof leerMcDatos === 'function') ? leerMcDatos(panel) : [],
     };
 
+    // Generador de atributos: método, base y bonos (para reabrirlo sin sumar dos veces)
+    if (panel.dataset.atrGen) { try { d.atrGen = JSON.parse(panel.dataset.atrGen); } catch (_) { /* dato dañado: se omite */ } }
     d.roleplay = leerRoleplay(panel);
     d.autoNotas = leerAutoNotas(panel);
 
@@ -1968,6 +1970,11 @@ function cargarDatosEnPanel(panel, d) {
             if (c.tfPrevBonos) tfWrap.dataset.prevBonos = c.tfPrevBonos;
         }
     }
+    });
+
+    _secc('generador de atributos', () => {
+    if (d.atrGen && typeof d.atrGen === 'object' && d.atrGen.base) panel.dataset.atrGen = JSON.stringify(d.atrGen);
+    if (typeof _actualizarAvisoTfGen === 'function') _actualizarAvisoTfGen(panel);
     });
 
     _secc('recálculo', () => {

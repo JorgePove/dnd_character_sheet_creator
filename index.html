@@ -151,6 +151,7 @@
         <aside class="columna-stats">
             <div class="seccion-caja">
                 <h3 class="titulo-caja">Estadísticas</h3>
+                <button type="button" class="btn-gen-atr" onclick="abrirGeneradorAtributos(this)" title="Array estándar, compra de puntos, tirada 4d6, bonos de trasfondo…">🎲 Generar atributos</button>
                 <div class="stats-lista">
 
                     <div class="stat-bloque">
@@ -740,6 +741,9 @@
 
                     <!-- Panel de trasfondo PERSONALIZADO (oculto por defecto) -->
                     <div class="trasfondo-personalizado" style="display:none">
+                        <div class="tf-gen-aviso">Los aumentos de característica (+2/+1 o +1/+1/+1) se aplican desde
+                            <button type="button" class="tf-gen-btn" onclick="abrirGeneradorAtributos(this, 3)">🎲 Generar atributos</button>
+                            (paso «Bonos»). Aquí sólo se anotan.</div>
                         <div class="tf-grid">
                             <div class="tf-campo">
                                 <label class="tf-label">Estadística <span class="tf-badge tf-badge-plus2">+2</span></label>
@@ -1254,6 +1258,7 @@
 <!-- Ensamblador + UI -->
 <script src="caracteristicas.js"></script>
 <script src="opciones-ui.js"></script>
+<script src="atributos-gen.js"></script>
 <script src="hechizos-buscador.js"></script>
 <!-- Motor principal -->
 <script src="script.js"></script>

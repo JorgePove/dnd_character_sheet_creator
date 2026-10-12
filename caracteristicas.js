@@ -951,10 +951,16 @@ function aplicarTrasfondoPersonalizado(panel) {
     const hab2  = tfWrap.querySelector('.tf-hab2-sel')?.value;
 
     // Revertir bonos anteriores
+    // Los aumentos de característica (+2/+1) YA NO se suman aquí: los aplica el generador de atributos
+    // (🎲 Generar atributos, paso «Bonos»). Sólo las fichas guardadas con una versión anterior, que ya
+    // llevan esos aumentos dentro del número (prevBonos.stat2/stat1), siguen funcionando como antes
+    // hasta que se abra el generador, que los reabsorbe.
     const prevRaw = tfWrap.dataset.prevBonos;
+    let horneado = false;
     if (prevRaw) {
         try {
             const prev = JSON.parse(prevRaw);
+            horneado = !!(prev.stat2 || prev.stat1);
             if (prev.stat2) _ajustarStat(panel, _STAT_KEY[prev.stat2], -2);
             if (prev.stat1) _ajustarStat(panel, _STAT_KEY[prev.stat1], -1);
             if (prev.hab1)  _setHabProf(panel, prev.hab1, false);
@@ -963,12 +969,15 @@ function aplicarTrasfondoPersonalizado(panel) {
     }
 
     // Aplicar nuevos bonos
-    if (stat2 && _STAT_KEY[stat2]) _ajustarStat(panel, _STAT_KEY[stat2], +2);
-    if (stat1 && _STAT_KEY[stat1]) _ajustarStat(panel, _STAT_KEY[stat1], +1);
+    if (horneado) {
+        if (stat2 && _STAT_KEY[stat2]) _ajustarStat(panel, _STAT_KEY[stat2], +2);
+        if (stat1 && _STAT_KEY[stat1]) _ajustarStat(panel, _STAT_KEY[stat1], +1);
+    }
     if (hab1)  _setHabProf(panel, hab1, true);
     if (hab2)  _setHabProf(panel, hab2, true);
 
-    tfWrap.dataset.prevBonos = JSON.stringify({ stat2, stat1, hab1, hab2 });
+    tfWrap.dataset.prevBonos = JSON.stringify(horneado ? { stat2, stat1, hab1, hab2 } : { stat2: '', stat1: '', hab1, hab2 });
+    if (typeof _actualizarAvisoTfGen === 'function') _actualizarAvisoTfGen(panel);
 
     if (typeof actualizarTodoPanel === 'function') actualizarTodoPanel(panel);
     if (typeof guardarDebounced    === 'function') guardarDebounced();

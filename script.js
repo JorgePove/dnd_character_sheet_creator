@@ -72,6 +72,9 @@ function nuevaFicha(datosGuardados, opciones) {
     const tab = document.createElement('div');
     tab.className = 'pestana';
     tab.dataset.fichaId = id;
+    tab.dataset.defecto = `Personaje ${contadorFichas}`;   // nombre mientras la ficha no tenga uno (no depende del orden de las pestañas)
+    tab.tabIndex = 0;                                        // enfocable con teclado (Alt + ←/→ la mueve, ver pestanas-orden.js)
+    tab.title = 'Arrastra para cambiar el orden';
     tab.innerHTML = `<span class="pestana-nombre">Personaje ${contadorFichas}</span><button class="pestana-cerrar" onclick="cerrarFicha(event,'${id}')" title="Cerrar ficha">✕</button>`;
     tab.addEventListener('click', () => { activarFicha(id); guardarDebounced(); });
     barra.insertBefore(tab, btnNueva);
@@ -92,6 +95,7 @@ function nuevaFicha(datosGuardados, opciones) {
     if (typeof initSpellcasting === 'function') initSpellcasting(panel);
     initNotasSubpags(panel);
     _initAutoAccionesBloque(panel);
+    if (typeof initAccionesEstandar === 'function') initAccionesEstandar(panel);   // referencia plegable (acciones-estandar.js)
     initMulticlaseWidget(panel);
     _hookAutoAcciones(panel);
     activarFicha(id);
@@ -137,6 +141,7 @@ function cerrarFicha(event, id) {
     if (fichas.length <= 1) return;
     const ficha = fichas.find(f => f.id === id);
     const nombre = ficha?.panel.querySelector('.input-nombre')?.value.trim()
+        || document.querySelector(`.pestana[data-ficha-id="${id}"]`)?.dataset.defecto
         || `Personaje ${fichas.findIndex(f => f.id === id) + 1}`;
     fichaABorrar = id;
     const modal = document.getElementById('modal-borrado-global');
@@ -187,7 +192,7 @@ function onNombreCambia(input) {
     const tab = document.querySelector(`.pestana[data-ficha-id="${id}"] .pestana-nombre`);
     if (tab) {
         const val = input.value.trim();
-        tab.textContent = val || `Personaje ${fichas.findIndex(f => f.id === id) + 1}`;
+        tab.textContent = val || tab.closest('.pestana')?.dataset.defecto || `Personaje ${fichas.findIndex(f => f.id === id) + 1}`;
     }
     _ajustarFuenteNombre(input);
     guardarDebounced();
@@ -452,12 +457,13 @@ function toggleDadosGlobal(modo) {
 
 function realizarTiradaStat(el, nombre) {
     const panel = getPanel(el);
-    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.stat-mod-circulo')?.innerText) || 0);
+    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.stat-mod-circulo')?.innerText) || 0, undefined, { tipo: 'prueba' });
 }
 
 function tirarSalvacionStat(el, nombre) {
     const panel = getPanel(el);
-    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.salv-valor')?.value) || 0);
+    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.salv-valor')?.value) || 0, undefined,
+        { tipo: 'salv', stat: el.querySelector('.salv-valor')?.dataset.salv });
 }
 
 function actualizarIniBonus(input) {
@@ -469,14 +475,14 @@ function actualizarIniBonus(input) {
 
 function realizarTiradaInput(el, nombre) {
     const panel = getPanel(el);
-    lanzarConPanel(panel, nombre, parseInt(panel.querySelector('.ini-val')?.value) || 0);
+    lanzarConPanel(panel, nombre, parseInt(panel.querySelector('.ini-val')?.value) || 0, undefined, { tipo: 'ini' });
 }
 
 function tirarDesdeFila(el, nombre) {
     const panel = getPanel(el);
     const toggle = el.querySelector('.adv-toggle');
     const advEstado = toggle ? parseInt(toggle.dataset.adv) : 0;
-    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.mod-valor')?.value) || 0, advEstado);
+    lanzarConPanel(panel, nombre, parseInt(el.querySelector('.mod-valor')?.value) || 0, advEstado, { tipo: 'prueba' });
 }
 
 /* Lee el estado de ventaja/desventaja del panel flotante global */
@@ -493,12 +499,21 @@ function _resetAdv() {
     document.querySelector('.btn-desventaja-f')?.classList.remove('activo');
 }
 
-function lanzarConPanel(panel, nombre, mod, forzarAdv) {
+/* ctx = { tipo: 'prueba' | 'salv' | 'ini', stat } → aplica condiciones y agotamiento (condiciones-efectos.js) */
+function lanzarConPanel(panel, nombre, mod, forzarAdv, ctx) {
     const estado = _leerEstadoAdv();
     let mV, mD;
     if      (forzarAdv === 1) { mV = true;  mD = false; }
     else if (forzarAdv === 2) { mV = false; mD = true; }
     else                      { mV = estado.ventaja; mD = estado.desventaja; }
+
+    // Condiciones: ventaja/desventaja automáticas (se anulan entre sí), fallo automático y penalización de agotamiento
+    let penal = 0, motivo = '';
+    if (ctx && typeof ceTirada === 'function') {
+        const ce = ceTirada(panel, ctx.tipo, ctx.stat, { V: mV, D: mD });
+        if (ce.autoFallo && ctx.tipo === 'salv') { ceLogFalloAutomatico(nombre, ce.autoFallo); _resetAdv(); return; }
+        mV = ce.ventaja; mD = ce.desventaja; penal = ce.penal; motivo = ce.motivo;
+    }
 
     const d1 = Math.floor(Math.random() * 20) + 1;
     const d2 = Math.floor(Math.random() * 20) + 1;
@@ -508,7 +523,9 @@ function lanzarConPanel(panel, nombre, mod, forzarAdv) {
     else if (mD) { resultado = Math.min(d1,d2); detalle = `[${d1}, ${d2}] ➔ ${resultado}`; clase = 'desventaja'; }
     else         { resultado = d1; detalle = `${d1}`; }
 
-    registrarLog(nombre, resultado + mod, detalle, mod, clase);
+    if (motivo) detalle += ` · ${_esc(motivo)}`;
+    if (penal)  detalle += ` · agotamiento ${penal} incl.`;
+    registrarLog(nombre, resultado + mod + penal, detalle, mod + penal, clase);
     _resetAdv();
 }
 
@@ -1035,16 +1052,22 @@ function tirarArma(iconEl) {
     const nombre    = fila.querySelector('.arma-nombre-input').value.trim() || 'Arma';
     const bonoTotal = parseInt(fila.querySelector('.arma-bono-total').textContent) || 0;
 
-    const gV = _leerEstadoAdv().ventaja;
-    const gD = _leerEstadoAdv().desventaja;
+    // Condiciones: ventaja/desventaja automáticas y penalización de agotamiento (condiciones-efectos.js)
+    const ce = (typeof ceTirada === 'function')
+        ? ceTirada(panel, 'ataque', null, { V: _leerEstadoAdv().ventaja, D: _leerEstadoAdv().desventaja })
+        : { ventaja: _leerEstadoAdv().ventaja, desventaja: _leerEstadoAdv().desventaja, penal: 0, motivo: '' };
+    const gV = ce.ventaja;
+    const gD = ce.desventaja;
     const d1 = Math.floor(Math.random() * 20) + 1;
     const d2 = Math.floor(Math.random() * 20) + 1;
     let dImpacto, detalleImpacto;
     if (gV)      { dImpacto = Math.max(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; }
     else if (gD) { dImpacto = Math.min(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; }
     else         { dImpacto = d1; detalleImpacto = `${d1}`; }
+    if (ce.motivo) detalleImpacto += ` ${_esc(ce.motivo)}`;
+    const penalAtq = ce.penal || 0;
 
-    const totalImpacto = dImpacto + bonoTotal;
+    const totalImpacto = dImpacto + bonoTotal + penalAtq;
     const esCrit  = dImpacto === 20;
     const esFallo = dImpacto === 1;
 
@@ -1073,7 +1096,7 @@ function tirarArma(iconEl) {
 
     const impColor = esCrit ? 'crit-verde' : esFallo ? 'crit-rojo' : '';
     const impLabel = esCrit ? '¡CRÍTICO!' : esFallo ? 'Pifia' : 'impacto';
-    const bonoStr  = bonoTotal >= 0 ? `+${bonoTotal}` : `${bonoTotal}`;
+    const bonoStr  = (bonoTotal >= 0 ? `+${bonoTotal}` : `${bonoTotal}`) + (penalAtq ? ` ${penalAtq} agot.` : '');
 
     const dañoHTML = lineasDaño.length === 1
         ? `<div class="log-daño-linea"><span>${sumaTotalDaño}</span><small>${lineasDaño[0].tipoDaño} (${lineasDaño[0].detalle})</small></div>`
@@ -4709,7 +4732,10 @@ function _aplicarPGTemporales(panel, cantidad) {
 }
 
 function _tirarConSpec(sp, panel, spec, ctx) {
-    const { esCantrip, nivelLanzado, nivelPersonaje, labelNivel, modoEt, extras, gV, gD } = ctx;
+    const { esCantrip, nivelLanzado, nivelPersonaje, labelNivel, modoEt, extras, gV: gVc, gD: gDc, gV0, gD0, penalAtq, motivoAtq } = ctx;
+    // Ataques propios del conjuro con bono fijo (criaturas invocadas…) no sufren las condiciones del personaje
+    const usaCond = spec.atqFijo === undefined;
+    const gV = usaCond ? gVc : gV0, gD = usaCond ? gDc : gD0;
     const log = document.getElementById('log-lista');
     const div = document.createElement('div');
     const nivelBase = esCantrip ? 0 : (parseInt((sp.nivel || '').replace(/\D/g, '')) || 1);
@@ -4758,8 +4784,8 @@ function _tirarConSpec(sp, panel, spec, ctx) {
     if (spec.repNv) rep += spec.repNv * nExtra;
     rep = Math.max(1, rep);
     const multi = rep > 1;
-    const bonoAtq = spec.atqFijo !== undefined ? spec.atqFijo + (spec.atqMod ? modv : 0) : spellAtk;
-    const bonStr = bonoAtq >= 0 ? `+${bonoAtq}` : `${bonoAtq}`;
+    const bonoAtq = (spec.atqFijo !== undefined ? spec.atqFijo + (spec.atqMod ? modv : 0) : spellAtk) + (usaCond ? (penalAtq || 0) : 0);
+    const bonStr = (bonoAtq >= 0 ? `+${bonoAtq}` : `${bonoAtq}`) + (usaCond && penalAtq ? ` (agot. ${penalAtq} incl.)` : '');
     let hayCrit = false, sumaTotal = 0, notaTemp = '', primeraLinea = null;
     const lineasResultado = [];
 
@@ -4774,6 +4800,7 @@ function _tirarConSpec(sp, panel, spec, ctx) {
             else if (v)   { dI = Math.max(d1, d2); det = `[${d1},${d2}]→${dI}`; claseAdv = 'ventaja'; }
             else if (gD)  { dI = Math.min(d1, d2); det = `[${d1},${d2}]→${dI}`; claseAdv = 'desventaja'; }
             else          { dI = d1; det = `${d1}`; }
+            if (usaCond && motivoAtq) det += ` ${_esc(motivoAtq)}`;
             esCrit = dI === 20;
             const esFallo = dI === 1;
             if (esCrit) hayCrit = true;
@@ -4912,8 +4939,13 @@ async function tirarHechizo(sp, panel) {
     // ── Construir log ────────────────────────────────────
     const log = document.getElementById('log-lista');
     const div = document.createElement('div');
-    const gV = _leerEstadoAdv().ventaja;
-    const gD = _leerEstadoAdv().desventaja;
+    const gV0 = _leerEstadoAdv().ventaja;     // solo lo puesto a mano
+    const gD0 = _leerEstadoAdv().desventaja;
+    // Condiciones (condiciones-efectos.js): afectan a los ataques de conjuro del personaje
+    const ceS = (typeof ceTirada === 'function') ? ceTirada(panel, 'ataque', null, { V: gV0, D: gD0 }) : null;
+    const gV = ceS ? ceS.V : gV0;             // V/D en bruto: quien tira ya hace que se anulen entre sí
+    const gD = ceS ? ceS.D : gD0;
+    const penalAtq = ceS ? ceS.penal : 0, motivoAtq = ceS ? ceS.motivo : '';
 
     // Etiqueta de nivel para el log
     const labelNivel = esCantrip
@@ -4924,7 +4956,7 @@ async function tirarHechizo(sp, panel) {
 
     // ── Conjuro con tirada definida en hechizos-tiradas.js ──
     if (spec) {
-        _tirarConSpec(sp, panel, spec, { esCantrip, nivelLanzado, nivelPersonaje, labelNivel, modoEt, extras, gV, gD });
+        _tirarConSpec(sp, panel, spec, { esCantrip, nivelLanzado, nivelPersonaje, labelNivel, modoEt, extras, gV, gD, gV0, gD0, penalAtq, motivoAtq });
         return;
     }
 
@@ -4976,17 +5008,19 @@ async function tirarHechizo(sp, panel) {
         const d1 = Math.floor(Math.random() * 20) + 1;
         const d2 = Math.floor(Math.random() * 20) + 1;
         let dImpacto, detalleImpacto, claseAdv = '';
-        if      (gV) { dImpacto = Math.max(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; claseAdv = 'ventaja'; }
-        else if (gD) { dImpacto = Math.min(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; claseAdv = 'desventaja'; }
-        else         { dImpacto = d1; detalleImpacto = `${d1}`; }
+        const vEf = ceS ? ceS.ventaja : gV, dEf = ceS ? ceS.desventaja : gD;   // ya anulados entre sí
+        if      (vEf) { dImpacto = Math.max(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; claseAdv = 'ventaja'; }
+        else if (dEf) { dImpacto = Math.min(d1,d2); detalleImpacto = `[${d1},${d2}]→${dImpacto}`; claseAdv = 'desventaja'; }
+        else          { dImpacto = d1; detalleImpacto = `${d1}`; }
+        if (motivoAtq) detalleImpacto += ` ${_esc(motivoAtq)}`;
 
-        const totalImpacto = dImpacto + spellAtk;
+        const totalImpacto = dImpacto + spellAtk + penalAtq;
         const esCrit  = dImpacto === 20;
         const esFallo = dImpacto === 1;
 
         const { rolls, suma } = _tirarDados(qtyFinal, base.faces, esCrit);
         const totalDaño = suma + flatBonus;
-        const bonStr = spellAtk >= 0 ? `+${spellAtk}` : `${spellAtk}`;
+        const bonStr = (spellAtk >= 0 ? `+${spellAtk}` : `${spellAtk}`) + (penalAtq ? ` (agot. ${penalAtq} incl.)` : '');
         const critStr = esCrit ? ` ✦CRIT(${qtyFinal}d→${qtyFinal*2}d)` : '';
         const flatStr = flatBonus ? ` +${flatBonus}` : '';
 
@@ -5509,7 +5543,7 @@ function _modalConcentracion(nombreActivo, nombreNuevo) {
 const CONDICION_TOOLTIPS = {
     'Agarrado':     'Tu velocidad se reduce a 0 y no puedes beneficiarte de bonificaciones a la velocidad. La condición termina si quien te agarra queda Incapacitado o si un efecto te saca de su alcance.',
     'Asustado':     'Tienes Desventaja en pruebas de característica y tiradas de ataque mientras puedas ver la fuente de tu miedo. No puedes moverte voluntariamente hacia ella.',
-    'Aturdido':     'Estás Incapacitado, no puedes moverte y solo puedes hablar de manera entrecortada. Fallas automáticamente las salvaciones de FUE y DES. Las tiradas de ataque contra ti tienen Ventaja.',
+    'Aturdido':     'Estás Incapacitado. Fallas automáticamente las salvaciones de FUE y DES. Las tiradas de ataque contra ti tienen Ventaja. [2014: además no puedes moverte y solo puedes hablar de manera entrecortada.]',
     'Cegado':       'No puedes ver. Las tiradas de ataque contra ti tienen Ventaja y tus tiradas de ataque tienen Desventaja.',
     'Derribado':    'Solo puedes moverte arrastrándote (coste doble de movimiento). Tienes Desventaja en tus tiradas de ataque. Los ataques cuerpo a cuerpo contra ti tienen Ventaja; los ataques a distancia tienen Desventaja.',
     'Encantado':    'No puedes atacar al encantador ni elegirle como objetivo de efectos perjudiciales. El encantador tiene Ventaja en pruebas de Carisma para interactuar socialmente contigo.',
@@ -5889,7 +5923,7 @@ function _pdfPrepararPanel(panel) {
     // 2. Fuera tooltips y ventanas emergentes
     panel.querySelectorAll('.modal-overlay, .spell-tooltip, .condicion-tooltip').forEach(el => estilo(el, 'visibility', 'hidden'));
     // Opciones de clase: fuera el selector, la vista previa y los mensajes (los contadores y el texto se quedan)
-    panel.querySelectorAll('.opc-selector-fila, .opc-vista, .opc-aviso').forEach(el => estilo(el, 'display', 'none'));
+    panel.querySelectorAll('.opc-selector-fila, .opc-vista, .opc-aviso, .acc-ref').forEach(el => estilo(el, 'display', 'none'));   // .acc-ref: referencia de acciones estándar
 
     // 3. Pestañas de ACCIONES: se muestran todas las que tengan contenido, con su título
     panel.querySelectorAll('.caja-acciones').forEach(caja => {

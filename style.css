@@ -5554,3 +5554,93 @@ html.tema-oscuro .mc-subir-btn { background: #3a1d1a; border-color: #8a3a31; col
     .cr-confirma { flex: 1 1 100%; }
     .cr-fila .ag-select, .cr-fila .ag-num { max-width: none; flex-basis: 100%; }
 }
+
+
+/* ===================================================
+   REORDENAR PESTAÑAS (pestanas-orden.js)
+=================================================== */
+.pestana { -webkit-touch-callout: none; }
+.pestana:focus-visible { outline: 2px solid var(--acento, #3182ce); outline-offset: 2px; }
+.barra-pestanas.reordenando { cursor: grabbing; }
+.barra-pestanas.reordenando .pestana { cursor: grabbing; }
+.pestana.arrastrando {
+    z-index: 3000;
+    transition: none;
+    box-shadow: 0 8px 18px rgba(0,0,0,.35);
+    opacity: .96;
+}
+/* Hueco que marca dónde caerá la pestaña arrastrada */
+.pestana-hueco {
+    flex: 0 0 auto; box-sizing: border-box;
+    border: 2px dashed var(--color-borde); border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    background: rgba(128,128,128,.12);
+    position: relative; bottom: -3px;
+}
+
+/* ===================================================
+   ACCIONES ESTÁNDAR — referencia plegable (acciones-estandar.js)
+=================================================== */
+.acc-ref { margin: 0 0 10px; border: 1px solid var(--color-borde-xs); border-radius: 8px; background: var(--color-sub-caja); }
+.acc-ref-resumen {
+    cursor: pointer; padding: 7px 12px; font-size: 12px; font-weight: 700; letter-spacing: .02em;
+    color: var(--color-texto-med); list-style: none; display: flex; align-items: center; gap: 4px; user-select: none;
+}
+.acc-ref-resumen::-webkit-details-marker { display: none; }
+.acc-ref-resumen::after { content: '▾'; margin-left: auto; opacity: .6; transition: transform .15s; }
+.acc-ref[open] > .acc-ref-resumen::after { transform: rotate(180deg); }
+.acc-ref-resumen small { font-weight: 500; opacity: .7; }
+.acc-ref-resumen:focus-visible, .acc-ref-nom:focus-visible, .acc-ref-add:focus-visible { outline: 2px solid var(--acento, #3182ce); outline-offset: 1px; }
+.acc-ref-lista { padding: 0 8px 8px; display: flex; flex-direction: column; gap: 2px; }
+.acc-ref-item { border-top: 1px solid var(--color-borde-xs); }
+.acc-ref-item:first-child { border-top: none; }
+.acc-ref-fila { display: flex; align-items: center; gap: 6px; }
+.acc-ref-nom {
+    flex: 1; min-width: 0; text-align: left; background: none; border: none; cursor: pointer;
+    font: inherit; font-size: 13px; font-weight: 600; color: var(--color-texto); padding: 6px 4px;
+    display: flex; align-items: baseline; gap: 6px;
+}
+.acc-ref-nom:hover { color: var(--acento, #3182ce); }
+.acc-ref-flecha { display: inline-block; width: 10px; font-size: 10px; opacity: .6; transition: transform .12s; }
+.acc-ref-item.abierto .acc-ref-flecha { transform: rotate(90deg); }
+.acc-ref-en { font-weight: 400; font-size: 11px; opacity: .65; }
+.acc-ref-add {
+    flex: 0 0 auto; min-width: 28px; height: 26px; padding: 0 6px; cursor: pointer;
+    border: 1px solid var(--color-borde-xs); border-radius: 6px; background: var(--color-input); color: var(--color-texto-med);
+    font-size: 13px; font-weight: 700; line-height: 1;
+}
+.acc-ref-add:hover { background: var(--acento, #3182ce); color: #fff; border-color: transparent; }
+.acc-ref-add.hecho { opacity: .6; }
+.acc-ref-cuerpo { padding: 0 6px 8px 20px; font-size: 12px; line-height: 1.45; color: var(--color-texto-med); }
+.acc-ref-cuerpo p { margin: 0 0 4px; }
+.acc-ref-n14 { font-size: 11px; opacity: .8; border-left: 2px solid var(--color-borde-xs); padding-left: 7px; }
+@media (hover: none) and (pointer: coarse) {
+    .acc-ref-add { min-width: 36px; height: 34px; }
+    .acc-ref-nom { padding: 9px 4px; }
+}
+
+
+/* ===================================================
+   CONDICIONES — efectos en las tiradas (condiciones-efectos.js)
+=================================================== */
+.cond-efectos {
+    margin-top: 10px; padding: 8px 10px; border-radius: 8px;
+    border: 1px solid #d69e2e; background: rgba(214,158,46,.14);
+    color: var(--color-texto-med); font-size: 11.5px; line-height: 1.45;
+}
+.cond-efectos[hidden] { display: none; }
+.cond-efectos-tit { font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 10px; opacity: .8; margin-bottom: 3px; }
+.cond-efectos-fila b { font-weight: 700; color: var(--color-texto); }
+.btn-cond-f { background: #FFF3CD; border-color: #d69e2e; color: #7a5300; }
+.btn-cond-f:hover { background: #ffe69c; }
+.btn-cond-f.activo { background: #4a4a4a; border-color: #222; color: #fff; box-shadow: 0 0 12px rgba(0,0,0,.4); }
+.btn-cond-f[hidden] { display: none; }
+html.tema-oscuro .btn-cond-f { background: #3a2f10; border-color: #d69e2e; color: #f6e05e; }
+html.tema-oscuro .btn-cond-f.activo { background: #1a1a1a; border-color: #8a8a8a; color: #fff; }
+
+/* Tema oscuro: la condición marcada se resaltaba con fondo rosa claro y el texto claro no se leía */
+html.tema-oscuro .condicion-item:has(.condicion-chk:checked) {
+    background: rgba(229, 62, 62, .24);
+    outline-color: #E74C3C;
+}
+html.tema-oscuro .condicion-item:has(.condicion-chk:checked) .condicion-nombre { color: #ffd7d7; }

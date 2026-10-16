@@ -458,27 +458,27 @@
                                 <div class="agotamiento-item">
                                     <div class="agotamiento-bolita" onclick="toggleAgotamiento(this)" data-nivel="1"></div>
                                     <span class="agotamiento-num">1</span>
-                                    <div class="agotamiento-tooltip"><strong>Nv. 1:</strong> Desventaja en pruebas de característica.</div>
+                                    <div class="agotamiento-tooltip"><strong>Nv. 1:</strong> −2 a todas las tiradas de d20 y −5 pies de velocidad. <em>2014: Desventaja en pruebas de característica.</em></div>
                                 </div>
                                 <div class="agotamiento-item">
                                     <div class="agotamiento-bolita" onclick="toggleAgotamiento(this)" data-nivel="2"></div>
                                     <span class="agotamiento-num">2</span>
-                                    <div class="agotamiento-tooltip"><strong>Nv. 2:</strong> Velocidad reducida a la mitad.</div>
+                                    <div class="agotamiento-tooltip"><strong>Nv. 2:</strong> −4 a las tiradas de d20 y −10 pies de velocidad. <em>2014: Velocidad reducida a la mitad.</em></div>
                                 </div>
                                 <div class="agotamiento-item">
                                     <div class="agotamiento-bolita" onclick="toggleAgotamiento(this)" data-nivel="3"></div>
                                     <span class="agotamiento-num">3</span>
-                                    <div class="agotamiento-tooltip"><strong>Nv. 3:</strong> Desventaja en tiradas de ataque y salvaciones.</div>
+                                    <div class="agotamiento-tooltip"><strong>Nv. 3:</strong> −6 a las tiradas de d20 y −15 pies de velocidad. <em>2014: Desventaja en ataques y salvaciones.</em></div>
                                 </div>
                                 <div class="agotamiento-item">
                                     <div class="agotamiento-bolita" onclick="toggleAgotamiento(this)" data-nivel="4"></div>
                                     <span class="agotamiento-num">4</span>
-                                    <div class="agotamiento-tooltip"><strong>Nv. 4:</strong> Máximo de PG reducido a la mitad.</div>
+                                    <div class="agotamiento-tooltip"><strong>Nv. 4:</strong> −8 a las tiradas de d20 y −20 pies de velocidad. <em>2014: PG máximos reducidos a la mitad.</em></div>
                                 </div>
                                 <div class="agotamiento-item">
                                     <div class="agotamiento-bolita" onclick="toggleAgotamiento(this)" data-nivel="5"></div>
                                     <span class="agotamiento-num">5</span>
-                                    <div class="agotamiento-tooltip"><strong>Nv. 5:</strong> Velocidad reducida a 0.</div>
+                                    <div class="agotamiento-tooltip"><strong>Nv. 5:</strong> −10 a las tiradas de d20 y −25 pies de velocidad. <em>2014: Velocidad reducida a 0.</em></div>
                                 </div>
                                 <div class="agotamiento-item">
                                     <div class="agotamiento-bolita" onclick="toggleAgotamiento(this)" data-nivel="6"></div>
@@ -1274,6 +1274,9 @@
 <script src="hechizos-buscador.js"></script>
 <!-- Motor principal -->
 <script src="script.js"></script>
+<script src="pestanas-orden.js"></script>
+<script src="acciones-estandar.js"></script>
+<script src="condiciones-efectos.js"></script>
 <script src="descanso-corto.js"></script>
 <script src="historial.js"></script>
 <script src="firebase-config.js"></script>
@@ -1282,6 +1285,7 @@
 <div id="panel-flotante-acciones">
     <button class="btn-flotante btn-ventaja-f" onclick="toggleDadosGlobal('ventaja')" title="Ventaja">▲ Ventaja</button>
     <button class="btn-flotante btn-desventaja-f" onclick="toggleDadosGlobal('desventaja')" title="Desventaja">▼ Desventaja</button>
+    <button class="btn-flotante btn-cond-f" id="btn-cond-f" onclick="toggleIgnorarCondiciones()" hidden aria-pressed="false">⚠ Condiciones</button>
     <div class="flotante-sep"></div>
     <button class="btn-flotante btn-descanso-corto-f" onclick="descansoCortoGlobal()" title="Descanso Corto">☀ Desc. Corto</button>
     <button class="btn-flotante btn-descanso-largo-f" onclick="descansoLargoGlobal()" title="Descanso Largo">☽ Desc. Largo</button>

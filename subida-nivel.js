@@ -259,6 +259,80 @@ function snPaginaDe(panel, clase) {
 }
 function snDisparar(el, tipo) { el.dispatchEvent(new Event(tipo, { bubbles: true })); }
 
+/* Sube la clase (o la crea) y deja el nivel pedido en AMBOS widgets. Es la parte crítica del asistente:
+   o se hace entera o se deshace (no deja páginas de clase vacías). Devuelve la página de la clase. */
+function snClaseYNivel(E, antesNv) {
+    const panel = E.panel;
+    const nivelFin = antesNv + E.nNiv;
+    const paginas = () => Array.from(panel.querySelectorAll('.caract-mc-body .mc-pagina'));
+    const filas = () => Array.from(panel.querySelectorAll('.multiclase-fila'));
+    const claseDe = p => p.querySelector('.mc-sel-clase')?.value || '';
+    const previas = new Set(paginas());
+
+    if (E.nueva) {
+        // Si quedó una página vacía (p. ej. de un intento anterior) se aprovecha en vez de crear otra
+        let pag = paginas().reverse().find(p => !claseDe(p));
+        if (!pag) {
+            const btn = panel.querySelector('.caract-mc-add');
+            if (!btn || typeof mcAddTab !== 'function') throw new Error('No se encuentra el botón «＋» de clases en Características.');
+            try { mcAddTab(btn); }
+            catch (e) { snQuitarPaginasNuevas(panel, previas); throw e; }
+            pag = paginas().find(p => !previas.has(p)) || paginas().pop();
+        }
+        const sel = pag && pag.querySelector('.mc-sel-clase');
+        if (!sel) { snQuitarPaginasNuevas(panel, previas); throw new Error('La página de clase nueva no tiene selector de clase.'); }
+        sel.value = E.clase;
+        if (sel.value !== E.clase) { snQuitarPaginasNuevas(panel, previas); throw new Error(`La clase «${E.clase}» no está en el desplegable de clases de Características.`); }
+        snDisparar(sel, 'change');
+    }
+
+    const nivelAhora = () => { const m = leerMulticlases(panel).find(x => x.clase === E.clase); return m ? m.nivel : null; };
+    let pag = snPaginaDe(panel, E.clase);
+    if (pag) {
+        const nsel = pag.querySelector('.mc-nivel-sel');
+        nsel.value = String(nivelFin);
+        snDisparar(nsel, 'change');
+    }
+    // Comprobación: la clase tiene que estar con su nivel en la cabecera (es la fuente de verdad de la ficha)
+    if (nivelAhora() !== nivelFin) {
+        let fila = filas().find(f => f.querySelector('.multiclase-sel')?.value === E.clase)
+                || filas().find(f => !f.querySelector('.multiclase-sel')?.value);
+        if (!fila && typeof multiclaseAñadir === 'function') {
+            const add = panel.querySelector('.multiclase-add-btn');
+            if (add) { multiclaseAñadir(add); fila = filas().pop(); }
+        }
+        if (fila) {
+            const cs = fila.querySelector('.multiclase-sel'), ns = fila.querySelector('.multiclase-nivel');
+            if (cs.value !== E.clase) { cs.value = E.clase; snDisparar(cs, 'change'); }
+            ns.value = String(nivelFin); snDisparar(ns, 'change');
+        }
+    }
+    if (nivelAhora() !== nivelFin) {
+        if (E.nueva) snQuitarPaginasNuevas(panel, previas);
+        throw new Error(`No se pudo dejar ${E.clase} en nivel ${nivelFin} (la cabecera muestra nivel ${nivelAhora() ?? 'ninguno'}).`);
+    }
+    if (E.subclase) {
+        // Cambiar el nivel reconstruye los widgets de clase: se vuelve a buscar la página
+        const pag2 = snPaginaDe(panel, E.clase);
+        const ss = pag2 && pag2.querySelector('.mc-sel-subclase');
+        if (ss) { ss.value = E.subclase; snDisparar(ss, 'change'); }
+    }
+}
+/* Deshace las páginas de clase creadas por un intento fallido (y la fila vacía de la cabecera) */
+function snQuitarPaginasNuevas(panel, previas) {
+    try {
+        const body = panel.querySelector('.caract-mc-body');
+        Array.from(body.querySelectorAll('.mc-pagina')).forEach(p => {
+            if (!previas.has(p) && typeof mcRemoveTab === 'function') mcRemoveTab(panel, parseInt(p.dataset.mcIdx));
+        });
+        // filas vacías de la cabecera que sobran (siempre se deja una)
+        const lista = panel.querySelector('.multiclase-lista');
+        const filas = Array.from(lista ? lista.querySelectorAll('.multiclase-fila') : []);
+        filas.forEach(f => { if (!f.querySelector('.multiclase-sel')?.value && lista.querySelectorAll('.multiclase-fila').length > 1) f.remove(); });
+        if (typeof _mcRenderTabs === 'function') _mcRenderTabs(panel);
+    } catch (e) { console.warn('Subida de nivel: no se pudo limpiar tras el fallo', e); }
+}
+
 async function snAplicar(E) {
     const panel = E.panel;
     const nuevoTotal = E.nivelTotal + E.nNiv;
@@ -266,6 +340,8 @@ async function snAplicar(E) {
     const hpEl = panel.querySelector('.hp-max'), actEl = panel.querySelector('.hp-actual');
     const res = snResumenPG(E);
     const scFin = snScoresTras(E, E.mejoras.length);
+    const avisos = [];
+    const intentar = (que, fn) => { try { fn(); } catch (e) { console.error('Subida de nivel (' + que + ')', e); avisos.push(`${que}: ${e && e.message ? e.message : e}`); } };
 
     // 1. Seguridad: versión en el Historial antes de tocar nada
     try {
@@ -273,81 +349,67 @@ async function snAplicar(E) {
         if (f && typeof hxGuardarVersion === 'function') await hxGuardarVersion(f, `Antes de subir a nivel ${nuevoTotal}`);
     } catch (e) { console.warn('Subida de nivel: no se pudo guardar la versión previa', e); }
 
-    // 2. PG de los niveles tirados/escritos
-    panel.dataset.hpNiveles = JSON.stringify(snHpNivelesDespues(E));
+    // 2. Clase y nivel (igual que si se cambiara a mano el selector de nivel de Características).
+    //    Si falla, se deshace y no queda nada a medias: se puede volver a intentar.
+    snClaseYNivel(E, antesNv);
+    E.aplicado = true;   // a partir de aquí ya no se reintenta (se duplicaría)
 
-    // 3. Mejoras: características y dotes
+    // 3. PG de los niveles tirados/escritos
+    intentar('PG por nivel', () => { panel.dataset.hpNiveles = JSON.stringify(snHpNivelesDespues(E)); });
+
+    // 4. Mejoras: características y dotes
     const dotesAnadidas = [], cambiosAtr = [];
-    E.mejoras.forEach(m => {
-        if (m.modo === 'dote') {
-            const d = DND_DOTES.find(x => x.n === m.dote);
-            const ta = panel.querySelector('.caract-dotes');
-            if (d && ta) {
-                const etq = (typeof _TIPO_ETIQUETA !== 'undefined' && _TIPO_ETIQUETA[d.tipo]) || d.tipo || 'General';
-                const linea = `${d.n} [${etq}]: ${d.d}`;
-                ta.value = ta.value ? ta.value + '\n\n' + linea : linea;
-                dotesAnadidas.push(d.n);
+    intentar('Mejoras', () => {
+        E.mejoras.forEach(m => {
+            if (m.modo === 'dote') {
+                const d = DND_DOTES.find(x => x.n === m.dote);
+                const ta = panel.querySelector('.caract-dotes');
+                if (d && ta) {
+                    const etq = (typeof _TIPO_ETIQUETA !== 'undefined' && _TIPO_ETIQUETA[d.tipo]) || d.tipo || 'General';
+                    const linea = `${d.n} [${etq}]: ${d.d}`;
+                    ta.value = ta.value ? ta.value + '\n\n' + linea : linea;
+                    dotesAnadidas.push(d.n);
+                }
             }
-        }
+        });
+        AG_ATRS.forEach(a => {
+            if (scFin[a] !== E.scores[a]) {
+                const inp = panel.querySelector(`.stat-score[data-stat="${a}"]`);
+                if (inp) { inp.value = scFin[a]; actualizarAtributo(inp); cambiosAtr.push(`${AG_ABREV[a]} ${E.scores[a]}→${scFin[a]}`); }
+            }
+        });
     });
-    AG_ATRS.forEach(a => {
-        if (scFin[a] !== E.scores[a]) {
-            const inp = panel.querySelector(`.stat-score[data-stat="${a}"]`);
-            if (inp) { inp.value = scFin[a]; actualizarAtributo(inp); cambiosAtr.push(`${AG_ABREV[a]} ${E.scores[a]}→${scFin[a]}`); }
-        }
-    });
-
-    // 4. Clase y nivel (igual que si se cambiara a mano el selector de nivel de Características)
-    if (E.nueva) {
-        const btn = panel.querySelector('.caract-mc-add');
-        if (btn && typeof mcAddTab === 'function') mcAddTab(btn);
-        const pags = panel.querySelectorAll('.caract-mc-body .mc-pagina');
-        const pag = pags[pags.length - 1];
-        const sel = pag && pag.querySelector('.mc-sel-clase');
-        if (sel) { sel.value = E.clase; snDisparar(sel, 'change'); }
-    }
-    const pag = snPaginaDe(panel, E.clase);
-    if (!pag) {
-        // Ficha cuyo widget de Características no tiene esa clase: se sube desde el selector de la cabecera
-        const fila = Array.from(panel.querySelectorAll('.multiclase-fila')).find(f => f.querySelector('.multiclase-sel')?.value === E.clase);
-        const ns = fila && fila.querySelector('.multiclase-nivel');
-        if (ns) { ns.value = String(antesNv + E.nNiv); snDisparar(ns, 'change'); }
-    } else {
-        const nsel = pag.querySelector('.mc-nivel-sel');
-        nsel.value = String(antesNv + E.nNiv);
-        snDisparar(nsel, 'change');
-        if (E.subclase) {
-            // Cambiar el nivel reconstruye los widgets de clase: se vuelve a buscar la página
-            const pag2 = snPaginaDe(panel, E.clase);
-            const ss = pag2 && pag2.querySelector('.mc-sel-subclase');
-            if (ss) { ss.value = E.subclase; snDisparar(ss, 'change'); }
-        }
-    }
 
     // 5. Vida: recálculo y PG actuales
-    if (res.auto) {
-        calcularHPMaxAuto(panel);
-    } else if (hpEl) {
-        hpEl.value = res.nuevoMax;
-    }
-    if (hpEl && actEl) {
-        const fin = parseInt(hpEl.value) || 0;
-        const estabaLleno = isNaN(res.actAntes) || res.maxAntes <= 0 || res.actAntes >= res.maxAntes;
-        actEl.value = estabaLleno ? fin : Math.max(0, Math.min(fin, res.actAntes + (fin - res.maxAntes)));
-        actualizarVidaPanel(hpEl);
-    }
+    intentar('Vida', () => {
+        if (res.auto) calcularHPMaxAuto(panel);
+        else if (hpEl) hpEl.value = res.nuevoMax;
+        if (hpEl && actEl) {
+            const fin = parseInt(hpEl.value) || 0;
+            const estabaLleno = isNaN(res.actAntes) || res.maxAntes <= 0 || res.actAntes >= res.maxAntes;
+            actEl.value = estabaLleno ? fin : Math.max(0, Math.min(fin, res.actAntes + (fin - res.maxAntes)));
+            actualizarVidaPanel(hpEl);
+        }
+    });
 
     // 6. Registro y aviso
-    const partes = [`${E.clase} ${antesNv} → ${antesNv + E.nNiv}`, `PG máx. ${res.maxAntes} → ${hpEl ? hpEl.value : res.nuevoMax}`];
-    if (cambiosAtr.length) partes.push(cambiosAtr.join(', '));
-    if (dotesAnadidas.length) partes.push('Dote: ' + dotesAnadidas.join(', '));
-    if (E.subclase) partes.push('Subclase: ' + E.subclase);
-    const pend = E.mejoras.filter(m => m.modo === 'luego').length;
-    if (pend) partes.push(`${pend} mejora(s) sin decidir`);
-    snLog('Subida de nivel', `Nv. ${nuevoTotal}`, partes.join(' · '));
-    if (typeof guardarDebounced === 'function') guardarDebounced();
-    if (typeof _mostrarToast === 'function') _mostrarToast(`✔ ${E.clase} sube a nivel ${antesNv + E.nNiv} (nivel total ${nuevoTotal})`);
-    return true;
+    intentar('Registro', () => {
+        const partes = [`${E.clase} ${antesNv} → ${antesNv + E.nNiv}`, `PG máx. ${res.maxAntes} → ${hpEl ? hpEl.value : res.nuevoMax}`];
+        if (cambiosAtr.length) partes.push(cambiosAtr.join(', '));
+        if (dotesAnadidas.length) partes.push('Dote: ' + dotesAnadidas.join(', '));
+        if (E.subclase) partes.push('Subclase: ' + E.subclase);
+        const pend = E.mejoras.filter(m => m.modo === 'luego').length;
+        if (pend) partes.push(`${pend} mejora(s) sin decidir`);
+        snLog('Subida de nivel', `Nv. ${nuevoTotal}`, partes.join(' · '));
+    });
+    intentar('Guardado', () => { if (typeof guardarDebounced === 'function') guardarDebounced(); });
+    if (typeof _mostrarToast === 'function') {
+        try {
+            if (avisos.length) _mostrarToast(`⚠ ${E.clase} sube a nivel ${antesNv + E.nNiv}, pero hubo avisos: ${avisos.join(' · ')}`, 'error');
+            else _mostrarToast(`✔ ${E.clase} sube a nivel ${antesNv + E.nNiv} (nivel total ${nuevoTotal})`);
+        } catch (e) { /* el aviso no es esencial */ }
+    }
+    return { avisos };
 }
 
 /* ══════ Ventana ══════ */
@@ -379,6 +441,7 @@ function abrirSubidaNivel(origen, claseInicial) {
 
     let refrescadores = [];
     let aplicando = false;
+    let errorAplicar = '';   // el mensaje de un fallo al aplicar se mantiene visible (no lo borra actualizar)
     const NOMBRES = { clase: 'Clase', vida: 'Vida', rasgos: 'Rasgos', mejoras: 'Mejoras', resumen: 'Resumen' };
 
     function cerrar() {
@@ -438,6 +501,7 @@ function abrirSubidaNivel(origen, claseInicial) {
     }
 
     function irPaso(n) {
+        errorAplicar = '';
         E.paso = Math.max(1, Math.min(E.pasos.length, n));
         cuerpo.textContent = ''; refrescadores = [];
         construirStepper();
@@ -457,7 +521,8 @@ function abrirSubidaNivel(origen, claseInicial) {
             if (i + 1 === E.paso) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
         });
         const v = validoPaso(nombrePasoActual());
-        aviso.textContent = v.ok ? '' : v.msg;
+        aviso.textContent = errorAplicar || (v.ok ? '' : v.msg);
+        aviso.classList.toggle('ag-aviso-error', !!errorAplicar);
         const ultimo = E.paso === E.pasos.length;
         bSig.textContent = ultimo ? `⬆ Subir a nivel ${E.nivelTotal + E.nNiv}` : 'Siguiente →';
         bSig.disabled = !v.ok || aplicando;
@@ -794,9 +859,20 @@ function abrirSubidaNivel(origen, claseInicial) {
     bSig.addEventListener('click', async () => {
         if (!validoPaso(nombrePasoActual()).ok) return;
         if (E.paso < E.pasos.length) { irPaso(E.paso + 1); return; }
-        aplicando = true; actualizar();
+        aplicando = true; errorAplicar = ''; actualizar();
         try { await snAplicar(E); cerrar(); }
-        catch (e) { console.error('Subida de nivel', e); aplicando = false; aviso.textContent = 'No se pudo completar: ' + (e && e.message ? e.message : e); actualizar(); }
+        catch (e) {
+            console.error('Subida de nivel', e);
+            aplicando = false;
+            const msg = e && e.message ? e.message : String(e);
+            if (E.aplicado) {   // la clase ya está subida: se cierra para no repetirla
+                cerrar();
+                if (typeof _mostrarToast === 'function') _mostrarToast('⚠ La subida se aplicó, pero algo falló al final: ' + msg, 'error');
+                return;
+            }
+            errorAplicar = 'No se pudo completar (la ficha no ha cambiado): ' + msg;
+            actualizar();
+        }
     });
     overlay.addEventListener('mousedown', e => { if (e.target === overlay && !aplicando) cerrar(); });
 

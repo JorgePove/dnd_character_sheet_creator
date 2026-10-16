@@ -5324,6 +5324,7 @@ html.tema-oscuro .tf-gen-btn { background: #3a1d1a; border-color: #8a3a31; color
 .ag-nota { color: #fbd38d; font-size: 12px; margin: 0 0 8px; line-height: 1.5; }
 .ag-nota-peq { color: #a0aec0; font-size: 11px; margin: 4px 0 0; }
 .ag-aviso { color: #fbd38d; font-size: 12px; min-height: 0; margin: 6px 0 0; }
+.ag-aviso.ag-aviso-error { color: #fed7d7; font-weight: 600; background: rgba(229,62,62,.18); border: 1px solid #e53e3e; border-radius: 6px; padding: 6px 9px; user-select: text; }
 .ag-pie { display: flex; gap: 8px; margin-top: 12px; justify-content: space-between; }
 .ag-btn {
     padding: 8px 14px; border-radius: 6px; cursor: pointer;

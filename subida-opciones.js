@@ -79,6 +79,8 @@ function snOpcMcsNivel(E, nivelClase, sub) {
 function snOpcEd(E, tipo, T, delTipo, subD) {
     const tabs = DND_OPCIONES_LIMITES[tipo] || {};
     const eds = Object.keys(tabs).sort((a, b) => b - a);   // 5.5e (2024) primero
+    // Creación de personaje: las reglas ya se eligieron al empezar
+    if (E.crear) { const w = E.crear.ed === '24' ? '2024' : '2014'; if (tabs[w]) return { ed: w, fija: true, eds }; }
     let ed, fija = false;
     if (delTipo.some(o => _opcEdicion(o) === '2024')) { ed = '2024'; fija = true; }
     else if (delTipo.length) { ed = '2014'; fija = true; }

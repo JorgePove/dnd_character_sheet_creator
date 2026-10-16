@@ -79,7 +79,9 @@ function snPlanConjuros(E) {
     const castD = _castingDe({ clase, nivel: despues, subclase: subD });
     if (castD === 'none') return { hay: false };
     const val = (tabla, nv, cast) => (nv > 0 && cast !== 'none') ? ((tabla[clase] || [])[Math.min(nv, 20) - 1] || 0) : 0;
-    const trucos = Math.max(0, val(CANTRIPS_CONOCIDOS, despues, castD) - val(CANTRIPS_CONOCIDOS, antes, castA));
+    let trucos = Math.max(0, val(CANTRIPS_CONOCIDOS, despues, castD) - val(CANTRIPS_CONOCIDOS, antes, castA));
+    // Creación 5.5e: Clérigo Taumaturgo y Druida Mago (Orden Divino / Primigenio) conocen un truco más
+    if (E.crear && antes === 0 && typeof crOrdenOpcion === 'function') { const o = crOrdenOpcion(E.crear); if (o && o.truco && (clase === 'Clérigo' || clase === 'Druida')) trucos += o.truco; }
     const prep = Math.max(0, val(HECHIZOS_PREPARADOS_2024, despues, castD) - val(HECHIZOS_PREPARADOS_2024, antes, castA));
     const libro = clase === 'Mago' ? (antes === 0 ? 6 + 2 * (E.nNiv - 1) : 2 * E.nNiv) : 0;
     const maxA = snNivelMaxConjuro(E.mcs), maxD = snNivelMaxConjuro(snMcsDespues(E));

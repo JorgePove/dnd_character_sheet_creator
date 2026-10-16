@@ -38,6 +38,7 @@ const AG_PRINCIPALES = {
     'Artificer': ['int'], 'Bárbaro': ['str'], 'Bardo': ['cha'], 'Brujo': ['cha'], 'Clérigo': ['wis'],
     'Druida': ['wis'], 'Explorador': ['dex', 'wis'], 'Guerrero': ['str', 'dex'], 'Hechicero': ['cha'],
     'Mago': ['int'], 'Monje': ['dex', 'wis'], 'Paladín': ['str', 'cha'], 'Pícaro': ['dex'],
+    'Blood Hunter': ['dex', 'int'],   // no es del PHB: sugerencia según sus salvaciones (DES e INT)
 };
 const AG_PRIORIDAD = {
     'Artificer':  ['int', 'con', 'dex', 'wis', 'cha', 'str'],
@@ -53,6 +54,7 @@ const AG_PRIORIDAD = {
     'Monje':      ['dex', 'wis', 'con', 'str', 'cha', 'int'],
     'Paladín':    ['str', 'cha', 'con', 'wis', 'dex', 'int'],
     'Pícaro':     ['dex', 'con', 'wis', 'int', 'cha', 'str'],
+    'Blood Hunter': ['dex', 'int', 'con', 'str', 'wis', 'cha'],
 };
 
 /* ══════════════ Funciones puras (sin DOM) ══════════════ */
@@ -213,8 +215,9 @@ function agLeerActuales(panel) {
 }
 
 /* Trasfondo de la ficha: lista (con sus características permitidas), personalizado o ninguno */
-function agInfoTrasfondo(panel) {
-    const clave = panel.querySelector('.sel-trasfondo')?.value || '';
+function agInfoTrasfondo(panel, claveForzada) {
+    // claveForzada: creación de personaje (el trasfondo aún no está en la ficha); null/undefined = el de la ficha
+    const clave = (claveForzada != null) ? claveForzada : (panel.querySelector('.sel-trasfondo')?.value || '');
     if (clave === '__personalizado__') {
         const w = panel.querySelector('.trasfondo-personalizado');
         let prev = {};
@@ -232,12 +235,13 @@ function agInfoTrasfondo(panel) {
     return { tipo: 'lista', clave, nombre: clave, permitidas: perm, sinAsi: !perm.length };
 }
 
-function agEstadoInicial(panel) {
+function agEstadoInicial(panel, opts) {
+    const crear = (opts && opts.crear) || null;   // asistente de creación: { clase, tfClave, extra }
     const actual = agLeerActuales(panel);
     let guardado = null;
     try { guardado = panel.dataset.atrGen ? JSON.parse(panel.dataset.atrGen) : null; } catch (e) { guardado = null; }
     if (guardado && (typeof guardado !== 'object' || !guardado.base)) guardado = null;
-    const tfInfo = agInfoTrasfondo(panel);
+    const tfInfo = agInfoTrasfondo(panel, crear ? (crear.tfClave || '') : undefined);
     const mcs = (typeof leerMulticlases === 'function' ? leerMulticlases(panel) : []).filter(m => m.clase);
     const E = {
         paso: 1, metodo: 'manual', presupuesto: 27, unos: false, fisico: false,
@@ -245,7 +249,7 @@ function agEstadoInicial(panel) {
         historial: [], tirada: null,
         tf: { modo: 'no', mas2: '', mas1: '', tres: [] },
         extra: _agCeros(), delta: _agCeros(), conservar: true,
-        actual, tfInfo, clase: mcs[0] ? mcs[0].clase : '', origen: 'nuevo',
+        actual, tfInfo, clase: crear ? (crear.clase || '') : (mcs[0] ? mcs[0].clase : ''), origen: 'nuevo', crear: !!crear,
     };
     AG_ATRS.forEach(a => { E.asig[a] = null; E.compra[a] = 8; });
     const sinCambios = AG_ATRS.every(a => actual[a] === 10);
@@ -293,6 +297,8 @@ function agEstadoInicial(panel) {
         E.origen = 'actual'; E.metodo = 'manual';
     }
     if (E.tf.modo === '111' && E.tf.tres.length === 0) E.tf.tres = (tfInfo.permitidas || []).slice(0, 3);
+    // Creación: los aumentos de la especie (5e) entran como «Bonos extra» (se pueden retocar)
+    if (crear && crear.extra) AG_ATRS.forEach(a => { E.extra[a] = parseInt(crear.extra[a]) || 0; });
     return E;
 }
 
@@ -321,8 +327,8 @@ function agLog(titulo, grande, detalle) {
 async function agAplicar(panel, E) {
     const filas = agCalcular(E);
     if (!filas) return false;
-    // Seguridad: versión en el Historial antes de tocar nada (si el Historial está disponible)
-    try {
+    // Seguridad: versión en el Historial antes de tocar nada (si el Historial está disponible; en una creación no hace falta)
+    if (!E.crear) try {
         const f = (typeof fichas !== 'undefined') ? fichas.find(x => x.panel === panel) : null;
         if (f && typeof hxGuardarVersion === 'function') await hxGuardarVersion(f, 'Antes del generador de atributos');
     } catch (e) { console.warn('Generador de atributos: no se pudo guardar la versión previa', e); }
@@ -367,10 +373,10 @@ async function agAplicar(panel, E) {
 }
 
 /* ══════════════ Ventana ══════════════ */
-function abrirGeneradorAtributos(origen, pasoInicial) {
+function abrirGeneradorAtributos(origen, pasoInicial, opts) {
     const panel = origen && origen.closest ? origen.closest('.ficha-panel') : origen;
     if (!panel || document.getElementById('modal-gen-atributos')) return;
-    const E = agEstadoInicial(panel);
+    const E = agEstadoInicial(panel, opts);
     const previo = document.activeElement;
     const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
     const sinAnimar = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -414,6 +420,7 @@ function abrirGeneradorAtributos(origen, pasoInicial) {
         document.removeEventListener('keydown', teclas, true);
         overlay.remove();
         if (previo && previo.focus) try { previo.focus(); } catch (e) {}
+        if (opts && typeof opts.alCerrar === 'function') { try { opts.alCerrar(); } catch (e) { console.error(e); } }
     }
     function teclas(e) {
         if (e.key === 'Escape') { e.stopPropagation(); cerrar(); }
@@ -468,6 +475,7 @@ function abrirGeneradorAtributos(origen, pasoInicial) {
         if (E.paso < 4) { irPaso(E.paso + 1); return; }
         bSig.disabled = true;
         const ok = await agAplicar(panel, E);
+        if (ok && opts && typeof opts.alAplicar === 'function') { try { opts.alAplicar(); } catch (e) { console.error(e); } }
         if (ok) cerrar(); else actualizar();
     });
     overlay.addEventListener('mousedown', e => { if (e.target === overlay) cerrar(); });

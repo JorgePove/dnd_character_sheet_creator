@@ -5486,3 +5486,70 @@ html.tema-oscuro .mc-subir-btn { background: #3a1d1a; border-color: #8a3a31; col
 .sn-op-sust > summary:focus-visible { outline: 2px solid #F6A99F; outline-offset: 2px; border-radius: 4px; }
 .sn-op-cambio { margin-top: 6px; padding-top: 6px; border-top: 1px dashed #2d3748; }
 .sn-op-cambio:first-of-type { border-top: 0; }
+
+/* ══════ Asistente de creación de personaje (creacion-*.js) ══════ */
+.cr-caja { width: min(820px, 100%); height: min(840px, 94vh); }
+.cr-caja label, .cr-caja-chica label { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 600; color: #cbd5e0; display: flex; }
+.cr-caja .ag-check { display: inline-flex; }
+.cr-caja-chica { width: min(560px, 100%); }
+.cr-cuerpo { padding-right: 6px; }
+.cr-opciones { display: grid; gap: 10px; margin: 8px 0 4px; }
+.cr-opcion {
+    display: flex; flex-direction: column; gap: 4px; text-align: left; cursor: pointer;
+    background: #2d3748; border: 1px solid #4a5568; border-radius: 10px; padding: 12px 14px;
+    color: #e2e8f0; font: inherit;
+}
+.cr-opcion strong { font-size: 14px; color: #fff; }
+.cr-opcion span { font-size: 12px; color: #cbd5e0; line-height: 1.45; }
+.cr-opcion:hover { border-color: #E74C3C; background: #323c52; }
+.cr-opcion:focus-visible { outline: 2px solid #F6A99F; outline-offset: 2px; }
+.cr-op-asist { border-color: #C0392B; }
+.cr-modos { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.cr-modos .ag-modo { display: flex; gap: 8px; align-items: flex-start; border: 1px solid #4a5568; border-radius: 8px; padding: 6px 9px; background: #1f2636; cursor: pointer; }
+.cr-modos .ag-modo:has(input:checked) { border-color: #E74C3C; background: #2a2230; }
+.cr-modos .ag-modo input { margin-top: 3px; }
+.cr-modos .ag-modo-tx { gap: 1px; min-width: 0; }
+.cr-modos .ag-modo-tx strong { color: #fff; font-size: 12.5px; }
+.cr-modos .ag-modo-tx span { color: #a0aec0; font-size: 11.5px; line-height: 1.4; overflow-wrap: anywhere; }
+.cr-off { opacity: 0.45; cursor: default !important; }
+.cr-fila { display: flex; gap: 10px; align-items: center; margin: 4px 0; flex-wrap: wrap; }
+.cr-fila-etq { min-width: 150px; color: #cbd5e0; font-size: 12px; font-weight: 600; }
+.cr-fila .ag-select, .cr-fila .ag-num { flex: 1 1 200px; max-width: 360px; }
+.cr-nombre { width: auto; text-align: left; }
+.cr-sub { margin: 8px 0 3px; color: #e2e8f0; font-weight: 700; font-size: 12px; }
+.cr-selsn { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
+.cr-selsn .ag-select { flex: 1 1 170px; max-width: 260px; }
+.cr-checks { gap: 4px 14px; }
+.cr-checks .ag-check { font-size: 12px; min-width: 150px; }
+.cr-lista .sn-sp-lista { max-height: 180px; }
+.cr-vista { max-height: 190px; }
+.cr-prev { display: flex; flex-direction: column; gap: 4px; }
+.cr-prev-r { font-size: 12px; line-height: 1.45; color: #cbd5e0; }
+.cr-prev-r b { color: #e2e8f0; }
+.cr-panel { margin-top: 10px; }
+.cr-chip { border-color: #4a5568; background: #2d3748; padding: 3px 9px; font-size: 12px; }
+.cr-clase-info { display: flex; flex-direction: column; gap: 3px; }
+.cr-dote { margin-top: 8px; padding: 6px 10px; border: 1px solid #4a5568; border-radius: 8px; background: #1f2636; }
+.cr-dote-cab { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+.cr-atr-caja { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 4px 0 8px; }
+.cr-atr { border: 1px solid #4a5568; border-radius: 8px; padding: 6px 4px; text-align: center; background: #1f2636; }
+.cr-atr.princ { border-color: #E74C3C; }
+.cr-atr-n { font-size: 11px; color: #a0aec0; font-weight: 700; }
+.cr-atr-v { font-size: 20px; font-weight: 800; color: #fff; }
+.cr-atr-m { font-size: 12px; color: #9ae6b4; font-weight: 700; }
+.cr-btn-gen { padding: 8px 14px; }
+.cr-eq-lista { margin: 6px 0 0; }
+.cr-confirma { flex: 3; align-self: center; color: #fed7d7; font-weight: 600; font-size: 12.5px; }
+.cr-btn-descartar { background: #9b2c2c; border-color: #e53e3e; }
+.cr-btn-descartar:not(:disabled):hover { background: #c53030; }
+@media (max-width: 560px) {
+    .cr-atr-caja { grid-template-columns: repeat(3, 1fr); }
+    .cr-fila-etq { min-width: 0; flex-basis: 100%; }
+}
+@media (max-width: 480px) {
+    .ag-pie { flex-wrap: wrap; }
+    .ag-pie .ag-btn { flex: 1 1 42%; min-width: 0; }
+    .ag-pie .ag-btn-pri { flex: 2 1 100%; }
+    .cr-confirma { flex: 1 1 100%; }
+    .cr-fila .ag-select, .cr-fila .ag-num { max-width: none; flex-basis: 100%; }
+}

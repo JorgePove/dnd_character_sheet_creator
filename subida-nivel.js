@@ -137,7 +137,7 @@ function snRasgosPorNivel(E) {
 }
 
 /* ══════ Estado ══════ */
-function snEstadoInicial(panel, claseInicial) {
+function snEstadoInicial(panel, claseInicial, crear) {
     const mcs = leerMulticlases(panel).filter(m => m.clase).map(m => ({ clase: m.clase, nivel: parseInt(m.nivel) || 1, subclase: m.subclase || '' }));
     const scores = {};
     AG_ATRS.forEach(a => { scores[a] = parseInt(panel.querySelector(`.stat-score[data-stat="${a}"]`)?.value) || 10; });
@@ -152,6 +152,9 @@ function snEstadoInicial(panel, claseInicial) {
     };
     const ini = claseInicial && mcs.find(m => m.clase === claseInicial) ? claseInicial : (mcs[0] && mcs[0].clase) || '';
     E.clase = ini;
+    if (crear) {   // Creación de personaje: la clase es nueva (desde nivel 0) y sube hasta el nivel inicial de una vez
+        E.crear = crear; E.clase = crear.clase; E.nueva = true; E.nNiv = crear.nivel;
+    }
     snPrepararNiveles(E);
     return E;
 }
@@ -189,7 +192,7 @@ function snPasos(E) {
     const plan = (typeof snPlanConjuros === 'function') ? snPlanConjuros(E) : { hay: false };
     const opc = (typeof snPlanOpciones === 'function') ? snPlanOpciones(E) : { hay: false };
     const est = (typeof snPlanEstilo === 'function') ? snPlanEstilo(E) : { hay: false };
-    return ['clase', 'vida', 'rasgos']
+    return (E.crear ? ['vida', 'rasgos'] : ['clase', 'vida', 'rasgos'])
         .concat(E.mejoras.length ? ['mejoras'] : [])
         .concat(est.hay ? ['estilo'] : [])
         .concat(plan.hay ? ['conjuros'] : [])
@@ -357,8 +360,8 @@ async function snAplicar(E) {
     const avisos = [];
     const intentar = (que, fn) => { try { fn(); } catch (e) { console.error('Subida de nivel (' + que + ')', e); avisos.push(`${que}: ${e && e.message ? e.message : e}`); } };
 
-    // 1. Seguridad: versión en el Historial antes de tocar nada
-    try {
+    // 1. Seguridad: versión en el Historial antes de tocar nada (en una creación no hay nada que conservar)
+    if (!E.crear) try {
         const f = (typeof fichas !== 'undefined') ? fichas.find(x => x.panel === panel) : null;
         if (f && typeof hxGuardarVersion === 'function') await hxGuardarVersion(f, `Antes de subir a nivel ${nuevoTotal}`);
     } catch (e) { console.warn('Subida de nivel: no se pudo guardar la versión previa', e); }
@@ -421,9 +424,16 @@ async function snAplicar(E) {
         }
     });
 
+    // 5c. Creación de personaje: ataques y CA con el nivel y las características definitivas
+    let avisosCrear = [];
+    if (E.crear && typeof crAplicarFinal === 'function') intentar('Equipo', () => { avisosCrear = crAplicarFinal(E.crear) || []; });
+    avisosCrear.forEach(a => avisos.push(a));
+
     // 6. Registro y aviso
     intentar('Registro', () => {
-        const partes = [`${E.clase} ${antesNv} → ${antesNv + E.nNiv}`, `PG máx. ${res.maxAntes} → ${hpEl ? hpEl.value : res.nuevoMax}`];
+        const partes = E.crear
+            ? [`${E.clase} nivel ${antesNv + E.nNiv}`, `PG máx. ${hpEl ? hpEl.value : res.nuevoMax}`]
+            : [`${E.clase} ${antesNv} → ${antesNv + E.nNiv}`, `PG máx. ${res.maxAntes} → ${hpEl ? hpEl.value : res.nuevoMax}`];
         if (cambiosAtr.length) partes.push(cambiosAtr.join(', '));
         if (dotesAnadidas.length) partes.push('Dote: ' + dotesAnadidas.join(', '));
         if (E.subclase) partes.push('Subclase: ' + E.subclase);
@@ -432,12 +442,15 @@ async function snAplicar(E) {
         resOpc.lineas.forEach(l => partes.push(l));
         const pend = E.mejoras.filter(m => m.modo === 'luego').length;
         if (pend) partes.push(`${pend} mejora(s) sin decidir`);
-        snLog('Subida de nivel', `Nv. ${nuevoTotal}`, partes.join(' · '));
+        snLog(E.crear ? 'Creación de personaje' : 'Subida de nivel', `Nv. ${nuevoTotal}`, partes.join(' · '));
     });
     intentar('Guardado', () => { if (typeof guardarDebounced === 'function') guardarDebounced(); });
     if (typeof _mostrarToast === 'function') {
         try {
-            if (avisos.length) _mostrarToast(`⚠ ${E.clase} sube a nivel ${antesNv + E.nNiv}, pero hubo avisos: ${avisos.join(' · ')}`, 'error');
+            if (E.crear) {
+                if (avisos.length) _mostrarToast(`⚠ Personaje creado, pero hubo avisos: ${avisos.join(' · ')}`, 'error');
+                else _mostrarToast(`✔ Personaje creado: ${E.clase} de nivel ${nuevoTotal}`);
+            } else if (avisos.length) _mostrarToast(`⚠ ${E.clase} sube a nivel ${antesNv + E.nNiv}, pero hubo avisos: ${avisos.join(' · ')}`, 'error');
             else _mostrarToast(`✔ ${E.clase} sube a nivel ${antesNv + E.nNiv} (nivel total ${nuevoTotal})`);
         } catch (e) { /* el aviso no es esencial */ }
     }
@@ -445,10 +458,11 @@ async function snAplicar(E) {
 }
 
 /* ══════ Ventana ══════ */
-function abrirSubidaNivel(origen, claseInicial) {
+function abrirSubidaNivel(origen, claseInicial, opts) {
     const panel = origen && origen.closest ? origen.closest('.ficha-panel') : origen;
     if (!panel || document.getElementById('modal-subida-nivel')) return;
-    const E = snEstadoInicial(panel, claseInicial);
+    const crear = (opts && opts.crear) || null;   // creación de personaje: ver creacion.js
+    const E = snEstadoInicial(panel, claseInicial, crear);
     const previo = document.activeElement;
     const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
     const nombre = (panel.querySelector('.input-nombre')?.value || '').trim();
@@ -458,15 +472,17 @@ function abrirSubidaNivel(origen, claseInicial) {
     caja.setAttribute('role', 'dialog'); caja.setAttribute('aria-modal', 'true'); caja.setAttribute('aria-labelledby', 'sn-titulo');
     overlay.appendChild(caja);
     const cab = el('div', 'ag-cab');
-    const titulo = el('div', 'ag-titulo', '⬆ Subir de nivel'); titulo.id = 'sn-titulo';
-    cab.append(titulo, el('div', 'ag-sub', [nombre, E.mcs.map(m => `${m.clase} ${m.nivel}`).join(' / ')].filter(Boolean).join(' · ') || 'Personaje sin nombre'));
+    const titulo = el('div', 'ag-titulo', crear ? '🧙 Creación de personaje · Parte 2: progresión' : '⬆ Subir de nivel'); titulo.id = 'sn-titulo';
+    cab.append(titulo, el('div', 'ag-sub', crear
+        ? [nombre, `${crear.clase} nivel ${crear.nivel}`, crear.esp ? crNombreCorto(crear.esp) : '', crear.tf && crear.tf !== '__personalizado__' ? crNombreCorto(crear.tf) : ''].filter(Boolean).join(' · ')
+        : [nombre, E.mcs.map(m => `${m.clase} ${m.nivel}`).join(' / ')].filter(Boolean).join(' · ') || 'Personaje sin nombre'));
     caja.appendChild(cab);
 
     const lista = el('ol', 'ag-pasos'); caja.appendChild(lista);
     const cuerpo = el('div', 'ag-cuerpo'); caja.appendChild(cuerpo);
     const aviso = el('div', 'ag-aviso'); aviso.setAttribute('aria-live', 'polite'); caja.appendChild(aviso);
     const pie = el('div', 'ag-pie');
-    const bCancelar = el('button', 'ag-btn ag-btn-sec', 'Cancelar'); bCancelar.type = 'button';
+    const bCancelar = el('button', 'ag-btn ag-btn-sec', crear ? 'Descartar' : 'Cancelar'); bCancelar.type = 'button';
     const bAtras = el('button', 'ag-btn ag-btn-sec', '← Atrás'); bAtras.type = 'button';
     const bSig = el('button', 'ag-btn ag-btn-pri', 'Siguiente →'); bSig.type = 'button';
     pie.append(bCancelar, bAtras, bSig); caja.appendChild(pie);
@@ -481,8 +497,22 @@ function abrirSubidaNivel(origen, claseInicial) {
         overlay.remove();
         if (previo && previo.focus) try { previo.focus(); } catch (e) {}
     }
+    /* Creación: descartar el personaje pide confirmación en el propio pie de la ventana */
+    function pedirDescarte() {
+        if (aplicando || pie.dataset.confirmando) return;
+        pie.dataset.confirmando = '1';
+        const previos = Array.from(pie.children);
+        pie.textContent = '';
+        const msg = el('div', 'cr-confirma', '¿Descartar el personaje? Se borrará la ficha que se está creando.');
+        const bNo = el('button', 'ag-btn ag-btn-sec', 'No, seguir'); bNo.type = 'button';
+        const bSi = el('button', 'ag-btn ag-btn-pri cr-btn-descartar', 'Sí, descartar'); bSi.type = 'button';
+        pie.append(msg, bNo, bSi);
+        bNo.addEventListener('click', () => { pie.textContent = ''; previos.forEach(x => pie.appendChild(x)); delete pie.dataset.confirmando; });
+        bSi.addEventListener('click', () => { cerrar(); crear.descartar(); });
+        bNo.focus();
+    }
     function teclas(e) {
-        if (e.key === 'Escape') { e.stopPropagation(); if (!aplicando) cerrar(); }
+        if (e.key === 'Escape') { e.stopPropagation(); if (crear) pedirDescarte(); else if (!aplicando) cerrar(); }
         else if (e.key === 'Tab') {
             const foco = Array.from(caja.querySelectorAll('button:not([disabled]),input:not([type="hidden"]):not([disabled]),select:not([disabled]),summary')).filter(x => x.offsetParent !== null);
             if (!foco.length) return;
@@ -556,9 +586,11 @@ function abrirSubidaNivel(origen, claseInicial) {
         aviso.textContent = errorAplicar || (v.ok ? '' : v.msg);
         aviso.classList.toggle('ag-aviso-error', !!errorAplicar);
         const ultimo = E.paso === E.pasos.length;
-        bSig.textContent = ultimo ? `⬆ Subir a nivel ${E.nivelTotal + E.nNiv}` : 'Siguiente →';
+        bSig.textContent = ultimo ? (crear ? '✔ Crear personaje' : `⬆ Subir a nivel ${E.nivelTotal + E.nNiv}`) : 'Siguiente →';
         bSig.disabled = !v.ok || aplicando;
-        bAtras.style.visibility = E.paso === 1 ? 'hidden' : 'visible';
+        bAtras.textContent = (crear && E.paso === 1) ? '← Volver a la creación' : '← Atrás';
+        bAtras.style.visibility = (E.paso === 1 && !crear) ? 'hidden' : 'visible';
+        bAtras.disabled = aplicando;
     }
 
     /* ═════ PASO: clase ═════ */
@@ -666,7 +698,9 @@ function abrirSubidaNivel(origen, claseInicial) {
                 celdasTotal[i][1].textContent = `${v + r.conDesp + r.bonoActual + r.toughNuevo}`;
             });
             const gan = r.nuevoMax - r.maxAntes;
-            resumen.textContent = `PG máximos: ${r.maxAntes} → ${r.nuevoMax} (${agFmt(gan)})  ·  PG actuales: ${r.actAntes} → ${r.actDesp}`;
+            resumen.textContent = crear
+                ? `PG máximos: ${r.nuevoMax}  ·  PG actuales: ${r.actDesp}`
+                : `PG máximos: ${r.maxAntes} → ${r.nuevoMax} (${agFmt(gan)})  ·  PG actuales: ${r.actAntes} → ${r.actDesp}`;
             notas.textContent = '';
             if (r.bonoActual) notas.appendChild(el('li', '', `Incluye +${r.bonoActual} por nivel (Dote Tough/Robusto o Dureza Enana).`));
             if (!r.auto) notas.appendChild(el('li', 'ag-msg-aviso', 'Tus PG máximos están en manual: el asistente sumará la ganancia a tu valor actual (puedes reactivar el cálculo automático con ⟳ junto a los PG).'));
@@ -940,16 +974,25 @@ function abrirSubidaNivel(origen, claseInicial) {
     function renderOpciones() { snRenderOpciones(E, cuerpo, el, () => irPaso(E.paso)); }
 
     function renderResumen() {
-        cuerpo.appendChild(el('p', 'ag-ayuda', 'Revisa los cambios. Al confirmar se guarda antes una versión en el Historial («Antes de subir a nivel N») por si quieres deshacerlo.'));
+        cuerpo.appendChild(el('p', 'ag-ayuda', crear
+            ? 'Último repaso. Al pulsar «Crear personaje» se aplican la clase, el nivel, los puntos de golpe, los rasgos y todo lo que elegiste en la primera parte.'
+            : 'Revisa los cambios. Al confirmar se guarda antes una versión en el Historial («Antes de subir a nivel N») por si quieres deshacerlo.'));
         const r = snResumenPG(E);
         const antes = snNivelClaseAntes(E);
         const filas = [];
-        filas.push(['Clase', `${E.clase}: ${antes} → ${antes + E.nNiv}${E.nueva ? ' (clase nueva)' : ''}`]);
-        filas.push(['Nivel total', `${E.nivelTotal} → ${E.nivelTotal + E.nNiv}`]);
-        const pbA = calcPB(E.nivelTotal), pbD = calcPB(E.nivelTotal + E.nNiv);
-        filas.push(['Bono de competencia', pbA === pbD ? `+${pbA} (sin cambio)` : `+${pbA} → +${pbD}`]);
-        filas.push(['Puntos de golpe', `máx. ${r.maxAntes} → ${r.nuevoMax}  ·  actuales ${r.actAntes} → ${r.actDesp}`]);
-        filas.push(['Dados de golpe', `+${E.nNiv}${E._dado}`]);
+        if (crear) {
+            filas.push(['Clase', `${E.clase}, nivel ${E.nNiv}`]);
+            filas.push(['Bono de competencia', `+${calcPB(E.nNiv)}`]);
+            filas.push(['Puntos de golpe', `${r.nuevoMax}`]);
+            filas.push(['Dados de golpe', `${E.nNiv}${E._dado}`]);
+        } else {
+            filas.push(['Clase', `${E.clase}: ${antes} → ${antes + E.nNiv}${E.nueva ? ' (clase nueva)' : ''}`]);
+            filas.push(['Nivel total', `${E.nivelTotal} → ${E.nivelTotal + E.nNiv}`]);
+            const pbA = calcPB(E.nivelTotal), pbD = calcPB(E.nivelTotal + E.nNiv);
+            filas.push(['Bono de competencia', pbA === pbD ? `+${pbA} (sin cambio)` : `+${pbA} → +${pbD}`]);
+            filas.push(['Puntos de golpe', `máx. ${r.maxAntes} → ${r.nuevoMax}  ·  actuales ${r.actAntes} → ${r.actDesp}`]);
+            filas.push(['Dados de golpe', `+${E.nNiv}${E._dado}`]);
+        }
         const rasgos = [];
         snRasgosPorNivel(E).forEach(g => g.rasgos.forEach(x => rasgos.push(x.n)));
         filas.push(['Rasgos nuevos', rasgos.length ? Array.from(new Set(rasgos)).join(', ') : 'ninguno']);
@@ -970,7 +1013,7 @@ function abrirSubidaNivel(origen, claseInicial) {
         filas.forEach(([k, v]) => { const tr = el('tr'); tr.append(el('th', '', k), el('td', '', v)); tb.appendChild(tr); });
         cuerpo.appendChild(tabla);
         const notas = el('ul', 'ag-msgs');
-        if (E.nueva) notas.appendChild(el('li', 'ag-msg-aviso', 'Clase nueva: revisa en Características las competencias que realmente ganas por multiclase.'));
+        if (E.nueva && !crear) notas.appendChild(el('li', 'ag-msg-aviso', 'Clase nueva: revisa en Características las competencias que realmente ganas por multiclase.'));
         if (!r.auto) notas.appendChild(el('li', 'ag-msg-aviso', 'PG máximos en manual: se suma la ganancia a tu valor actual.'));
         notas.appendChild(el('li', '', snPlanConjuros(E).hay
             ? 'Los espacios de conjuro y los máximos de trucos y preparados se actualizan solos; lo que dejaste sin elegir lo añades tú en la pestaña de conjuros.'
@@ -981,27 +1024,31 @@ function abrirSubidaNivel(origen, claseInicial) {
     }
 
     /* ── Botones ── */
-    bCancelar.addEventListener('click', () => { if (!aplicando) cerrar(); });
-    bAtras.addEventListener('click', () => { if (E.paso > 1) irPaso(E.paso - 1); });
+    bCancelar.addEventListener('click', () => { if (aplicando) return; if (crear) pedirDescarte(); else cerrar(); });
+    bAtras.addEventListener('click', () => {
+        if (E.paso > 1) irPaso(E.paso - 1);
+        else if (crear && !aplicando) { cerrar(); crear.volver(); }
+    });
     bSig.addEventListener('click', async () => {
         if (!validoPaso(nombrePasoActual()).ok) return;
         if (E.paso < E.pasos.length) { irPaso(E.paso + 1); return; }
         aplicando = true; errorAplicar = ''; actualizar();
-        try { await snAplicar(E); cerrar(); }
+        try { await snAplicar(E); cerrar(); if (crear && crear.alTerminar) crear.alTerminar(E); }
         catch (e) {
             console.error('Subida de nivel', e);
             aplicando = false;
             const msg = e && e.message ? e.message : String(e);
             if (E.aplicado) {   // la clase ya está subida: se cierra para no repetirla
                 cerrar();
-                if (typeof _mostrarToast === 'function') _mostrarToast('⚠ La subida se aplicó, pero algo falló al final: ' + msg, 'error');
+                if (crear && crear.alTerminar) crear.alTerminar(E);
+                if (typeof _mostrarToast === 'function') _mostrarToast(crear ? '⚠ El personaje se creó, pero algo falló al final: ' + msg : '⚠ La subida se aplicó, pero algo falló al final: ' + msg, 'error');
                 return;
             }
             errorAplicar = 'No se pudo completar (la ficha no ha cambiado): ' + msg;
             actualizar();
         }
     });
-    overlay.addEventListener('mousedown', e => { if (e.target === overlay && !aplicando) cerrar(); });
+    overlay.addEventListener('mousedown', e => { if (e.target === overlay && !aplicando && !crear) cerrar(); });
 
     document.addEventListener('keydown', teclas, true);
     document.body.appendChild(overlay);

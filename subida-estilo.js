@@ -116,6 +116,8 @@ function snEstQuitarBloque(texto, nombres) {
 /* Edición con la que se cuenta: la de lo ya anotado, si no la de la subclase, si no la que elija la persona */
 function snEstEd(E, subD, tiene) {
     const eds = snEstEdiciones(E.clase);
+    // Creación de personaje: las reglas ya se eligieron al empezar
+    if (E.crear) { const w = E.crear.ed === '24' ? '2024' : '2014'; if (eds.includes(w)) return { ed: w, fija: true, eds }; }
     let ed, fija = false;
     if (tiene.f24.length && eds.includes('2024')) { ed = '2024'; fija = true; }
     else if (tiene.o14.length && eds.includes('2014')) { ed = '2014'; fija = true; }

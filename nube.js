@@ -920,7 +920,7 @@ function nbAbrirCuenta() {
         const bueno = estado === 'ok';
         caja.appendChild(nbEl('div', `margin-top:10px;padding:8px 10px;border-radius:6px;font-weight:600;background:${bueno ? '#22543d' : (estado === 'error' ? '#742a2a' : '#2d3748')};color:${bueno ? '#c6f6d5' : (estado === 'error' ? '#fed7d7' : '#e2e8f0')};`, frases[estado] || ''));
         if (nbConteoRemoto != null) caja.appendChild(nbEl('div', 'margin-top:8px;' + NB_EST.sub, `Fichas en la nube: ${nbConteoRemoto}.`));
-        caja.appendChild(nbEl('div', 'margin-top:8px;' + NB_EST.sub, 'El historial de versiones, la papelera y el fondo personalizado se guardan solo en este navegador.'));
+        caja.appendChild(nbEl('div', 'margin-top:8px;' + NB_EST.sub, 'El historial de versiones y la papelera se guardan solo en este navegador.'));
 
         const fila = nbEl('div', 'display:flex;flex-direction:column;gap:6px;margin-top:12px;');
         const ahora = nbBtn('↻ Sincronizar ahora', async () => { nbOffline = false; if (!nbUnsub) nbIniciarListener(); await nbSubirPendientes(true); }, NB_EST.primario);

@@ -1454,6 +1454,7 @@ function leerFicha(panel) {
     d.hpMax    = panel.querySelector('.hp-max')?.value      || '10';
     d.hpTemp   = panel.querySelector('.hp-temp-val')?.value || '0';
     d.hpAuto   = panel.querySelector('.hp-max')?.dataset.hpAuto !== 'false';
+    if (panel.dataset.hpNiveles) { try { d.hpNiveles = JSON.parse(panel.dataset.hpNiveles); } catch (_) { /* dato dañado: se omite */ } }
 
     // Resistencias (3 textareas separadas)
     const resTas = panel.querySelectorAll('.res-textarea');
@@ -1705,6 +1706,7 @@ function cargarDatosEnPanel(panel, d) {
     if (d.hpMax)    panel.querySelector('.hp-max').value       = d.hpMax;
     if (d.hpTemp)   panel.querySelector('.hp-temp-val').value  = d.hpTemp;
     // Restaurar flag auto (por defecto true si no hay dato guardado)
+    if (d.hpNiveles && typeof d.hpNiveles === 'object' && !Array.isArray(d.hpNiveles)) panel.dataset.hpNiveles = JSON.stringify(d.hpNiveles);
     const hpMaxEl = panel.querySelector('.hp-max');
     if (hpMaxEl) {
         const esAuto = d.hpAuto !== false;
@@ -3839,7 +3841,7 @@ function _maxDado(diceStr) {
    - Nivel 1 (primera clase, primer nivel): máximo del dado + mod CON
    - Cada nivel adicional: average del dado + mod CON
    - Multiclase: orden de entrada no importa para el cálculo total */
-function calcularHPMax(mcs, conMod) {
+function calcularHPMax(mcs, conMod, hpNiveles) {
     if (!mcs || !mcs.length) return 0;
     let total = 0;
     let primerNivel = true;
@@ -3849,18 +3851,28 @@ function calcularHPMax(mcs, conMod) {
         const nv   = parseInt(mc.nivel) || 0;
         if (nv <= 0) return;
         const dado = data.diceHit || 'd8';
+        const caras = _maxDado(dado);
+        const tiradas = (hpNiveles && Array.isArray(hpNiveles[mc.clase])) ? hpNiveles[mc.clase] : null;
 
         for (let i = 0; i < nv; i++) {
             if (primerNivel) {
                 total += _maxDado(dado) + conMod;
                 primerNivel = false;
             } else {
-                total += _avgDado(dado) + conMod;
+                // Si al subir de nivel se tiró (o se escribió) el dado de ese nivel, se usa ese resultado; si no, la media
+                const t = tiradas ? parseInt(tiradas[i]) : NaN;
+                total += ((t >= 1 && t <= caras) ? t : _avgDado(dado)) + conMod;
             }
         }
     });
 
     return Math.max(total, 1);
+}
+
+/* PG de los niveles tirados/escritos al subir de nivel: { "Guerrero": [null, 7, 5], … } (índice = nivel de clase − 1) */
+function _leerHpNiveles(fichaPanel) {
+    try { const o = JSON.parse(fichaPanel.dataset.hpNiveles || '{}'); return (o && typeof o === 'object') ? o : {}; }
+    catch (e) { return {}; }
 }
 
 /* Lee mod CON del panel */
@@ -3899,7 +3911,7 @@ function calcularHPMaxAuto(fichaPanel) {
     const conMod = _getConMod(fichaPanel);
     const nivelTotal = mcs.reduce((t, mc) => t + (parseInt(mc.nivel) || 0), 0);
     const extra  = _hpBonusPorNivel(fichaPanel);
-    const nuevo  = calcularHPMax(mcs, conMod) + extra.porNivel * nivelTotal;
+    const nuevo  = calcularHPMax(mcs, conMod, _leerHpNiveles(fichaPanel)) + extra.porNivel * nivelTotal;
     hpMaxInput.title = extra.partes.length ? `Incluye ${extra.partes.join(' y ')} (nivel ${nivelTotal})` : '';
 
     // Si el personaje tenía la vida llena (o la ficha estaba en blanco), se mantiene llena con el
@@ -5943,7 +5955,7 @@ function _pdfPrepararPanel(panel) {
         '.btn-añadir-arma, .btn-añadir-accion, .arma-btn-extra-daño, .caract-mc-add, .caract-btn-limpiar, ' +
         '.caract-btn-add, .recursos-add-btn, .btn-spell-add, .btn-slot-add, .retrato-cab-borrar, ' +
         '.apariencia-btn-borrar, .notas-tab-add, .notas-subpag-add, .notas-subpag-del, .notas-tab-cerrar, ' +
-        '.mc-del-btn, .salv-arrow';
+        '.mc-del-btn, .salv-arrow, .btn-gen-atr, .tf-gen-aviso, .btn-subir-nivel, .mc-subir-btn';
     panel.querySelectorAll(SEL_EDICION).forEach(b => estilo(b, 'visibility', 'hidden'));
     panel.querySelectorAll('button').forEach(b => {
         if (/^[+＋×✕✖]$/.test((b.textContent || '').trim())) estilo(b, 'visibility', 'hidden');

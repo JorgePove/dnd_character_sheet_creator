@@ -241,7 +241,7 @@ body:has(#fondo-bg.tiene-fondo)::before {
 }
 
 /* Todo el contenido por encima del fondo */
-body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(#spell-card-global):not(#dote-card-global):not(#especie-card-global):not(#modal-borrado-global):not(#modal-gen-atributos):not(#fondo-bg):not(.sb-panel){ position: relative; z-index: 1; }
+body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(#spell-card-global):not(#dote-card-global):not(#especie-card-global):not(#modal-borrado-global):not(.ag-overlay):not(#fondo-bg):not(.sb-panel){ position: relative; z-index: 1; }
 
 /* ===================================================
    BARRA DE PESTAÑAS
@@ -5418,3 +5418,40 @@ html.tema-oscuro .tf-gen-btn { background: #3a1d1a; border-color: #8a3a31; color
     .ag-hist-fila { grid-template-columns: 1fr auto; }
     .ag-hist-m { display: none; }
 }
+
+
+/* ═══════ Asistente de subida de nivel ═══════ */
+.btn-subir-nivel {
+    display: block; margin-top: 4px; padding: 3px 8px; cursor: pointer;
+    font: inherit; font-size: 11px; font-weight: 800; letter-spacing: 0.3px;
+    background: #FDEDEB; border: 1px solid #E74C3C; border-radius: 6px; color: #922B21;
+}
+.btn-subir-nivel:hover { background: #F9D6D2; }
+html.tema-oscuro .btn-subir-nivel { background: #3a1d1a; border-color: #8a3a31; color: #f3b5ac; }
+.mc-subir-btn {
+    margin-left: 6px; padding: 0 6px; cursor: pointer; font: inherit; font-weight: 800; line-height: 1.5;
+    background: #FDEDEB; border: 1px solid #E74C3C; border-radius: 6px; color: #922B21;
+}
+.mc-subir-btn:hover { background: #F9D6D2; }
+html.tema-oscuro .mc-subir-btn { background: #3a1d1a; border-color: #8a3a31; color: #f3b5ac; }
+
+.sn-info { color: #cbd5e0; font-size: 12px; margin: 8px 0 4px; line-height: 1.5; font-weight: 600; }
+.sn-nniv { margin-top: 8px; }
+.sn-msgs { margin-top: 6px; }
+.sn-pg-tabla th { text-align: left; }
+.sn-pg-tabla th.n, .sn-pg-tabla td.n { text-align: center; }
+.sn-pg-valor { display: inline-block; min-width: 28px; margin-right: 6px; }
+.sn-pg-input { width: 70px; }
+.sn-rasgo { margin: 2px 0; border: 1px solid #2d3748; border-radius: 6px; background: #1f2636; }
+.sn-rasgo summary { cursor: pointer; padding: 4px 8px; font-weight: 700; color: #e2e8f0; }
+.sn-rasgo-d { margin: 0; padding: 4px 10px 8px; font-size: 12px; line-height: 1.5; color: #cbd5e0; white-space: pre-wrap; }
+.sn-mejora-cuerpo { margin-top: 6px; display: flex; flex-direction: column; gap: 6px; }
+.sn-dote-filtro { flex-wrap: wrap; }
+.sn-dote-q { width: 170px; text-align: left; }
+.sn-dote-lista { width: 100%; height: auto; }
+.sn-dote-det { border: 1px solid #2d3748; border-radius: 8px; background: #1f2636; padding: 6px 10px; }
+.sn-dote-t { font-weight: 800; color: #F6A99F; margin-bottom: 2px; }
+.sn-dote-d { margin: 4px 0 0; font-size: 12px; line-height: 1.5; color: #cbd5e0; max-height: 130px; overflow-y: auto; white-space: pre-wrap; }
+.sn-dote-mas { align-items: center; }
+.sn-resumen th { text-align: left; width: 38%; color: #a0aec0; font-weight: 700; font-size: 12px; padding: 5px 6px; vertical-align: top; }
+.sn-resumen td { font-size: 12.5px; }

@@ -1070,6 +1070,15 @@ function _mcCrearPagina(panel, idx, datos) {
     });
     nivelWrap.appendChild(nivelLabel);
     nivelWrap.appendChild(nivelSel);
+    // Atajo al asistente de subida de nivel con esta clase ya elegida
+    const btnSubir = document.createElement('button');
+    btnSubir.type = 'button';
+    btnSubir.className = 'mc-subir-btn';
+    btnSubir.textContent = '⬆';
+    btnSubir.title = 'Subir de nivel esta clase (asistente)';
+    btnSubir.setAttribute('aria-label', 'Subir de nivel esta clase');
+    btnSubir.onclick = () => { if (typeof abrirSubidaNivel === 'function') abrirSubidaNivel(panel, selClase.value); };
+    nivelWrap.appendChild(btnSubir);
     hClase.appendChild(nivelWrap);
 
     if (idx > 0) {

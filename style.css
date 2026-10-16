@@ -4004,7 +4004,8 @@ html.tema-oscuro body {
     color: var(--txt-base);
 }
 html.tema-oscuro body::before {
-    filter: blur(8px) contrast(0.45) brightness(0.3);
+    /* Oscuro, pero con la imagen visible (con brightness 0.3 se veía casi negro) */
+    filter: blur(6px) contrast(0.7) brightness(0.55);
 }
 
 /* Barra de pestañas */

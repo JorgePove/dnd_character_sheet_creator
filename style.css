@@ -5456,3 +5456,46 @@ html.tema-oscuro .mc-subir-btn { background: #3a1d1a; border-color: #8a3a31; col
 .sn-dote-mas { align-items: center; }
 .sn-resumen th { text-align: left; width: 38%; color: #a0aec0; font-weight: 700; font-size: 12px; padding: 5px 6px; vertical-align: top; }
 .sn-resumen td { font-size: 12.5px; }
+
+/* ── Asistente de subida de nivel: paso «Conjuros» ── */
+.sn-sp-sec .ag-ayuda { margin-bottom: 6px; }
+.sn-sp-cont { font-weight: 700; color: #fbd38d; font-size: 12px; margin-left: 4px; }
+.sn-sp-cont.completo { color: #9ae6b4; }
+.sn-sp-sub { margin: 8px 0 4px; font-size: 12px; font-weight: 800; color: #F6A99F; }
+.sn-sp { display: flex; flex-direction: column; gap: 6px; }
+.sn-sp-chips { display: flex; flex-wrap: wrap; gap: 5px; min-height: 26px; align-items: center; }
+.sn-sp-sinelegir { font-size: 12px; color: #a0aec0; font-style: italic; }
+.sn-sp-chip { display: inline-flex; align-items: center; border: 1px solid #38a169; background: #1f3a2c; border-radius: 14px; overflow: hidden; }
+.sn-sp-chip-nom, .sn-sp-chip-x { background: transparent; border: 0; color: #e2e8f0; font: inherit; font-size: 12px; cursor: pointer; padding: 3px 8px; }
+.sn-sp-chip-nom { font-weight: 700; }
+.sn-sp-chip-x { padding: 3px 8px 3px 4px; color: #feb2b2; }
+.sn-sp-chip-nom:hover, .sn-sp-chip-x:hover { background: rgba(255,255,255,.1); }
+.sn-sp-filtros { display: flex; flex-wrap: wrap; gap: 6px; }
+.sn-sp-buscar { width: 190px; text-align: left; }
+.sn-sp-lista {
+    border: 1px solid #4a5568; border-radius: 8px; background: #1a202c;
+    max-height: 210px; overflow-y: auto; padding: 2px; position: relative;
+}
+.sn-sp-lista:focus-visible { outline: 2px solid #F6A99F; outline-offset: 1px; }
+.sn-sp-fila { display: flex; align-items: baseline; gap: 8px; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 12.5px; color: #e2e8f0; }
+.sn-sp-fila:hover, .sn-sp-fila.activa { background: #2d3748; }
+.sn-sp-fila.sel { background: #1f3a2c; }
+.sn-sp-fila.sel.activa, .sn-sp-fila.sel:hover { background: #285a3f; }
+.sn-sp-fila.off { opacity: .45; cursor: not-allowed; }
+.sn-sp-marca { flex: 0 0 auto; color: #9ae6b4; }
+.sn-sp-nom { flex: 1 1 auto; font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.sn-sp-meta { flex: 0 0 auto; font-size: 11px; color: #a0aec0; }
+.sn-sp-tag { flex: 0 0 auto; font-size: 10px; font-weight: 800; border: 1px solid #718096; color: #cbd5e0; border-radius: 4px; padding: 0 4px; }
+.sn-sp-vacio { padding: 10px; font-size: 12px; color: #a0aec0; }
+.sn-sp-nota { font-size: 11px; color: #a0aec0; min-height: 0; }
+.sn-sp-nota:empty { display: none; }
+.sn-sp-vista { border: 1px solid #2d3748; border-radius: 8px; background: #1f2636; padding: 6px 10px; font-size: 12px; color: #cbd5e0; line-height: 1.5; max-height: 150px; overflow-y: auto; }
+.sn-sp-vista.vacia { color: #a0aec0; font-style: italic; }
+.sn-sp-vista-cab { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 2px; }
+.sn-sp-vista-cab strong { color: #F6A99F; font-size: 13px; }
+.sn-sp-vista-cab .opc-etq { border-color: #4a5568; color: #cbd5e0; }
+.sn-sp-vista-datos { color: #a0aec0; font-size: 11.5px; }
+.sn-sp-vista-desc { margin: 3px 0; white-space: pre-wrap; }
+.sn-sp-viejo { max-width: 100%; }
+.sn-sp-pend { margin-top: 6px; }
+@media (max-width: 520px) { .sn-sp-buscar { width: 100%; } .sn-sp-meta { display: none; } }

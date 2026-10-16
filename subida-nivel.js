@@ -175,12 +175,21 @@ function snPrepararNiveles(E) {
         const nvClase = antes + i + 1;
         if (snEsAsi(E.clase, nvClase)) E.mejoras.push({ clase: E.clase, nvClase, nvTotal: E.nivelTotal + i + 1, modo: 'asi', asiModo: '2', a: '', b: '', dote: '', mas: '', q: '', soloCumplo: true, otras: false });
     }
-    const hayAsi = E.mejoras.length > 0;
-    E.pasos = ['clase', 'vida', 'rasgos'].concat(hayAsi ? ['mejoras'] : []).concat(['resumen']);
     // La subclase elegida en la ficha se conserva; si no hay y se alcanza el nivel 3 se puede elegir
     const mc = snMcActual(E);
     if (!mc || mc.subclase) E.subclase = '';
     E._dado = dado;
+    E.conj = null;
+    E.pasos = snPasos(E);
+}
+
+/* Pasos del asistente: Mejoras solo si toca y Conjuros solo si la clase gana algo */
+function snPasos(E) {
+    const plan = (typeof snPlanConjuros === 'function') ? snPlanConjuros(E) : { hay: false };
+    return ['clase', 'vida', 'rasgos']
+        .concat(E.mejoras.length ? ['mejoras'] : [])
+        .concat(plan.hay ? ['conjuros'] : [])
+        .concat(['resumen']);
 }
 
 function snSubclaseVigente(E) { const mc = snMcActual(E); return (mc && mc.subclase) || E.subclase || ''; }
@@ -380,7 +389,12 @@ async function snAplicar(E) {
         });
     });
 
-    // 5. Vida: recálculo y PG actuales
+    // 5. Conjuros elegidos (después del cambio de nivel, para que los límites de preparados ya estén al día)
+    let resConj = { lineas: [], avisos: [] };
+    intentar('Conjuros', () => { if (typeof snAplicarConjuros === 'function' && E.conj) resConj = snAplicarConjuros(E); });
+    resConj.avisos.forEach(a => avisos.push(a));
+
+    // 5b. Vida: recálculo y PG actuales
     intentar('Vida', () => {
         if (res.auto) calcularHPMaxAuto(panel);
         else if (hpEl) hpEl.value = res.nuevoMax;
@@ -398,6 +412,7 @@ async function snAplicar(E) {
         if (cambiosAtr.length) partes.push(cambiosAtr.join(', '));
         if (dotesAnadidas.length) partes.push('Dote: ' + dotesAnadidas.join(', '));
         if (E.subclase) partes.push('Subclase: ' + E.subclase);
+        resConj.lineas.forEach(l => partes.push(l));
         const pend = E.mejoras.filter(m => m.modo === 'luego').length;
         if (pend) partes.push(`${pend} mejora(s) sin decidir`);
         snLog('Subida de nivel', `Nv. ${nuevoTotal}`, partes.join(' · '));
@@ -442,7 +457,7 @@ function abrirSubidaNivel(origen, claseInicial) {
     let refrescadores = [];
     let aplicando = false;
     let errorAplicar = '';   // el mensaje de un fallo al aplicar se mantiene visible (no lo borra actualizar)
-    const NOMBRES = { clase: 'Clase', vida: 'Vida', rasgos: 'Rasgos', mejoras: 'Mejoras', resumen: 'Resumen' };
+    const NOMBRES = { clase: 'Clase', vida: 'Vida', rasgos: 'Rasgos', mejoras: 'Mejoras', conjuros: 'Conjuros', resumen: 'Resumen' };
 
     function cerrar() {
         document.removeEventListener('keydown', teclas, true);
@@ -505,7 +520,7 @@ function abrirSubidaNivel(origen, claseInicial) {
         E.paso = Math.max(1, Math.min(E.pasos.length, n));
         cuerpo.textContent = ''; refrescadores = [];
         construirStepper();
-        ({ clase: renderClase, vida: renderVida, rasgos: renderRasgos, mejoras: renderMejoras, resumen: renderResumen })[nombrePasoActual()]();
+        ({ clase: renderClase, vida: renderVida, rasgos: renderRasgos, mejoras: renderMejoras, conjuros: renderConjuros, resumen: renderResumen })[nombrePasoActual()]();
         actualizar();
         const primero = cuerpo.querySelector('input:not([disabled]),select:not([disabled]),button:not([disabled])');
         if (primero && E.paso !== 1) { try { primero.focus({ preventScroll: true }); } catch (e) {} }
@@ -657,7 +672,7 @@ function abrirSubidaNivel(origen, claseInicial) {
             const o0 = el('option', '', '— Elegir después —'); o0.value = ''; s.appendChild(o0);
             Object.keys(data.subclases).sort(_ordenES).forEach(k => { const o = el('option', '', k); o.value = k; s.appendChild(o); });
             s.value = E.subclase;
-            s.addEventListener('change', () => { E.subclase = s.value; irPaso(E.paso); });
+            s.addEventListener('change', () => { E.subclase = s.value; E.pasos = snPasos(E); irPaso(E.paso); });
             sec.appendChild(s);
             cuerpo.appendChild(sec);
         }
@@ -819,6 +834,88 @@ function abrirSubidaNivel(origen, claseInicial) {
     }
 
     /* ═════ PASO: resumen ═════ */
+    /* ═════ PASO: conjuros ═════ */
+    function renderConjuros() {
+        const plan = snPlanConjuros(E);
+        const c = snConjAjustar(E, plan);
+        cuerpo.appendChild(el('p', 'ag-ayuda', `Conjuros que ganas con ${E.clase}. Las listas salen de la lista de ${plan.lista} y del nivel máximo que ya puedes lanzar. Puedes dejar elecciones para más tarde (en la pestaña de conjuros de la ficha).`));
+        const info = el('div', 'sn-info'); cuerpo.appendChild(info);
+        const esp = snEspaciosTexto(E);
+        info.textContent = `Nivel máximo de conjuro: ${plan.maxA || '–'} → ${plan.maxD}` + (esp ? `  ·  Espacios: ${esp}` : '');
+        const pendiente = el('div', 'ag-nota-peq sn-sp-pend');
+        const secs = [];
+        const refrescarTodas = () => { secs.forEach(x => x.refrescar()); estado(); };
+        const estado = () => {
+            const falta = [];
+            const f1 = plan.trucos - c.trucos.length; if (f1 > 0) falta.push(`${f1} truco${f1 > 1 ? 's' : ''}`);
+            const f2 = plan.libro - c.libro.length; if (f2 > 0) falta.push(`${f2} para el libro`);
+            const f3 = plan.prep - c.prep.length; if (f3 > 0) falta.push(`${f3} preparado${f3 > 1 ? 's' : ''}`);
+            const med = c.cT.concat(c.cP).filter(f => (f.viejo && !f.nuevo[0]) || (!f.viejo && f.nuevo[0])).length;
+            if (med) falta.push(`${med} sustitución${med > 1 ? 'es' : ''} a medias (se ignoran)`);
+            pendiente.textContent = falta.length ? 'Pendiente de elegir: ' + falta.join(', ') + '. No bloquea: puedes continuar.' : 'Todo elegido.';
+        };
+        const bloque = (titulo, ayuda, cfg) => {
+            const sec = el('div', 'ag-sec sn-sp-sec');
+            const tit = el('div', 'ag-sec-tit'); tit.appendChild(document.createTextNode(titulo + ' '));
+            const cont = el('span', 'sn-sp-cont'); tit.appendChild(cont); sec.appendChild(tit);
+            if (ayuda) sec.appendChild(el('p', 'ag-ayuda', ayuda));
+            const api = snSelectorConjuros(Object.assign({}, cfg, { onChange: () => { if (cfg.alCambiar) cfg.alCambiar(); refrescarTodas(); } }));
+            const refrescar = () => { cont.textContent = `${cfg.sel.length}/${cfg.max}`; cont.classList.toggle('completo', cfg.sel.length >= cfg.max); api.refrescar(); };
+            sec.appendChild(api.el); cuerpo.appendChild(sec);
+            secs.push({ refrescar });
+            return sec;
+        };
+        const ficha = () => snConjurosFicha(E.panel);
+        const deClase = id => (HECHIZOS_CLASES[id] || []).includes(plan.lista);
+
+        if (plan.trucos > 0) bloque(`Trucos nuevos`, `Elige ${plan.trucos} truco${plan.trucos > 1 ? 's' : ''} de la lista de ${plan.lista}.`,
+            { sel: c.trucos, max: plan.trucos, nivelMin: 0, nivelMax: 0, etiqueta: 'trucos', candidatos: () => snCandidatosConjuros(E, plan, 'truco', c.trucos) });
+        if (plan.libro > 0) bloque('Libro de conjuros', `Tu libro gana ${plan.libro} conjuro${plan.libro > 1 ? 's' : ''} de nivel ${plan.maxD > 1 ? '1 a ' + plan.maxD : '1'} (copiarlos cuesta 50 po y 2 horas por nivel del conjuro). Aquí solo los apuntas en la ficha; prepararlos es el siguiente apartado.`,
+            { sel: c.libro, max: plan.libro, nivelMin: 1, nivelMax: plan.maxD, etiqueta: 'libro', candidatos: () => snCandidatosConjuros(E, plan, 'libro', c.libro),
+              alCambiar: () => { const f = ficha(); for (let i = c.prep.length - 1; i >= 0; i--) if (!f.has(c.prep[i]) && !c.libro.includes(c.prep[i])) c.prep.splice(i, 1); } });
+        if (plan.prep > 0) bloque('Conjuros preparados nuevos',
+            plan.mago ? `Prepara ${plan.prep} conjuro${plan.prep > 1 ? 's' : ''} más, de tu libro (los que ya tenías sin preparar y los que acabas de añadir).`
+                      : `Prepara ${plan.prep} conjuro${plan.prep > 1 ? 's' : ''} más de la lista de ${plan.lista} (nivel ${plan.maxD > 1 ? '1 a ' + plan.maxD : '1'}). Se añaden a la ficha ya marcados como preparados.`,
+            { sel: c.prep, max: plan.prep, nivelMin: 1, nivelMax: Math.max(1, plan.maxD), etiqueta: 'preparados', candidatos: () => snCandidatosConjuros(E, plan, plan.mago ? 'prepMago' : 'prep', c.prep) });
+
+        const filaSust = (f, i, tipo) => {
+            const esTruco = tipo === 'truco';
+            const sec = el('div', 'ag-sec sn-sp-sec');
+            sec.appendChild(el('div', 'ag-sec-tit', `${esTruco ? 'Sustituir un truco' : 'Sustituir un conjuro preparado'} (opcional)${plan.cambTruco > 1 || plan.cambPrep > 1 ? ' · ' + (i + 1) : ''}`));
+            const propios = ficha();
+            const otrosViejos = new Set((esTruco ? c.cT : c.cP).filter(x => x !== f).map(x => x.viejo).filter(Boolean));
+            const opciones = [];
+            propios.forEach((v, id) => {
+                if (!deClase(id) || otrosViejos.has(id)) return;
+                if (esTruco ? v.nivel === 0 : (v.nivel >= 1 && v.prep)) opciones.push(id);
+            });
+            if (!opciones.length && !f.viejo) {
+                sec.appendChild(el('p', 'ag-nota-peq', esTruco ? `No tienes anotados en la ficha trucos de la lista de ${plan.lista} para sustituir.` : `No tienes anotados en la ficha conjuros preparados de la lista de ${plan.lista} para sustituir.`));
+                cuerpo.appendChild(sec); return;
+            }
+            sec.appendChild(el('p', 'ag-ayuda', esTruco ? 'Al subir de nivel puedes cambiar un truco por otro de la lista de la clase.' : 'Al subir de nivel puedes cambiar un conjuro preparado por otro de la lista de la clase para el que tengas espacios.'));
+            const fila = el('label', 'ag-fila-opc'); fila.appendChild(el('span', '', 'Quitar:'));
+            const sv = el('select', 'ag-select sn-sp-viejo'); sv.setAttribute('aria-label', esTruco ? 'Truco que quitas' : 'Conjuro que quitas');
+            const o0 = el('option', '', '— ninguno —'); o0.value = ''; sv.appendChild(o0);
+            opciones.sort((a, b) => _ordenES((snIdxConjuros().get(a) || { sp: { n: a } }).sp.n, (snIdxConjuros().get(b) || { sp: { n: b } }).sp.n))
+                .forEach(id => { const it = snIdxConjuros().get(id); const o = el('option', '', it ? it.sp.n : id); o.value = id; sv.appendChild(o); });
+            sv.value = f.viejo; if (sv.value !== f.viejo) { f.viejo = ''; sv.value = ''; }
+            sv.addEventListener('change', () => { f.viejo = sv.value; refrescarTodas(); });
+            fila.appendChild(sv); sec.appendChild(fila);
+            const api = snSelectorConjuros({
+                sel: f.nuevo, max: 1, nivelMin: esTruco ? 0 : 1, nivelMax: esTruco ? 0 : Math.max(1, plan.maxD), etiqueta: 'nuevo',
+                candidatos: () => snCandidatosConjuros(E, plan, esTruco ? 'truco' : 'prep', f.nuevo), onChange: refrescarTodas
+            });
+            sec.appendChild(el('div', 'sn-sp-sub', 'Por:'));
+            sec.appendChild(api.el); cuerpo.appendChild(sec);
+            secs.push({ refrescar: () => api.refrescar() });
+        };
+        c.cT.forEach((f, i) => filaSust(f, i, 'truco'));
+        c.cP.forEach((f, i) => filaSust(f, i, 'prep'));
+        cuerpo.appendChild(pendiente);
+        refrescarTodas();
+    }
+
     function renderResumen() {
         cuerpo.appendChild(el('p', 'ag-ayuda', 'Revisa los cambios. Al confirmar se guarda antes una versión en el Historial («Antes de subir a nivel N») por si quieres deshacerlo.'));
         const r = snResumenPG(E);
@@ -842,6 +939,7 @@ function abrirSubidaNivel(origen, claseInicial) {
             else t = `Dote: ${m.dote}` + (ef.cambios.length ? ' · ' + ef.cambios.map(c => `${AG_ABREV[c.s]} ${c.de}→${c.a}`).join(', ') : '');
             filas.push([`Mejora nv. ${m.nvClase}`, t]);
         });
+        if (typeof snResumenConjuros === 'function') snResumenConjuros(E, snPlanConjuros(E)).forEach(f => filas.push(f));
         const tabla = el('table', 'ag-tabla sn-resumen');
         const tb = el('tbody'); tabla.appendChild(tb);
         filas.forEach(([k, v]) => { const tr = el('tr'); tr.append(el('th', '', k), el('td', '', v)); tb.appendChild(tr); });
@@ -849,7 +947,9 @@ function abrirSubidaNivel(origen, claseInicial) {
         const notas = el('ul', 'ag-msgs');
         if (E.nueva) notas.appendChild(el('li', 'ag-msg-aviso', 'Clase nueva: revisa en Características las competencias que realmente ganas por multiclase.'));
         if (!r.auto) notas.appendChild(el('li', 'ag-msg-aviso', 'PG máximos en manual: se suma la ganancia a tu valor actual.'));
-        notas.appendChild(el('li', '', 'Los espacios de conjuro, trucos y conjuros preparados se actualizan solos; los conjuros nuevos los eliges tú en la pestaña de hechizos.'));
+        notas.appendChild(el('li', '', snPlanConjuros(E).hay
+            ? 'Los espacios de conjuro y los máximos de trucos y preparados se actualizan solos; lo que dejaste sin elegir lo añades tú en la pestaña de conjuros.'
+            : 'Los espacios de conjuro, trucos y conjuros preparados se actualizan solos.'));
         cuerpo.appendChild(notas);
     }
 

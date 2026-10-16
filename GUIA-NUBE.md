@@ -65,7 +65,7 @@ Pulsa **☁ Iniciar sesión**, entra, y comprueba en Firebase → Firestore que 
 - **Primera vez que inicias sesión** en un navegador con fichas ya hechas: te pregunta si quieres añadirlas a tu cuenta.
 - **Cambiar de cuenta** en un navegador que tiene fichas de otra: se descarga una copia `.json` y se quitan de ese navegador (siguen en la nube de la otra cuenta).
 - **Cerrar sesión** deja las fichas en el navegador, o (si todo está sincronizado) permite quitarlas, útil en ordenadores compartidos.
-- **Solo en el navegador** (no se sincronizan): historial de versiones, papelera, fondo personalizado y tema claro/oscuro.
+- **Solo en el navegador** (no se sincronizan): historial de versiones, papelera y tema claro/oscuro.
 - Si una ficha pesa demasiado para la nube (límite de ~0,9 MB por ficha, normalmente por imágenes), se suben sin las imágenes más pesadas, que se quedan en el navegador donde se pusieron.
 
 ## Límites del plan gratuito

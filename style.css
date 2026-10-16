@@ -205,13 +205,13 @@ body {
     background: #1a1a1a; /* fallback oscuro si no hay imagen de fondo */
 }
 
-/* Imagen de fondo con blur y contraste reducido */
+/* Imagen de fondo fija (fondo.jpg) con blur y contraste reducido; cada tema ajusta el filtro más abajo */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
-    background-image: url('data/background.jpg');
+    background-image: url('fondo.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -219,29 +219,8 @@ body::before {
     transform: scale(1.05); /* evita bordes blancos del blur */
 }
 
-/* Imagen de fondo personalizada (cargada por el usuario vía JS) */
-#fondo-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    filter: blur(4px) contrast(0.75) brightness(0.85);
-    transform: scale(1.05);
-    pointer-events: none;
-    display: none; /* oculto hasta que tenga imagen */
-}
-#fondo-bg.tiene-fondo {
-    display: block;
-}
-/* Cuando hay fondo personalizado, ocultamos el ::before para no superponer */
-body:has(#fondo-bg.tiene-fondo)::before {
-    display: none;
-}
-
 /* Todo el contenido por encima del fondo */
-body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(#spell-card-global):not(#dote-card-global):not(#especie-card-global):not(#modal-borrado-global):not(.ag-overlay):not(#fondo-bg):not(.sb-panel){ position: relative; z-index: 1; }
+body > *:not(#log-tiradas):not(#panel-flotante-acciones):not(#dados-widget):not(#spell-card-global):not(#dote-card-global):not(#especie-card-global):not(#modal-borrado-global):not(.ag-overlay):not(.sb-panel){ position: relative; z-index: 1; }
 
 /* ===================================================
    BARRA DE PESTAÑAS

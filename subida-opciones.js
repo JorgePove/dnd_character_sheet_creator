@@ -242,7 +242,7 @@ function snOpcCandidatas(E, plan, s, propio) {
 }
 
 /* ═════ Selector con buscador y vista previa ═════
-   cfg = { sel: [nombres] (se modifica), max, candidatos: () => [{o, bloq}], onChange: () => {}, etiqueta } */
+   cfg = { sel: [nombres] (se modifica), max, candidatos: () => [{o, bloq}], onChange: () => {}, etiqueta, buscar?: nombre => elemento } */
 function snSelectorOpciones(cfg) {
     const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
     const raiz = el('div', 'sn-sp');
@@ -264,7 +264,7 @@ function snSelectorOpciones(cfg) {
 
     let activo = -1, filas = [], fuentesPuestas = '';
     const completo = () => cfg.sel.length >= cfg.max;
-    const buscaOp = n => snOpPorNombre().get(n);
+    const buscaOp = n => (cfg.buscar ? cfg.buscar(n) : null) || snOpPorNombre().get(n);   // cfg.buscar: para elementos que no son de DND_OPCIONES (las dotes de Estilo de Combate)
 
     function pintarVista(it) {
         vista.textContent = '';

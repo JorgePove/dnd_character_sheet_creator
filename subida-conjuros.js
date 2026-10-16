@@ -120,10 +120,13 @@ function snConjAjustar(E, plan) {
 /* Todos los ids ya elegidos en cualquier sección (salvo los arrays indicados) */
 function snConjUsados(E, ...salvos) {
     const c = E.conj; const s = new Set();
-    if (!c) return s;
     const ok = a => !salvos.includes(a);
-    [c.trucos, c.libro, c.prep].forEach(a => { if (ok(a)) a.forEach(i => s.add(i)); });
-    [c.cT, c.cP].forEach(arr => arr.forEach(f => { if (ok(f.nuevo)) f.nuevo.forEach(i => s.add(i)); }));
+    if (c) {
+        [c.trucos, c.libro, c.prep].forEach(a => { if (ok(a)) a.forEach(i => s.add(i)); });
+        [c.cT, c.cP].forEach(arr => arr.forEach(f => { if (ok(f.nuevo)) f.nuevo.forEach(i => s.add(i)); }));
+    }
+    // trucos que se eligen en el paso Estilo (Guerrero Bendecido / Druídico): no se ofrecen otra vez aquí
+    if (E.est && typeof snEstArraysTrucos === 'function') snEstArraysTrucos(E).forEach(a => { if (ok(a)) a.forEach(i => s.add(i)); });
     return s;
 }
 

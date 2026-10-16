@@ -28,7 +28,7 @@ const DND_OPCIONES_TIPOS = {
   "Runa": { clases:["Guerrero"], sub:"Guerrero Rúnico", corto:"Runas" },
   "Disciplina Elemental": { clases:["Monje"], sub:"Camino de los Cuatro Elementos", corto:"Disciplinas" },
   "Disparo Arcano": { clases:["Guerrero"], sub:"Tirador Arcano", corto:"Disparos Arcanos" },
-  "Estilo de Combate (2014)": { clases:["Guerrero","Paladín","Explorador","Bardo"], corto:"Estilo" },
+  "Estilo de Combate (2014)": { clases:["Guerrero","Paladín","Explorador","Bardo","Blood Hunter"], corto:"Estilo" },
   "Renombre de Casa": { clases:[], corto:"Renombre" }
 };
 
@@ -259,11 +259,11 @@ const DND_OPCIONES = [
   { n:"Flecha Sombría (Shadow Arrow) [XGtE]", tipo:"Disparo Arcano", clases:["Guerrero"], sub:"Tirador Arcano", a:"O", d:"Opción de Disparo Arcano (ilusión): tejes magia de ilusión en la flecha para nublar la vista del enemigo con sombras. La criatura impactada por la flecha sufre 2d6 de daño psíquico extra y debe superar una salvación de SAB (CD de Disparo Arcano) o no puede ver nada a más de 5 pies de ella hasta el inicio de tu siguiente turno. El daño psíquico pasa a 4d6 en Nv.18 de Guerrero." },
 
   /* ── ESTILO DE COMBATE (2014) (13) ── */
-  { n:"Arquería (Archery) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Explorador"], d:"+2 a las tiradas de ataque que hagas con armas a distancia." },
-  { n:"Combate con Armas a Dos Manos (Great Weapon Fighting) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Paladín"], d:"Cuando sacas un 1 o un 2 en un dado de daño de un ataque con un arma cuerpo a cuerpo que empuñes con dos manos, puedes volver a tirar ese dado y debes usar la nueva tirada, aunque sea otro 1 o 2. El arma debe tener la propiedad A Dos Manos o Versátil para que obtengas este beneficio." },
-  { n:"Combate con Dos Armas (Two-Weapon Fighting) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Bardo","Explorador"], d:"Cuando luchas con dos armas, puedes sumar tu modificador de característica al daño del segundo ataque." },
+  { n:"Arquería (Archery) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Explorador","Blood Hunter"], d:"+2 a las tiradas de ataque que hagas con armas a distancia." },
+  { n:"Combate con Armas a Dos Manos (Great Weapon Fighting) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Paladín","Blood Hunter"], d:"Cuando sacas un 1 o un 2 en un dado de daño de un ataque con un arma cuerpo a cuerpo que empuñes con dos manos, puedes volver a tirar ese dado y debes usar la nueva tirada, aunque sea otro 1 o 2. El arma debe tener la propiedad A Dos Manos o Versátil para que obtengas este beneficio." },
+  { n:"Combate con Dos Armas (Two-Weapon Fighting) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Bardo","Explorador","Blood Hunter"], d:"Cuando luchas con dos armas, puedes sumar tu modificador de característica al daño del segundo ataque." },
   { n:"Defensa (Defense) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Paladín","Explorador"], d:"Mientras llevas armadura, obtienes +1 a la CA." },
-  { n:"Duelo (Dueling) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Bardo","Paladín","Explorador"], d:"Mientras empuñas un arma cuerpo a cuerpo en una mano y ninguna otra arma, obtienes +2 a las tiradas de daño con esa arma." },
+  { n:"Duelo (Dueling) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Bardo","Paladín","Explorador","Blood Hunter"], d:"Mientras empuñas un arma cuerpo a cuerpo en una mano y ninguna otra arma, obtienes +2 a las tiradas de daño con esa arma." },
   { n:"Protección (Protection) [PHB 2014]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Paladín"], a:"R", d:"Cuando una criatura que veas ataca a un objetivo que no seas tú a 5 pies o menos de ti, puedes usar tu Reacción para imponer Desventaja a esa tirada de ataque. Debes empuñar un escudo." },
   { n:"Combate a Ciegas (Blind Fighting) [TCE]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Paladín","Explorador"], d:"Tienes Vista Ciega con alcance de 10 pies. Dentro de ese alcance ves con eficacia cualquier cosa que no esté tras Cobertura Total, aunque estés Cegado o en la oscuridad. Además, ves a una criatura Invisible dentro de ese alcance, salvo que consiga esconderse de ti." },
   { n:"Combate con Armas Arrojadizas (Thrown Weapon Fighting) [TCE]", tipo:"Estilo de Combate (2014)", clases:["Guerrero","Explorador"], d:"Puedes sacar un arma con la propiedad Arrojadiza como parte del ataque que hagas con ella. Además, cuando impactas con un ataque a distancia usando un arma arrojadiza, obtienes +2 a la tirada de daño." },

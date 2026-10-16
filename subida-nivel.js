@@ -184,12 +184,14 @@ function snPrepararNiveles(E) {
     E.pasos = snPasos(E);
 }
 
-/* Pasos del asistente: Mejoras solo si toca; Conjuros y Opciones solo si la clase gana o puede cambiar algo */
+/* Pasos del asistente: Mejoras solo si toca; Estilo, Conjuros y Opciones solo si la clase gana o puede cambiar algo */
 function snPasos(E) {
     const plan = (typeof snPlanConjuros === 'function') ? snPlanConjuros(E) : { hay: false };
     const opc = (typeof snPlanOpciones === 'function') ? snPlanOpciones(E) : { hay: false };
+    const est = (typeof snPlanEstilo === 'function') ? snPlanEstilo(E) : { hay: false };
     return ['clase', 'vida', 'rasgos']
         .concat(E.mejoras.length ? ['mejoras'] : [])
+        .concat(est.hay ? ['estilo'] : [])
         .concat(plan.hay ? ['conjuros'] : [])
         .concat(opc.hay ? ['opciones'] : [])
         .concat(['resumen']);
@@ -392,6 +394,11 @@ async function snAplicar(E) {
         });
     });
 
+    // 4b. Estilo de combate (dote de 5.5e u opción de 5e) y los trucos de Guerrero Bendecido / Druídico
+    let resEst = { lineas: [], avisos: [] };
+    intentar('Estilo de combate', () => { if (typeof snAplicarEstilo === 'function' && E.est) resEst = snAplicarEstilo(E); });
+    resEst.avisos.forEach(a => avisos.push(a));
+
     // 5. Conjuros elegidos (después del cambio de nivel, para que los límites de preparados ya estén al día)
     let resConj = { lineas: [], avisos: [] };
     intentar('Conjuros', () => { if (typeof snAplicarConjuros === 'function' && E.conj) resConj = snAplicarConjuros(E); });
@@ -420,6 +427,7 @@ async function snAplicar(E) {
         if (cambiosAtr.length) partes.push(cambiosAtr.join(', '));
         if (dotesAnadidas.length) partes.push('Dote: ' + dotesAnadidas.join(', '));
         if (E.subclase) partes.push('Subclase: ' + E.subclase);
+        resEst.lineas.forEach(l => partes.push(l));
         resConj.lineas.forEach(l => partes.push(l));
         resOpc.lineas.forEach(l => partes.push(l));
         const pend = E.mejoras.filter(m => m.modo === 'luego').length;
@@ -466,7 +474,7 @@ function abrirSubidaNivel(origen, claseInicial) {
     let refrescadores = [];
     let aplicando = false;
     let errorAplicar = '';   // el mensaje de un fallo al aplicar se mantiene visible (no lo borra actualizar)
-    const NOMBRES = { clase: 'Clase', vida: 'Vida', rasgos: 'Rasgos', mejoras: 'Mejoras', conjuros: 'Conjuros', opciones: 'Opciones', resumen: 'Resumen' };
+    const NOMBRES = { clase: 'Clase', vida: 'Vida', rasgos: 'Rasgos', mejoras: 'Mejoras', estilo: 'Estilo', conjuros: 'Conjuros', opciones: 'Opciones', resumen: 'Resumen' };
 
     function cerrar() {
         document.removeEventListener('keydown', teclas, true);
@@ -529,7 +537,7 @@ function abrirSubidaNivel(origen, claseInicial) {
         E.paso = Math.max(1, Math.min(E.pasos.length, n));
         cuerpo.textContent = ''; refrescadores = [];
         construirStepper();
-        ({ clase: renderClase, vida: renderVida, rasgos: renderRasgos, mejoras: renderMejoras, conjuros: renderConjuros, opciones: renderOpciones, resumen: renderResumen })[nombrePasoActual()]();
+        ({ clase: renderClase, vida: renderVida, rasgos: renderRasgos, mejoras: renderMejoras, estilo: renderEstilo, conjuros: renderConjuros, opciones: renderOpciones, resumen: renderResumen })[nombrePasoActual()]();
         actualizar();
         const primero = cuerpo.querySelector('input:not([disabled]),select:not([disabled]),button:not([disabled])');
         if (primero && E.paso !== 1) { try { primero.focus({ preventScroll: true }); } catch (e) {} }
@@ -925,6 +933,9 @@ function abrirSubidaNivel(origen, claseInicial) {
         refrescarTodas();
     }
 
+    /* ═════ PASO: estilo de combate ═════ */
+    function renderEstilo() { snRenderEstilo(E, cuerpo, el, () => irPaso(E.paso)); }
+
     /* ═════ PASO: opciones de clase ═════ */
     function renderOpciones() { snRenderOpciones(E, cuerpo, el, () => irPaso(E.paso)); }
 
@@ -951,6 +962,7 @@ function abrirSubidaNivel(origen, claseInicial) {
             else t = `Dote: ${m.dote}` + (ef.cambios.length ? ' · ' + ef.cambios.map(c => `${AG_ABREV[c.s]} ${c.de}→${c.a}`).join(', ') : '');
             filas.push([`Mejora nv. ${m.nvClase}`, t]);
         });
+        if (typeof snResumenEstilo === 'function') snResumenEstilo(E, snPlanEstilo(E)).forEach(f => filas.push(f));
         if (typeof snResumenConjuros === 'function') snResumenConjuros(E, snPlanConjuros(E)).forEach(f => filas.push(f));
         if (typeof snResumenOpciones === 'function') snResumenOpciones(E, snPlanOpciones(E)).forEach(f => filas.push(f));
         const tabla = el('table', 'ag-tabla sn-resumen');
@@ -963,6 +975,7 @@ function abrirSubidaNivel(origen, claseInicial) {
         notas.appendChild(el('li', '', snPlanConjuros(E).hay
             ? 'Los espacios de conjuro y los máximos de trucos y preparados se actualizan solos; lo que dejaste sin elegir lo añades tú en la pestaña de conjuros.'
             : 'Los espacios de conjuro, trucos y conjuros preparados se actualizan solos.'));
+        if (typeof snPlanEstilo === 'function' && snPlanEstilo(E).hay) notas.appendChild(el('li', '', 'El estilo de combate se anota en Dotes (5.5e) o en «Opciones de clase» (5e); lo que dejaste sin elegir lo añades tú desde esos paneles.'));
         if (typeof snPlanOpciones === 'function' && snPlanOpciones(E).hay) notas.appendChild(el('li', '', 'Las opciones de clase elegidas se anotan en el cuadro «Opciones de clase» de Características; lo que dejaste sin elegir lo añades tú desde ese panel.'));
         cuerpo.appendChild(notas);
     }

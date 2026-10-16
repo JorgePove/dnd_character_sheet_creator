@@ -5499,3 +5499,11 @@ html.tema-oscuro .mc-subir-btn { background: #3a1d1a; border-color: #8a3a31; col
 .sn-sp-viejo { max-width: 100%; }
 .sn-sp-pend { margin-top: 6px; }
 @media (max-width: 520px) { .sn-sp-buscar { width: 100%; } .sn-sp-meta { display: none; } }
+
+/* ── Asistente de subida de nivel: paso «Opciones de clase» ── */
+.sn-op-ed { gap: 14px; flex-wrap: wrap; }
+.sn-op-sust { margin-top: 8px; border: 1px solid #2d3748; border-radius: 8px; background: #1f2636; padding: 4px 10px 8px; }
+.sn-op-sust > summary { cursor: pointer; font-size: 12.5px; font-weight: 700; color: #F6A99F; padding: 5px 0; }
+.sn-op-sust > summary:focus-visible { outline: 2px solid #F6A99F; outline-offset: 2px; border-radius: 4px; }
+.sn-op-cambio { margin-top: 6px; padding-top: 6px; border-top: 1px dashed #2d3748; }
+.sn-op-cambio:first-of-type { border-top: 0; }

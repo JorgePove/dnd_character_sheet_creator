@@ -58,7 +58,8 @@ function _crearWidget() {
     // Restaurar estado de colapso. Sin preferencia guardada, en pantallas pequeñas
     // arranca minimizado para no tapar la ficha.
     (function() {
-        let colapsar = window.innerWidth <= 768;
+        const vista = document.documentElement.dataset.vista;   // responsive.js: escritorio / tablet / movil
+        let colapsar = window.innerWidth <= 768 || (!!vista && vista !== 'escritorio');
         try {
             const guardado = localStorage.getItem('dnd_dados_colapsado');
             if (guardado === '1') colapsar = true;

@@ -5595,6 +5595,9 @@ const FICHA_PADDING = 56;   // padding lateral del contenedor (28px × 2)
 const WIDGET_DADOS_ANCHO = 270; // ancho del widget de dados fijo (izquierda) + margen
 
 function _calcularEscalaFicha() {
+    // Tablet y móvil (responsive.js): la hoja se adapta al ancho, ya no se encoge con scale()
+    const vista = document.documentElement.dataset.vista;
+    if (vista && vista !== 'escritorio') return 1;
     const anchoVP = window.innerWidth;
 
     // Descontar el widget de dados si está visible (no en móvil pequeño)
@@ -5915,6 +5918,9 @@ function _pdfPrepararPanel(panel) {
     const sinTexto = (contenedor) =>
         !contenedor.querySelector('.auto-entrada') &&
         ![...contenedor.querySelectorAll('input[type="text"], textarea')].some(i => i.value.trim());
+
+    // 0. Siempre con el diseño de escritorio, aunque se exporte desde el móvil o una tablet
+    if (typeof window._vistaForzarEscritorio === 'function') deshacer.push(window._vistaForzarEscritorio());
 
     // 1. Sin la escala responsiva: la ficha se fotografía a su tamaño real (1100 px)
     estilo(panel, 'transform', 'none');

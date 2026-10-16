@@ -1,0 +1,739 @@
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE — tablet y móvil
+   (la lógica está en responsive.js; este archivo se carga el último)
+
+   html.vista-escritorio → no se toca nada: la ficha es la de siempre.
+   html.vista-tablet     → 700–1239 px: hoja a todo el ancho, dos columnas.
+   html.vista-movil      → < 700 px: una columna, barra fija arriba y barra inferior.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+    --mv-nav-h: 58px;
+    --mv-seguro-abajo: env(safe-area-inset-bottom, 0px);
+}
+
+/* Elementos que solo existen en móvil: ocultos en el resto */
+.mv-barra, #mv-nav, #mv-fab, .mv-btn-menu { display: none; }
+
+/* ═══════════════ TABLET + MÓVIL: la hoja deja de medir 1100 px ═══════════════ */
+html.vista-tablet #fichas-contenedor,
+html.vista-movil  #fichas-contenedor {
+    padding: 12px 10px 48px;
+    overflow-x: clip;      /* clip y no hidden: hidden rompería el position: sticky de dentro */
+    overflow-y: visible;
+}
+html.vista-tablet .ficha-panel.activa,
+html.vista-movil  .ficha-panel.activa {
+    width: 100%;
+    max-width: 1100px;
+    transform: none;
+    box-sizing: border-box;
+    padding: 16px;
+    overflow: visible;
+    align-items: stretch;
+}
+html.vista-tablet .segunda-pagina,
+html.vista-movil  .segunda-pagina {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
+    overflow: visible;
+}
+html.vista-tablet .cabecera-principal,
+html.vista-movil  .cabecera-principal { flex-wrap: wrap; }
+html.vista-tablet .input-nombre,
+html.vista-movil  .input-nombre { font-size: clamp(22px, 5vw, 40px); }
+
+/* ═══════════════ TABLET ═══════════════ */
+html.vista-tablet .bloque-nombre { flex: 1 1 100%; }
+html.vista-tablet .bloque-clase-info { flex: 1 1 320px; }
+html.vista-tablet .controles-accion { flex-wrap: wrap; }
+html.vista-tablet .combate-inline { flex: 1 1 420px; flex-wrap: wrap; border-left: 0; border-right: 0; padding: 0; }
+
+/* Atributos | habilidades en dos columnas; combate e inventario debajo, a todo el ancho */
+html.vista-tablet .rejilla-ficha {
+    grid-template-columns: minmax(190px, 230px) minmax(0, 1fr);
+    gap: 14px;
+}
+html.vista-tablet .columna-combate {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 14px;
+    align-items: start;
+}
+html.vista-tablet .columna-combate > .seccion-vida,
+html.vista-tablet .columna-combate > .seccion-inventario { grid-column: 1 / -1; }
+
+/* ═══════════════ MÓVIL ═══════════════ */
+html.vista-movil body { padding-bottom: calc(var(--mv-nav-h) + var(--mv-seguro-abajo)); }
+html.vista-movil #fichas-contenedor { padding: 8px 8px 24px; }
+
+/* La hoja se disuelve: las secciones van seguidas, sin marco de página */
+html.vista-movil .ficha-panel.activa {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+}
+html.vista-movil .segunda-pagina {
+    padding: 0;
+    margin-top: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+}
+html.vista-movil .segunda-pagina > * + * { margin-top: 12px; }
+
+/* Orden de los bloques dentro de cada sección */
+html.vista-movil .ficha-panel > .mv-barra          { order: -10; }
+html.vista-movil .ficha-panel > .controles-accion  { order: -5; }
+html.vista-movil .ficha-panel > .cabecera-principal{ order: 0; }
+html.vista-movil .ficha-panel > .rejilla-ficha     { order: 2; }
+html.vista-movil .ficha-panel > .segunda-pagina    { order: 3; }
+html.vista-movil .ficha-panel > .segunda-pagina:not(.tercera-pagina):not(.cuarta-pagina):not(.quinta-pagina) { order: 1; }   /* acciones de combate */
+html.vista-movil .ficha-panel > .tercera-pagina    { order: 4; }
+html.vista-movil .ficha-panel > .cuarta-pagina     { order: 5; }
+html.vista-movil .ficha-panel > .quinta-pagina     { order: 6; }
+
+/* Solo se ve la sección elegida en la barra inferior */
+html.vista-movil[data-seccion="combate"]     .ficha-panel [data-sec]:not([data-sec~="combate"]),
+html.vista-movil[data-seccion="habilidades"] .ficha-panel [data-sec]:not([data-sec~="habilidades"]),
+html.vista-movil[data-seccion="conjuros"]    .ficha-panel [data-sec]:not([data-sec~="conjuros"]),
+html.vista-movil[data-seccion="inventario"]  .ficha-panel [data-sec]:not([data-sec~="inventario"]),
+html.vista-movil[data-seccion="historia"]    .ficha-panel [data-sec]:not([data-sec~="historia"]) {
+    display: none !important;
+}
+/* Los contenedores que se quedan sin nada no dejan huecos */
+html.vista-movil .rejilla-ficha { display: flex; flex-direction: column; gap: 0; }
+html.vista-movil .columna-stats,
+html.vista-movil .columna-habilidades,
+html.vista-movil .columna-combate { display: flex; flex-direction: column; width: 100%; }
+html.vista-movil .columna-combate > .fila-dados-muerte { order: 1; }
+html.vista-movil .columna-combate > .seccion-condiciones { order: 2; }
+html.vista-movil .columna-combate > .seccion-resistencias { order: 3; }
+html.vista-movil .columna-combate > .seccion-inventario { order: 4; }
+
+/* La página de características reparte sus filas entre «Habilidades» y «Combate» (recursos) */
+html.vista-movil[data-seccion="combate"] .caja-caracteristicas {
+    border: 0; padding: 0; background: transparent; box-shadow: none; margin: 0;
+}
+html.vista-movil[data-seccion="combate"] .caja-caracteristicas > .titulo-caja { display: none; }
+
+/* ── Barra de pestañas de fichas: más baja y sin quedarse fija ── */
+html.vista-movil .barra-pestanas { position: relative; padding: 6px 6px 0; align-items: flex-end; }
+html.vista-movil .barra-acciones-globales {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 6px;
+    z-index: 3000;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 10px;
+    margin: 0;
+    min-width: 200px;
+    background: var(--color-marco, #f5f5f5);
+    border: 2px solid var(--color-borde, #2c2c2c);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+html.vista-movil.mv-menu-abierto .barra-acciones-globales { display: flex; }
+html.vista-movil .barra-acciones-globales .btn-global,
+html.vista-movil .barra-acciones-globales .btn-tema-global {
+    width: 100%; justify-content: flex-start; font-size: 14px; padding: 12px 14px; min-height: 44px; box-sizing: border-box;
+}
+html.vista-movil .mv-btn-menu {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-left: auto; min-width: 44px; min-height: 36px;
+    font-size: 22px; line-height: 1; font-weight: 700;
+    background: var(--color-marco, #f5f5f5); color: var(--color-texto, #222);
+    border: 2px solid var(--color-borde, #2c2c2c); border-radius: 10px; cursor: pointer;
+}
+
+/* ── Barra fija superior: PG, CA, Iniciativa ── */
+html.vista-movil .mv-barra {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    padding: 6px;
+    margin: 0 -8px 10px;
+    background: var(--color-hoja, #fff);
+    border-bottom: 2px solid var(--color-borde, #2c2c2c);
+    box-shadow: 0 4px 10px rgba(0,0,0,.18);
+}
+html.vista-movil .mv-barra .caja-stat-inline { min-width: 50px; padding: 3px 6px; justify-content: center; }
+html.vista-movil .mv-barra .csi-input { width: 44px; font-size: 20px; min-height: 28px; }
+html.vista-movil .mv-barra .seccion-vida {
+    position: static;
+    min-width: 0;
+    margin: 0;
+    padding: 3px 34px 3px 8px;
+    display: flex; flex-direction: column; justify-content: center; gap: 2px;
+}
+html.vista-movil .mv-barra .cabecera-vida { margin: 0; gap: 6px; justify-content: flex-start; }
+html.vista-movil .mv-barra .cabecera-vida > span { font-size: 10px; }
+html.vista-movil .mv-barra .hp-auto-label { display: none; }
+html.vista-movil .mv-barra .hp-inputs input { width: 52px; font-size: 20px; min-height: 28px; }
+html.vista-movil .mv-barra .barra-vida-contenedor { margin: 0; height: 10px; }
+html.vista-movil .mv-barra .hp-controles {
+    display: none;
+    position: absolute;
+    left: 0; right: 0; top: 100%;
+    padding: 10px;
+    background: var(--color-hoja, #fff);
+    border-bottom: 2px solid var(--color-borde, #2c2c2c);
+    box-shadow: 0 8px 14px rgba(0,0,0,.25);
+}
+html.vista-movil .mv-barra.vida-abierta .hp-controles { display: flex; }
+html.vista-movil .mv-vida-toggle {
+    position: absolute; right: 6px; top: 6px; bottom: 6px;
+    width: 38px; padding: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 15px; line-height: 1.1; color: var(--color-peligro, #c0392b);
+    background: transparent; border: 0; cursor: pointer;
+}
+html.vista-movil .mv-barra.vida-abierta .mv-vida-toggle-flecha { display: inline-block; transform: rotate(180deg); }
+html.vista-movil .hp-controles .btn-hp { min-height: 40px; font-size: 13px; padding: 6px 12px; }
+html.vista-movil .hp-controles .hp-mod,
+html.vista-movil .hp-controles .hp-temp-val { min-height: 38px; font-size: 16px; }
+
+/* ── Barra inferior de secciones ── */
+/* (style.css fuerza position:relative; z-index:1 a todo lo que cuelga del body: por eso el !important) */
+html.vista-movil #mv-nav {
+    display: flex;
+    position: fixed !important;
+    left: 0; right: 0; bottom: 0;
+    z-index: 1500 !important;
+    height: calc(var(--mv-nav-h) + var(--mv-seguro-abajo));
+    padding-bottom: var(--mv-seguro-abajo);
+    background: var(--color-marco, #f5f5f5);
+    border-top: 2px solid var(--color-borde, #2c2c2c);
+    box-shadow: 0 -4px 14px rgba(0,0,0,.22);
+}
+html.vista-movil .mv-nav-btn {
+    flex: 1 1 0; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    padding: 4px 2px;
+    background: transparent; border: 0; border-top: 3px solid transparent;
+    color: var(--color-texto-mute, #555); cursor: pointer;
+    font: inherit; -webkit-tap-highlight-color: transparent;
+}
+html.vista-movil .mv-nav-ico { font-size: 20px; line-height: 1; }
+html.vista-movil .mv-nav-txt { font-size: 10.5px; font-weight: 700; letter-spacing: .02em; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.vista-movil .mv-nav-btn.activo { color: var(--color-peligro, #c0392b); border-top-color: var(--color-peligro, #c0392b); background: var(--acento-bg, rgba(192,57,43,.08)); }
+html.vista-movil .mv-nav-btn:focus-visible { outline: 2px solid var(--color-peligro, #c0392b); outline-offset: -4px; }
+
+/* ═══════════════ TABLET: combate en dos columnas ═══════════════ */
+html.vista-tablet .columna-combate > .seccion-vida        { order: 0; grid-column: 1 / -1; }
+html.vista-tablet .columna-combate > .fila-dados-muerte   { order: 1; grid-column: 1 / -1; }
+html.vista-tablet .columna-combate > .seccion-resistencias{ order: 2; }
+html.vista-tablet .columna-combate > .seccion-condiciones { order: 3; }
+html.vista-tablet .columna-combate > .seccion-inventario  { order: 4; grid-column: 1 / -1; }
+html.vista-tablet .fila-dados-muerte { gap: 14px; }
+html.vista-tablet .resistencias-grid { grid-template-columns: 1fr; }
+html.vista-tablet .res-textarea { height: 44px; }
+html.vista-tablet .condiciones-y-agotamiento { flex-wrap: wrap; gap: 8px; }
+html.vista-tablet .condiciones-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1 1 200px; }
+html.vista-tablet .agotamiento-zona { padding-left: 10px; }
+
+/* ═══════════════ MÓVIL: bloques ═══════════════ */
+html.vista-movil .seccion-caja { padding: 14px 10px 10px; margin-bottom: 14px; }
+html.vista-movil .titulo-caja { font-size: 11px; }
+
+/* — Velocidades, inspiración y bono de competencia — */
+html.vista-movil .controles-accion {
+    flex-direction: column; align-items: stretch; gap: 10px;
+    padding: 12px 10px; margin-bottom: 14px;
+}
+html.vista-movil .combate-inline { flex: none; border: 0; padding: 0; width: 100%; }
+html.vista-movil .sep-inline { display: none; }
+html.vista-movil .vel-inline-bloque { flex: 1; }
+html.vista-movil .vel-inline-titulo { font-size: 10px; }
+html.vista-movil .vel-inline-fila { gap: 6px; }
+html.vista-movil .vel-inline-item label { font-size: 10px; }
+html.vista-movil .vel-inline-input { font-size: 16px; min-height: 40px; padding: 4px 2px; }
+html.vista-movil .grupo-insp-pb { display: flex; gap: 8px; width: 100%; }
+html.vista-movil .grupo-insp-pb > * { flex: 1 1 0; min-width: 0; }
+
+/* — Acciones de combate — */
+html.vista-movil .caja-acciones { min-height: 0; }
+html.vista-movil .acciones-tabs {
+    flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    margin-left: -4px; margin-right: -4px; padding: 0 4px;
+}
+html.vista-movil .acciones-tabs::-webkit-scrollbar { display: none; }
+html.vista-movil .accion-tab { flex: 0 0 auto; min-height: 40px; padding: 8px 12px; font-size: 12px; white-space: nowrap; }
+
+html.vista-movil .armas-cabecera { display: none; }
+html.vista-movil .arma-fila {
+    grid-template-columns: minmax(0, 1fr) 36px;
+    grid-template-areas:
+        "nombre  borrar"
+        "bono    bono"
+        "dano    dano"
+        "alcance notas";
+    gap: 10px 8px;
+    padding: 10px;
+}
+html.vista-movil .arma-fila > .arma-nombre-wrap   { grid-area: nombre; }
+html.vista-movil .arma-fila > .btn-borrar-arma    { grid-area: borrar; justify-self: end; width: 36px; height: 36px; font-size: 22px; }
+html.vista-movil .arma-fila > .arma-bono-wrap     { grid-area: bono; }
+html.vista-movil .arma-fila > .arma-daños-wrap    { grid-area: dano; }
+html.vista-movil .arma-fila > .arma-alcance-input { grid-area: alcance; }
+html.vista-movil .arma-fila > .arma-notas-input   { grid-area: notas; }
+html.vista-movil .arma-fila {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) 36px;
+    grid-template-areas:
+        "nombre  nombre  borrar"
+        "bono    bono    bono"
+        "dano    dano    dano"
+        "alcance notas   notas";
+}
+html.vista-movil .arma-nombre-txt { font-size: 22px; padding: 4px; }
+html.vista-movil .arma-input { font-size: 16px; min-height: 36px; }
+html.vista-movil .arma-nombre-input { font-weight: 700; }
+html.vista-movil .arma-bono-wrap { flex-wrap: nowrap; gap: 6px; position: relative; padding-top: 12px; }
+html.vista-movil .arma-bono-wrap::before,
+html.vista-movil .arma-daños-wrap::before {
+    position: absolute; top: 0; left: 0;
+    font-size: 9px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--color-texto-mute, #666);
+}
+html.vista-movil .arma-bono-wrap::before  { content: 'Bono de ataque'; }
+html.vista-movil .arma-daños-wrap { position: relative; padding-top: 12px; }
+html.vista-movil .arma-daños-wrap::before { content: 'Daño'; }
+html.vista-movil .arma-stat-sel { font-size: 16px; min-height: 40px; }
+html.vista-movil .arma-bono-extra { width: 54px; font-size: 16px; min-height: 40px; }
+html.vista-movil .arma-bono-total { font-size: 20px; min-width: 48px; padding: 6px 4px; }
+html.vista-movil .arma-daño-bloque { flex-wrap: wrap; gap: 6px; padding: 6px; }
+html.vista-movil .arma-dado-qty { width: 44px; font-size: 16px; min-height: 36px; }
+html.vista-movil .arma-dado-tipo { width: 62px; font-size: 16px; min-height: 36px; }
+html.vista-movil .arma-bono-daño { width: 54px; font-size: 16px; min-height: 36px; }
+html.vista-movil .arma-tipo-daño { flex: 1 1 130px; font-size: 16px; min-height: 36px; }
+html.vista-movil .arma-btn-extra-daño,
+html.vista-movil .arma-btn-quitar-daño { width: 32px; height: 32px; font-size: 20px; }
+html.vista-movil .btn-añadir-arma,
+html.vista-movil .btn-añadir-accion { min-height: 44px; font-size: 14px; }
+
+html.vista-movil .entrada-accion { grid-template-columns: 1fr; gap: 6px; }
+html.vista-movil .accion-nombre { font-size: 16px; min-height: 38px; }
+html.vista-movil .accion-desc { font-size: 16px; min-height: 80px; }
+
+/* — Dados de golpe y salvaciones de muerte — */
+html.vista-movil .fila-dados-muerte { flex-direction: column; gap: 14px; margin-bottom: 14px; }
+html.vista-movil .circulo-muerte { width: 34px; height: 34px; }
+html.vista-movil .btn-salv-muerte { min-height: 46px; font-size: 14px; }
+
+/* — Condiciones y agotamiento — */
+html.vista-movil .condiciones-y-agotamiento { flex-direction: column; gap: 10px; }
+html.vista-movil .condiciones-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 8px; width: 100%; }
+html.vista-movil .condicion-item { padding: 9px 10px; gap: 10px; min-height: 40px; border: 1px solid var(--color-borde-xs, #ddd); border-radius: 8px; }
+html.vista-movil .condicion-chk { width: 20px; height: 20px; border-radius: 4px; }
+html.vista-movil .condicion-chk:checked::after { font-size: 14px; }
+html.vista-movil .condicion-nombre { font-size: 14px; }
+html.vista-movil .agotamiento-zona { width: 100%; padding: 10px 0 0; border-left: 0; border-top: 1px solid var(--color-borde-xs, #d8d8d8); }
+html.vista-movil .agotamiento-fila-principal { flex-direction: row; justify-content: space-between; width: 100%; gap: 10px; }
+html.vista-movil .agotamiento-titulo { font-size: 11px; }
+html.vista-movil .agotamiento-bolitas { grid-template-columns: repeat(6, auto); grid-template-rows: auto; gap: 6px; }
+html.vista-movil .agotamiento-bolita { width: 28px; height: 28px; }
+html.vista-movil .agotamiento-num { font-size: 11px; padding: 2px 0; }
+
+/* — Resistencias e inmunidades — */
+html.vista-movil .resistencias-grid { grid-template-columns: 1fr; gap: 10px; }
+html.vista-movil .res-grupo label { font-size: 10px; }
+html.vista-movil .res-textarea { height: 54px; font-size: 16px; }
+
+/* — Recursos — */
+html.vista-movil .recursos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+/* ═══════════════ TABLET: widgets flotantes abajo, sin tapar la ficha ═══════════════ */
+html.vista-tablet #fichas-contenedor { padding-bottom: 110px; }
+html.vista-tablet #dados-widget { top: auto; bottom: 12px; left: 12px; }
+html.vista-tablet #panel-flotante-acciones {
+    bottom: 12px; left: 50%; transform: translateX(-50%);
+    flex-direction: row; flex-wrap: wrap; justify-content: center;
+    gap: 6px; width: auto; max-width: calc(100vw - 520px); min-width: 230px;
+}
+html.vista-tablet .btn-flotante { width: auto; min-width: 84px; padding: 8px 10px; font-size: 11px; }
+html.vista-tablet .btn-flotante[hidden] { display: none; }
+html.vista-tablet .flotante-sep { display: none; }
+html.vista-tablet .log-contenedor { top: auto; bottom: 12px; right: 12px; width: 220px; max-height: 40vh; }
+
+/* ═══════════════ MÓVIL: botones flotantes, dados y registro ═══════════════ */
+html.vista-movil #mv-fab {
+    display: flex; align-items: center; justify-content: center;
+    position: fixed !important; z-index: 1400 !important;
+    right: 12px; bottom: calc(var(--mv-nav-h) + var(--mv-seguro-abajo) + 12px);
+    width: 54px; height: 54px; padding: 0;
+    border-radius: 50%; border: 2px solid var(--color-borde, #2c2c2c);
+    background: var(--color-marco, #f5f5f5); color: var(--color-texto, #222);
+    box-shadow: 0 4px 14px rgba(0,0,0,.35); cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+html.vista-movil #mv-fab .mv-fab-ico { font-size: 24px; line-height: 1; }
+html.vista-movil #mv-fab .mv-fab-badge {
+    position: absolute; top: -6px; right: -6px; min-width: 20px; padding: 1px 5px;
+    border-radius: 10px; font-size: 12px; font-weight: 700; line-height: 18px; text-align: center;
+    background: #c0392b; color: #fff; display: none;
+}
+html.vista-movil #mv-fab .mv-fab-badge:not(:empty) { display: block; }
+html.vista-movil #mv-fab[data-vd="v"] { border-color: #12915e; background: #bff7e1; }
+html.vista-movil #mv-fab[data-vd="v"] .mv-fab-badge { background: #12915e; }
+html.vista-movil #mv-fab[data-vd="d"] { border-color: #c0392b; background: #fdd; }
+html.vista-movil #mv-fab[data-cond="si"] .mv-fab-badge { background: #b7791f; }
+html.vista-movil.mv-fab-abierto #mv-fab { background: var(--color-peligro, #c0392b); color: #fff; }
+
+html.vista-movil #panel-flotante-acciones {
+    display: none;
+    position: fixed; z-index: 1400;
+    left: auto; right: 12px; transform: none;
+    bottom: calc(var(--mv-nav-h) + var(--mv-seguro-abajo) + 78px);
+    width: 190px; max-width: calc(100vw - 24px);
+    flex-direction: column; flex-wrap: nowrap; gap: 8px;
+    padding: 10px; border-radius: 14px;
+    background: var(--color-marco, #f5f5f5); border: 2px solid var(--color-borde, #2c2c2c);
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+html.vista-movil.mv-fab-abierto #panel-flotante-acciones { display: flex; }
+html.vista-movil .btn-flotante { width: 100%; min-width: 0; min-height: 44px; padding: 8px 10px; font-size: 13px; border-radius: 9px; }
+html.vista-movil .btn-flotante[hidden] { display: none; }
+html.vista-movil .flotante-sep { display: block; height: 1px; background: var(--color-borde-xs, #ccc); margin: 0; }
+html.vista-movil .btn-log-f { background: var(--color-sub-caja, #eee); border-color: var(--color-borde, #2c2c2c); color: var(--color-texto, #222); }
+.btn-log-f { display: none; }
+html.vista-movil .btn-log-f { display: block; }
+
+html.vista-movil #dados-widget {
+    top: auto; left: 12px;
+    bottom: calc(var(--mv-nav-h) + var(--mv-seguro-abajo) + 14px);
+    width: min(250px, calc(100vw - 92px)); z-index: 1400;
+}
+html.vista-movil #dados-widget.colapsado { width: 44px; height: 44px; }
+
+html.vista-movil .log-contenedor {
+    left: 8px; right: 8px; width: auto; top: auto;
+    bottom: calc(var(--mv-nav-h) + var(--mv-seguro-abajo) + 82px);
+    max-height: 46vh; font-size: 13px; z-index: 1450;
+    opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(10px);
+    transition: opacity .2s, transform .2s, visibility .2s;
+}
+html.vista-movil .log-contenedor.mv-log-reciente,
+html.vista-movil .log-contenedor.mv-log-abierto { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
+html.vista-movil .log-contenedor.mv-log-reciente:not(.mv-log-abierto) #log-lista .log-entrada:not(:first-child) { display: none; }
+html.vista-movil .log-contenedor .log-cabecera { min-height: 40px; }
+html.vista-movil .log-contenedor .log-cabecera button { min-width: 44px; min-height: 40px; }
+html.vista-movil .log-entrada { font-size: 13px; padding: 8px 10px; }
+html.vista-movil .res span { font-size: 22px; }
+html.vista-movil .res small { font-size: 12px; }
+
+/* ═══════════════ MÓVIL: Habilidades ═══════════════ */
+/* Las columnas se disuelven para poder intercalar: atributos → habilidades → sentidos → competencias */
+html.vista-movil .columna-stats,
+html.vista-movil .columna-habilidades { display: contents; }
+html.vista-movil .rejilla-ficha > .columna-stats > .seccion-caja:not(.seccion-sentidos) { order: 1; }
+html.vista-movil .rejilla-ficha > .columna-habilidades > .seccion-caja:first-child { order: 2; }
+html.vista-movil .rejilla-ficha > .columna-stats > .seccion-sentidos { order: 3; }
+html.vista-movil .rejilla-ficha > .columna-habilidades > .seccion-competencias { order: 4; }
+html.vista-movil .rejilla-ficha > .columna-combate { order: 5; }
+
+/* Atributos en dos columnas, con salvaciones táctiles */
+html.vista-movil .stats-lista { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+html.vista-movil .stat-parte-superior { padding: 8px 8px 8px 10px; gap: 4px; }
+html.vista-movil .stat-nombre { font-size: 14px; }
+html.vista-movil .stat-score { width: 52px; font-size: 16px; min-height: 32px; }
+html.vista-movil .stat-mod-circulo { width: 50px; height: 50px; font-size: 21px; }
+html.vista-movil .stat-salv { padding: 6px 8px; gap: 6px; min-height: 44px; }
+html.vista-movil .salv-label { font-size: 10px; }
+html.vista-movil .salv-valor { width: 36px; font-size: 16px; min-height: 30px; }
+html.vista-movil .salv-arrow { font-size: 13px; padding: 2px 8px; line-height: 1; }
+html.vista-movil .btn-gen-atr { min-height: 44px; font-size: 14px; }
+
+/* Habilidades: filas de 44 px con casillas grandes */
+html.vista-movil .fila-skill { padding: 4px 6px; gap: 8px; min-height: 44px; }
+html.vista-movil .dot { width: 22px; height: 22px; }
+html.vista-movil .etiqueta-pe { width: 22px; }
+html.vista-movil .etiqueta-mod, html.vista-movil .mod-valor { width: 42px; }
+html.vista-movil .mod-valor { font-size: 16px; min-height: 32px; }
+html.vista-movil .fila-skill label { font-size: 14px; }
+html.vista-movil .adv-toggle, html.vista-movil .etiqueta-adv { width: 32px; }
+html.vista-movil .adv-toggle { height: 32px; font-size: 16px; }
+html.vista-movil .cabecera-habilidades { gap: 8px; }
+
+/* Sentidos y competencias */
+html.vista-movil .sentidos-extra { font-size: 16px; min-height: 56px; }
+html.vista-movil .armadura-sel, html.vista-movil .armadura-selector-wrap select { font-size: 16px; min-height: 42px; }
+html.vista-movil .seccion-competencias textarea { font-size: 16px; }
+
+/* Características de personaje: todo apilado */
+html.vista-movil .caja-caracteristicas { gap: 14px; padding: 14px 8px 10px; }
+html.vista-movil .caract-fila { flex-direction: column; gap: 14px; }
+html.vista-movil .caract-mc-header { padding: 6px 4px 0; }
+html.vista-movil .caract-mc-body { padding: 8px 4px; }
+html.vista-movil .mc-tab { min-height: 38px; padding: 6px 14px; font-size: 13px; }
+html.vista-movil .caract-mc-add { min-height: 38px; min-width: 38px; }
+html.vista-movil .mc-pagina.mc-activa { flex-direction: column; }
+html.vista-movil .caract-textarea { min-height: 220px; font-size: 16px; padding: 10px 12px; }
+html.vista-movil .caract-especie, html.vista-movil .caract-dotes { min-height: 160px !important; max-height: 240px; }
+html.vista-movil .caract-select { font-size: 16px; min-height: 42px; }
+html.vista-movil .caract-btn-limpiar { width: 36px; height: 36px; font-size: 14px; }
+html.vista-movil .caract-btn-add { width: 36px; height: 36px; font-size: 20px; }
+
+/* ═══════════════ MÓVIL: Conjuros ═══════════════ */
+html.vista-movil .cuarta-pagina { display: flex; flex-direction: column; gap: 12px; }
+html.vista-movil .cuarta-pagina > * + * { margin-top: 0; }
+html.vista-movil .spell-valores-fila { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 4px; justify-items: center; }
+html.vista-movil .spell-val-bloque { padding: 0 4px; min-width: 0; }
+html.vista-movil .spell-val-bloque:first-child { grid-column: 1 / -1; }
+html.vista-movil .spell-val-bloque select { font-size: 16px; min-height: 44px; }
+html.vista-movil .spell-calc-display { font-size: 26px; padding: 4px 12px; min-width: 64px; }
+html.vista-movil .spell-extra-bono-wrap input, html.vista-movil .spell-val-bloque input { font-size: 16px; min-height: 36px; }
+html.vista-movil .caja-spell-lista { padding: 0 6px 8px; }
+html.vista-movil .spell-columnas { grid-template-columns: minmax(0, 1fr); }
+html.vista-movil .spell-col-izq { border-right: 0; }
+html.vista-movil .spell-nivel-bloque { padding: 12px 4px 12px; }
+html.vista-movil .spell-nivel-titulo { font-size: 15px; }
+html.vista-movil .spell-nivel-cabecera { gap: 8px; }
+html.vista-movil .spell-nivel-añadir { position: relative; flex: 1 1 100%; width: 100%; }
+html.vista-movil .spell-custom-dropdown { position: static; max-width: none; min-width: 0; }
+html.vista-movil .spell-dropdown-trigger { font-size: 15px; min-height: 44px; padding: 10px 30px 10px 12px; display: flex; align-items: center; }
+html.vista-movil .spell-dropdown-listbox { left: 0; right: 0; width: auto; min-width: 0; max-width: none; max-height: 60vh; }
+html.vista-movil .spell-dropdown-item { font-size: 15px; padding: 10px 12px; min-height: 40px; }
+html.vista-movil .btn-spell-add { min-height: 44px; min-width: 52px; font-size: 18px; }
+html.vista-movil .spell-unlock-wrap { min-height: 36px; }
+html.vista-movil .spell-unlock-chk { width: 20px; height: 20px; }
+html.vista-movil .spell-unlock-label { font-size: 11px; }
+html.vista-movil .slot-chk { width: 32px; height: 32px; }
+html.vista-movil .spell-slots-checks { gap: 12px; }
+html.vista-movil .btn-slot-add { width: 32px; height: 32px; font-size: 18px; }
+html.vista-movil .slot-del-btn { width: 20px; height: 20px; line-height: 20px; font-size: 13px; top: -8px; right: -8px; }
+html.vista-movil .spell-slots-checks .slot-del-btn { display: flex; align-items: center; justify-content: center; }
+html.vista-movil .spell-entry { padding: 8px 10px; min-height: 46px; gap: 10px; }
+html.vista-movil .spell-prep-chk { width: 24px; height: 24px; }
+html.vista-movil .spell-prep-chk:checked::after { width: 7px; height: 12px; }
+html.vista-movil .spell-entry-nombre { font-size: 15px; }
+html.vista-movil .btn-spell-del { font-size: 22px; min-width: 36px; min-height: 36px; opacity: .7; }
+/* Buscador y filtros de conjuros */
+html.vista-movil .sp-buscar { font-size: 16px; min-height: 42px; }
+html.vista-movil .sp-sel { font-size: 14px; min-height: 38px; }
+html.vista-movil .sp-chip { font-size: 12px; min-height: 34px; padding: 4px 10px; }
+html.vista-movil .sp-limpiar { min-height: 34px; font-size: 13px; }
+html.vista-movil .sp-info { font-size: 12px; }
+html.vista-movil .sp-lista { max-height: 50vh; }
+html.vista-movil .sp-tag { font-size: 10px; padding: 2px 5px; }
+html.vista-movil .sp-fav { width: 32px; font-size: 20px; }
+
+/* ═══════════════ MÓVIL: Inventario ═══════════════ */
+.btn-añadir-item { display: none; }
+html.vista-tablet .btn-añadir-item,
+html.vista-movil  .btn-añadir-item {
+    display: block; width: 100%; margin-top: 10px; min-height: 44px; font-size: 14px; font-weight: 700;
+    border: 1.5px dashed var(--color-icono-suave, #9a9a9a); border-radius: 8px; background: transparent;
+    color: var(--color-texto-mute, #666); cursor: pointer;
+}
+html.vista-tablet .btn-añadir-item:hover,
+html.vista-movil  .btn-añadir-item:hover { background: var(--color-sub-caja-hover, #eee); color: var(--color-texto-med, #444); }
+html.vista-movil .dinero-barra { flex-wrap: wrap; gap: 8px; }
+html.vista-movil .moneda { flex: 1 1 calc(50% - 8px); padding: 8px 6px; }
+html.vista-movil .moneda label { font-size: 11px; }
+html.vista-movil .moneda input { font-size: 18px; min-height: 40px; }
+html.vista-movil .inventario-hint { display: none; }
+html.vista-movil .inventario-cabecera { display: none; }
+html.vista-movil .contenedor-items { height: auto; max-height: none; overflow: visible; gap: 10px; }
+html.vista-movil .item-fila {
+    grid-template-columns: minmax(0, 1fr) 76px 40px;
+    grid-template-areas:
+        "nom  cant del"
+        "desc desc desc"
+        "eq   sint sint";
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--color-borde-xs, #ddd);
+    border-radius: 8px;
+    background: var(--color-sub-caja, #f3f3f3);
+}
+html.vista-movil .item-fila > .input-item      { grid-area: nom; }
+html.vista-movil .item-fila > .input-item-cant { grid-area: cant; }
+html.vista-movil .item-fila > .input-item-desc { grid-area: desc; }
+html.vista-movil .item-fila > .chk-equipado    { grid-area: eq; }
+html.vista-movil .item-fila > .chk-sintonizado { grid-area: sint; }
+html.vista-movil .item-fila > .btn-borrar-item { grid-area: del; width: 40px; height: 40px; font-size: 24px; }
+html.vista-movil .item-fila .input-item,
+html.vista-movil .item-fila .input-item-cant,
+html.vista-movil .item-fila .input-item-desc {
+    font-size: 16px; min-height: 42px; padding: 8px 10px; box-sizing: border-box;
+    background: var(--color-input, #fff); border: 1px solid var(--color-input-borde, #ccc); border-radius: 6px; color: var(--color-texto, #222);
+}
+html.vista-movil .item-fila .input-item { font-weight: 700; }
+html.vista-movil .item-fila .input-item-desc { color: var(--color-texto-med, #444); }
+/* Las casillas Equipado / Sintonizado se convierten en botones con texto */
+html.vista-movil .item-fila input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 100%; height: 42px; margin: 0; padding: 0 12px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1.5px solid var(--color-input-borde, #bbb); border-radius: 8px;
+    background: var(--color-input, #fff); color: var(--color-texto-med, #444);
+    font-size: 14px; font-weight: 700; cursor: pointer; justify-self: stretch; position: static;
+}
+html.vista-movil .item-fila .chk-equipado::before    { content: '☐ Equipado'; }
+html.vista-movil .item-fila .chk-equipado:checked::before { content: '☑ Equipado'; }
+html.vista-movil .item-fila .chk-sintonizado::before { content: '✧ Sintonizar'; }
+html.vista-movil .item-fila .chk-sintonizado:checked::before { content: '✦ Sintonizado'; }
+html.vista-movil .item-fila .chk-sintonizado::after,
+html.vista-movil .item-fila .chk-sintonizado:checked::after { content: none; }
+html.vista-movil .item-fila .chk-equipado:checked { background: #bff7e1; border-color: #12915e; color: #0b5c3b; }
+html.vista-movil .item-fila .chk-sintonizado:checked { background: var(--color-spell-bg, #f0ebff); border-color: var(--color-spell, #805ad5); color: var(--color-spell-dark, #553c9a); }
+
+/* ═══════════════ MÓVIL: tarjetas flotantes de información ═══════════════ */
+html.vista-movil #spell-card-global,
+html.vista-movil #dote-card-global,
+html.vista-movil #especie-card-global,
+html.vista-movil .spell-tooltip {
+    width: calc(100vw - 12px); max-width: 380px; max-height: 62vh; overflow-y: auto; box-sizing: border-box;
+}
+
+/* ═══════════════ MÓVIL: Historia ═══════════════ */
+html.vista-movil .cabecera-principal { flex-direction: column; align-items: stretch; gap: 12px; padding: 12px 10px; }
+html.vista-movil .cabecera-principal > * { min-width: 0; width: 100%; flex: none; }
+html.vista-movil .bloque-nombre { flex: none; }
+html.vista-movil .input-nombre { font-size: 28px; min-height: 48px; }
+html.vista-movil .bloque-clase-info { flex: none; }
+html.vista-movil .fila-input { flex-direction: column; gap: 12px; }
+html.vista-movil .campo-multiclase, html.vista-movil .bloque-especie-trasfondo { width: 100%; max-width: none; flex: none; }
+html.vista-movil .bloque-especie-trasfondo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+html.vista-movil .cab-select { font-size: 16px; min-height: 42px; width: 100%; }
+html.vista-movil .multiclase-widget select, html.vista-movil .multiclase-widget input { font-size: 16px; min-height: 40px; }
+html.vista-movil .multiclase-add-btn, html.vista-movil .btn-subir-nivel { min-height: 42px; font-size: 14px; }
+html.vista-movil .retrato-cab-contenedor { width: 160px; height: 160px; margin: 0 auto; }
+
+html.vista-movil .roleplay-fila-superior { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-bottom: 14px; }
+html.vista-movil .roleplay-textarea-historia { min-height: 260px; font-size: 16px; }
+html.vista-movil .apariencia-contenedor { min-height: 220px; }
+html.vista-movil .notas-tabs-barra { gap: 6px; }
+html.vista-movil .notas-tabs-lista { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+html.vista-movil .notas-tabs-lista::-webkit-scrollbar { display: none; }
+html.vista-movil .notas-tab { flex: 0 0 auto; min-height: 40px; padding: 8px 14px; font-size: 14px; }
+html.vista-movil .notas-tab-add { min-height: 40px; min-width: 40px; }
+
+/* ═══════════════ TABLET ESTRECHA (700–899 px): armas en tarjeta ═══════════════ */
+@media (max-width: 899px) {
+    html.vista-tablet .armas-cabecera { display: none; }
+    html.vista-tablet .arma-fila {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr) 30px;
+        grid-template-areas:
+            "nombre  bono   borrar"
+            "dano    dano   dano"
+            "alcance notas  notas";
+        gap: 8px;
+    }
+    html.vista-tablet .arma-fila > .arma-nombre-wrap   { grid-area: nombre; }
+    html.vista-tablet .arma-fila > .arma-bono-wrap     { grid-area: bono; }
+    html.vista-tablet .arma-fila > .btn-borrar-arma    { grid-area: borrar; }
+    html.vista-tablet .arma-fila > .arma-daños-wrap    { grid-area: dano; }
+    html.vista-tablet .arma-fila > .arma-alcance-input { grid-area: alcance; }
+    html.vista-tablet .arma-fila > .arma-notas-input   { grid-area: notas; }
+    html.vista-tablet .entrada-accion { grid-template-columns: 160px 1fr; }
+}
+
+/* ═══════════════ TÁCTIL (tablet): zonas de toque más grandes ═══════════════ */
+@media (pointer: coarse) {
+    html.vista-tablet .accion-tab { min-height: 40px; }
+    html.vista-tablet .btn-flotante { min-height: 40px; }
+    html.vista-tablet .fila-skill { min-height: 38px; }
+    html.vista-tablet .dot { width: 18px; height: 18px; }
+    html.vista-tablet .condicion-item { padding: 6px 8px; }
+    html.vista-tablet .condicion-chk { width: 16px; height: 16px; }
+    html.vista-tablet .condicion-chk:checked::after { font-size: 11px; }
+    html.vista-tablet .condicion-nombre { font-size: 11.5px; }
+    html.vista-tablet .agotamiento-bolita { width: 22px; height: 22px; }
+    html.vista-tablet .slot-chk { width: 28px; height: 28px; }
+    html.vista-tablet .salv-arrow { font-size: 11px; padding: 1px 6px; }
+    html.vista-tablet .btn-spell-add, html.vista-tablet .btn-hp { min-height: 38px; }
+    html.vista-tablet .spell-entry { min-height: 40px; }
+    html.vista-tablet .btn-borrar-item, html.vista-tablet .btn-borrar-arma, html.vista-tablet .btn-spell-del { min-width: 32px; min-height: 32px; }
+}
+
+/* ═══════════════ PANTALLAS BAJAS (móvil o tablet apaisados) ═══════════════ */
+@media (max-height: 520px) {
+    html.vista-tablet .barra-pestanas { position: static; }
+    html.vista-tablet #fichas-contenedor { padding-bottom: 76px; }
+    html.vista-movil { --mv-nav-h: 46px; }
+    html.vista-movil .mv-nav-btn { flex-direction: row; gap: 6px; justify-content: center; }
+    html.vista-movil .mv-nav-ico { font-size: 20px; }
+    html.vista-movil .mv-nav-txt { display: none; }
+    html.vista-movil .mv-barra { padding: 3px 6px; margin-bottom: 6px; }
+    html.vista-movil .mv-barra .caja-stat-inline { padding: 1px 6px; }
+    html.vista-movil .mv-barra .csi-input { min-height: 24px; font-size: 18px; }
+    html.vista-movil .mv-barra .hp-inputs input { min-height: 24px; font-size: 18px; }
+    html.vista-movil .mv-barra .cabecera-vida > span { display: none; }
+    html.vista-movil #mv-fab { width: 46px; height: 46px; }
+    html.vista-movil #panel-flotante-acciones { bottom: calc(var(--mv-nav-h) + var(--mv-seguro-abajo) + 66px); max-height: calc(100vh - var(--mv-nav-h) - 100px); overflow-y: auto; }
+    html.vista-movil .log-contenedor { bottom: calc(var(--mv-nav-h) + var(--mv-seguro-abajo) + 64px); max-height: 38vh; }
+}
+
+html.vista-movil .spell-sep-v { display: none; }
+
+/* Iniciativa en la barra fija: el número se edita y la etiqueta tira (con icono para que se vea) */
+html.vista-movil .mv-barra .caja-stat-inline.rollable .csi-label::before { content: '⚄ '; }
+html.vista-movil .mv-barra .caja-stat-inline.rollable .csi-label { padding: 2px 0; }
+
+/* ═══════════════ MÓVILES MUY ESTRECHOS (≤ 359 px) ═══════════════ */
+@media (max-width: 359px) {
+    html.vista-movil .mv-barra { gap: 4px; padding: 5px 4px; }
+    html.vista-movil .mv-barra .caja-stat-inline { min-width: 42px; padding: 3px 3px; }
+    html.vista-movil .mv-barra .csi-input { width: 36px; font-size: 18px; }
+    html.vista-movil .mv-barra .seccion-vida { padding: 3px 28px 3px 4px; }
+    html.vista-movil .mv-barra .hp-inputs input { width: 40px; font-size: 18px; padding: 0 2px; }
+    html.vista-movil .mv-barra .separador-hp { padding: 0 1px; }
+    html.vista-movil .mv-barra .cabecera-vida > span { display: none; }
+    html.vista-movil .mv-vida-toggle { width: 28px; right: 3px; }
+    html.vista-movil .stats-lista { grid-template-columns: minmax(0, 1fr); }
+    html.vista-movil .agotamiento-fila-principal { flex-direction: column; align-items: flex-start; }
+    html.vista-movil .agotamiento-bolitas { grid-template-columns: repeat(6, auto); gap: 4px; }
+    html.vista-movil .agotamiento-bolita { width: 26px; height: 26px; }
+    html.vista-movil .condiciones-grid { grid-template-columns: minmax(0, 1fr); }
+    html.vista-movil .recursos-grid { grid-template-columns: minmax(0, 1fr); }
+    html.vista-movil .bloque-especie-trasfondo { grid-template-columns: minmax(0, 1fr); }
+    html.vista-movil .mv-nav-txt { font-size: 9.5px; }
+}
+
+/* ═══════════════ MÓVIL ANCHO (apaisado, ≥ 560 px): más columnas ═══════════════ */
+@media (min-width: 560px) {
+    html.vista-movil .stats-lista { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    html.vista-movil .condiciones-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    html.vista-movil .recursos-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    html.vista-movil .resistencias-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    html.vista-movil .fila-dados-muerte { flex-direction: row; }
+    html.vista-movil .spell-columnas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    html.vista-movil .spell-col-izq { border-right: 2px solid var(--color-borde-xs, #d8d8d8); }
+    html.vista-movil .roleplay-fila-superior { grid-template-columns: 1fr 2fr; }
+    html.vista-movil .caract-fila { flex-direction: row; }
+    html.vista-movil .caract-fila .caract-completa:only-child { flex: 1 1 100%; }
+    html.vista-movil .mc-pagina.mc-activa { flex-direction: row; }
+    html.vista-movil .cabecera-principal { flex-direction: row; flex-wrap: wrap; }
+    html.vista-movil .cabecera-principal > .bloque-nombre { flex: 1 1 100%; }
+    html.vista-movil .cabecera-principal > .bloque-clase-info { flex: 1 1 360px; width: auto; }
+    html.vista-movil .cabecera-principal > .retrato-cab-contenedor { flex: 0 0 140px; width: 140px; height: 140px; margin: 0; }
+    html.vista-movil .item-fila {
+        grid-template-columns: minmax(0, 2fr) 76px minmax(0, 3fr) 150px 150px 40px;
+        grid-template-areas: "nom cant desc eq sint del";
+    }
+}
+
+/* ═══════════════ TEMA OSCURO / CLÁSICO: barra inferior ═══════════════ */
+html.tema-oscuro.vista-movil .mv-nav-btn.activo { color: #fc8181; border-top-color: #fc8181; background: rgba(252, 129, 129, .14); }
+html.tema-oscuro.vista-movil .mv-vida-toggle { color: #fc8181; }
+html.tema-oscuro.vista-movil .mv-btn-menu,
+html.tema-oscuro.vista-movil #mv-fab { color: #e6edf7; }
+
+/* ═══════════════ MÓVIL: campos a 16 px (iOS hace zoom al enfocar un campo con letra menor) ═══════════════ */
+html.vista-movil .notas-textarea { font-size: 16px; }
+html.vista-movil .dg-tipo { font-size: 16px; width: 68px; min-height: 36px; }
+html.vista-movil .mc-nivel-sel { font-size: 16px; width: 62px; min-height: 36px; }
